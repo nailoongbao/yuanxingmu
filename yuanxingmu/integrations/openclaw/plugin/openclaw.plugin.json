@@ -1,0 +1,31 @@
+{
+  "id": "yuanxingmu",
+  "name": "元星木资料防御",
+  "description": "通过固定任务权限服务读取资料、发送内容，并隔离原生 exec。",
+  "categories": ["security", "runtime"],
+  "activation": {"onStartup": true},
+  "contracts": {
+    "tools": ["yuanxingmu_read", "yuanxingmu_send", "yuanxingmu_status"]
+  },
+  "toolMetadata": {
+    "yuanxingmu_read": {"optional": true},
+    "yuanxingmu_send": {"optional": true},
+    "yuanxingmu_status": {"optional": true}
+  },
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["python", "corePath", "workspace", "brokerSocket", "bwrap", "auditPath", "operatorSocket", "resourceIds", "destinationIds"],
+    "properties": {
+      "python": {"type": "string", "pattern": "^/"},
+      "corePath": {"type": "string", "pattern": "^/"},
+      "workspace": {"type": "string", "pattern": "^/"},
+      "brokerSocket": {"type": "string", "pattern": "^/"},
+      "bwrap": {"type": "string", "pattern": "^/"},
+      "auditPath": {"type": "string", "pattern": "^/"},
+      "operatorSocket": {"type": "string", "pattern": "^/"},
+      "resourceIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 128}},
+      "destinationIds": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 128}}
+    }
+  }
+}

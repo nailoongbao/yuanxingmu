@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#091522">
+  <meta name="description" content="用自己的模型，在 OpenClaw 原生聊天中整理短文本。元星木预览版安装、资料导入、启动与关闭说明，适用于 Linux / WSL。">
+  <title>开始使用 · 元星木 Yuanxingmu</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .quickstart-page .start-nav{display:flex;gap:28px;align-items:center;font-size:13px;color:#c4cdd2}
+    .quickstart-page .start-nav a:hover{color:var(--green)}
+    .start-hero{padding:66px 0 58px}
+    .start-hero h1{font-size:clamp(36px,4.4vw,62px);white-space:normal;margin-top:24px;letter-spacing:-1.5px}
+    .start-hero .hero-description{max-width:740px;font-size:16px;margin-top:22px}
+    .start-hero .hero-actions{flex-wrap:wrap}
+    .start-trust-note{max-width:810px;margin-top:27px;padding:17px 20px;border-left:2px solid #8bbf92;background:#ffffff06;color:#b7cbc3;font-size:13px;line-height:1.9}
+    .start-trust-note strong{font-weight:600;color:#e0eee2}
+    .start-overview{display:flex;gap:28px;flex-wrap:wrap;padding:24px 0 30px;border-top:1px solid #ffffff1c;color:#c9dbd0;font-size:13px}
+    .start-overview span{color:#91a698;font-family:var(--mono);font-size:10px;margin-right:10px}
+    .start-document{padding:58px 0 72px}
+    .start-layout{display:grid;grid-template-columns:180px minmax(0,1fr);gap:62px;align-items:start}
+    .start-toc{position:sticky;top:26px;font-size:13px;line-height:1.7}
+    .start-toc p{font-weight:600;margin-bottom:13px}
+    .start-toc a{display:block;padding:9px 0;color:#5a7362}
+    .start-toc a:hover{color:#1c4d34;text-decoration:underline;text-underline-offset:4px}
+    .start-toc .start-doc-link{border-top:1px solid #d7e0d8;margin-top:16px;padding-top:18px;font-size:12px}
+    .start-content{min-width:0;max-width:900px;font-size:15px;line-height:1.9;color:#3f5a49}
+    .start-content section+section{margin-top:48px;padding-top:40px;border-top:1px solid #d7e0d8}
+    .start-content h2{font-size:29px;letter-spacing:-.7px;margin:9px 0 18px;color:#213d2e}
+    .start-content h3{font-size:18px;margin:27px 0 12px;color:#294934;font-weight:600}
+    .start-content p+p,.start-content pre+p,.start-content details+p{margin-top:15px}
+    .start-content a{color:#265c42;text-decoration:underline;text-underline-offset:4px}
+    .start-content code{font-family:var(--mono);font-size:.9em;overflow-wrap:anywhere}
+    .start-content p code,.start-content td code{background:#e6ece4;padding:2px 5px;border-radius:3px}
+    .start-content pre{margin:17px 0;padding:21px 20px;background:#10232b;color:#d9e8db;border:1px solid #254339;border-radius:5px;overflow-x:auto;line-height:1.8;font-size:13px;tab-size:2}
+    .start-content pre code{font-size:inherit;overflow-wrap:normal}
+    .start-code{position:relative;margin-top:18px}
+    .start-code pre{margin-top:0;padding-top:45px}
+    .start-copy-button{position:absolute;right:10px;top:9px;border:1px solid #537363;background:#1a3335;color:#cfdfd0;border-radius:3px;font-size:11px;padding:4px 11px}
+    .start-copy-button:hover{background:#2b4c44}
+    .start-content blockquote{margin:20px 0;padding:20px 23px;border-left:3px solid #80a97d;background:#e8efe3;color:#2e5338;font-size:16px}
+    .start-note{background:#e9efe5;border:1px solid #d3dfcf;border-radius:4px;padding:17px 20px;margin:20px 0;font-size:13px;line-height:1.9}
+    .start-content details{border:1px solid #d7e0d8;border-radius:4px;margin:18px 0;padding:0 18px}
+    .start-content summary{cursor:pointer;padding:15px 0;color:#31543d;font-size:14px;font-weight:600}
+    .start-content details>p:last-child{margin-bottom:18px}
+    .start-content details pre:last-child{margin-bottom:18px}
+    .start-table-wrap{overflow-x:auto;margin-top:20px}
+    .start-content table{width:100%;border-collapse:collapse;font-size:13px;text-align:left}
+    .start-content th,.start-content td{border-bottom:1px solid #d6e0d3;padding:14px 13px;vertical-align:top;min-width:130px}
+    .start-content th{color:#2c4d36;background:#e9efe6;font-weight:600}
+    .start-content td:first-child{color:#355940}
+    .start-feedback{font-size:12px;min-height:23px;color:#5b765d}
+    @media(max-width:899px){.start-layout{grid-template-columns:150px minmax(0,1fr);gap:32px}.start-document{padding-top:40px}.start-content{font-size:14px}.start-content h2{font-size:26px}.start-content pre{font-size:12px}}
+    @media(max-width:639px){.quickstart-page .start-nav{gap:18px;font-size:12px}.start-hero{padding:37px 0 34px}.start-hero h1{font-size:38px;letter-spacing:-1px}.start-hero .hero-description{font-size:14px}.start-hero .hero-actions{gap:18px}.start-trust-note{font-size:12px;padding:14px 16px;margin-top:22px}.start-overview{gap:13px;flex-direction:column;padding:21px 0 26px;font-size:12px}.start-layout{display:block}.start-toc{position:static;display:flex;gap:0 20px;flex-wrap:wrap;margin-bottom:31px;border-bottom:1px solid #d7e0d8;padding-bottom:18px;font-size:12px}.start-toc p{width:100%;margin-bottom:5px}.start-toc a{padding:7px 0}.start-toc .start-doc-link{border:0;margin:0;padding:7px 0}.start-content h2{font-size:26px}.start-content section+section{margin-top:33px;padding-top:30px}.start-content pre{padding-left:14px;padding-right:14px;font-size:11px}.start-content blockquote{font-size:14px;padding:17px}.start-content th,.start-content td{padding:12px 10px}.start-document{padding-bottom:45px}}
+    @media(max-width:639px){
+      .start-content pre{font-size:13px}
+      .start-code pre{padding-top:63px}
+      .start-copy-button{min-height:44px;min-width:58px;font-size:12px}
+    }
+  </style>
+</head>
+<body class="quickstart-page">
+  <a class="skip-link" href="#main">跳到正文</a>
+  <div class="topbar">
+    <header class="site-header wrap">
+      <a class="brand" href="index.html" aria-label="元星木首页"><img src="assets/mark.svg" width="38" height="38" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a>
+      <nav class="start-nav" aria-label="主导航"><a href="index.html">首页</a><a href="https://github.com/yh-l20/agent-defense-check" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+    </header>
+  </div>
+  <main id="main">
+    <div class="dark-top">
+      <section class="start-hero wrap" aria-labelledby="start-title">
+        <div class="preview-label"><span class="status-dot" aria-hidden="true"></span> RESEARCH PREVIEW <span class="label-divider"></span> 使用预览版</div>
+        <h1 id="start-title">用自己的模型，<br><span>从一份短文本开始。</span></h1>
+        <p class="hero-description">把资料交给 AI 整理，在 OpenClaw 原来的聊天界面里看结果。<br>元星木为这次工作建立独立实例，默认不配置对外发送位置。</p>
+        <div class="hero-actions"><a class="button button-primary" href="#install">开始安装 <span aria-hidden="true">↓</span></a><a class="text-link" href="#daily">已经装好，打开聊天 <span aria-hidden="true">→</span></a></div>
+        <p class="start-trust-note"><strong>你选择的模型会看到聊天内容和它读取的资料。</strong><br>云端模型需要把这些内容发送给模型服务。“默认不能发送”指不能另外发往未配置的接收位置，不包括正常的模型请求。</p>
+      </section>
+      <div class="start-overview wrap" aria-label="使用过程"><p><span>01</span>安装并接上模型</p><p><span>02</span>导入一份短文本</p><p><span>03</span>在原生聊天里看结果</p></div>
+    </div>
+    <div class="section-light start-document">
+      <div class="wrap start-layout">
+        <nav class="start-toc" aria-label="使用步骤">
+          <p>跟着做一次</p><a href="#install">1. 安装到独立目录</a><a href="#document">2. 准备短文本</a><a href="#model">3. 连接模型</a><a href="#chat">4. 开始聊天</a><a href="#daily">日常打开与关闭</a><a href="#revoke">永久收回权限</a><a href="#help">遇到问题</a><a class="start-doc-link" href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">完整文档 ↗</a>
+        </nav>
+        <div class="start-content">
+          <section id="install" aria-labelledby="install-title">
+            <p class="eyebrow">01 / 首次安装</p><h2 id="install-title">给这次工作一个独立目录。</h2>
+            <p>下面以 <strong>Ubuntu 24.04 / WSL Ubuntu 24.04、x86_64 电脑</strong>为例。需要系统 Python 3.12+、Node.js 24.16.0、OpenClaw 2026.9.4 和 bubblewrap 0.9.0。其他环境需要另外验证；当前还需要在终端中完成安装。</p>
+            <details><summary>Windows 用户：先打开 Ubuntu 终端</summary><p>在 PowerShell 中运行下面的命令，按屏幕提示完成 WSL 安装，再打开 Ubuntu 24.04。后续命令都在 Ubuntu 中运行。已有合适环境可以跳过。</p><pre><code>wsl --install -d Ubuntu-24.04</code></pre></details>
+            <p>请按顺序一段一段执行，报错时先处理错误。工作目录放在 Linux 的 <code>~</code> 下。已经装好后，直接看<a href="#daily">日常打开与关闭</a>。较长命令可左右滑动查看，“复制”会复制整段。</p>
+            <h3>安装系统依赖</h3>
+            <pre><code>sudo apt-get update
+sudo apt-get install -y python3 python3-venv git curl xz-utils ca-certificates bubblewrap
+/usr/bin/python3 --version
+bwrap --version</code></pre>
+            <p>Python 应为 3.12 或更新版本。bubblewrap 已验证版本是 0.9.0，能否使用还要由后面的实际检查决定。</p>
+            <h3>下载 Node.js</h3>
+            <pre><code>YXM_DIR="$HOME/yuanxingmu"
+mkdir -p "$YXM_DIR/tools" "$YXM_DIR/openclaw" "$YXM_DIR/inputs"
+cd "$YXM_DIR/tools"
+curl --fail --location --output node-v24.16.0-linux-x64.tar.xz \
+  https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz
+curl --fail --location --output SHASUMS256.txt \
+  https://nodejs.org/dist/v24.16.0/SHASUMS256.txt
+sha256sum --check --ignore-missing SHASUMS256.txt
+tar -xJf node-v24.16.0-linux-x64.tar.xz
+export PATH="$YXM_DIR/tools/node-v24.16.0-linux-x64/bin:$PATH"
+node --version</code></pre>
+            <p>文件校验应显示 <code>OK</code>，Node 版本应为 <code>v24.16.0</code>。这里下载的是 Linux x86_64 版本，ARM 电脑不能直接使用这个压缩包。</p>
+            <h3>安装元星木和 OpenClaw</h3>
+            <pre><code>git clone https://github.com/yh-l20/agent-defense-check.git "$YXM_DIR/agent-defense-check"
+/usr/bin/python3 -m venv "$YXM_DIR/.venv"
+"$YXM_DIR/.venv/bin/python" -m pip install "$YXM_DIR/agent-defense-check"
+npm install --prefix "$YXM_DIR/openclaw" openclaw@2026.9.4
+"$YXM_DIR/.venv/bin/python" -I -m yuanxingmu doctor --bwrap /usr/bin/bwrap</code></pre>
+            <div class="start-note">看到 <code>"available": true</code> 后继续。这表示基础隔离可用；首次启动还会检查配置、运行文件和服务响应。隔离不可用时程序会停止，不会直接在宿主上继续运行。</div>
+            <p>这套 OpenClaw 装在本次目录内。后面会通过 <code>--openclaw-package</code> 使用它，无须运行 <code>openclaw onboard</code> 或修改个人 OpenClaw 配置。</p>
+          </section>
+          <section id="document" aria-labelledby="document-title">
+            <p class="eyebrow">02 / 准备资料</p><h2 id="document-title">先放几段你看得懂的文字。</h2>
+            <p>先创建一份练习资料，用它确认读取和整理过程：</p>
+            <pre><code>cat &gt; "$YXM_DIR/inputs/quote.txt" &lt;&lt;'EOF'
+项目：春季客户活动（练习资料）
+场地：6000 元
+物料：2800 元
+摄影：1200 元
+备注：报价仅供内部讨论，尚未确认供应商。
+EOF</code></pre>
+            <p>可以换成自己的文件。当前只支持 <strong>UTF-8 文本，每个文件不超过 256 KiB</strong>，暂不直接读取 PDF、Word、Excel 或图片。</p>
+            <p>创建实例时会复制文件，后来修改原文件不会自动同步。要换资料，请创建另一个实例；当前还没有向已有实例增删资料的命令。</p>
+          </section>
+          <section id="model" aria-labelledby="model-title">
+            <p class="eyebrow">03 / 连接模型</p><h2 id="model-title">填写自己的接口和模型名称。</h2>
+            <p>模型服务需要支持<strong>工具调用</strong>和 OpenAI 兼容的 Chat Completions 接口。接口地址通常以 <code>/v1</code> 结尾；网页聊天账号本身不是模型接口。</p>
+            <p>云端服务须用 HTTPS。本机服务可以是 <code>http://127.0.0.1:1234/v1</code>，但必须能从当前 Linux / WSL 访问。运行后会询问接口地址和模型名称；HTTPS 服务还会隐藏输入 API 密钥。</p>
+            <pre><code>read -r -p "模型接口地址（通常以 /v1 结尾）：" YXM_MODEL_URL
+read -r -p "模型名称：" YXM_MODEL_ID
+"$YXM_DIR/.venv/bin/python" -I -m yuanxingmu openclaw init \
+  --profile "$YXM_DIR/profiles/first-chat" \
+  --model-url "$YXM_MODEL_URL" \
+  --model-id "$YXM_MODEL_ID" \
+  --document "quote=$YXM_DIR/inputs/quote.txt" \
+  --node "$YXM_DIR/tools/node-v24.16.0-linux-x64/bin/node" \
+  --openclaw-package "$YXM_DIR/openclaw/node_modules/openclaw" \
+  --bwrap /usr/bin/bwrap</code></pre>
+            <p>看到 <code>"status": "created"</code> 就建好了，下一步再启动聊天服务。</p>
+            <div class="start-note"><code>--profile</code> 是这个实例的独立目录，首次创建时必须不存在。它保存资料副本、聊天和权限状态，请保留它。<code>quote</code> 是聊天里使用的资料名称；多份文本可重复添加 <code>--document</code>，每份使用不同名称。</div>
+            <details><summary>我已经用环境变量保存模型密钥</summary><p>在上面的创建命令末尾加 <code>--api-key-env YXM_MODEL_KEY</code>，读取已导出的 <code>YXM_MODEL_KEY</code>。这里传变量名，不传密钥值。无交互终端或需要密钥的本机接口也可使用这种方式。</p><p>如果需要先输入密钥，可在当前终端运行：</p><pre><code>read -r -s -p "模型 API 密钥：" YXM_MODEL_KEY
+printf '\n'
+export YXM_MODEL_KEY</code></pre><p>创建成功后可执行 <code>unset YXM_MODEL_KEY</code>。实例会保留自己使用的本地密钥文件。</p></details>
+            <p>本流程没有配置 <code>--destinations</code>，默认没有其他发送位置。你选择的模型仍会接收完成聊天所需的内容。</p>
+          </section>
+          <section id="chat" aria-labelledby="chat-title">
+            <p class="eyebrow">04 / 开始聊天</p><h2 id="chat-title">打开 OpenClaw，试着整理这份报价。</h2>
+            <pre><code>"$YXM_DIR/.venv/bin/python" -I -m yuanxingmu openclaw start \
+  --profile "$YXM_DIR/profiles/first-chat"</code></pre>
+            <p>在浏览器中打开输出里的 <strong><code>dashboard_url</code></strong>。这个完整链接包含实例的访问凭证，请只供自己使用。默认在本机 <code>127.0.0.1:18911</code>。</p>
+            <p>在 OpenClaw 聊天里输入：</p>
+            <blockquote>请读取 quote，列出三个费用项目，算出总费用，并说明还有什么需要确认。直接在聊天里回复我。</blockquote>
+            <p>练习资料的三项费用合计 <strong>10,000 元</strong>，供应商尚待确认。你应看到资料读取操作及模型回答。然后可以继续说“改成三句话”或“整理成表格”。</p>
+            <p>如果模型没有读取资料、工具调用失败或结果算错，需要检查模型能力和配置。只看到一句“已完成”，不能代替实际操作记录。</p>
+          </section>
+          <section id="daily" aria-labelledby="daily-title">
+            <p class="eyebrow">日常使用</p><h2 id="daily-title">关闭后，下次还可以继续。</h2>
+            <p>新开 Ubuntu 终端后，运行下面两行即可打开原来的实例：</p>
+            <pre><code>YXM_DIR="$HOME/yuanxingmu"
+"$YXM_DIR/.venv/bin/python" -I -m yuanxingmu openclaw start \
+  --profile "$YXM_DIR/profiles/first-chat"</code></pre>
+            <h3>查看状态</h3>
+            <pre><code>"$YXM_DIR/.venv/bin/python" -I -m yuanxingmu openclaw status \
+  --profile "$YXM_DIR/profiles/first-chat"</code></pre>
+            <h3>今天先不用了</h3>
+            <pre><code>"$YXM_DIR/.venv/bin/python" -I -m yuanxingmu openclaw stop \
+  --profile "$YXM_DIR/profiles/first-chat"</code></pre>
+            <p><strong>这会关闭服务和它运行中的命令。</strong>资料、聊天和权限状态保留，下次仍能用 <code>start</code> 继续。只关闭浏览器标签页不会停止服务。</p>
+          </section>
+          <section id="revoke" aria-labelledby="revoke-title">
+            <p class="eyebrow">结束资料使用</p><h2 id="revoke-title">确定不用了，再永久收回权限。</h2>
+            <p>如果这项工作不应再读取或发送资料，可以执行：</p>
+            <pre><code>"$YXM_DIR/.venv/bin/python" -I -m yuanxingmu openclaw revoke \
+  --profile "$YXM_DIR/profiles/first-chat"</code></pre>
+            <p>也可以在已登录的 OpenClaw 聊天中输入 <code>/yuanxingmu-revoke</code>。</p>
+            <div class="start-note"><strong>撤销是永久的，本版没有恢复权限的命令。</strong>它会拒绝后续通过元星木读取或发送资料，但不会删除已经读到的内容、撤回已完成的发送或停止本地计算。要同时关闭服务，再执行 <code>stop</code>。</div>
+            <div class="start-table-wrap"><table><thead><tr><th scope="col">你想做什么</th><th scope="col">使用操作</th><th scope="col">之后会怎样</th></tr></thead><tbody><tr><td>今天先不用了</td><td><code>stop</code></td><td>关闭服务，之后可以重开。</td></tr><tr><td>看看当前状态</td><td><code>status</code></td><td>只查看，不改变权限。</td></tr><tr><td>永久收回资料权限</td><td><code>revoke</code></td><td>不能恢复读取和发送权限。</td></tr></tbody></table></div>
+          </section>
+          <section id="help" aria-labelledby="help-title">
+            <p class="eyebrow">预览版说明</p><h2 id="help-title">遇到问题，先看程序的实际状态。</h2>
+            <details><summary>隔离检查没通过</summary><p>查看 <code>doctor</code> 输出中的 <code>reason</code>，确认在 Linux / WSL 内使用系统 Python 和 bubblewrap。如果电脑限制了隔离能力，需要换受支持环境或请管理员处理。不要跳过检查继续运行。</p></details>
+            <details><summary>实例目录已经存在，或者模型连接失败</summary><p>已有实例用 <code>start</code>；新工作使用新的目录名。模型报 401、404 或无法调用工具时，核对密钥、接口地址、模型名称及工具调用支持。资料太长时，先用短文本重新建立实例。</p></details>
+            <details><summary>启动失败、端口被占用或服务异常中断</summary><p>查看实例目录里的 <code>supervisor.log</code> 和 <code>gateway.stderr.log</code>。端口占用时，新建实例可加 <code>--port 18912</code>。</p><p>如果状态是 <code>interrupted</code> 或 <code>unconfirmed</code>，表示异常退出后的清理还没有确认。保留日志与 <code>lifecycle.json</code>，先检查记录中的进程，不要删除权限库或改状态绕过检查。</p></details>
+            <details><summary>更换版本或直接修改实例配置后不能启动</summary><p>当前实例保留创建时的资料副本与校验记录。请使用指定的 OpenClaw 2026.9.4，不要直接修改生成的配置或替换运行文件。本版暂未提供原地升级与恢复撤销权限的流程。</p></details>
+            <details><summary>能直接接飞书、Slack 或邮箱吗？</summary><p>当前发送扩展需要开发者配置固定的 JSON 接收接口，还不是这些服务的现成连接器。这个入门流程直接在聊天里看结果，无须配置接收方。</p></details>
+            <p>这是一个需要实际环境验证的预览版，没有通用防护率承诺。完整参数与排错说明见<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">仓库文档 ↗</a>。</p>
+          </section>
+          <p id="copy-feedback" class="start-feedback" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-content"><a class="brand" href="index.html" aria-label="返回元星木首页"><img src="assets/mark.svg" width="32" height="32" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a><span class="footer-tagline">让能力增长，权限有界。</span><div><span>RESEARCH PREVIEW / 2026</span><a href="https://github.com/yh-l20/agent-defense-check" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+  <script>
+    for (const code of document.querySelectorAll('.start-content pre > code')) {
+      const block = document.createElement('div');
+      block.className = 'start-code';
+      const pre = code.parentElement;
+      pre.replaceWith(block);
+      block.append(pre);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'start-copy-button';
+      button.textContent = '复制';
+      button.setAttribute('aria-label', '复制本段命令');
+      block.append(button);
+      button.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(code.textContent);
+          button.textContent = '已复制';
+          document.getElementById('copy-feedback').textContent = '命令已复制，请到对应的终端执行。';
+        } catch {
+          button.textContent = '请手动复制';
+          document.getElementById('copy-feedback').textContent = '浏览器未允许复制，请选中命令手动复制。';
+        }
+        window.setTimeout(() => { button.textContent = '复制'; }, 2500);
+      });
+    }
+  </script>
+</body>
+</html>

@@ -139,10 +139,11 @@ class Broker:
                 "headers_sha256": _digest(json.dumps(destination.headers, sort_keys=True).encode())}
         return {"version": 1, "resources": resource_binding, "destinations": destination_binding}
 
-    def create_task(self, *, task_id: str | None = None) -> str:
+    def create_task(self, *, task_id: str | None = None, initial_labels: list[str] | None = None) -> str:
         with self._lock:
             return self.authority.create_root({k: list(v.labels) for k, v in self.resources.items()},
-                {k: list(v.labels) for k, v in self.destinations.items()}, task_id=task_id)
+                {k: list(v.labels) for k, v in self.destinations.items()}, task_id=task_id,
+                initial_labels=initial_labels)
 
     def delegate(self, task_id: str, *, resources=None, destinations=None) -> str:
         with self._lock:

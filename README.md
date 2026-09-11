@@ -10,7 +10,15 @@ Run agent work inside a Linux boundary. Keep resource access, outbound actions, 
 
 **Linux research prototype.** Verified with real bubblewrap, SQLite, isolated processes and an independent HTTP receiver using synthetic data. No attack-model evaluation or production protection rate. The existing repository URL remains `agent-defense-check`; the system is named Yuanxingmu.
 
-## Run the demo
+## Use your own model in OpenClaw
+
+The new dedicated OpenClaw profile uses the native chat UI, a selected model service and imported text documents. All chat input and work products are private from creation, including pasted text. New sessions and clean restarts retain the same task authority; destinations are empty by default.
+
+[Start with the step-by-step guide (Chinese)](docs/openclaw-quickstart.zh-CN.md). This remains a Linux/WSL preview requiring terminal setup. The selected model service receives the conversation and documents used for the task.
+
+The entire Gateway runs in its own network namespace, in addition to the separate worker sandbox. One fixed model bridge handles inference; the task broker handles document reads and authorized sends. Framework actions such as automatic remote-media downloads cannot directly reach external networks. Model credentials and the authority database stay on the host.
+
+## Run the core demo
 
 Requires Linux, Python 3.12+, and bubblewrap supporting this profile (tested with 0.9.0).
 

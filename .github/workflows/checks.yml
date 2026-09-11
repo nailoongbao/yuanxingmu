@@ -22,3 +22,5 @@ jobs:
       - run: python -m pip install .
       - name: Check installed CLI outside source import paths
         run: python -I -m defensecheck --help
+      - name: Check packaged OpenClaw integration
+        run: python -I -c "from importlib.resources import files; assert files('yuanxingmu').joinpath('integrations/openclaw/plugin/index.mjs').is_file()"

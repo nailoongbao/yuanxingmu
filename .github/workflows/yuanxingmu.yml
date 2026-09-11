@@ -29,6 +29,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
       - name: Install packaged Linux isolation
         run: |
           sudo apt-get update
@@ -58,7 +61,7 @@ jobs:
       - name: Verify authority, broker, command and process boundaries
         env:
           YUANXINGMU_SANDBOX_EVIDENCE_DIR: ${{ runner.temp }}/yuanxingmu-sandbox-evidence
-        run: python -m unittest discover -s tests -p 'test_yuanxingmu*.py' -v
+        run: YUANXINGMU_TEST_NODE="$(command -v node)" python -m unittest discover -s tests -p 'test_yuanxingmu*.py' -v
       - name: Verify installed demo against independent receiver
         run: python -I -m yuanxingmu demo --bwrap "$YUANXINGMU_TEST_BWRAP" --output "$RUNNER_TEMP/yuanxingmu-receipts"
       - name: Preserve isolation diagnostics after failure

@@ -192,10 +192,13 @@ class Authority:
             f"SELECT {kind}_id FROM authority_{kind}_grants WHERE task_id = ? ORDER BY {kind}_id", (task_id,))]
 
     def create_root(self, resources: dict[str, list[str]], destinations: dict[str, list[str]],
-                    *, task_id: str | None = None) -> str:
+                    *, task_id: str | None = None, initial_labels: list[str] | None = None) -> str:
         """Trusted configuration only. Labels are exact sets, with no wildcard semantics."""
         resources = _policy(resources, "resource_id")
         destinations = _policy(destinations, "destination_id")
+        # Trusted host declaration, not a simulated resource read. A private
+        # profile covers pasted chat, history and work products from its birth.
+        initial_labels = _identifiers(initial_labels if initial_labels is not None else [], "label")
         task_id = _identifier(task_id, "task_id") if task_id is not None else "task_" + uuid.uuid4().hex
 
         def create(db):
@@ -205,13 +208,16 @@ class Authority:
             family_id = uuid.uuid4().hex
             db.execute("INSERT INTO authority_families(id) VALUES (?)", (family_id,))
             db.execute("INSERT INTO authority_tasks(id,family_id) VALUES (?,?)", (task_id, family_id))
+            db.executemany("INSERT INTO authority_labels(family_id,label) VALUES (?,?)",
+                           [(family_id, label) for label in initial_labels])
             for kind, mapping in (("resource", resources), ("destination", destinations)):
                 db.executemany(f"INSERT INTO authority_{kind}s(family_id,{kind}_id,labels) VALUES (?,?,?)",
                                [(family_id, name, json.dumps(labels)) for name, labels in mapping.items()])
                 db.executemany(f"INSERT INTO authority_{kind}_grants(task_id,{kind}_id) VALUES (?,?)",
                                [(task_id, name) for name in mapping])
             self._event(db, task_id, "create_root", True, "root_created",
-                        {"resources": resources, "destinations": destinations, "revision": 0})
+                        {"resources": resources, "destinations": destinations,
+                         "initial_labels": initial_labels, "revision": 0})
             return task_id
 
         return self._request(task_id, "create_root", create)
