@@ -1,8 +1,8 @@
 """Operator-owned, persistent OpenClaw profiles (Linux/WSL).
 
 Each profile is born private, including pasted chat and subsequent sessions.
-Only its fixed model service is entrusted with conversation data. The gateway
-is trusted host code; this module does not claim to isolate its model traffic.
+Only its fixed model service is entrusted with conversation data. The Gateway
+runs in a network namespace; a host bridge holds its fixed model credential.
 """
 from __future__ import annotations
 

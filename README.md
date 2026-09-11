@@ -20,9 +20,11 @@ The independent receiver recorded **one internal delivery and zero external deli
 
 ## Use your own model in OpenClaw
 
-The new dedicated OpenClaw profile uses the native chat UI, a selected model service and imported text documents. All chat input and work products are private from creation, including pasted text. New sessions and clean restarts retain the same task authority; destinations are empty by default.
+After the first terminal installation, run `yuanxingmu desk` to open the local workbench. Fill in your model connection, import short UTF-8 text files, and manage each work item in the browser. A successful start provides a link to the native OpenClaw chat UI. The page also lets you stop a work item or permanently revoke its document permissions.
 
-[Start with the step-by-step guide (Chinese)](docs/openclaw-quickstart.zh-CN.md). This remains a Linux/WSL preview requiring terminal setup. The selected model service receives the conversation and documents used for the task.
+Each work item has its own persistent OpenClaw profile. Chat input and work products are private from creation, including pasted text. New sessions and clean restarts retain the same task authority; destinations are empty by default. **The selected model service receives the conversation and documents used for the task.**
+
+[Watch the 117-second walkthrough](https://yh-l20.github.io/agent-defense-check/workbench-demo.html) · [Install and use the workbench (Chinese)](docs/workbench.zh-CN.md) · [Advanced CLI guide](docs/openclaw-quickstart.zh-CN.md). This is a Linux/WSL preview; first-time installation still requires a terminal. Closing the browser or workbench does not stop running agents. The workbench currently supports OpenClaw 2026.9.4.
 
 The entire Gateway runs in its own network namespace, in addition to the separate worker sandbox. One fixed model bridge handles inference; the task broker handles document reads and authorized sends. Framework actions such as automatic remote-media downloads cannot directly reach external networks. Model credentials and the authority database stay on the host.
 

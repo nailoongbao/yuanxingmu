@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>元星木 · 本地工作台</title>
+  <script src="/app.js"></script>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="icon" href="/mark.svg" type="image/svg+xml">
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到工作台</a>
+  <header class="topbar">
+    <div class="wrap header-inner">
+      <a class="brand" href="/" aria-label="元星木本地工作台首页">
+        <img src="/mark.svg" width="40" height="40" alt="">
+        <span class="brand-name">元星木<span>本地工作台</span></span>
+      </a>
+      <div class="connection"><span class="connection-dot" id="connection-dot"></span><span id="connection-text">正在连接本机</span></div>
+    </div>
+  </header>
+  <main id="main" class="wrap">
+    <section class="intro" aria-labelledby="page-title">
+      <div><p class="eyebrow">你的资料，由你决定交给谁</p><h1 id="page-title">给 AI 一份有边界的工作。</h1><p class="intro-copy">选好模型，放入资料，再到 OpenClaw 里开始对话。每份工作独立创建，你可以暂时关闭，也可以收回资料权限。</p></div>
+      <div class="runtime"><span class="runtime-label">本机运行环境</span><strong id="runtime-status">正在检查</strong><span id="runtime-version"></span></div>
+    </section>
+    <div id="global-notice" class="notice" role="status" aria-live="polite" hidden></div>
+    <noscript><p class="notice notice-error">工作台需要启用 JavaScript 才能连接本机服务。</p></noscript>
+    <div class="workspace-grid">
+      <section class="panel create-panel" aria-labelledby="create-title">
+        <div class="panel-heading"><div><p class="section-index">开始一份新工作</p><h2 id="create-title">把资料交给 AI</h2></div><span class="small-mark" aria-hidden="true">＋</span></div>
+        <form id="create-form" autocomplete="off">
+          <fieldset id="create-fields" disabled>
+            <legend class="visually-hidden">新工作设置</legend>
+            <div class="field"><label for="work-name">工作名称</label><input id="work-name" name="name" type="text" required maxlength="80" placeholder="例如：整理这周的会议记录" autocomplete="off"></div>
+            <div class="field-group">
+              <div class="group-heading"><h3>使用哪个模型</h3><span>支持兼容 OpenAI 的接口</span></div>
+              <div class="field"><label for="model-url">模型地址</label><input id="model-url" name="model_url" type="url" required maxlength="2048" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false" inputmode="url"></div>
+              <div class="field"><label for="model-id">模型名称</label><input id="model-id" name="model_id" type="text" required maxlength="256" placeholder="填写服务商提供的模型名称" autocomplete="off" spellcheck="false"></div>
+              <div class="field"><label for="api-key">连接密钥 <span class="optional">API Key</span></label><input id="api-key" name="api_key" type="password" maxlength="8192" placeholder="本地 HTTP 模型可留空" autocomplete="off" spellcheck="false" aria-describedby="model-privacy"></div>
+              <p id="model-privacy" class="field-note">密钥交给本机的模型连接服务，浏览器不保存。所选模型会看到对话和交给它的资料；使用云端模型时，这些内容会发送给模型服务商。</p>
+            </div>
+            <div class="field-group document-group">
+              <div class="group-heading"><h3>允许读取的资料</h3><span id="document-count">尚未导入</span></div>
+              <label class="file-picker" for="document-files"><span class="file-plus" aria-hidden="true">＋</span><span><strong>选择文本文件</strong><small id="file-limit-note">UTF-8 文本，每份最多 256 KB</small></span><input id="document-files" type="file" accept=".txt,.md,.csv,.json,.log,.yaml,.yml,.text,text/plain,text/markdown" multiple></label>
+              <div id="document-list" class="document-list"></div>
+              <p id="file-error" class="field-error" role="alert" hidden></p>
+              <p class="field-note">资料会复制到这份工作中。创建后，本版不能再添加资料，也不会额外配置发送目的地。</p>
+            </div>
+            <button id="create-submit" class="button button-primary button-wide" type="submit">创建独立工作<span aria-hidden="true">↗</span></button>
+          </fieldset>
+          <div id="create-message" class="form-message" role="status" aria-live="polite" hidden></div>
+          <button id="retry-create" class="button button-secondary button-wide" type="button" hidden>重新连接并确认创建</button>
+        </form>
+      </section>
+      <section class="work-section" aria-labelledby="works-title">
+        <div class="works-heading"><div><p class="section-index">在这里查看与管理</p><h2 id="works-title">我的工作 <span id="work-count" class="count" hidden></span></h2></div><button id="refresh-button" class="button button-quiet" type="button">刷新状态 <span aria-hidden="true">↻</span></button></div>
+        <p class="section-note">每份工作的运行状态和资料权限分别显示。</p>
+        <div id="profile-list" class="profile-list" aria-busy="true"><div class="empty-state"><span class="empty-symbol" aria-hidden="true">◇</span><h3>正在读取本机工作</h3><p>这里只显示本机实际创建的工作。</p></div></div>
+        <p id="refresh-time" class="refresh-time" aria-live="off"></p>
+        <aside class="usage-note"><span aria-hidden="true">i</span><p>关闭网页或工作台不会停止正在运行的工作。暂时不用时，请点击“暂时关闭”；正常关闭后可以再启动。</p></aside>
+      </section>
+    </div>
+    <footer class="footer"><span>元星木 · 本地工作台</span><p>资料权限的收回是永久的；已经读到的内容不会随之清除。</p></footer>
+  </main>
+  <dialog id="revoke-dialog" aria-labelledby="revoke-title" aria-describedby="revoke-description">
+    <div class="dialog-body"><p class="section-index">收回资料权限</p><h2 id="revoke-title">永久收回这份工作的权限？</h2><p id="revoke-work-name" class="dialog-work-name"></p><p id="revoke-description">确认后，这份工作不能再通过元星木读取资料或发送内容。本版无法恢复这份权限。</p><p class="dialog-note">这不会清除 AI 已经读到的内容，也不会停止它的运行。如需停止，请另点“暂时关闭”。</p><div class="dialog-actions"><button id="cancel-revoke" class="button button-secondary" type="button" autofocus>暂不收回</button><button id="confirm-revoke" class="button button-danger" type="button">永久收回权限</button></div></div>
+  </dialog>
+</body>
+</html>

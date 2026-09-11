@@ -15,6 +15,14 @@ def main():
     demo = commands.add_parser("demo", help="Run isolated synthetic workers and verify independent receipts")
     demo.add_argument("--output", required=True, type=Path)
     demo.add_argument("--bwrap", type=Path)
+    desk = commands.add_parser("desk", help="打开元星木本地工作台，在页面中导入资料和管理 OpenClaw")
+    desk.add_argument("--install-root", type=Path, default=Path.home() / "yuanxingmu")
+    desk.add_argument("--data", type=Path, help="工作台自己的新目录；默认是安装目录下的 workbench")
+    desk.add_argument("--port", type=int, default=18910)
+    desk.add_argument("--node", type=Path)
+    desk.add_argument("--openclaw-package", type=Path)
+    desk.add_argument("--bwrap", type=Path)
+    desk.add_argument("--no-browser", action="store_true")
     run = commands.add_parser("run", help="Run a command with a persistent task and operator-owned policy")
     run.add_argument("--policy", required=True, type=Path)
     run.add_argument("--state", required=True, type=Path)
@@ -44,6 +52,11 @@ def main():
         action.add_argument("--profile", required=True, type=Path)
     args = parser.parse_args()
     try:
+        if args.command == "desk":
+            from .dashboard.server import Runtime, serve
+            install_root = args.install_root.expanduser()
+            runtime = Runtime.discover(install_root, node=args.node, openclaw_package=args.openclaw_package, bwrap=args.bwrap)
+            return serve(args.data or install_root / "workbench", runtime, port=args.port, open_browser=not args.no_browser)
         if args.command == "openclaw":
             from .openclaw import init_profile, start_profile, control_profile
             if args.action == "init":

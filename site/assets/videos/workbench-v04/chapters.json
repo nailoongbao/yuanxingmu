@@ -1,0 +1,36 @@
+{
+  "chapters": [
+    {
+      "step": "create",
+      "title": "填模型、选资料，创建工作",
+      "start_seconds": 0.0,
+      "end_seconds": 42.0,
+      "file": "01-create.mp4",
+      "captions": "01-create.vtt"
+    },
+    {
+      "step": "chat",
+      "title": "在 OpenClaw 里读取报价",
+      "start_seconds": 42.0,
+      "end_seconds": 65.0,
+      "file": "02-chat.mp4",
+      "captions": "02-chat.vtt"
+    },
+    {
+      "step": "continue",
+      "title": "暂时关闭，下次继续",
+      "start_seconds": 65.0,
+      "end_seconds": 85.0,
+      "file": "03-continue.mp4",
+      "captions": "03-continue.vtt"
+    },
+    {
+      "step": "revoke",
+      "title": "永久收回权限，再读被拒绝",
+      "start_seconds": 85.0,
+      "end_seconds": 117.0,
+      "file": "04-revoke.mp4",
+      "captions": "04-revoke.vtt"
+    }
+  ]
+}

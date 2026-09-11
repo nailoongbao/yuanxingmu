@@ -1,0 +1,205 @@
+{
+  "status": "passed",
+  "visual_review": {
+    "status": "passed",
+    "caption_frames_reviewed": 9,
+    "checks": [
+      "All original UI remains visible",
+      "Captions fit within added 160px lower area",
+      "Chapter titles and footer do not overlap captions",
+      "Actual create, answer, resumed chat, revoked read and final stopped state retained"
+    ]
+  },
+  "audio_listening_review": {
+    "status": "not_available",
+    "reason": "The session tool explicitly reported that audio input is unsupported; no human listening claim is made.",
+    "automated_audio_format_levels_and_decode": "passed"
+  },
+  "duration_seconds": 117.0,
+  "width": 800,
+  "height": 760,
+  "decode": "passed",
+  "original_sources": [
+    {
+      "file": "01-create.webm",
+      "sha256": "faecbd10e6d6fe5dbc2ea9ee043d6b8c35f6d7de130a20572662003a728fc872",
+      "archive_matches_original": true
+    },
+    {
+      "file": "02-native-chat-1.webm",
+      "sha256": "14c2192959508a3f623fdabf96e6eea175c975204d6a88971ee8a9603fceca11",
+      "archive_matches_original": true
+    },
+    {
+      "file": "03-controls.webm",
+      "sha256": "4bf43bea97343a37cc5f81028540c7def8e0cbdcd3a0be1e8bff8968f1fccc51",
+      "archive_matches_original": true
+    },
+    {
+      "file": "03-controls-1.webm",
+      "sha256": "9aa5a101fe8a432abde600851831e6ec2ef1502e8b27dc0c9e921dff526cae93",
+      "archive_matches_original": true
+    }
+  ],
+  "ui_pixel_comparisons": [
+    {
+      "segment": 1,
+      "source_file": "01-create.webm",
+      "source_second": 5.0,
+      "output_second": 3.0,
+      "mean_absolute_pixel_error_0_to_255": 0.267922
+    },
+    {
+      "segment": 2,
+      "source_file": "01-create.webm",
+      "source_second": 83.0,
+      "output_second": 11.0,
+      "mean_absolute_pixel_error_0_to_255": 0.31831
+    },
+    {
+      "segment": 3,
+      "source_file": "01-create.webm",
+      "source_second": 92.5,
+      "output_second": 20.5,
+      "mean_absolute_pixel_error_0_to_255": 0.23281
+    },
+    {
+      "segment": 4,
+      "source_file": "01-create.webm",
+      "source_second": 109.0,
+      "output_second": 27.0,
+      "mean_absolute_pixel_error_0_to_255": 0.234547
+    },
+    {
+      "segment": 5,
+      "source_file": "01-create.webm",
+      "source_second": 153.0,
+      "output_second": 31.0,
+      "mean_absolute_pixel_error_0_to_255": 0.193573
+    },
+    {
+      "segment": 6,
+      "source_file": "01-create.webm",
+      "source_second": 201.5,
+      "output_second": 37.5,
+      "mean_absolute_pixel_error_0_to_255": 0.216911
+    },
+    {
+      "segment": 7,
+      "source_file": "02-native-chat-1.webm",
+      "source_second": 77.0,
+      "output_second": 45.0,
+      "mean_absolute_pixel_error_0_to_255": 0.111329
+    },
+    {
+      "segment": 8,
+      "source_file": "02-native-chat-1.webm",
+      "source_second": 116.0,
+      "output_second": 51.0,
+      "mean_absolute_pixel_error_0_to_255": 0.06829
+    },
+    {
+      "segment": 9,
+      "source_file": "02-native-chat-1.webm",
+      "source_second": 133.5,
+      "output_second": 59.5,
+      "mean_absolute_pixel_error_0_to_255": 0.133331
+    },
+    {
+      "segment": 10,
+      "source_file": "03-controls.webm",
+      "source_second": 46.0,
+      "output_second": 69.0,
+      "mean_absolute_pixel_error_0_to_255": 0.155515
+    },
+    {
+      "segment": 11,
+      "source_file": "03-controls.webm",
+      "source_second": 117.0,
+      "output_second": 78.0,
+      "mean_absolute_pixel_error_0_to_255": 0.157071
+    },
+    {
+      "segment": 12,
+      "source_file": "03-controls-1.webm",
+      "source_second": 151.0,
+      "output_second": 84.0,
+      "mean_absolute_pixel_error_0_to_255": 0.088454
+    },
+    {
+      "segment": 13,
+      "source_file": "03-controls.webm",
+      "source_second": 245.5,
+      "output_second": 88.5,
+      "mean_absolute_pixel_error_0_to_255": 0.211733
+    },
+    {
+      "segment": 14,
+      "source_file": "03-controls.webm",
+      "source_second": 261.0,
+      "output_second": 95.0,
+      "mean_absolute_pixel_error_0_to_255": 0.322427
+    },
+    {
+      "segment": 15,
+      "source_file": "03-controls-1.webm",
+      "source_second": 279.0,
+      "output_second": 100.0,
+      "mean_absolute_pixel_error_0_to_255": 0.180603
+    },
+    {
+      "segment": 16,
+      "source_file": "03-controls-1.webm",
+      "source_second": 293.0,
+      "output_second": 106.0,
+      "mean_absolute_pixel_error_0_to_255": 0.190447
+    },
+    {
+      "segment": 17,
+      "source_file": "03-controls-1.webm",
+      "source_second": 332.5,
+      "output_second": 111.5,
+      "mean_absolute_pixel_error_0_to_255": 0.199278
+    },
+    {
+      "segment": 18,
+      "source_file": "03-controls.webm",
+      "source_second": 366.0,
+      "output_second": 115.0,
+      "mean_absolute_pixel_error_0_to_255": 0.122476
+    }
+  ],
+  "max_ui_pixel_error": 0.322427,
+  "caption_cues": 9,
+  "captions_outside_ui": true,
+  "audio_mean_db": -25.1,
+  "audio_peak_db": -0.5,
+  "chapters": [
+    {
+      "file": "01-create.mp4",
+      "expected_seconds": 42.0,
+      "container_seconds": 42.0,
+      "sha256": "3e96d187b4ca6f39d73bcf6def367cc79d126a5f7206b4b9e349590b02241c73"
+    },
+    {
+      "file": "02-chat.mp4",
+      "expected_seconds": 23.0,
+      "container_seconds": 23.0,
+      "sha256": "23d906d9895aa1d59cfcf13ecb1b9a79d3bcce87b3aa41acfec6320c65c321ca"
+    },
+    {
+      "file": "03-continue.mp4",
+      "expected_seconds": 20.0,
+      "container_seconds": 20.0,
+      "sha256": "fe6cff66af531631e907780e6b742453bce2c0441877d3c5ca3c4c48a2305fdc"
+    },
+    {
+      "file": "04-revoke.mp4",
+      "expected_seconds": 32.0,
+      "container_seconds": 32.0,
+      "sha256": "36674fcf5dbb2e677e02abaa4e34d408f769422e1e6bec5d675a171c73dec8c9"
+    }
+  ],
+  "output_sha256": "a37a91db7652a43b9cfd793608c97534825ffdec54841229af045a2fc0b19439",
+  "no_v03_media_reused": true
+}

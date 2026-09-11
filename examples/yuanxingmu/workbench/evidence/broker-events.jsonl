@@ -1,0 +1,2 @@
+{"allowed":true,"event_id":2,"labels":["private"],"operation":"read","reason":"read_authorized","resource_id":"quote","resource_labels":["private"],"revision":1,"task_id":"task_af286dac2ded473cb424c37163adf272","time":"2026-09-11T19:21:28.523305+00:00"}
+{"allowed":false,"operation":"read","reason":"task_revoked","task_id":"task_af286dac2ded473cb424c37163adf272","time":"2026-09-11T19:27:47.879083+00:00"}

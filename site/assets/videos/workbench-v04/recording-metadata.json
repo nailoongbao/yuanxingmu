@@ -1,0 +1,122 @@
+{
+  "title": "元星木工作台：真实上手演示",
+  "duration_seconds": 117.0,
+  "width": 800,
+  "height": 760,
+  "fps": 25,
+  "recording": "Actual local workbench and native OpenClaw UI using a local Qwen3-4B model",
+  "editing": "Chronological real footage; waits shortened with explicit disclosure; 18 cuts at original speed; no UI reconstruction, cropping, resizing or static replacement",
+  "recording_version_note": "这组录像拍摄于后续管理层状态显示修复之前。创建录像中曾短暂显示占用或待确认状态，后续加入了每份工作的串行访问和操作期间保留最后实测状态。本片保留真实录像，仅省略等待，不代表对最终源代码版本的重新录制或验证。",
+  "narration": {
+    "language": "zh-CN",
+    "voice": "Microsoft Huihui Desktop",
+    "local_synthesis": true,
+    "new_for_this_recording": true
+  },
+  "safety_semantics": "Temporary close supports later restart; revocation is permanent and does not erase previously read content or stop runtime",
+  "sources": [
+    {
+      "file": "01-create.webm",
+      "duration_seconds": 287.6,
+      "sha256": "faecbd10e6d6fe5dbc2ea9ee043d6b8c35f6d7de130a20572662003a728fc872",
+      "role": "workbench creation"
+    },
+    {
+      "file": "02-native-chat-1.webm",
+      "duration_seconds": 202.88,
+      "sha256": "14c2192959508a3f623fdabf96e6eea175c975204d6a88971ee8a9603fceca11",
+      "role": "native OpenClaw first chat"
+    },
+    {
+      "file": "03-controls.webm",
+      "duration_seconds": 370.36,
+      "sha256": "4bf43bea97343a37cc5f81028540c7def8e0cbdcd3a0be1e8bff8968f1fccc51",
+      "role": "workbench close, reopen, revoke, final close"
+    },
+    {
+      "file": "03-controls-1.webm",
+      "duration_seconds": 370.68,
+      "sha256": "9aa5a101fe8a432abde600851831e6ec2ef1502e8b27dc0c9e921dff526cae93",
+      "role": "native OpenClaw resumed chat and refused read"
+    }
+  ],
+  "files": [
+    {
+      "file": "yuanxingmu-workbench.mp4",
+      "bytes": 2702545,
+      "sha256": "a37a91db7652a43b9cfd793608c97534825ffdec54841229af045a2fc0b19439"
+    },
+    {
+      "file": "yuanxingmu-workbench.vtt",
+      "bytes": 1331,
+      "sha256": "d7426378b3c46baf109bc553cf1e2741cd61b3bceec30b4f2a8c741907c82d3c"
+    },
+    {
+      "file": "yuanxingmu-workbench.srt",
+      "bytes": 1279,
+      "sha256": "0d1f75c16e7707c8d4a53462eae9ede41f6f251c2dbda456a8974059e418852b"
+    },
+    {
+      "file": "poster.jpg",
+      "bytes": 29187,
+      "sha256": "8fb58ed06f422f89e045c9f31a7d52fa1491807ce998601b7d1d40fd04b977c1"
+    },
+    {
+      "file": "chapters.json",
+      "bytes": 894,
+      "sha256": "358c5a68730c4fe5f6f229f7a8be33868e4fd30c0edf6fe96b80d31420a93694"
+    },
+    {
+      "file": "timeline.json",
+      "bytes": 8905,
+      "sha256": "e20b8d0c4f67c65aee92dc0759532eb19923aa146b878d16a48c39ebcc122978"
+    },
+    {
+      "file": "01-create.mp4",
+      "bytes": 1080686,
+      "sha256": "3e96d187b4ca6f39d73bcf6def367cc79d126a5f7206b4b9e349590b02241c73"
+    },
+    {
+      "file": "01-create.vtt",
+      "bytes": 587,
+      "sha256": "75d69ed6cd08bbecbd415ee6fae5b39eb265e494e707bbc031e89342845ae9c6"
+    },
+    {
+      "file": "02-chat.mp4",
+      "bytes": 440549,
+      "sha256": "23d906d9895aa1d59cfcf13ecb1b9a79d3bcce87b3aa41acfec6320c65c321ca"
+    },
+    {
+      "file": "02-chat.vtt",
+      "bytes": 303,
+      "sha256": "ae5de97bf75042057bd7862b5ac44b3ea150d2638a5982c0090c0d72a0cc396b"
+    },
+    {
+      "file": "03-continue.mp4",
+      "bytes": 333909,
+      "sha256": "fe6cff66af531631e907780e6b742453bce2c0441877d3c5ca3c4c48a2305fdc"
+    },
+    {
+      "file": "03-continue.vtt",
+      "bytes": 139,
+      "sha256": "40b4eaafe0954183a2044c6153aa34b4ad92be538bf8bb1cf63c41d040da4a07"
+    },
+    {
+      "file": "04-revoke.mp4",
+      "bytes": 740074,
+      "sha256": "36674fcf5dbb2e677e02abaa4e34d408f769422e1e6bec5d675a171c73dec8c9"
+    },
+    {
+      "file": "04-revoke.vtt",
+      "bytes": 326,
+      "sha256": "2bb6f691c0f8e7e21f452e09dfcefeb70f1582ca7d45c7ce2bf207de25aa90e4"
+    }
+  ],
+  "qa": {
+    "report": "qa-report.json",
+    "ui_pixel_samples": 18,
+    "subtitle_visual_review": "passed",
+    "audio_automated_checks": "passed",
+    "audio_listening_review": "not available in this tool session"
+  }
+}

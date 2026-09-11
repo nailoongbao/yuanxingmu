@@ -24,3 +24,8 @@ jobs:
         run: python -I -m defensecheck --help
       - name: Check packaged OpenClaw integration
         run: python -I -c "from importlib.resources import files; assert files('yuanxingmu').joinpath('integrations/openclaw/plugin/index.mjs').is_file()"
+      - name: Check packaged workbench CLI and browser assets
+        working-directory: ${{ runner.temp }}
+        run: |
+          python -I -m yuanxingmu desk --help
+          python -I -c "from importlib.resources import files; root = files('yuanxingmu.dashboard').joinpath('web'); required = ('index.html', 'app.js', 'styles.css', 'mark.svg'); assert all(root.joinpath(name).is_file() and root.joinpath(name).read_bytes() for name in required), 'Packaged dashboard assets missing or empty'"

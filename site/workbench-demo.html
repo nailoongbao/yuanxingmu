@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#091522">
+  <meta name="description" content="117 秒看元星木怎样使用：在页面填写模型、选一份资料，到 OpenClaw 整理预算，再暂时关闭或永久收回权限。真实本地模型与实机录屏。">
+  <title>从一份资料开始 · 元星木上手演示</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="demo.css">
+  <link rel="stylesheet" href="real-demo.css">
+  <script defer src="demo.js"></script>
+</head>
+<body class="watch-page real-watch" data-video-directory="assets/videos/workbench-v04/" data-video-file="yuanxingmu-workbench.mp4">
+  <a class="skip-link" href="#main">跳到正文</a>
+  <div class="topbar"><header class="site-header wrap">
+    <a class="brand" href="index.html" aria-label="元星木首页"><img src="assets/mark.svg" width="38" height="38" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a>
+    <nav class="watch-nav" aria-label="主导航"><a href="index.html">首页</a><a href="start.html">开始使用</a></nav>
+  </header></div>
+  <main id="main">
+    <section class="watch-hero wrap" aria-labelledby="watch-title">
+      <p class="watch-eyebrow"><span class="status-dot" aria-hidden="true"></span> 本地工作台 + OpenClaw · 实机录屏</p>
+      <h1 id="watch-title">放入一份资料，<br><span>让 AI 帮你整理。</span></h1>
+      <p class="watch-description">填好模型，选一份报价，去聊天里看结果。<br class="watch-desktop-break">再试一次暂时关闭、重新打开和收回权限。</p>
+      <p class="watch-description-scope">真实本地 Qwen3-4B 模型，练习资料，中文解说。录屏按实际操作剪辑，省略了等待；首次安装仍需 Linux 或 WSL 和终端。</p>
+    </section>
+    <section class="watch-film wrap" aria-labelledby="film-title">
+      <div class="watch-film-header"><h2 id="film-title">117 秒 · 跟着用一次</h2><span id="film-status" class="watch-status is-pending" role="status">正在加载</span></div>
+      <div class="watch-stage">
+        <video id="demo-player" controls playsinline preload="metadata" poster="assets/videos/workbench-v04/poster.jpg" hidden aria-label="元星木工作台和 OpenClaw 上手演示" aria-describedby="watch-scope">
+          <track kind="captions" src="assets/videos/workbench-v04/yuanxingmu-workbench.vtt" srclang="zh-CN" label="中文解说">
+        </video>
+        <div id="film-placeholder" class="watch-placeholder"><div class="watch-placeholder-mark" aria-hidden="true"><img src="assets/mark.svg" width="48" height="48" alt=""></div><p id="placeholder-title">正在加载演示视频</p><p id="placeholder-detail">加载完成后，点击播放即可观看。</p><button id="retry-media" class="watch-retry" type="button">刷新查看 ↻</button></div>
+      </div>
+      <div class="watch-film-bottom"><p id="player-note" class="watch-player-note" role="status">中文配音 · 可按章节观看</p><a id="download-full" class="watch-download" href="assets/videos/workbench-v04/yuanxingmu-workbench.mp4" download hidden>下载完整视频 ↓</a></div>
+      <p id="watch-scope" class="watch-scope">手机观看可全屏。工作台管理资料和权限，聊天使用 OpenClaw 自带的界面。这次演示没有配置对外发送位置。</p>
+      <noscript><p class="watch-noscript"><a href="assets/videos/workbench-v04/yuanxingmu-workbench.mp4">直接播放视频</a></p></noscript>
+      <div class="watch-outcomes" aria-label="这次实际用到了什么">
+        <article><span>整理资料</span><strong>预算合计 10,000 元</strong><p>模型实际读取文件，列出场地、物料和摄影三项费用。</p></article>
+        <article><span>继续原来的工作</span><strong>关闭后还能重开</strong><p>正常关闭后重新启动，原来的聊天、资料和权限继续保留。</p></article>
+        <article><span>永久收回权限</span><strong>再次读取被拒绝</strong><p>点击确认后，同一个聊天再次调用读取，实际拿到了拒绝结果。</p></article>
+      </div>
+    </section>
+    <section class="watch-chapters" aria-labelledby="chapters-title"><div class="wrap watch-chapters-inner">
+      <div class="watch-chapters-heading"><div><p class="eyebrow">每一步都有实际画面</p><h2 id="chapters-title">从你关心的一步看起。</h2></div><p>点击章节跳转。<br>也可以单独播放一段。</p></div>
+      <div id="chapters-pending" class="watch-chapters-pending" role="status"><span class="watch-pending-symbol" aria-hidden="true">＋</span><div><h3 id="chapters-pending-title">正在加载章节</h3><p id="chapters-pending-detail">可以按顺序观看，也可以选择你关心的一段。</p></div></div>
+      <ol id="chapter-list" class="watch-chapter-list" aria-label="视频章节" hidden></ol><p id="chapter-feedback" class="watch-chapter-feedback" role="status"></p>
+      <div class="watch-notes">
+        <h2>开始前，了解这几件事。</h2>
+        <details open><summary>模型会看到你交给它的资料</summary><p>你选择的模型需要接收聊天和资料才能工作。使用云端模型时，这些内容会交给模型服务。元星木限制的是额外的资料读取和发送。</p></details>
+        <details><summary>暂时关闭与永久收回有什么区别</summary><p>暂时关闭会结束本次运行，正常关闭后可以继续。永久收回会禁止后续通过元星木读取和发送资料，本版不能恢复；已读内容不会消失，也不会因此停止本地运算。</p></details>
+        <details><summary>现在能导入哪些文件</summary><p>最多 8 份 UTF-8 文本，每份 256 KiB，合计 1 MiB。PDF、Word、Excel 和图片还不能直接导入；安装后，日常操作在网页中完成。</p></details>
+        <details><summary>录像和这一版程序有什么区别</summary><p>录像期间，工作台的状态查询曾短暂显示占用或异常。发布前已修正查询与启动互相争用的问题，并补做实机检查；视频保留原来的实际操作，省略等待，没有重绘界面。记录与源码差异可在下方核对。</p></details>
+        <div class="watch-evidence-links"><a href="start.html">按步骤开始使用 →</a><a href="real-demo.html">再看看向外发送会怎样 →</a><a href="https://github.com/yh-l20/agent-defense-check/blob/main/examples/yuanxingmu/workbench/evidence/REPORT.zh-CN.md" target="_blank" rel="noopener noreferrer">核对这次操作记录 ↗</a></div>
+      </div>
+      <div class="watch-backline"><span>让 AI 做事，资料别乱发。</span><a href="index.html">回到首页 →</a></div>
+    </div></section>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-content"><a class="brand" href="index.html" aria-label="元星木首页"><img src="assets/mark.svg" width="32" height="32" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a><span class="footer-tagline">让能力增长，权限有界。</span><div><span>预览版 / 2026</span><a href="https://github.com/yh-l20/agent-defense-check" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+</body>
+</html>
