@@ -19,6 +19,7 @@ import sys
 import tempfile
 import threading
 import time
+from types import SimpleNamespace
 import unittest
 from unittest import mock
 import uuid
@@ -74,7 +75,10 @@ class DashboardTests(unittest.TestCase):
         self.addCleanup(self.patches.close)
         self.patches.enter_context(mock.patch.object(dashboard.Runtime, "public", return_value=AVAILABLE))
         self.patches.enter_context(mock.patch.object(core, "sandbox_available", return_value={"available": True, "reason": "fixture only"}))
-        self.patches.enter_context(mock.patch.object(core.sys, "executable", str(Path("/usr/bin/python3").resolve())))
+        # Keep fixture runtime paths separate from the interpreter that spawns tests.
+        # Mutating the shared sys module mixes CI's Python binary and standard library.
+        fixture_sys = SimpleNamespace(platform=sys.platform, executable=str(Path("/usr/bin/python3").resolve()))
+        self.patches.enter_context(mock.patch.object(core, "sys", fixture_sys))
         self.manager = self.server = self.server_thread = None
         self.addCleanup(self._shutdown)
         self._open()
