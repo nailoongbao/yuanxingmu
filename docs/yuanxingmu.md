@@ -5,8 +5,8 @@
 ## 运行合成演示
 
 ```bash
-python -m yuanxingmu doctor
-python -m yuanxingmu demo --output output/first-yuanxingmu-run
+python -I -m yuanxingmu doctor
+python -I -m yuanxingmu demo --output output/first-yuanxingmu-run
 ```
 
 需要 Linux、Python 3.12+、支持 `--disable-userns` 与 `--as-pid-1` 的 bubblewrap。已测 Ubuntu 24.04 / WSL2 / Python 3.12.3 / bubblewrap 0.9.0。自选安装位置时附加 `--bwrap /absolute/path/to/bwrap`。`doctor` 真正尝试隔离；失败时排查宿主支持条件，不会无隔离执行。
@@ -39,7 +39,7 @@ python -m yuanxingmu demo --output output/first-yuanxingmu-run
 启动时，工作区应只包含经过可信宿主确认可向任务提供的资料。私密资料应经资源接口读取，不能提前复制到工作区却把它标成公开：
 
 ```bash
-python -m yuanxingmu run --policy policy.json --state /srv/yuanxingmu/state \
+python -I -m yuanxingmu run --policy policy.json --state /srv/yuanxingmu/state \
   --task review-001 --new-task --workspace /srv/yuanxingmu/public-work \
   -- /usr/bin/python3 -m yuanxingmu.client read private
 ```
@@ -47,7 +47,7 @@ python -m yuanxingmu run --policy policy.json --state /srv/yuanxingmu/state \
 后续继续此任务，去掉 `--new-task`：
 
 ```bash
-python -m yuanxingmu run --policy policy.json --state /srv/yuanxingmu/state \
+python -I -m yuanxingmu run --policy policy.json --state /srv/yuanxingmu/state \
   --task review-001 --workspace /srv/yuanxingmu/public-work \
   -- /usr/bin/python3 -m yuanxingmu.client send internal --body 'internal summary'
 ```

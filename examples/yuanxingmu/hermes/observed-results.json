@@ -1,0 +1,56 @@
+{
+  "assertions": {
+    "all_launchers_reaped": true,
+    "broker_private_read_succeeded": true,
+    "cwd_package_did_not_execute_on_host": true,
+    "direct_tcp_failed": true,
+    "host_private_file_unreadable": true,
+    "internal_correction_succeeded": true,
+    "native_file_read_succeeded": true,
+    "native_file_write_succeeded": true,
+    "native_terminal_succeeded": true,
+    "only_two_expected_receipts": true,
+    "private_external_send_denied": true,
+    "receipt_request_ids_match": true,
+    "recreated_environment_retained_policy": true,
+    "revoked_task_write_did_not_land": true,
+    "separate_clean_task_succeeded": true,
+    "tested_sources_unchanged": true
+  },
+  "availability": {
+    "available": true,
+    "bwrap": "/home/liyihao24/codex-yuanxingmu-tools/bubblewrap-0.9.0/usr/bin/bwrap",
+    "platform": "linux",
+    "reason": "Linux namespace and read-only runtime smoke test passed",
+    "version": "bubblewrap 0.9.0"
+  },
+  "environment_instances": 3,
+  "guards": {
+    "skip_container_guards": false,
+    "terminal_force": false
+  },
+  "hermes_commit": "2237be355906fbe6065ce1815711eee52b2d646e",
+  "hermes_distribution_version": "0.21.1",
+  "hermes_version": "v2026.9.7",
+  "launcher_processes": 17,
+  "native_calls": 12,
+  "raw_result": "/home/liyihao24/codex-yuanxingmu-tools/hermes-example-03/result.json",
+  "raw_result_sha256": "9f7779a0bff6c92d5c205fd859b88941127cf1306f601c04ee06369c0fd4a73a",
+  "receipts": 2,
+  "scope": "Real Hermes terminal_tool/read_file_tool/write_file_tool, official provider registration, inherited BaseEnvironment.execute, real bubblewrap and local broker/receiver; no model or agent loop",
+  "source_hashes": {
+    "adapter": "4f8c9051599279396fdf340917a5cf4d1ccc4572961ff2976fccc1303efca485",
+    "authority": "fc6498b3df38d2a8c215408c030cbb6c217288eb8caf0327d66d384b12c30c3e",
+    "broker": "c97cebba3818887aac2f1a54191465bd28352ec387920f6e471da518aeb90fa8",
+    "client": "da3ecd5d69635028724e4911493a79d95b05d9897c1f79f6f0dd9ce5844fabfc",
+    "hermes_base_environment": "1c949700ba864cff60964f839ccae14460c730beb89d0779380b3efded7f0db8",
+    "hermes_files": "17796def099601f2f786c5dcc49c743005a3a277f6c09c6e662afd2e1b2712e5",
+    "hermes_provider_interface": "a3b73b93586ea1abf11191b6d97f9f342fb7608ad23230658c8af330120a2ccf",
+    "hermes_terminal": "5ca8d06f9cc42f8f8672d76bca5efcc4c523a24244a345529a76e2b3c5c4cbb7",
+    "probe": "0297a56478b76d5b55c6ae8f3b3fd1d3a7748e05616999e30a8d29559709c64f",
+    "receipts": "a69ebeebd499526418fa23797168ee9b83c686e232c315f52db71e634c694882",
+    "sandbox": "dd693c87fe532150b55cce2e3ced72fd6dae7c04520dd595434cfb2306305d23",
+    "worker": "3aa6977d8dd049f178135783d7f925915b855cea251952dda670a67469618f53"
+  },
+  "status": "observed"
+}

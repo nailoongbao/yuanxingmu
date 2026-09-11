@@ -1,0 +1,4 @@
+name: yuanxingmu
+version: 0.1.0
+description: Task-bound Linux execution and broker access for Hermes terminal and file tools
+kind: backend

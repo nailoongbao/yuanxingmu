@@ -1,0 +1,20 @@
+{
+  "id": "yuanxingmu",
+  "name": "Yuanxingmu local execution example",
+  "description": "Route native exec through the existing Yuanxingmu Linux worker and a task-bound broker endpoint.",
+  "categories": ["security", "runtime"],
+  "activation": {"onStartup": true},
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["python", "corePath", "workspace", "brokerSocket", "bwrap", "auditPath"],
+    "properties": {
+      "python": {"type": "string", "pattern": "^/"},
+      "corePath": {"type": "string", "pattern": "^/"},
+      "workspace": {"type": "string", "pattern": "^/"},
+      "brokerSocket": {"type": "string", "pattern": "^/"},
+      "bwrap": {"type": "string", "pattern": "^/"},
+      "auditPath": {"type": "string", "pattern": "^/"}
+    }
+  }
+}
