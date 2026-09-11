@@ -21,6 +21,7 @@ import sys
 import tempfile
 import threading
 import unittest
+from types import SimpleNamespace
 from unittest import mock
 
 from yuanxingmu.authority import AuthorizationError
@@ -324,9 +325,14 @@ class MailBrokerTests(unittest.TestCase):
         (package / "package.json").write_text('{"version":"2026.9.4"}')
         (package / "openclaw.mjs").write_text("throw new Error('synthetic package must not run');\n")
         profile = self.root / "profile"
-        openclaw.init_profile(profile, node=Path(node).resolve(), bwrap=Path(binary).resolve(),
-                             openclaw_package=package, model_url="https://model.invalid/v1", model_id="synthetic",
-                             api_key="SYNTHETIC-HOST-MODEL-SECRET", reviewed_mail=True)
+        # The isolated probe runs the real system interpreter. Hosted CI's test
+        # runner may live under /opt, which is deliberately not a supported
+        # Gateway Python location. Keep that production check intact.
+        system_python = SimpleNamespace(platform=sys.platform, executable=str(Path("/usr/bin/python3").resolve()))
+        with mock.patch.object(openclaw, "sys", system_python):
+            openclaw.init_profile(profile, node=Path(node).resolve(), bwrap=Path(binary).resolve(),
+                                 openclaw_package=package, model_url="https://model.invalid/v1", model_id="synthetic",
+                                 api_key="SYNTHETIC-HOST-MODEL-SECRET", reviewed_mail=True)
         manifest = openclaw.validate_profile(profile)
         runtime = Path(manifest["runtime"])
         self.assertEqual(runtime.parent, Path("/tmp"))
