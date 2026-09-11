@@ -65,7 +65,7 @@ python3.12 -m venv .venv-aggregation
   --output output/first-run
 ```
 
-The [Runtime demo workflow](https://github.com/yh-l20/agent-defense-check/actions/workflows/runtime-demo.yml) also provides a manual GitHub-hosted Linux run and retains its evidence for 30 days. Its results are separate from the Ubuntu/WSL run above.
+The installed demo also [passed on GitHub-hosted Ubuntu 24.04.5 / Python 3.12.14](https://github.com/yh-l20/agent-defense-check/actions/runs/34605839564), with the same 3 → 0 prohibited receipts and 3 legitimate receipts. The [download-verified result](examples/verified-hosted-linux-demo-report.json) identifies the tested commit and artifact. The manual workflow retains complete runtime evidence for 30 days.
 
 ## Use an existing configuration
 

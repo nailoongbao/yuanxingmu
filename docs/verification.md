@@ -2,7 +2,7 @@
 
 The useful result is a concrete behavior change: **three prohibited sends reached the downstream service with separate connections; zero reached it with the candidate; three legitimate sends still arrived.**
 
-This page records local Windows and Ubuntu/WSL experiments. The gateway, policy engine and aggregator are actual third-party packages. The read service, receiving service, data and HTTP rule adapter are authored test components. No model or real email provider participated.
+This page records Windows, Ubuntu/WSL and GitHub-hosted Linux experiments. The gateway, policy engine and aggregator are actual third-party packages. The read service, receiving service, data and HTTP rule adapter are authored test components. No model or real email provider participated.
 
 ## Evidence reference
 
@@ -19,7 +19,7 @@ Before publication, the alpha was repackaged to include the complete upstream Ap
 | FastMCP runtime | `fastmcp-slim 4.0.3` |
 | MCP packages in aggregation environment | `mcp 2.2.0`, `mcp-types 2.2.0` |
 | Full Windows demo | Windows, Python 3.12.9 |
-| Full Linux demo | Ubuntu 24.04.3 under WSL2, Python 3.12.3 |
+| Full Linux demo | Ubuntu 24.04.3 under WSL2, Python 3.12.3; GitHub-hosted Ubuntu 24.04.5, Python 3.12.14 |
 
 The gateway provenance records the pinned archive URL and SHA-256 `765813aba3bb201beff502aac0a11eab4f3f064d54234a8f6ec9c521a81b5f83`. Thirty installed gateway Python files matched their installation `RECORD` hashes. This is an installation-integrity check; the run did not download the archive again and compare every installed file against it.
 
@@ -37,7 +37,13 @@ The [selected-fields Linux report](../examples/verified-linux-demo-report.json) 
 
 Both environments passed `pip check`. Their installation plans selected no Torch, Triton or NVIDIA/CUDA packages. The demo took 5.524 seconds in this run. The recorded install times used a cache warmed by `pip --dry-run`; neither those timings nor pip's rounded wheel-size announcements are cold-install or network-transfer benchmarks.
 
-The manual [Runtime demo workflow](https://github.com/yh-l20/agent-defense-check/actions/workflows/runtime-demo.yml) runs the installed package on GitHub-hosted Linux and uploads runtime evidence, including after a failed demo when files are available. Evidence expires after 30 days. A passing hosted run must be checked separately; the Ubuntu/WSL result does not establish its outcome.
+### GitHub-hosted Linux
+
+The installed package passed the manual [Runtime demo run](https://github.com/yh-l20/agent-defense-check/actions/runs/34605839564) at commit `7584dac89342bb84295fbacc3e4f21b018e23bee` on GitHub-hosted Ubuntu 24.04.5, image `20260907.300.1`, Python 3.12.14. The entry point was `python -I -m defensecheck demo`, excluding the checkout from the main process's import path. Both environments passed `pip check`.
+
+The [download-verified summary](../examples/verified-hosted-linux-demo-report.json) records the same 3 → 0 prohibited receipts, 3 legitimate receipts and 6 observed backend exits. The downloaded evidence ZIP matched GitHub's reported SHA-256 `044aa77962ba0c8312dfcf2680ad97c1adef38321ad1098d64418864799be7a4`. All eight bound configuration/control files matched their recorded hashes, and all 13 exercised package modules matched the tested Git commit. The raw result SHA-256 is `131f6da7836b8127cd0a28ed0f780b96be7bd5b96dd9db917cb9be24d0b2e648`.
+
+The workflow records installation and demo logs even when a later command fails, with runtime evidence when available. Complete artifacts expire after 30 days; the selected-fields summary remains in the repository. This is another synthetic runtime experiment, not an independent user's integration.
 
 ## The actual workflow
 

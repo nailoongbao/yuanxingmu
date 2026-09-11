@@ -52,7 +52,7 @@ python3.12 -m venv .venv-aggregation
   --output output/first-run
 ```
 
-仓库还提供手动触发的 [Runtime demo 工作流](https://github.com/yh-l20/agent-defense-check/actions/workflows/runtime-demo.yml)，用于在 GitHub 的 Linux 环境运行演示并保留 30 天证据。其运行结果与上述 Ubuntu/WSL 记录分别报告。
+安装后的演示也已在 [GitHub 的 Ubuntu 24.04.5 / Python 3.12.14 环境通过](https://github.com/yh-l20/agent-defense-check/actions/runs/34605839564)：危险回执同样从 3 次降为 0 次，3 次正常发送成功。[下载核验摘要](examples/verified-hosted-linux-demo-report.json)记录了实际提交与产物；手动工作流保留完整证据 30 天。
 
 ## 接入自己的配置
 
