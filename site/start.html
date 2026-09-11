@@ -47,6 +47,8 @@
     .installer-preview h3{margin:11px 0 10px}.installer-preview p{font-size:14px}
     .installer-status{display:inline-block;padding:4px 9px;border:1px solid #a8bca1;border-radius:3px;font-size:11px;letter-spacing:.3px;color:#48613e}
     .installer-preview details{background:#f5f8f2}.installer-preview details p{font-size:13px}
+    .installer-links{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:18px}
+    .start-content .installer-download{display:inline-flex;align-items:center;min-height:44px;padding:10px 17px;background:#203e2e;color:#eef4e8;text-decoration:none;border-radius:4px;font-size:14px;font-weight:600}
     .start-content details{border:1px solid #d7e0d8;border-radius:4px;margin:18px 0;padding:0 18px}
     .start-content summary{cursor:pointer;padding:15px 0;color:#31543d;font-size:14px;font-weight:600}
     .start-content details>p:last-child{margin-bottom:18px}
@@ -95,19 +97,15 @@
             <p class="eyebrow">01 / 首次安装</p><h2 id="install-title">把工作台装在自己的电脑上。</h2>
             <p>首版适用于 <strong>Ubuntu 24.04 / WSL Ubuntu 24.04、x86_64 电脑</strong>，需要系统 Python 3.12 或更新版本。请准备<strong>至少 2 GB 可用空间</strong>和网络连接；首次还会下载 Node.js 与 OpenClaw。</p>
             <details><summary>Windows 用户：先准备 Ubuntu / WSL</summary><p>安装器在 Ubuntu 中运行，不会替你安装 WSL。在 PowerShell 中运行下面的命令，按屏幕提示完成系统安装，再打开 Ubuntu 24.04。后续命令都在 Ubuntu 终端中运行；已有合适环境可以跳过。</p><pre><code>wsl --install -d Ubuntu-24.04</code></pre></details>
-            <div class="installer-preview" id="installer-preview" data-installer-status="pending">
-              <span class="installer-status" id="installer-release-status">安装器预览 0.1.0a1 · 尚未发布</span>
+            <div class="installer-preview" id="installer-preview" data-installer-status="published">
+              <span class="installer-status" id="installer-release-status">Ubuntu / WSL 安装预览 · 0.1.0a1</span>
               <h3>下载一个文件，准备所需程序。</h3>
-              <p id="installer-release-note">安装器的下载入口将在发布核验后开放。目前可以展开下方的手工安装步骤，或先<a href="workbench-demo.html">看一次实际使用</a>。</p>
-              <!-- INSTALLER_RELEASE_GATE: enable download links only after this separate release is published and verified.
-                   Release: https://github.com/yh-l20/agent-defense-check/releases/tag/installer-0.1.0a1
-                   Installer: https://github.com/yh-l20/agent-defense-check/releases/download/installer-0.1.0a1/yuanxingmu-installer-0.1.0a1.pyz
-                   Manifest: https://github.com/yh-l20/agent-defense-check/releases/download/installer-0.1.0a1/installer-manifest.json
-                   Checksums: https://github.com/yh-l20/agent-defense-check/releases/download/installer-0.1.0a1/SHA256SUMS
-              -->
-              <details id="installer-preview-steps"><summary>下载开放后，怎样使用安装器</summary>
+              <p id="installer-release-note">安装器已发布。新目录安装、关闭后重开和收回权限，已在 Ubuntu 与 WSL 检查通过。首次需要在 Ubuntu 终端运行下面的一条命令。</p>
+              <div class="installer-links"><a class="installer-download" id="installer-download" href="https://github.com/yh-l20/agent-defense-check/releases/download/installer-0.1.0a1/yuanxingmu-installer-0.1.0a1.pyz">下载安装器（66 KB） ↓</a><a href="https://github.com/yh-l20/agent-defense-check/releases/tag/installer-0.1.0a1" target="_blank" rel="noopener noreferrer">版本与核验记录 ↗</a></div>
+              <details id="installer-preview-steps" open><summary>下载后，按这一步安装</summary>
                 <p>把下载的 <code>yuanxingmu-installer-0.1.0a1.pyz</code> 放到 Ubuntu 的主目录（<code>~</code>），然后在 Ubuntu 终端运行：</p>
                 <pre><code>/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.1.0a1.pyz" --system-deps</code></pre>
+                <p>Windows / WSL 用户可以先在 Ubuntu 终端运行 <code>cd ~</code>，再运行 <code>explorer.exe .</code>，把下载的文件拖进打开的文件夹。</p>
                 <p>点击“复制”取得完整命令；手机上也可以左右滑动查看。</p>
                 <p><code>--system-deps</code> 允许安装 Ubuntu 提供的隔离程序 bubblewrap，系统可能要求输入你的密码。需要额外配置时，只为元星木使用的程序设置 AppArmor 规则，保留系统的整体限制。隔离检查失败时，安装会停止。</p>
                 <p>安装器固定准备元星木 <strong>0.4.0a1</strong>、Node.js <strong>24.16.0</strong> 和 OpenClaw <strong>2026.9.4</strong>，不需要你分别操作 pip、Git 或 npm。已经备齐系统依赖时，可以省略命令末尾的 <code>--system-deps</code>。</p>
