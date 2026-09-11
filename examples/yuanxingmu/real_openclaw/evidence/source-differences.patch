@@ -1,0 +1,30 @@
+--- recorded-runtime/yuanxingmu/gateway_network.py
++++ current-checkout/yuanxingmu/gateway_network.py
+@@ -130,7 +130,7 @@
+         pass
+ 
+ 
+-class _UnixServer(_TrackedThreads, socketserver.UnixStreamServer):
++class _UnixServer(_TrackedThreads, getattr(socketserver, "UnixStreamServer", socketserver.TCPServer)):
+     pass
+ 
+ 
+@@ -205,7 +205,8 @@
+ 
+     def do_POST(self):
+         self.close_connection = True
+-        if self.path != "/v1/chat/completions":
++        target = self.raw_requestline.split()[1]
++        if self.path != "/v1/chat/completions" or target != b"/v1/chat/completions":
+             self._error(403, "model_path_not_allowed")
+             return
+         lengths = self.headers.get_all("Content-Length", [])
+@@ -349,6 +350,8 @@
+         self._stack = None
+ 
+     def __enter__(self):
++        if not sys.platform.startswith("linux"):
++            raise RuntimeError("gateway_network_namespace_requires_linux")
+         if self._stack is not None:
+             raise RuntimeError("network_bridge_already_running")
+         _private_directory(self.runtime, create=True)

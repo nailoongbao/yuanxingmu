@@ -1,8 +1,8 @@
 (() => {
   'use strict';
 
-  const videoDirectory = new URL('assets/videos/', document.baseURI);
-  const fullVideoUrl = new URL('yuanxingmu-webui.mp4', videoDirectory);
+  const videoDirectory = new URL(document.body.dataset.videoDirectory || 'assets/videos/', document.baseURI);
+  const fullVideoUrl = new URL(document.body.dataset.videoFile || 'yuanxingmu-webui.mp4', videoDirectory);
   const chapterDataUrl = new URL('chapters.json', videoDirectory);
   const player = document.getElementById('demo-player');
   const placeholder = document.getElementById('film-placeholder');

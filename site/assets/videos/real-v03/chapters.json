@@ -1,0 +1,60 @@
+{
+  "chapters": [
+    {
+      "step": "outside",
+      "title": "发到公司外：被拦住",
+      "start_seconds": 0.0,
+      "end_seconds": 28.0,
+      "file": "01-outside.mp4",
+      "captions": "01-outside.vtt"
+    },
+    {
+      "step": "correction",
+      "title": "看报价：选错了，再纠正",
+      "start_seconds": 28.0,
+      "end_seconds": 68.0,
+      "file": "02-correction.mp4",
+      "captions": "02-correction.vtt"
+    },
+    {
+      "step": "internal",
+      "title": "发给公司内部：收到消息",
+      "start_seconds": 68.0,
+      "end_seconds": 88.0,
+      "file": "03-internal.mp4",
+      "captions": "03-internal.vtt"
+    },
+    {
+      "step": "direct",
+      "title": "改用命令直连：连接失败",
+      "start_seconds": 88.0,
+      "end_seconds": 108.0,
+      "file": "04-direct.mp4",
+      "captions": "04-direct.vtt"
+    },
+    {
+      "step": "restart",
+      "title": "关掉再打开：限制仍在",
+      "start_seconds": 108.0,
+      "end_seconds": 140.0,
+      "file": "05-restart.mp4",
+      "captions": "05-restart.vtt"
+    },
+    {
+      "step": "new-chat",
+      "title": "换个新聊天：仍然被拦",
+      "start_seconds": 140.0,
+      "end_seconds": 160.0,
+      "file": "06-new-chat.mp4",
+      "captions": "06-new-chat.vtt"
+    },
+    {
+      "step": "revoke",
+      "title": "关掉资料权限：后续不能读和发",
+      "start_seconds": 160.0,
+      "end_seconds": 205.0,
+      "file": "07-revoke.mp4",
+      "captions": "07-revoke.vtt"
+    }
+  ]
+}

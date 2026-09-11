@@ -4,11 +4,19 @@
 
 让 Agent 在受限环境里工作，把资料读取、外部发送和任务权限交给环境之外的服务。读过私密资料后，任务就不能再向公开目的地发送；重连、恢复和派生子任务都不能清掉这条限制。
 
-[English](README.md) · [官网](https://yh-l20.github.io/agent-defense-check/) · [看实机演示](https://yh-l20.github.io/agent-defense-check/demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
+[English](README.md) · [官网](https://yh-l20.github.io/agent-defense-check/) · [看实机演示](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 
-![元星木：让能力增长，权限有界](site/assets/yuanxingmu-poster.svg)
+![元星木：让 AI 做事，资料别乱发](site/assets/yuanxingmu-public-v03-poster.svg)
 
 这是一个 **Linux 本地研究原型**。使用真实 bubblewrap、SQLite、独立 HTTP 接收进程和合成资料验证；没有调用攻击模型，没有生产防御率，也没有完整的企业权限接入。当前公开仓库地址保留 `agent-defense-check`，系统名称为元星木。
+
+## 看一次实际使用
+
+让 AI 整理一份报价，发到允许的内部位置，再尝试向外发送、重开聊天和收回权限。新视频在 **OpenClaw 原生界面**中录制，回答和工具请求来自本地 **Qwen3-4B** 模型。
+
+这次演示里，内部实际收到 **1 条**消息，外部收到 **0 条**。AI 也读错过文件、答错金额和日期；这个过程没有删掉。收回权限后，它实际发起的读取和发送都被拒绝。
+
+[看中文解说视频](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [核对结果和局限](docs/real-openclaw-demo.zh-CN.md)。使用演示资料和测试收件服务；这是一次运行记录，不是通用防护率。较早的[脚本模型演示](https://yh-l20.github.io/agent-defense-check/demo.html)单独保留。
 
 ## 用自己的模型和资料
 
@@ -58,7 +66,7 @@ python -I -m yuanxingmu run --policy policy.json --state authority-state \
 
 恢复时使用同一状态目录和 `--task`，去掉 `--new-task`。完整配置与发送例子见[运行说明](docs/yuanxingmu.md)。这条命令的配置、任务创建与工作目录选择由可信宿主管理，不能交给被防护的 Agent 自由调用。
 
-[OpenClaw 原生执行](examples/yuanxingmu/openclaw/README.md)与 [Hermes 原生终端环境](examples/yuanxingmu/hermes/README.md)已分别完成接入演示。OpenClaw 使用本地脚本模型发起真实工具调用；Hermes 验证原生工具调用链，没有运行模型对话。结果只覆盖各示例列出的工具和配置。
+[OpenClaw 原生执行](examples/yuanxingmu/openclaw/README.md)与 [Hermes 原生终端环境](examples/yuanxingmu/hermes/README.md)已分别完成接入演示。早期 OpenClaw 示例使用本地脚本模型；新版真实模型记录见上方视频。Hermes 验证原生工具调用链，没有运行模型对话。结果只覆盖各示例列出的工具和配置。
 
 [独立 Linux CI 记录](examples/yuanxingmu/verified-hosted-report.json)保存了 33 项测试和 19 项核心演示检查的结果。它验证执行核心，不包含这两种框架的 WebUI 或真实模型攻击评测。
 

@@ -1,3 +1,7 @@
 * text=auto eol=lf
 # Published recording artifacts have byte-level provenance hashes.
 site/assets/videos/* -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/real-v03/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+examples/yuanxingmu/real_openclaw/evidence/** -text
+# Blank context lines in a frozen unified diff contain a required space.
+examples/yuanxingmu/real_openclaw/evidence/source-differences.patch -whitespace

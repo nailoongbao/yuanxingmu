@@ -1,0 +1,1 @@
+{"action":"start","exit_code":1,"phase":"after_recording_stopped","result":{"reason":"task_revoked","status":"error"},"source_sha256":"8795e7f867d3d9a841da9c91d63fd316f081b000311df39f23d5296066d0dcbb","stderr_empty":true,"time":"2026-09-11T18:06:47.420425+00:00"}

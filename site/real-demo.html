@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#091522">
+  <meta name="description" content="用 OpenClaw 原生聊天界面，看 AI 整理报价、发送内部消息，以及元星木怎样限制向外发送、保留权限和收回权限。真实本地模型，演示资料，实际操作。">
+  <title>让 AI 整理一份报价 · 元星木实机演示</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="demo.css">
+  <link rel="stylesheet" href="real-demo.css">
+  <script defer src="demo.js"></script>
+</head>
+<body class="watch-page real-watch" data-video-directory="assets/videos/real-v03/" data-video-file="yuanxingmu-real-openclaw.mp4">
+  <a class="skip-link" href="#main">跳到正文</a>
+  <div class="topbar"><header class="site-header wrap">
+    <a class="brand" href="index.html" aria-label="元星木首页"><img src="assets/mark.svg" width="38" height="38" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a>
+    <nav class="watch-nav" aria-label="主导航"><a href="index.html">首页</a><a href="start.html">试用预览版</a></nav>
+  </header></div>
+  <main id="main">
+    <section class="watch-hero wrap" aria-labelledby="watch-title">
+      <p class="watch-eyebrow"><span class="status-dot" aria-hidden="true"></span> OpenClaw 原生界面 · 实机录屏</p>
+      <h1 id="watch-title">让 AI 整理报价，<br><span>资料会被发到哪里？</span></h1>
+      <p class="watch-description">从看资料、发公司消息，到重新打开聊天、收回权限。<br class="watch-desktop-break">看一次实际操作，也看 AI 读错文件后发生了什么。</p>
+      <p class="watch-description-scope">本地 Qwen3-4B 模型实际生成回答和工具请求。使用演示资料与测试收件服务，录屏经过剪辑，保留了关键操作与结果。</p>
+    </section>
+    <section class="watch-film wrap" aria-labelledby="film-title">
+      <div class="watch-film-header"><h2 id="film-title">中文解说 · 完整演示</h2><span id="film-status" class="watch-status is-pending" role="status">正在加载</span></div>
+      <div class="watch-stage">
+        <video id="demo-player" controls playsinline preload="metadata" poster="assets/videos/real-v03/yuanxingmu-real-openclaw-poster.jpg" hidden aria-label="元星木在 OpenClaw 中整理报价的实机演示" aria-describedby="watch-scope">
+          <track kind="captions" src="assets/videos/real-v03/yuanxingmu-real-openclaw.vtt" srclang="zh-CN" label="中文解说">
+        </video>
+        <div id="film-placeholder" class="watch-placeholder"><div class="watch-placeholder-mark" aria-hidden="true"><img src="assets/mark.svg" width="48" height="48" alt=""></div><p id="placeholder-title">正在加载演示视频</p><p id="placeholder-detail">加载完成后，点击播放即可观看。</p><button id="retry-media" class="watch-retry" type="button">刷新查看 ↻</button></div>
+      </div>
+      <div class="watch-film-bottom"><p id="player-note" class="watch-player-note" role="status">中文配音 · 可按章节观看</p><a id="download-full" class="watch-download" href="assets/videos/real-v03/yuanxingmu-real-openclaw.mp4" download hidden>下载完整视频 ↓</a></div>
+      <p id="watch-scope" class="watch-scope">手机观看可点击视频右下角全屏。演示中的“内部”和“外部”是两处测试收件服务。发送结果已与收件记录核对；当前还没有飞书或邮箱的现成连接器。</p>
+      <noscript><p class="watch-noscript"><a href="assets/videos/real-v03/yuanxingmu-real-openclaw.mp4">直接播放视频</a></p></noscript>
+      <div class="watch-outcomes" aria-label="这次演示观察到的结果">
+        <article><span>允许的发送</span><strong>内部收到 1 条</strong><p>整理好的报价发到了预先允许的位置，正文与操作记录一致。</p></article>
+        <article><span>受限的发送</span><strong>外部收到 0 条</strong><p>本次向外发送和直接连接的尝试没有送达。重开后，限制仍在。</p></article>
+        <article><span>也有做错的时候</span><strong>AI 读错过文件</strong><p>它一度报出错误的金额和日期。明确指定报价文件后才改正。</p></article>
+      </div>
+    </section>
+    <section class="watch-chapters" aria-labelledby="chapters-title"><div class="wrap watch-chapters-inner">
+      <div class="watch-chapters-heading"><div><p class="eyebrow">按你关心的内容观看</p><h2 id="chapters-title">一件事，一段演示。</h2></div><p>点选章节即可跳转。<br>每一段也可以单独观看。</p></div>
+      <div id="chapters-pending" class="watch-chapters-pending" role="status"><span class="watch-pending-symbol" aria-hidden="true">＋</span><div><h3 id="chapters-pending-title">正在加载章节</h3><p id="chapters-pending-detail">可以按顺序观看，也可以选择你关心的一段。</p></div></div>
+      <ol id="chapter-list" class="watch-chapter-list" aria-label="视频章节" hidden></ol><p id="chapter-feedback" class="watch-chapter-feedback" role="status"></p>
+      <div class="watch-notes">
+        <h2>用之前，了解这三件事。</h2>
+        <details open><summary>模型仍然会看到你交给它的资料</summary><p>元星木限制额外的读取和发送。你选择的模型需要接收聊天与资料才能工作；连接云端模型时，这些内容会交给该模型服务。</p></details>
+        <details><summary>收回权限，不会撤回已经发出的内容</summary><p>收回后，下一次通过元星木读取或发送会被拒绝。本版不能恢复被撤销的权限，也不会删除 AI 已经读到的内容。想停止本地运行，还需关闭服务。</p></details>
+        <details><summary>这次演示说明了什么</summary><p>它说明了这个本地配置下的实际操作结果。它没有证明能挡住所有攻击，也不能保证 AI 的答案正确。当前安装需要 Linux 或 WSL 和终端操作。</p></details>
+        <div class="watch-evidence-links"><a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/real-openclaw-demo.zh-CN.md" target="_blank" rel="noopener noreferrer">核对本次结果 ↗</a><a href="demo.html">查看较早的脚本演示 ↗</a><a href="start.html">了解怎样安装 →</a></div>
+      </div>
+      <div class="watch-backline"><span>让能力增长，权限有界。</span><a href="index.html">回到首页 →</a></div>
+    </div></section>
+  </main>
+  <footer class="site-footer"><div class="wrap footer-content"><a class="brand" href="index.html" aria-label="元星木首页"><img src="assets/mark.svg" width="32" height="32" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a><span class="footer-tagline">让能力增长，权限有界。</span><div><span>预览版 / 2026</span><a href="https://github.com/yh-l20/agent-defense-check" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+</body>
+</html>

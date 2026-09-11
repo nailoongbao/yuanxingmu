@@ -1,0 +1,30 @@
+.real-watch .watch-description { font-size: 17px; }
+.real-watch .watch-description-scope, .real-watch .watch-scope { font-size: 14px; line-height: 1.85; }
+.real-watch .watch-player-note, .real-watch .watch-download, .real-watch .watch-status { font-size: 13px; }
+.watch-outcomes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: 36px; gap: 28px; }
+.watch-outcomes article { border-top: 1px solid #435e66; padding-top: 22px; }
+.watch-outcomes span { display: block; color: #a3bbc1; font-size: 13px; }
+.watch-outcomes strong { display: block; margin-top: 12px; color: #d1edc0; font-size: 24px; font-weight: 600; }
+.watch-outcomes article:last-child strong { color: #ecd4a8; }
+.watch-outcomes p { margin-top: 12px; color: #adbec4; font-size: 14px; line-height: 1.85; }
+.watch-notes { margin-top: 45px; max-width: 860px; }
+.watch-notes h2 { margin-bottom: 20px; font-size: 27px; }
+.watch-notes details { border-bottom: 1px solid #cfdbcb; }
+.watch-notes summary { padding: 20px 0; color: #294333; font-size: 16px; cursor: pointer; }
+.watch-notes details p { margin-bottom: 22px; color: #546b5d; font-size: 15px; line-height: 1.85; }
+.watch-evidence-links { display: flex; flex-wrap: wrap; gap: 10px 28px; margin-top: 25px; }
+.watch-evidence-links a { display: inline-flex; align-items: center; min-height: 44px; color: #346845; font-size: 14px; text-decoration: underline; text-underline-offset: 5px; }
+.real-watch .watch-chapters-heading > p { font-size: 14px; }
+@media (max-width: 639px) {
+  .real-watch .watch-nav { font-size: 13px; gap: 18px; }
+  .real-watch .watch-description { font-size: 15px; }
+  .real-watch .watch-description-scope, .real-watch .watch-scope { font-size: 13px; }
+  .real-watch .watch-chapter-title { font-size: 15px; }
+  .real-watch .watch-chapter-clip, .real-watch .watch-chapter-time { font-size: 12px; }
+  .real-watch .watch-chapter-number { font-size: 11px; }
+  .watch-outcomes { grid-template-columns: 1fr; gap: 25px; margin-top: 28px; }
+  .watch-outcomes strong { font-size: 23px; }
+  .watch-notes h2 { font-size: 24px; }
+  .watch-notes summary { font-size: 15px; }
+  .watch-notes details p { font-size: 14px; }
+}

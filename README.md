@@ -4,11 +4,19 @@
 
 Run agent work inside a Linux boundary. Keep resource access, outbound actions, and task authority outside it. Once a task reads private data, its entire task family cannot send to public destinations. Reconnecting, restarting the broker, or delegating a child does not clear that state.
 
-[中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/agent-defense-check/) · [Watch the demo](https://yh-l20.github.io/agent-defense-check/demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
+[中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/agent-defense-check/) · [Watch the demo](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
 
-![Yuanxingmu: capability grows, authority stays bounded](site/assets/yuanxingmu-poster.svg)
+![Yuanxingmu: let AI work within your permissions](site/assets/yuanxingmu-public-v03-poster.svg)
 
 **Linux research prototype.** Verified with real bubblewrap, SQLite, isolated processes and an independent HTTP receiver using synthetic data. No attack-model evaluation or production protection rate. The existing repository URL remains `agent-defense-check`; the system is named Yuanxingmu.
+
+## Watch a real-model session
+
+Read a quote, send it to an allowed internal receiver, then try an external send, restart, open a new chat, and revoke access. The new narrated recording uses the **native OpenClaw UI** with genuine local **Qwen3-4B** inference and synthetic documents.
+
+The independent receiver recorded **one internal delivery and zero external deliveries**. The model also read the wrong document and reported the wrong price and date before the user corrected it; that failure remains in the video. Actual read and send requests after revocation were denied.
+
+[Watch with Chinese narration](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [Results and limits](docs/real-openclaw-demo.zh-CN.md). This is one recorded session, not an attack-model evaluation or a general protection rate. The earlier [scripted-model recording](https://yh-l20.github.io/agent-defense-check/demo.html) remains separate.
 
 ## Use your own model in OpenClaw
 
@@ -58,7 +66,7 @@ python -I -m yuanxingmu run --policy policy.json --state authority-state \
 
 Resume with the same state directory and task ID, omitting `--new-task`. See the [policy example and threat model](docs/yuanxingmu.md). Task creation, policies and mount selection are trusted host operations, not agent tools.
 
-The [OpenClaw native execution](examples/yuanxingmu/openclaw/README.md) and [Hermes native terminal environment](examples/yuanxingmu/hermes/README.md) examples have completed their respective integration demonstrations. OpenClaw uses a local scripted model with real native tool calls; Hermes exercises native tools without a model conversation. Coverage is limited to the tools and configurations listed in each example.
+The [OpenClaw native execution](examples/yuanxingmu/openclaw/README.md) and [Hermes native terminal environment](examples/yuanxingmu/hermes/README.md) examples have completed their respective integration demonstrations. The earlier OpenClaw example uses a scripted model; the newer genuine-model session is linked above. Hermes exercises native tools without a model conversation. Coverage is limited to the tools and configurations listed in each example.
 
 The [independent Linux CI report](examples/yuanxingmu/verified-hosted-report.json) records 33 passing tests and 19 core demonstration checks. This CI run covers the execution core, not framework WebUIs or autonomous model attacks.
 

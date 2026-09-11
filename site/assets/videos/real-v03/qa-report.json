@@ -1,0 +1,175 @@
+{
+  "source_preserved": true,
+  "archive_matches_source": true,
+  "final_duration_seconds": 205.0,
+  "original_ui_frame_comparisons": [
+    {
+      "interval": 1,
+      "source_second": 4.0,
+      "output_second": 4.0,
+      "mean_absolute_pixel_error_0_to_255": 0.14941
+    },
+    {
+      "interval": 2,
+      "source_second": 52.0,
+      "output_second": 18.0,
+      "mean_absolute_pixel_error_0_to_255": 0.20305
+    },
+    {
+      "interval": 3,
+      "source_second": 112.0,
+      "output_second": 36.0,
+      "mean_absolute_pixel_error_0_to_255": 0.19452
+    },
+    {
+      "interval": 4,
+      "source_second": 351.0,
+      "output_second": 48.0,
+      "mean_absolute_pixel_error_0_to_255": 0.16945
+    },
+    {
+      "interval": 5,
+      "source_second": 372.0,
+      "output_second": 60.0,
+      "mean_absolute_pixel_error_0_to_255": 0.16628
+    },
+    {
+      "interval": 6,
+      "source_second": 470.0,
+      "output_second": 72.0,
+      "mean_absolute_pixel_error_0_to_255": 0.29649
+    },
+    {
+      "interval": 7,
+      "source_second": 487.0,
+      "output_second": 82.0,
+      "mean_absolute_pixel_error_0_to_255": 0.2898
+    },
+    {
+      "interval": 8,
+      "source_second": 583.5,
+      "output_second": 91.5,
+      "mean_absolute_pixel_error_0_to_255": 0.25309
+    },
+    {
+      "interval": 9,
+      "source_second": 612.5,
+      "output_second": 101.5,
+      "mean_absolute_pixel_error_0_to_255": 0.3152
+    },
+    {
+      "interval": 10,
+      "source_second": 778.5,
+      "output_second": 111.5,
+      "mean_absolute_pixel_error_0_to_255": 0.32584
+    },
+    {
+      "interval": 11,
+      "source_second": 791.0,
+      "output_second": 117.0,
+      "mean_absolute_pixel_error_0_to_255": 0.3143
+    },
+    {
+      "interval": 12,
+      "source_second": 928.5,
+      "output_second": 129.5,
+      "mean_absolute_pixel_error_0_to_255": 0.17907
+    },
+    {
+      "interval": 13,
+      "source_second": 1071.5,
+      "output_second": 143.5,
+      "mean_absolute_pixel_error_0_to_255": 0.15156
+    },
+    {
+      "interval": 14,
+      "source_second": 1134.5,
+      "output_second": 153.5,
+      "mean_absolute_pixel_error_0_to_255": 0.16428
+    },
+    {
+      "interval": 15,
+      "source_second": 1436.5,
+      "output_second": 168.5,
+      "mean_absolute_pixel_error_0_to_255": 0.20748
+    },
+    {
+      "interval": 16,
+      "source_second": 1479.0,
+      "output_second": 180.0,
+      "mean_absolute_pixel_error_0_to_255": 0.14613
+    },
+    {
+      "interval": 17,
+      "source_second": 1505.0,
+      "output_second": 194.0,
+      "mean_absolute_pixel_error_0_to_255": 0.162
+    }
+  ],
+  "all_original_ui_samples_match": true,
+  "caption_cues": 12,
+  "caption_contact_sheets": [
+    "qa/final-captions-1.jpg",
+    "qa/final-captions-2.jpg",
+    "qa/final-captions-3.jpg"
+  ],
+  "audio_mean_db": -24.5,
+  "audio_peak_db": -0.4,
+  "full_decode_errors": 0,
+  "clips": [
+    {
+      "file": "01-outside.mp4",
+      "expected_seconds": 28.0,
+      "container_seconds": 28.0,
+      "sha256": "74977c275ef1da687edd7fdae7a70a5c96a033941e1643aa59e05152d8bbd73f"
+    },
+    {
+      "file": "02-correction.mp4",
+      "expected_seconds": 40.0,
+      "container_seconds": 40.0,
+      "sha256": "4904f23cc00de580dd2f2309c91cdfc6b44ce24fe6627761108beb2dcc0012e9"
+    },
+    {
+      "file": "03-internal.mp4",
+      "expected_seconds": 20.0,
+      "container_seconds": 20.0,
+      "sha256": "8172b0b13643ae8c4e08d7c0cc40a5271b7572e93bad8628de9edebd32560a91"
+    },
+    {
+      "file": "04-direct.mp4",
+      "expected_seconds": 20.0,
+      "container_seconds": 20.0,
+      "sha256": "e40a12945d4184367b97616259d4043d305c08fc34b02b47ae9be122e592a645"
+    },
+    {
+      "file": "05-restart.mp4",
+      "expected_seconds": 32.0,
+      "container_seconds": 32.0,
+      "sha256": "86dcc385ec180a1d8592f705bd42f52e7d6703826ed6d9755a8e41bccb7c2940"
+    },
+    {
+      "file": "06-new-chat.mp4",
+      "expected_seconds": 20.0,
+      "container_seconds": 20.0,
+      "sha256": "a7c05138aaa28a37cf4b046bf20cf0257a1d235e677170344a83a4e56a4adb06"
+    },
+    {
+      "file": "07-revoke.mp4",
+      "expected_seconds": 45.0,
+      "container_seconds": 45.0,
+      "sha256": "1880b8a4aad7a8d862878e7ea8d9ddada5f14cac23de83f7b1abf2dbab9efe31"
+    }
+  ],
+  "poster_second": 23,
+  "poster_sha256": "0a9b7c7958838ea7e2a69cd9447c2ed738b50fc2cc3be6398bf17e33b684ae8d",
+  "output_sha256": "f221f407a24219cfb24575dcaacb525a33ada4e9e1d8438bf96356cd634d775f",
+  "visual_review_pending": false,
+  "scope": "No browser actions; source UI unscaled/uncropped; subtitles confined to an added margin; no old scripted assets used.",
+  "visual_review_completed_utc": "2026-09-11T18:27:32.308120+00:00",
+  "visual_review_notes": [
+    "Reviewed all 12 caption cue images in three contact sheets.",
+    "Chinese captions and fixed disclosure are readable and confined to the added margin.",
+    "Source UI remains complete; wrong incoming answer and explicit quote correction retained.",
+    "Original and archived raw hashes match. Final stop outside the recording is not presented as a scene."
+  ]
+}

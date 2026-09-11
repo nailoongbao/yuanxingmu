@@ -15,3 +15,25 @@
 @media(max-width:639px){.hero-description{font-size:14px;line-height:1.9}.hero-footnote{font-size:9px;max-width:none}.button{font-size:12px;min-height:47px}.hero-actions .text-link{font-size:11px}.eyebrow{font-size:9px}.hero-eyebrow{font-size:8px}.section-intro{font-size:13px;line-height:1.9}.section-intro>span{font-size:10px}.demo-bar{font-size:11px}.simulation-tag{font-size:9px}.scenario-tabs button{font-size:11px}.flow-step p{font-size:12px}.flow-step small{font-size:9px}.flow-step .node-note{font-size:10px}.authority-header strong{font-size:13px}.authority-check b{font-size:11px}.authority-check span{font-size:10px}.authority-footer{font-size:9px}.scenario-explanation{font-size:11px}.demo-disclaimer{font-size:9px}.capability-grid h3{font-size:16px}.capability-grid p{font-size:12px}.feature-index{font-size:8px}.evidence-row{font-size:12px;grid-template-columns:minmax(0,1fr) 62px}.evidence-row.table-head{font-size:9px}.evidence-status{font-size:9px}.evidence-row>.evidence-source{font-size:9px}.report-footnote{font-size:9px}.evidence-bottom p{font-size:10px}.evidence-bottom .text-link{font-size:11px}.start-copy>p:not(.eyebrow){font-size:13px}.get-started-card p{font-size:12px}.repo-address code{font-size:11px}.copy-feedback{font-size:9px}.limitations-list summary{font-size:12px}.limitations-list details p{font-size:12px}.footer-tagline{font-size:10px}}
 .validation-note{font-size:11px;color:#9bb0b9;line-height:1.8;letter-spacing:.1px;margin-top:7px;max-width:560px}
 @media(max-width:639px){.validation-note{font-size:11px;max-width:350px}.evidence-row{grid-template-columns:minmax(0,1fr) 74px}}
+
+/* Reading sizes for the public product page. */
+.user-site .hero-description{font-size:17px}
+.user-site .hero-footnote,.user-site .validation-note{font-size:13px}
+.user-site .capability-grid p,.user-site .section-intro,.user-site .limitations-list details p{font-size:15px}
+.user-site .evidence-row{font-size:14px}
+.user-site .evidence-status,.user-site .evidence-source,.user-site .report-footnote{font-size:12px}
+.user-site .limitations-list summary{font-size:16px}
+@media(max-width:899px){.user-site .evidence-row{grid-template-columns:minmax(0,1fr) 112px 95px}}
+@media(max-width:639px){
+  .user-site .hero-description{font-size:16px}
+  .user-site .capability-grid{grid-template-columns:1fr}
+  .user-site .capability-grid h3{font-size:20px}
+  .user-site .capability-grid p{max-width:none;font-size:14px}
+  .user-site .feature-index{font-size:11px}
+  .user-site .evidence-row{grid-template-columns:minmax(0,1fr) 103px;font-size:14px}
+  .user-site .evidence-row>.evidence-source{font-size:12px}
+  .user-site .report-footnote{font-size:13px}
+  .user-site .section-intro,.user-site .limitations-list details p{font-size:14px}
+  .user-site .scenario-tabs button,.user-site .flow-step p,.user-site .authority-check b,.user-site .authority-check span,.user-site .scenario-explanation{font-size:13px}
+  .user-site .flow-step .node-note,.user-site .authority-footer,.user-site .demo-disclaimer,.user-site .simulation-tag{font-size:12px}
+}

@@ -1,0 +1,137 @@
+{
+  "version": 1,
+  "title": "元星木：本地千问模型真实操作",
+  "source": {
+    "file": "openclaw-network-isolated.webm",
+    "sha256": "fd5fadfbded98e19527ea18b40fe228658e3d464bcf9ebd2e7b9699e20cd4a1e",
+    "duration_seconds": 1681.0,
+    "width": 800,
+    "height": 600,
+    "fps": 25,
+    "preserved": true,
+    "separate_archive": "source/openclaw-network-isolated.webm"
+  },
+  "model": "Qwen3-4B (local)",
+  "host": "OpenClaw 2026.9.4",
+  "data": "synthetic demonstration material",
+  "cut": {
+    "file": "yuanxingmu-real-openclaw.mp4",
+    "sha256": "f221f407a24219cfb24575dcaacb525a33ada4e9e1d8438bf96356cd634d775f",
+    "duration_seconds": 205.0,
+    "width": 800,
+    "height": 760,
+    "source_intervals": 17,
+    "source_order_preserved": true,
+    "speed_multiplier": 1.0,
+    "raw_picture_cropped": false,
+    "raw_picture_scaled": false,
+    "raw_picture_redrawn": false,
+    "added_bottom_margin_px": 160,
+    "fixed_footer": "真实本地模型 · 演示资料 · 实机剪辑",
+    "old_scripted_video_or_audio_used": false,
+    "final_operator_stop_after_recording_included": false
+  },
+  "narration": {
+    "source": "New locally synthesized Microsoft Huihui Desktop Chinese narration",
+    "segments": 12,
+    "duration_seconds": 138.386,
+    "burned_captions": "added margin only",
+    "vtt": "optional; do not enable a duplicate subtitle layer by default"
+  },
+  "verification": {
+    "raw_hash_preserved": true,
+    "source_ui_samples_checked": 17,
+    "pixel_mae_max": 0.32584,
+    "decode_errors": 0,
+    "all_seven_chapter_durations_match": true,
+    "visual_review_complete": true
+  },
+  "timeline": "timeline.json",
+  "chapters": "chapters.json",
+  "files": {
+    "yuanxingmu-real-openclaw.mp4": {
+      "sha256": "f221f407a24219cfb24575dcaacb525a33ada4e9e1d8438bf96356cd634d775f",
+      "bytes": 3840077
+    },
+    "yuanxingmu-real-openclaw-poster.jpg": {
+      "sha256": "0a9b7c7958838ea7e2a69cd9447c2ed738b50fc2cc3be6398bf17e33b684ae8d",
+      "bytes": 29503
+    },
+    "yuanxingmu-real-openclaw.vtt": {
+      "sha256": "a3ccb7c401bcc074c51ee886d90013d6c5ab0d63a6cd82b874931a8e6db74182",
+      "bytes": 2142
+    },
+    "yuanxingmu-real-openclaw.srt": {
+      "sha256": "9b46112383ab024ae199fedcb88903cc8050ddc39637c1d94efd63aaa2d89665",
+      "bytes": 2056
+    },
+    "chapters.json": {
+      "sha256": "f0a0f7c1c718e4232679e4fde3b72cbddb53791a888fe21609467b5a2f7ac824",
+      "bytes": 1586
+    },
+    "01-outside.mp4": {
+      "sha256": "74977c275ef1da687edd7fdae7a70a5c96a033941e1643aa59e05152d8bbd73f",
+      "bytes": 492240
+    },
+    "01-outside.vtt": {
+      "sha256": "a66acbd1856c12f5a3863d4ad6249748a292b7a6b11932f7834b484eb4d44e12",
+      "bytes": 335
+    },
+    "02-correction.mp4": {
+      "sha256": "4904f23cc00de580dd2f2309c91cdfc6b44ce24fe6627761108beb2dcc0012e9",
+      "bytes": 670367
+    },
+    "02-correction.vtt": {
+      "sha256": "531d528a491ae4201e3a78e58d8a32d028571d49ec37b641874bf998dcf0910a",
+      "bytes": 374
+    },
+    "03-internal.mp4": {
+      "sha256": "8172b0b13643ae8c4e08d7c0cc40a5271b7572e93bad8628de9edebd32560a91",
+      "bytes": 368915
+    },
+    "03-internal.vtt": {
+      "sha256": "4ce08d2b766e59a291895caf6f51a819610e7f9660f031910672f3b0e7453d3f",
+      "bytes": 187
+    },
+    "04-direct.mp4": {
+      "sha256": "e40a12945d4184367b97616259d4043d305c08fc34b02b47ae9be122e592a645",
+      "bytes": 383540
+    },
+    "04-direct.vtt": {
+      "sha256": "ecfb7da817858141aa8038bc171f6ffd72456e3ed38c01c07405b41004361033",
+      "bytes": 194
+    },
+    "05-restart.mp4": {
+      "sha256": "86dcc385ec180a1d8592f705bd42f52e7d6703826ed6d9755a8e41bccb7c2940",
+      "bytes": 727186
+    },
+    "05-restart.vtt": {
+      "sha256": "4442fa6d5c66b25fa0650bacd59113a9bfec570f5c9616f7af56bedcb1ffc9c1",
+      "bytes": 365
+    },
+    "06-new-chat.mp4": {
+      "sha256": "a7c05138aaa28a37cf4b046bf20cf0257a1d235e677170344a83a4e56a4adb06",
+      "bytes": 292683
+    },
+    "06-new-chat.vtt": {
+      "sha256": "63e8abff8e4224d0cf692ae5bc25b7421774b8f911bd682117107c9635ee4b01",
+      "bytes": 184
+    },
+    "07-revoke.mp4": {
+      "sha256": "1880b8a4aad7a8d862878e7ea8d9ddada5f14cac23de83f7b1abf2dbab9efe31",
+      "bytes": 783051
+    },
+    "07-revoke.vtt": {
+      "sha256": "224af807586d4c8b3dd2e28a8602373ce1f2291e31f76cf21fbbbcb550eb5510",
+      "bytes": 551
+    },
+    "timeline.json": {
+      "sha256": "e2cf30129f3274d32ceba292d9efc87ca9deed288f518248f2f9b5ff80b7ab44",
+      "bytes": 8777
+    },
+    "qa-report.json": {
+      "sha256": "0026ca6d0ff911d2fd741cc771013ddba79ea8f2bec4270fca2e369f0b3f9a0d",
+      "bytes": 5261
+    }
+  }
+}
