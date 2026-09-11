@@ -140,7 +140,13 @@ class GatewayNetworkTransportTests(unittest.TestCase):
     def request(self, bridge, method="POST", path="/v1/chat/completions", body=b'{"input":"synthetic"}', headers=None):
         connection = _UnixHTTP(bridge.runtime / "model.sock")
         try:
-            connection.request(method, path, body=body, headers=headers or {})
+            try:
+                connection.request(method, path, body=body, headers=headers or {})
+            except BrokenPipeError:
+                # The bridge may reject headers and close before the body write.
+                # Still require a real HTTP response; callers retain their status
+                # and independent upstream-receipt assertions.
+                pass
             response = connection.getresponse()
             return response.status, dict(response.getheaders()), response.read()
         finally:
