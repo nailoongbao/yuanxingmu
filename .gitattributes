@@ -1,2 +1,3 @@
+* text=auto eol=lf
 # Published recording artifacts have byte-level provenance hashes.
 site/assets/videos/* -text whitespace=trailing-space,space-before-tab,cr-at-eol
