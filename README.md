@@ -1,8 +1,8 @@
 # Yuanxingmu · 元星木
 
-**The agent requests. The system authorizes.**
+**Give AI the files it needs. Keep control of its permissions.**
 
-Run agent work inside a Linux boundary. Keep resource access, outbound actions, and task authority outside it. Once a task reads private data, its entire task family cannot send to public destinations. Reconnecting, restarting the broker, or delegating a child does not clear that state.
+Choose a document and let your own AI help you work through it. Yuanxingmu keeps each work item separate and lets you stop, reopen, or revoke its document access. After a private read, the task family cannot send to public destinations through the controlled sending tools, even after a restart. Your selected model service still receives the conversation and documents used for the task.
 
 [中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/agent-defense-check/) · [Watch the demo](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
 
@@ -20,11 +20,11 @@ The independent receiver recorded **one internal delivery and zero external deli
 
 ## Use your own model in OpenClaw
 
-After the first terminal installation, run `yuanxingmu desk` to open the local workbench. Fill in your model connection, import short UTF-8 text files, and manage each work item in the browser. A successful start provides a link to the native OpenClaw chat UI. The page also lets you stop a work item or permanently revoke its document permissions.
+The installer packages first-time setup into one file. After installation, run `~/yuanxingmu/open-yuanxingmu` to open the local workbench. Fill in your model connection, import short UTF-8 text files, and manage each work item in the browser. A successful start provides a link to the native OpenClaw chat UI. The page also lets you stop a work item or permanently revoke its document permissions. Existing manual installations continue to use `yuanxingmu desk`.
 
 Each work item has its own persistent OpenClaw profile. Chat input and work products are private from creation, including pasted text. New sessions and clean restarts retain the same task authority; destinations are empty by default. **The selected model service receives the conversation and documents used for the task.**
 
-[Watch the 117-second walkthrough](https://yh-l20.github.io/agent-defense-check/workbench-demo.html) · [Install and use the workbench (Chinese)](docs/workbench.zh-CN.md) · [Advanced CLI guide](docs/openclaw-quickstart.zh-CN.md). This is a Linux/WSL preview; first-time installation still requires a terminal. Closing the browser or workbench does not stop running agents. The workbench currently supports OpenClaw 2026.9.4.
+[Watch the 117-second walkthrough](https://yh-l20.github.io/agent-defense-check/workbench-demo.html) · [Install and use the workbench (Chinese)](https://yh-l20.github.io/agent-defense-check/start.html) · [Installer details](install/README.md) · [Advanced CLI guide](docs/openclaw-quickstart.zh-CN.md). The installer targets Ubuntu 24.04 / WSL Ubuntu 24.04 x86_64; first-time installation still requires a terminal. Closing the browser or workbench does not stop running agents. The workbench currently supports OpenClaw 2026.9.4.
 
 The entire Gateway runs in its own network namespace, in addition to the separate worker sandbox. One fixed model bridge handles inference; the task broker handles document reads and authorized sends. Framework actions such as automatic remote-media downloads cannot directly reach external networks. Model credentials and the authority database stay on the host.
 

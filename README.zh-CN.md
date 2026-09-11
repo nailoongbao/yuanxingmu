@@ -1,8 +1,8 @@
 # 元星木 · Yuanxingmu
 
-**模型提请求，系统管权限。**
+**把资料交给 AI，权限留在自己手里。**
 
-让 Agent 在受限环境里工作，把资料读取、外部发送和任务权限交给环境之外的服务。读过私密资料后，任务就不能再向公开目的地发送；重连、恢复和派生子任务都不能清掉这条限制。
+选择一份资料，让自己的 AI 帮你整理。元星木把这项工作单独放好，让你随时关闭、继续，或收回资料权限。读过私密资料的工作不能再通过受控发送工具发往公开位置；重新打开也不会清掉这条限制。你选用的模型服务仍会收到聊天和使用的资料。
 
 [English](README.md) · [官网](https://yh-l20.github.io/agent-defense-check/) · [看实机演示](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 
@@ -20,11 +20,11 @@
 
 ## 用自己的模型和资料
 
-首次终端安装完成后，用 `yuanxingmu desk` 打开本机工作台。在页面填写模型连接、导入短文本，创建工作后启动，再进入 OpenClaw 原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。
+安装器把首次安装收成一个文件，装好后用 `~/yuanxingmu/open-yuanxingmu` 打开本机工作台。在页面填写模型连接、导入短文本，创建工作后启动，再进入 OpenClaw 原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。原先手工安装的用户继续使用 `yuanxingmu desk`。
 
 每项工作独立保存资料和权限。聊天粘贴和工作产物从一开始就按私密资料处理；换会话或正常重启不清除权限。默认没有额外发送位置。**所选模型服务会看到聊天和使用的资料。**
 
-[看 117 秒上手演示](https://yh-l20.github.io/agent-defense-check/workbench-demo.html) · [安装并使用工作台](docs/workbench.zh-CN.md) · [高级命令行指南](docs/openclaw-quickstart.zh-CN.md)。这仍是 Linux/WSL 预览版，首次安装需要终端。关闭网页或工作台不会停止运行中的 AI。目前工作台支持 OpenClaw 2026.9.4。
+[看 117 秒上手演示](https://yh-l20.github.io/agent-defense-check/workbench-demo.html) · [安装并使用工作台](https://yh-l20.github.io/agent-defense-check/start.html) · [安装器说明](install/README.md) · [高级命令行指南](docs/openclaw-quickstart.zh-CN.md)。安装器适用于 Ubuntu 24.04 / WSL Ubuntu 24.04 x86_64，首次需要终端。关闭网页或工作台不会停止运行中的 AI。目前工作台支持 OpenClaw 2026.9.4。
 
 除了隔离工具执行，新入口也把整个 OpenClaw 服务放进单独的网络环境。模型请求只能经过固定模型通道，资料读取和发送经过权限服务；框架自动下载远程媒体的动作也不能直接连接外部网络。模型密钥与授权数据库留在宿主侧。
 

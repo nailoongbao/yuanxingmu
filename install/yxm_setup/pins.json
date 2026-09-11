@@ -1,0 +1,27 @@
+{
+  "installer_version": "0.1.0a1",
+  "runtime_version": "0.4.0a1",
+  "runtime_commit": "3d645d6c9a4ed673535684bf98f50e9ebb807a5a",
+  "wheel": {
+    "name": "agent_defense_check-0.4.0a1-py3-none-any.whl",
+    "url": "https://github.com/yh-l20/agent-defense-check/releases/download/v0.4.0a1/agent_defense_check-0.4.0a1-py3-none-any.whl",
+    "bytes": 128482,
+    "sha256": "feb103cf98c8249f4b723162e5a13bdb8c645489c30cc362b7db423dadf320f9"
+  },
+  "node": {
+    "version": "24.16.0",
+    "name": "node-v24.16.0-linux-x64.tar.xz",
+    "url": "https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz",
+    "bytes": 31428548,
+    "sha256": "d804845d34eddc21dc1092b519d643ef40b1f58ec5dec5c22b1f4bd8fabde6c9"
+  },
+  "openclaw": {
+    "version": "2026.9.4",
+    "url": "https://registry.npmjs.org/openclaw/-/openclaw-2026.9.4.tgz",
+    "integrity": "sha512-lTQpEEe1Xm3u2PCHaPEr+vP8paGk1vLdHuzdItsNToaLI6hAqRVvgJYg+GxukJhETJp4tPy/S1Gftl4KuB8n7A==",
+    "package_sha256": "c0dc45fdbce44014d8dad1d7ac3dc7af867c22c9c8b7fb0805334646b59cd321",
+    "lock_sha256": "de05af1a481b26c1fabb84390fe60db73e09863f7922334c14fdb8eeaffc4569",
+    "tarball_sha256": "4f1f656770461d4677dea755b1899cba12b912b06798c89a59e2f0c18688b761",
+    "tarball_bytes": 67342399
+  }
+}

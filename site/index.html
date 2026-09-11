@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#091522">
-  <meta name="description" content="元星木 Yuanxingmu：让 AI 正常工作，把未获准的操作挡下来。了解内部资料如何使用、公开发送何时受限，以及收回权限后会发生什么。当前为研究原型。">
+  <meta name="description" content="元星木 Yuanxingmu：连接自己的模型，选择允许使用的资料，在 OpenClaw 中整理报价和预算。管理工作的打开、暂时关闭和资料权限。Ubuntu / WSL 预览版。">
   <title>元星木 Yuanxingmu — 让 AI 做事，资料别乱发</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -34,14 +34,14 @@
       <section class="hero wrap" aria-labelledby="hero-title">
         <div class="hero-copy">
           <div class="preview-label"><span class="status-dot"></span> RESEARCH PREVIEW <span class="label-divider"></span> 研究原型</div>
-          <p class="eyebrow hero-eyebrow">看报价、发消息，也要有使用权限</p>
+          <p class="eyebrow hero-eyebrow">自己的模型，使用自己选定的资料</p>
           <h1 id="hero-title">让 AI 做事，<br><span>资料别乱发。</span></h1>
-          <p class="hero-description">让 AI 看报价、整理资料、发公司消息。<br>只能读指定资料，发到允许的位置。<br class="desktop-break">关掉再打开，原来的限制还在。</p>
+          <p class="hero-description">连接自己的模型，交给它一份资料。<br>看报价、整理预算，在聊天里核对结果。<br class="desktop-break">暂时关闭后，还能带着原来的权限继续。</p>
           <div class="hero-actions">
             <a class="button button-primary" href="workbench-demo.html">看上手演示 <span aria-hidden="true">↗</span></a>
             <a class="text-link" href="start.html">了解怎样试用 <span aria-hidden="true">↗</span></a>
           </div>
-          <p class="hero-footnote">OpenClaw 原生界面 · 真实本地模型 · 预览版</p>
+          <p class="hero-footnote">自己的模型 · OpenClaw 原生界面 · Linux / WSL 预览版</p>
           <p class="validation-note">你选择的模型会看到聊天与资料；元星木限制额外的读取和发送。</p>
         </div>
         <div class="hero-art" aria-label="概念图：树状能力在透明的授权边界内生长">
@@ -63,7 +63,7 @@
     <div class="wrap">
       <div class="section-heading">
         <div><p class="eyebrow">01 / 怎样工作</p><h2 id="mechanism-title">每次操作，先看权限。</h2></div>
-        <p class="section-intro">先指定资料和允许的收件位置，<br>再让 AI 帮你完成工作。<br><span>下方是规则示意，实际结果见演示与记录。</span></p>
+        <p class="section-intro">先选好资料，<br>再让 AI 帮你完成工作。<br><span>下方也说明开发接入的发送规则，实际结果见演示记录。</span></p>
       </div>
 
       <div class="mechanism-demo" aria-label="工作权限规则示意">
@@ -90,10 +90,10 @@
       </div>
 
       <div class="capability-grid">
-        <article><span class="feature-index">A / 正常工作</span><h3>允许的事，继续做</h3><p>读取你交给它的报价，整理后发到允许的内部位置。发送演示中，内部实际收到了一条消息。</p></article>
+        <article><span class="feature-index">A / 选择资料</span><h3>交给它什么，你来选</h3><p>在工作台选择一份短文本，再进入 OpenClaw 聊天。让自己的模型读取报价、列出费用，在对话里查看结果。</p></article>
         <article><span class="feature-index">B / 公开发送</span><h3>换个方式，也要检查</h3><p>聊天内容从一开始就按内部资料处理。发送演示中，向外发送和直接连接的尝试都没送达。</p></article>
-        <article><span class="feature-index">C / 继续工作</span><h3>重新打开，限制还在</h3><p>关闭服务后重新打开，或者新开一个聊天，原来不能发送的位置仍然不能发送。</p></article>
-        <article><span class="feature-index">D / 收回权限</span><h3>权限收回，停止发送</h3><p>你收回这项工作的权限后，下一次读取和发送就会被拒绝。已经读到或发出的内容不会因此消失。</p></article>
+        <article><span class="feature-index">C / 继续工作</span><h3>暂时关闭，下次继续</h3><p>正常关闭且权限未被收回时，可以继续原来的资料、聊天和权限。重新打开工作，不会清掉原来的限制。</p></article>
+        <article><span class="feature-index">D / 收回权限</span><h3>不再需要，就收回权限</h3><p>收回后，后续通过元星木读取和发送资料会被拒绝。这个操作不能恢复；已经读到或发出的内容不会因此消失。</p></article>
       </div>
     </div>
   </section>
@@ -122,10 +122,10 @@
   <section id="start" class="start-section section-light" aria-labelledby="start-title">
     <div class="wrap">
       <div class="start-grid">
-        <div class="start-copy"><p class="eyebrow">03 / 继续了解</p><h2 id="start-title">先看怎样工作，<br>再看实际结果。</h2><p>从演示了解工作过程，<br>从公开记录核对已验证的范围。</p><a class="button button-dark" href="real-demo.html">打开实机演示页 <span aria-hidden="true">↗</span></a></div>
+        <div class="start-copy"><p class="eyebrow">03 / 开始自己的工作</p><h2 id="start-title">从自己的资料，<br>开始一份工作。</h2><p>安装后连接自己的模型，<br>选资料、进入聊天、核对结果。</p><a class="button button-dark" href="start.html">查看安装与使用步骤 <span aria-hidden="true">↗</span></a></div>
         <div class="get-started-card"><div class="card-corner" aria-hidden="true">↗</div><span class="feature-index">开发者资料</span><h3>接入和开发，看这里</h3><p>代码、接入步骤和已知限制都放在公开仓库。<br>具体运行要求请看开发文档。</p><div class="repo-address"><code>yh-l20/agent-defense-check</code><button id="copy-repo" type="button" aria-label="复制公开仓库地址"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></svg></button></div><span id="copy-feedback" class="copy-feedback" role="status">具体版本与运行要求，以仓库说明为准。</span><a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/yuanxingmu.md" target="_blank" rel="noopener noreferrer" class="card-link">打开开发文档 <span aria-hidden="true">→</span></a></div>
       </div>
-      <div class="limitations" aria-labelledby="limits-title"><div><p class="eyebrow">目前的范围</p><h3 id="limits-title">把限制也说清楚。</h3></div><div class="limitations-list"><details open><summary>演示覆盖哪些操作<span aria-hidden="true">+</span></summary><p>117 秒上手视频演示连接模型、导入报价、整理预算、关闭后重开和收回权限。另一个发送演示保留了内部送达、向外发送受限和 AI 读错文件的过程；它的收件位置使用测试服务，不是实际邮箱。两段视频都使用真实本地模型。</p></details><details><summary>现在可以怎样使用<span aria-hidden="true">+</span></summary><p>当前需要 Linux 或 WSL，首次安装仍用终端。安装后可以在本机工作台填写模型连接、导入短文本、打开和关闭工作，再进入 OpenClaw 原生聊天。工作台默认没有额外发送位置；飞书、Slack 或邮箱的现成连接器仍未提供。</p></details><details><summary>允许执行，也可能做错<span aria-hidden="true">+</span></summary><p>演示中，AI 曾经读错文件、报错金额和日期。元星木检查操作权限，不能代替你核对答案。它也会保守阻止对外发送，即使那段文字本身没有敏感内容。</p></details></div></div>
+      <div class="limitations" aria-labelledby="limits-title"><div><p class="eyebrow">目前的范围</p><h3 id="limits-title">把限制也说清楚。</h3></div><div class="limitations-list"><details open><summary>演示覆盖哪些操作<span aria-hidden="true">+</span></summary><p>117 秒上手视频演示连接模型、导入报价、整理预算、关闭后重开和收回权限。另一个发送演示保留了内部送达、向外发送受限和 AI 读错文件的过程；它的收件位置使用测试服务，不是实际邮箱。两段视频都使用真实本地模型。</p></details><details><summary>现在可以怎样使用<span aria-hidden="true">+</span></summary><p>使用自己的模型接口，选择短文本，再进入 OpenClaw 聊天；工作台可以暂时关闭、重新打开工作，也可以永久收回资料权限。当前适用于 Ubuntu 24.04 / WSL Ubuntu 24.04、x86_64 电脑，首次需要终端操作。</p><p id="installer-status-note" data-installer-status="pending">安装器预览正在准备，下载尚未开放；现有手工安装指南保留在使用页。工作台默认没有额外发送位置，飞书、Slack 和邮箱连接器，以及“本人确认后发送邮件”的完整流程都尚未提供。</p></details><details><summary>允许执行，也可能做错<span aria-hidden="true">+</span></summary><p>演示中，AI 曾经读错文件、报错金额和日期。元星木检查操作权限，不能代替你核对答案。它也会保守阻止对外发送，即使那段文字本身没有敏感内容。</p></details></div></div>
     </div>
   </section>
   </main>
