@@ -1,0 +1,9 @@
+{
+  "source_file": ".research/invariant_email_probe.py",
+  "source_file_sha256": "311a5443fe07c2b02bcee672c3e4a2ef215af8f1ac72364df5efc841b780fc41",
+  "extraction": "ast.literal_eval of the FIXED assignment; source module was not imported",
+  "validated_result_file": ".research/invariant-email-results-local-02.json",
+  "validated_result_sha256": "9d2f0c6aa68d32dcfc7c4fd29bfff92d84e163d246e3e79715a3bffaa324b865",
+  "matches_validated_result": true,
+  "policy_sha256": "0298d2406db70364aa274532a42f6e39b0762192b9de52df64c6a082712bb9a9"
+}

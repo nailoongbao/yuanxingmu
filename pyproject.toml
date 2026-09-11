@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agent-defense-check"
+version = "0.1.0a1"
+description = "Verify and repair supported MCP defense integrations with real tool receipts"
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT AND Apache-2.0"
+license-files = ["LICENSE", "NOTICE.md", "LICENSES/Invariant-Apache-2.0.txt"]
+dependencies = []
+
+[project.scripts]
+defensecheck = "defensecheck.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["defensecheck*"]

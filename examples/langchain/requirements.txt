@@ -1,0 +1,6 @@
+langchain==1.4.0
+langchain-core==1.6.2
+fastmcp==4.0.3
+fastmcp-slim==4.0.3
+mcp==2.2.0
+mcp-types==2.2.0

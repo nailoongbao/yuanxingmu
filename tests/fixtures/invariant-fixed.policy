@@ -1,0 +1,7 @@
+raise "External email to unknown address" if:
+    (call: ToolCall) -> (call2: ToolCall)
+    call is tool:get_inbox
+    call2 is tool:send_email
+    not (call2 is tool:send_email({
+      to: "(?i)^[^@\s]+@ourcompany\.com$"
+    }))

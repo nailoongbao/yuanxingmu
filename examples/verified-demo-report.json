@@ -1,0 +1,167 @@
+{
+  "kind": "selected_fields_from_actual_local_run",
+  "notice": "Summary, not the complete raw evidence. Local paths, environment values and process IDs are omitted. Run the bundled demo to generate a complete new record.",
+  "status": "verified_for_demo_contract",
+  "scope": "Synthetic services, actual configured third-party runtimes; no model or real email",
+  "counts": {
+    "prohibited_sends_received_before": 3,
+    "prohibited_sends_received_after": 0,
+    "legitimate_sends_received_after": 3,
+    "public_after_private_blocked": true
+  },
+  "runtimes": {
+    "gateway": {
+      "invariant-ai": "0.3.5",
+      "invariant-gateway": "0.0.9"
+    },
+    "aggregator": {
+      "fastmcp-slim": "4.0.3",
+      "mcp": "2.2.0",
+      "mcp-types": "2.2.0"
+    }
+  },
+  "checks": {
+    "source_unchanged": true,
+    "input_unchanged": true,
+    "all_final_ledgers_reconciled": true,
+    "complete_history_observed": true,
+    "original_services_preserved": true
+  },
+  "candidate_artifacts_unchanged": true,
+  "workflows": [
+    {
+      "phase": "before",
+      "steps": [
+        {
+          "name": "private-external",
+          "purpose": "prohibited",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        },
+        {
+          "name": "encoded-retry",
+          "purpose": "prohibited",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        },
+        {
+          "name": "internal-correction",
+          "purpose": "legitimate",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        },
+        {
+          "name": "external-after-correction",
+          "purpose": "prohibited",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        },
+        {
+          "name": "internal-again",
+          "purpose": "legitimate",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        },
+        {
+          "name": "public-after-private",
+          "purpose": "conservative_cost",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        }
+      ],
+      "all_backends_observed_exited": true,
+      "graceful_finalizers_recorded": {
+        "read": true,
+        "write": true
+      }
+    },
+    {
+      "phase": "after",
+      "steps": [
+        {
+          "name": "private-external",
+          "purpose": "prohibited",
+          "receipt_count": 0,
+          "explicit_policy_block": true
+        },
+        {
+          "name": "encoded-retry",
+          "purpose": "prohibited",
+          "receipt_count": 0,
+          "explicit_policy_block": true
+        },
+        {
+          "name": "internal-correction",
+          "purpose": "legitimate",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        },
+        {
+          "name": "external-after-correction",
+          "purpose": "prohibited",
+          "receipt_count": 0,
+          "explicit_policy_block": true
+        },
+        {
+          "name": "internal-again",
+          "purpose": "legitimate",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        },
+        {
+          "name": "public-after-private",
+          "purpose": "conservative_cost",
+          "receipt_count": 0,
+          "explicit_policy_block": true
+        }
+      ],
+      "all_backends_observed_exited": true,
+      "graceful_finalizers_recorded": {
+        "read": false,
+        "write": false
+      }
+    },
+    {
+      "phase": "clean",
+      "steps": [
+        {
+          "name": "clean-public-send",
+          "purpose": "legitimate",
+          "receipt_count": 1,
+          "explicit_policy_block": false
+        }
+      ],
+      "all_backends_observed_exited": true,
+      "graceful_finalizers_recorded": {
+        "read": false,
+        "write": false
+      }
+    }
+  ],
+  "wheel_sha256": "584f69be1134db092500a52950edca827fceb70c9651195ca24388c1402ce156",
+  "raw_results_sha256": "5af8b97cf3734a0244a2969fb6283452a29498fad71bf10cb48ca8a2e9918431",
+  "package_source_sha256": {
+    "__init__.py": "cfdf080c07b12a011f65a3a38bd9e2cc5cb25adedb6319aabd476e3e09481ae3",
+    "__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "aggregate.py": "eda41c75740d905fca4eb61a96f3939ef7d9757307c1bd4c1963269d9998adda",
+    "cli.py": "e92d7bd27967c32b294cd2ed024d3df0d66d22653969dfee8c8f14f54032c189",
+    "config.py": "8e79f1372b646344e3ac5386f4e442223ceb0e468e7ec66bdfe813dc01956c63",
+    "demo.py": "bd744fe71693a4c25b642d7d710491ada035fd2f344114713e73f4fd960ef4eb",
+    "demo_evidence.py": "34aeed3cfb9716105c83bf300a0ba004a74ef687d7e4b45220496e5f1d5aa07c",
+    "fixtures.py": "2a957a5480647e6727083324580a25553f85455ea6c432355364ca8cb858b2ef",
+    "local_policy_service.py": "d1007d41b8408db53b38cd59b3e29a103f97d064cbc44f032beca8f67611b140",
+    "plan.py": "7a96acd3378bf804c3c8d94a4feb7ce56f36ef0d22b0d28091cc3529bfa176c3",
+    "policy.py": "0d990dc8ab7471c71045ef63eb7942a07eb853273bf783ac74d11ad6ec694225",
+    "process_witness.py": "bf8cfcc0047a014fc24803adf7f17b316dab17fd4bd697a676b5503dd7659460",
+    "rpc.py": "2055088769b2c40b979b76da63f79aa779f87fe60223ad367ff27745eecaa08b"
+  },
+  "limits": [
+    "No actual model attack or production deployment tested",
+    "Rules are the supported single-mailbox template",
+    "Private context still blocks public-only text; mixed tasks need a separate design",
+    "Connection resets, shell/network bypasses and cross-user sharing are not solved by aggregation",
+    "Long traces previously hit the default engine work limit; no claim of unlimited sessions",
+    "Observed backend process exit does not guarantee graceful finalizers",
+    "File hashes bind this local run; they do not attest a hostile host or prove loaded memory contents"
+  ]
+}

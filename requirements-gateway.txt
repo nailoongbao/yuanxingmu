@@ -1,0 +1,2 @@
+invariant-ai==0.3.5
+invariant-gateway @ https://github.com/invariantlabs-ai/invariant-gateway/archive/9baeade022cc55de2412ba3dcae98069bd6f794a.zip

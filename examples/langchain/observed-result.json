@@ -1,0 +1,52 @@
+{
+  "kind": "selected_fields_from_actual_langchain_host_run",
+  "scope": "Actual LangChain 1.4.0 host tools; synthetic services; no model or real messages",
+  "status": "observed_with_correlated_evidence",
+  "versions": {
+    "langchain": "1.4.0",
+    "langchain-core": "1.6.2",
+    "fastmcp-slim": "4.0.3",
+    "mcp": "2.2.0",
+    "mcp-types": "2.2.0",
+    "agent-defense-check": "0.1.0a1"
+  },
+  "host_configuration": {
+    "client_mode": "legacy",
+    "stdio_keep_alive": "unchanged default (True)",
+    "reason": "The first auto-mode run failed SDK response validation before any source read or send"
+  },
+  "counts": {
+    "default": {
+      "prohibited": 0,
+      "legitimate": 2
+    },
+    "held": {
+      "prohibited": 0,
+      "legitimate": 2
+    },
+    "held-after-explicit-close": {
+      "prohibited": 1,
+      "legitimate": 0
+    },
+    "clean": {
+      "prohibited": 0,
+      "legitimate": 1
+    },
+    "task-scoped": {
+      "prohibited": 0,
+      "legitimate": 2
+    }
+  },
+  "closed_task_handle": {
+    "exception_type": "TaskScopeClosed",
+    "scope_state": "closed",
+    "in_flight": 0,
+    "no_new_backend_or_policy_activity": true
+  },
+  "source_hashes": {
+    "experiment.py": "686ed0bc0129c2e29e57517590aaa397f440717272956b4faaadf0e111879230",
+    "task_tools.py": "622a4d7d9e27528a1731c335a5b4c8dd219b407d2d20ab2d38a94cdd63007002"
+  },
+  "raw_results_sha256": "083ca094496e423420eb08840f7043b0b81da9f4793c879f44fb4063c26ff324",
+  "notice": "Synthetic data/services with actual released host and defense packages. This summary omits local paths and data; rerun for complete raw evidence. New scopes with retained private model memory are not solved."
+}
