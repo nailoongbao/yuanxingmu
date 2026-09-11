@@ -4,7 +4,7 @@
 
 Run agent work inside a Linux boundary. Keep resource access, outbound actions, and task authority outside it. Once a task reads private data, its entire task family cannot send to public destinations. Reconnecting, restarting the broker, or delegating a child does not clear that state.
 
-[中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/agent-defense-check/) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
+[中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/agent-defense-check/) · [Watch the demo](https://yh-l20.github.io/agent-defense-check/demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
 
 ![Yuanxingmu: capability grows, authority stays bounded](site/assets/yuanxingmu-poster.svg)
 
@@ -50,7 +50,9 @@ python -I -m yuanxingmu run --policy policy.json --state authority-state \
 
 Resume with the same state directory and task ID, omitting `--new-task`. See the [policy example and threat model](docs/yuanxingmu.md). Task creation, policies and mount selection are trusted host operations, not agent tools.
 
-Native OpenClaw and Hermes execution integrations are being verified separately in [examples/yuanxingmu](examples/yuanxingmu). Core results do not establish coverage of every host tool, browser, model request or messaging channel.
+The [OpenClaw native execution](examples/yuanxingmu/openclaw/README.md) and [Hermes native terminal environment](examples/yuanxingmu/hermes/README.md) examples have completed their respective integration demonstrations. OpenClaw uses a local scripted model with real native tool calls; Hermes exercises native tools without a model conversation. Coverage is limited to the tools and configurations listed in each example.
+
+The [independent Linux CI report](examples/yuanxingmu/verified-hosted-report.json) records 33 passing tests and 19 core demonstration checks. This CI run covers the execution core, not framework WebUIs or autonomous model attacks.
 
 ## Positioning
 

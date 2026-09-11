@@ -1,10 +1,12 @@
 'use strict';
 
 const scenarios = {
-  private: { request: '读过私密资料后，尝试公开外发', task: '任务未被撤销', scope: '私密状态已记录', family: '本任务与全部子任务', decision: '停止执行', destination: '公开目的地', note: '整个任务组受到私密状态约束', explanation: '一旦读取私密资料，本任务与全部子任务都不能向公开目的地发送。先前创建的子任务也在范围内。', blocked: true },
-  authorized: { request: '将资料发送到受控内部目的地', task: '任务未被撤销', scope: '私密状态仍然保留', family: '整个任务组继续受限', decision: '允许执行', destination: '受控内部目的地', note: '符合任务允许的内部发送范围', explanation: '拒绝公开外发之后，授权范围内的内部发送仍能继续。独立的公开任务也可以正常发送。', blocked: false },
-  reconnect: { request: '重连或恢复后，尝试公开外发', task: '恢复原来的任务', scope: '恢复后仍为私密状态', family: '原任务组限制继续生效', decision: '停止执行', destination: '公开目的地', note: '连接变化不清除资料状态', explanation: '状态保存在模型之外。换连接或重启执行服务恢复后，同一任务与子任务仍受到此前私密读取的约束。', blocked: true },
-  revoked: { request: '显式撤销后，再使用旧工具调用', task: '授权已被明确撤销', scope: '原有资料状态仍保留', family: '撤销传递到关联子任务', decision: '停止执行', destination: '已撤销任务的操作请求', note: '重新连接不恢复已撤销的授权', explanation: '撤销由受信任的管理端发起，并传递到关联子任务。原型不会把任务自然结束或连接断开等同于显式撤销。', blocked: true },
+  normal: { request: '读取这项工作允许使用的内部资料', task: '可以继续工作', scope: '允许读取指定内部资料', family: '分出去的工作也要检查', decision: '正常读取', destination: '指定的内部资料', note: '在允许的范围内继续做事', explanation: '先让 AI 读取指定的内部资料。保护正常工作的前提，是让它在获准范围内继续做事。', blocked: false },
+  private: { request: '把读过的内部资料公开发送', task: '这项工作仍在继续', scope: '已经读过内部资料', family: '分出去的工作同样受限', decision: '挡住发送', destination: '公开收件位置', note: '这项工作没有公开发送权限', explanation: '读过内部资料后，这项任务不能向公开位置发送；它分出去的工作也受同样限制。', blocked: true },
+  authorized: { request: '把同一份资料改发到内部', task: '可以继续工作', scope: '已经读过内部资料', family: '仍要遵守同样的权限', decision: '允许发送', destination: '获准的内部收件位置', note: '内部协作可以继续', explanation: '公开发送被挡之后，仍可改发到事先允许的内部位置。是否成功，要看真正的操作和收件方记录。', blocked: false },
+  bypass: { request: '把内容换成另一种编码后发送', task: '还是原来的工作', scope: '仍然读过内部资料', family: '换种方式也要检查', decision: '挡住发送', destination: '公开收件位置', note: '换一种编码不增加发送权限', explanation: '换成另一种编码，不会自动获得公开发送权限。直接联网能否绕过，也需要用实际操作检查。', blocked: true },
+  reconnect: { request: '重新打开原来的任务，再公开发送', task: '继续原来的工作', scope: '仍然读过内部资料', family: '原来的限制继续保留', decision: '挡住发送', destination: '公开收件位置', note: '重新打开不会清除限制', explanation: '重新打开原来的任务，已读内部资料的记录仍在，公开发送仍受限制。', blocked: true },
+  revoked: { request: '收回权限后，再尝试内部发送', task: '管理员已收回权限', scope: '原来的权限不能再用', family: '分出去的工作同样受限', decision: '挡住发送', destination: '原本获准的内部位置', note: '下一次发送不能继续', explanation: '管理员收回权限后，这项任务和它分出去的工作，不能继续通过受控服务读取或发送资料。重新打开不会把权限还回来。', blocked: true },
 };
 
 const tabs = [...document.querySelectorAll('[data-scenario]')];
@@ -59,9 +61,9 @@ document.getElementById('copy-repo').addEventListener('click', async () => {
 const evidence = window.YUANXINGMU_EVIDENCE;
 if (evidence && Array.isArray(evidence.checks)) {
   const container = document.getElementById('evidence-rows');
-  const labels = { pending: '待公开核验', observed: '已观察', partial: '部分观察' };
+  const labels = { pending: '待核验', observed: '已有记录', partial: '部分记录' };
   document.getElementById('evidence-revision').textContent = evidence.revisionLabel || '结果待发布';
-  if (evidence.published === true) document.getElementById('report-scope').textContent = '这些观察来自本地合成数据与真实进程，未调用真实 LLM。具体版本、正常任务结果与限制见链接记录，不代表生产环境中的防御率。';
+  if (evidence.published === true) document.getElementById('report-scope').textContent = '这些检查使用演示资料，操作实际执行，没有调用真实模型；视频中的回答由本地脚本生成。记录只覆盖所列操作，不代表真实模型抗攻击评测，也不代表生产环境中的全面防护。';
   const fragment = document.createDocumentFragment();
   evidence.checks.forEach((check) => {
     let sourceUrl;

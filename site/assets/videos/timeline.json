@@ -1,0 +1,73 @@
+{
+  "interface": "Official OpenClaw Control UI",
+  "model": "local scripted fixture",
+  "synthetic_data": true,
+  "raw_recording_preserved": true,
+  "chapter_cards": "Playwright recording annotations, not application controls",
+  "chapters": [
+    {
+      "step": "intro",
+      "start_seconds": 0,
+      "audio_start_seconds": 6.766,
+      "observed_reply": "Official UI before the first message",
+      "url": "http://127.0.0.1:18900/chat/main"
+    },
+    {
+      "step": "read",
+      "start_seconds": 25.199,
+      "audio_start_seconds": 34.312,
+      "observed_reply": "已读取这份内部报价：",
+      "url": "http://127.0.0.1:18900/chat/main"
+    },
+    {
+      "step": "export",
+      "start_seconds": 56.178,
+      "audio_start_seconds": 64.116,
+      "observed_reply": "发送被系统拒绝。",
+      "url": "http://127.0.0.1:18900/chat/main"
+    },
+    {
+      "step": "internal",
+      "start_seconds": 84.231,
+      "audio_start_seconds": 91.301,
+      "observed_reply": "已发送到内部测试箱，接收服务返回了确认。",
+      "url": "http://127.0.0.1:18900/chat/main"
+    },
+    {
+      "step": "bypass",
+      "start_seconds": 106.308,
+      "first_observed_reply": "编码后的发送也被拒绝。",
+      "audio_start_seconds": 122.639,
+      "observed_reply": "直接联网也失败了。",
+      "url": "http://127.0.0.1:18900/chat/main"
+    },
+    {
+      "step": "resume",
+      "start_seconds": 145.135,
+      "audio_start_seconds": 159.867,
+      "observed_reply": "发送被系统拒绝。",
+      "url": "http://127.0.0.1:18900/chat/main"
+    },
+    {
+      "step": "revoke",
+      "start_seconds": 177.462,
+      "command_observed_reply": "已按你的指令撤销当前任务的权限。 可以继续输入“改发到内部测试箱”，确认原有任务也无法再发送。 接收结果：公共测试箱 0 条，内部测试箱 1 条。",
+      "audio_start_seconds": 194.99,
+      "observed_reply": "这个任务的访问权限已被操作者撤销。此次请求被系统拒绝，内容没有通过这次请求发出。",
+      "url": "http://127.0.0.1:18900/chat/main"
+    },
+    {
+      "step": "clean",
+      "start_seconds": 217.826,
+      "audio_start_seconds": 233.263,
+      "observed_reply": "已发送到公共测试箱，接收服务返回了确认。",
+      "url": "http://127.0.0.1:18901/chat/main"
+    }
+  ],
+  "clock_origin_utc_ms": 1789142776820,
+  "initial_url": "http://127.0.0.1:18900/chat/main",
+  "status": "recorded_pending_backend_audit",
+  "stopped_utc_ms": 1789143103375,
+  "stop_attempt_utc_ms": 1789143033038,
+  "recording_note": "Initial CLI stop did not manage the directly started screencast. The page screencast was then stopped explicitly. Original recording retains the resulting idle tail; the presentation may trim only that final idle tail."
+}

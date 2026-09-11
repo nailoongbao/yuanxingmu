@@ -4,7 +4,7 @@
 
 让 Agent 在受限环境里工作，把资料读取、外部发送和任务权限交给环境之外的服务。读过私密资料后，任务就不能再向公开目的地发送；重连、恢复和派生子任务都不能清掉这条限制。
 
-[English](README.md) · [官网](https://yh-l20.github.io/agent-defense-check/) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
+[English](README.md) · [官网](https://yh-l20.github.io/agent-defense-check/) · [看实机演示](https://yh-l20.github.io/agent-defense-check/demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 
 ![元星木：让能力增长，权限有界](site/assets/yuanxingmu-poster.svg)
 
@@ -50,7 +50,9 @@ python -I -m yuanxingmu run --policy policy.json --state authority-state \
 
 恢复时使用同一状态目录和 `--task`，去掉 `--new-task`。完整配置与发送例子见[运行说明](docs/yuanxingmu.md)。这条命令的配置、任务创建与工作目录选择由可信宿主管理，不能交给被防护的 Agent 自由调用。
 
-OpenClaw 与 Hermes 的原生执行接入正在单独验证，结果及覆盖范围见 [examples/yuanxingmu](examples/yuanxingmu)。内核演示不等于整个 Agent 的所有工具已经受保护。
+[OpenClaw 原生执行](examples/yuanxingmu/openclaw/README.md)与 [Hermes 原生终端环境](examples/yuanxingmu/hermes/README.md)已分别完成接入演示。OpenClaw 使用本地脚本模型发起真实工具调用；Hermes 验证原生工具调用链，没有运行模型对话。结果只覆盖各示例列出的工具和配置。
+
+[独立 Linux CI 记录](examples/yuanxingmu/verified-hosted-report.json)保存了 33 项测试和 19 项核心演示检查的结果。它验证执行核心，不包含这两种框架的 WebUI 或真实模型攻击评测。
 
 ## 为什么做它
 

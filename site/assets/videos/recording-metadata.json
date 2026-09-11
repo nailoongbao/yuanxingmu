@@ -1,0 +1,160 @@
+{
+  "created_utc": "2026-09-11T16:22:58.835894+00:00",
+  "raw_sha256": "20fe537b67c647207591537e31f2d5c40055ddb7335f10296036f23584b7a520",
+  "raw_preserved": true,
+  "raw_duration": 327.72,
+  "kept_duration": 248.6325,
+  "output_sha256": "ed614d7a43d70e58de91e7f46b57378191e5b280998f5a7afcbb15bf6c0bd92f",
+  "encoded_duration": 248.64,
+  "timeline_sha256": "61dd523114c4f3803ff3d90359ef00892c8b74c809cd1fa7b8bf97570eb8bd3e",
+  "narration_sha256": "6a587c8c1f56aa510da1baac0d695681de257650fff5c75f903f2c7409a7ffbf",
+  "video_changes": "H264 encoding; original frame order and timing retained. Fixed disclosure in added bottom margin; original picture unscaled and uncropped.",
+  "interface": "Official OpenClaw Control UI",
+  "model": "Local scripted fixture",
+  "data": "Synthetic quotations and public announcement; loopback receivers",
+  "editing": "Only the final idle tail was trimmed. All recorded actions and intermediate waits are retained. Chinese narration, captions, and a fixed disclosure footer were added.",
+  "scope": "Configured native foreground exec and controlled resource/send requests. Revocation does not stop arbitrary local computation.",
+  "raw_release_asset": "https://github.com/yh-l20/agent-defense-check/releases/download/v0.2.0a1/yuanxingmu-official-raw.webm",
+  "files": [
+    {
+      "file": "yuanxingmu-webui.mp4",
+      "bytes": 10956515,
+      "sha256": "ed614d7a43d70e58de91e7f46b57378191e5b280998f5a7afcbb15bf6c0bd92f"
+    },
+    {
+      "file": "yuanxingmu-webui.srt",
+      "bytes": 1503,
+      "sha256": "7f5ee3f68f5394dad753ede7851d359b7f64d7286f33a83cd057ac18a2346773"
+    },
+    {
+      "file": "yuanxingmu-webui.vtt",
+      "bytes": 1551,
+      "sha256": "a6141a4ff73a7211ae1dff67b515bb9ee5bb944c8eb847844460648350ca78b3"
+    },
+    {
+      "file": "01-intro.mp4",
+      "bytes": 720511,
+      "sha256": "d28735602c4e81ed0285d55240130701f8a7017bd95e064873b3b9b85cd44dd8"
+    },
+    {
+      "file": "01-intro.srt",
+      "bytes": 207,
+      "sha256": "5ad61b76b38c9cdb4ac457142d1d0c9da208064d72c97ce5dba5d46afe8cd0d6"
+    },
+    {
+      "file": "01-intro.vtt",
+      "bytes": 221,
+      "sha256": "61d0fc4bd3564ee2e71cc00f5ba61e27874753ef0b0459a94122de26a7227b13"
+    },
+    {
+      "file": "02-read.mp4",
+      "bytes": 884121,
+      "sha256": "6046dd415e5a2fdd94c28d188e2a6ffc07aa7f81336ec26b9d1ff154e757667d"
+    },
+    {
+      "file": "02-read.srt",
+      "bytes": 182,
+      "sha256": "bdc8496e1e163732441e9c11c92c74d1eb4258c10af77a964e60e05d35a365bb"
+    },
+    {
+      "file": "02-read.vtt",
+      "bytes": 195,
+      "sha256": "4a790bc60f668cc11f3714183e760f42955e00e5f8d5a045afb8182df608b609"
+    },
+    {
+      "file": "03-export.mp4",
+      "bytes": 1026210,
+      "sha256": "7c91afc9f1b99d860752352198c758b770a678c4832924f0827c6ea54607ef58"
+    },
+    {
+      "file": "03-export.srt",
+      "bytes": 167,
+      "sha256": "c2505fe75a0a6fc1a41c3928b1fa69fe9386fbea9f1131b4b83db5bead7f0771"
+    },
+    {
+      "file": "03-export.vtt",
+      "bytes": 182,
+      "sha256": "a1a748a3dafb6a2bb060cb212c315d0c896ee41ccd29f2c1ece32508510abad6"
+    },
+    {
+      "file": "04-internal.mp4",
+      "bytes": 1304174,
+      "sha256": "f0d49f18e76d0a75a15b9cc234b37d2d1bb89c2e634eeb5bf36bdd01770a2aa4"
+    },
+    {
+      "file": "04-internal.srt",
+      "bytes": 158,
+      "sha256": "1611fee68e9691873f73ff384d2f473ae69a2a4a23637e0627639f8defd0c71c"
+    },
+    {
+      "file": "04-internal.vtt",
+      "bytes": 175,
+      "sha256": "a7973ed60a20e69f9bad038ba9e1951b8cceaf4fb236da8486538bf8533b774f"
+    },
+    {
+      "file": "05-bypass.mp4",
+      "bytes": 1939994,
+      "sha256": "9215eedc6a13eeff0f203559bd216e95046dceec2f62c072ebc4a9bf36494062"
+    },
+    {
+      "file": "05-bypass.srt",
+      "bytes": 185,
+      "sha256": "8d83023f70e54f493d465efe4dd0fdea5f670c2f3a523866a757ef0b2c4d74a7"
+    },
+    {
+      "file": "05-bypass.vtt",
+      "bytes": 200,
+      "sha256": "7916b5b44d3a6cbafe270a5122d047b2679208c903f50a829c4c6d95d8cda0eb"
+    },
+    {
+      "file": "06-resume.mp4",
+      "bytes": 1682155,
+      "sha256": "a6475833570622789f5909872ea9192028b953e68f8f093061bc7a23f3df2aa0"
+    },
+    {
+      "file": "06-resume.srt",
+      "bytes": 200,
+      "sha256": "7db0c8b059840dc53825eb0292ddb96b37e0c407f302f18e11bf91262be47a41"
+    },
+    {
+      "file": "06-resume.vtt",
+      "bytes": 215,
+      "sha256": "3ed603994c6d387ab3a2c7535d1d9fb3605dadc094965bb5032bacc0f64de7ca"
+    },
+    {
+      "file": "07-revoke.mp4",
+      "bytes": 2097735,
+      "sha256": "b472019d8a80dcf3bf77eaf4c081cd8bed5fabf4c6645241eb161f31b73c3102"
+    },
+    {
+      "file": "07-revoke.srt",
+      "bytes": 191,
+      "sha256": "6b886456ff14dcb81e3141ce5bd890c3f149a0271edd523c6aa0ee5cdb5cff74"
+    },
+    {
+      "file": "07-revoke.vtt",
+      "bytes": 206,
+      "sha256": "c02030c91a72fa0b0406aa824c3423aab293394e3fab5707abe80233ec0b0fe6"
+    },
+    {
+      "file": "08-clean.mp4",
+      "bytes": 1165433,
+      "sha256": "f3e52a08c5108bd089b608a0630274eb3f7cb638d5cf6d9db0fc4a51351bc18b"
+    },
+    {
+      "file": "08-clean.srt",
+      "bytes": 199,
+      "sha256": "c5f50939838062562741bad80357dbf1c71a2931534ab03ddaca3363af075d07"
+    },
+    {
+      "file": "08-clean.vtt",
+      "bytes": 213,
+      "sha256": "244ed605256fc9bfa51e52ae53cc54aa75f429c7cbafa217937ff4bbd273da28"
+    },
+    {
+      "file": "yuanxingmu-webui-poster.jpg",
+      "bytes": 70775,
+      "sha256": "9aa2201a0465b9eda4960328f448cd7b7200ac0a2a1c6fce4aefffe306ea92d7"
+    }
+  ]
+}

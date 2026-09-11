@@ -1,5 +1,7 @@
 # OpenClaw 的元星木执行环境
 
+要从普通用户能看到的原版聊天页面操作，见 [OpenClaw 官方 WebUI 演示](WEBUI.md)。下文是原生 CLI 接入与验证记录。
+
 这个示例把 OpenClaw 原生 `exec` 接到元星木执行器。agent 仍然使用原来的执行工具；工作命令在 Linux 沙箱中运行，私密源文件和发送凭证留在宿主。读取资料、对外发送都通过任务专属的 broker socket 完成。
 
 实际接入路径是：

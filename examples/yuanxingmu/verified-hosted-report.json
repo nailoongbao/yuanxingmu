@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "system": "Yuanxingmu",
+  "status": "verified",
+  "verified_utc": "2026-09-11T15:44:52.600712+00:00",
+  "run": {
+    "id": 34616508582,
+    "url": "https://github.com/yh-l20/agent-defense-check/actions/runs/34616508582",
+    "workflow": ".github/workflows/yuanxingmu.yml",
+    "event": "push",
+    "attempt": 1,
+    "commit": "5ef22bbdf7b9f7d3c10695daf98477fecddbfe16",
+    "conclusion": "success",
+    "started_utc": "2026-09-11T15:30:20Z",
+    "completed_utc": "2026-09-11T15:30:39Z"
+  },
+  "environment": {
+    "runner": "ubuntu-24.04",
+    "platform": "Linux-6.17.0-1022-azure-x86_64-with-glibc2.39",
+    "python": "3.12.14",
+    "sandbox": {
+      "available": true,
+      "platform": "linux",
+      "bwrap": "/opt/yuanxingmu/bin/bwrap",
+      "version": "bubblewrap 0.9.0",
+      "reason": "Linux namespace and read-only runtime smoke test passed"
+    }
+  },
+  "apparmor_condition": {
+    "profile_name": "yuanxingmu-bwrap",
+    "executable_attachment": "/opt/yuanxingmu/bin/bwrap",
+    "profile_abi": "4.0",
+    "profile_flags": [
+      "unconfined"
+    ],
+    "explicit_rule": "userns,",
+    "binary_install_from": "/usr/bin/bwrap",
+    "configured_owner_and_mode": "root:root 0755; install step succeeded",
+    "packaged_binary_cmp_passed": true,
+    "kernel.apparmor_restrict_unprivileged_userns": 1,
+    "global_setting_evidence": "The setup step asserted this exact value after loading the profile and succeeded.",
+    "meaning": "A named per-executable exception allows bubblewrap to establish namespaces. This profile does not itself confine the workload; execution restrictions come from sandbox.py arguments. It is not limited to one command line or caller.",
+    "global_apparmor_userns_restriction_disabled": false
+  },
+  "tests": {
+    "passed": 33,
+    "failed": 0,
+    "skipped": 0,
+    "groups": {
+      "test_yuanxingmu_authority": 15,
+      "test_yuanxingmu_broker": 9,
+      "test_yuanxingmu_run": 2,
+      "test_yuanxingmu_sandbox": 7
+    },
+    "note": "Executed on Linux. The Windows fail-closed case patches the platform value; this is not a native Windows isolation test."
+  },
+  "demo": {
+    "isolated_worker_processes": 6,
+    "reported_checks": {
+      "private_export_denied": true,
+      "encoded_export_denied": true,
+      "internal_send_acknowledged": true,
+      "existing_child_inherits_read": true,
+      "child_internal_send_acknowledged": true,
+      "direct_network_denied": true,
+      "host_resource_hidden": true,
+      "authority_hidden": true,
+      "identity_field_rejected": true,
+      "arbitrary_url_rejected": true,
+      "worker_cannot_create_root": true,
+      "worker_cannot_clear_labels": true,
+      "workspace_write_works": true,
+      "broker_restart_preserves_restriction": true,
+      "independent_public_task_works": true,
+      "revocation_reaches_child": true,
+      "missing_broker_fails_closed": true,
+      "receiver_exactly_three_expected_receipts": true,
+      "public_receiver_only_public_content": true
+    },
+    "checks_recomputed_from_saved_observations": 18,
+    "summary_only_check": {
+      "name": "missing_broker_fails_closed",
+      "value": true,
+      "limit": "The result is present in the matched demo report; the caught exception was not separately persisted."
+    },
+    "all_workers_exited": true,
+    "receiver_exited": true
+  },
+  "normal_work": {
+    "authorized_root_internal_send": true,
+    "authorized_child_internal_send": true,
+    "independent_public_task_send": true,
+    "workspace_write": true
+  },
+  "receipts": {
+    "count": 3,
+    "independent_receiver_matches_demo_copy": true,
+    "request_ids_match_worker_intent_and_acknowledgement": true,
+    "body_sha256_verified": true,
+    "records": [
+      {
+        "destination": "/internal",
+        "request_id": "d856b79707a34ce0b9a4e6609ab8e1bf",
+        "body_sha256": "f27af59fa7d01bc3c75d84ee15157d940324b65c0db85600ec8a83ccdb795335"
+      },
+      {
+        "destination": "/internal",
+        "request_id": "2f7a22aa436249aea6c71557022b9ed0",
+        "body_sha256": "885b9e05e360a933ab9503a7f983e7484a612731b0011ce38ef3c8ba5dd115a0"
+      },
+      {
+        "destination": "/public",
+        "request_id": "fc5123514a574cb09c614b8f117d4db7",
+        "body_sha256": "40ea48999f8b7d7698f66cff3749dcfb5beb1bb6a6274c4f2b57b2f68ef5c2a3"
+      }
+    ]
+  },
+  "persisted_authority": {
+    "sqlite_integrity": "ok",
+    "ordered_events": 15,
+    "child_existed_before_private_read": true,
+    "private_label_only_on_original_family": true,
+    "root_and_child_revoked": true,
+    "independent_public_task_remained_active": true
+  },
+  "sandbox_observations": {
+    "distinct_namespaces": [
+      "user",
+      "pid",
+      "net",
+      "ipc",
+      "mnt",
+      "uts"
+    ],
+    "no_new_privs": true,
+    "all_capability_sets_zero": true,
+    "host_private_file_and_symlink_hidden": true,
+    "explicit_readonly_resource_readable_not_writable": true,
+    "host_credential_fixture_not_inherited": true,
+    "direct_tcp_receipts": 0,
+    "explicit_broker_socket_receipts": 1,
+    "background_pidfd_exited_after_main_exit": true,
+    "background_pidfd_exited_after_launcher_group_cancellation": true
+  },
+  "source_verification": {
+    "commit": "5ef22bbdf7b9f7d3c10695daf98477fecddbfe16",
+    "method": "Each recorded SHA256 was compared against git show COMMIT:path bytes.",
+    "matching_python_files": 11,
+    "sha256": {
+      "yuanxingmu/client.py": "da3ecd5d69635028724e4911493a79d95b05d9897c1f79f6f0dd9ce5844fabfc",
+      "yuanxingmu/__init__.py": "973918d2f9ccc14666bc0dbe04ce6e745693c4ae8912c9cbf8233adb539bc547",
+      "yuanxingmu/authority.py": "fc6498b3df38d2a8c215408c030cbb6c217288eb8caf0327d66d384b12c30c3e",
+      "yuanxingmu/demo.py": "6d13f20cdc9a493aff33988b3750e38aa33cf52fd790431b15b6175f9276eb46",
+      "yuanxingmu/run.py": "42662b7ae71dabfbf069ebd58a1b89e2a90929895ea427921bc3c1a0082d381a",
+      "yuanxingmu/broker.py": "c97cebba3818887aac2f1a54191465bd28352ec387920f6e471da518aeb90fa8",
+      "yuanxingmu/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+      "yuanxingmu/receipts.py": "a69ebeebd499526418fa23797168ee9b83c686e232c315f52db71e634c694882",
+      "yuanxingmu/worker.py": "3aa6977d8dd049f178135783d7f925915b855cea251952dda670a67469618f53",
+      "yuanxingmu/sandbox.py": "dd693c87fe532150b55cce2e3ced72fd6dae7c04520dd595434cfb2306305d23",
+      "yuanxingmu/cli.py": "4b10bd7158dc4917c1169612a140ee9ddc9a1450dab28abc84a4a6a496809e2a"
+    },
+    "sandbox_test_path": "tests/test_yuanxingmu_sandbox.py",
+    "sandbox_test_sha256": "63cf2d45b4ceebeb8622babe48e9f7af3ad0472c9d19f27ba7c07691b9c4e64a"
+  },
+  "download_verification": {
+    "artifact_id": 10271370953,
+    "artifact_name": "yuanxingmu-receipts",
+    "artifact_zip_sha256": "3a0cda59fb57bd3daa17ad4408dd1a0eb2042e5b8bd236966d98bd1aa61f63bc",
+    "artifact_bytes": 16727,
+    "artifact_sha256_matches_github_api_digest": true,
+    "artifact_files": 21,
+    "logs_zip_sha256": "f5e95ab394a9a7c11ba86209bc35c02e74c754af92d2c4977c288cb68d47cdd8",
+    "downloaded_artifact_files_unchanged_during_review": true
+  },
+  "business_cost": {
+    "public_text_after_private_read_blocked": true,
+    "explanation": "Task-wide labels conservatively block even harmless public summaries after private reads; no automatic declassification."
+  },
+  "scope": "Synthetic Python workers; real Linux isolation, SQLite and independent HTTP receipts. No model attack evaluation.",
+  "limitations": [
+    "No autonomous model attack evaluation",
+    "No OpenClaw/Hermes or official WebUI verification in this CI run",
+    "Shared-kernel sandbox; this run does not test kernel exploits or resource quotas",
+    "Process exit evidence does not establish graceful application cleanup"
+  ]
+}

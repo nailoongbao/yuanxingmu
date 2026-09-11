@@ -1,0 +1,68 @@
+{
+  "chapters": [
+    {
+      "step": "intro",
+      "title": "元星木：让 AI 在权限范围内做事",
+      "start_seconds": 0.0,
+      "end_seconds": 25.199,
+      "file": "01-intro.mp4",
+      "captions": "01-intro.vtt"
+    },
+    {
+      "step": "read",
+      "title": "先正常读取",
+      "start_seconds": 25.199,
+      "end_seconds": 56.178,
+      "file": "02-read.mp4",
+      "captions": "02-read.vtt"
+    },
+    {
+      "step": "export",
+      "title": "公开发送被拦",
+      "start_seconds": 56.178,
+      "end_seconds": 84.231,
+      "file": "03-export.mp4",
+      "captions": "03-export.vtt"
+    },
+    {
+      "step": "internal",
+      "title": "内部协作照常",
+      "start_seconds": 84.231,
+      "end_seconds": 106.308,
+      "file": "04-internal.mp4",
+      "captions": "04-internal.vtt"
+    },
+    {
+      "step": "bypass",
+      "title": "换种方式再试",
+      "start_seconds": 106.308,
+      "end_seconds": 145.135,
+      "file": "05-bypass.mp4",
+      "captions": "05-bypass.vtt"
+    },
+    {
+      "step": "resume",
+      "title": "重开对话，限制仍在",
+      "start_seconds": 145.135,
+      "end_seconds": 177.462,
+      "file": "06-resume.mp4",
+      "captions": "06-resume.vtt"
+    },
+    {
+      "step": "revoke",
+      "title": "收回权限，停止发送",
+      "start_seconds": 177.462,
+      "end_seconds": 217.826,
+      "file": "07-revoke.mp4",
+      "captions": "07-revoke.vtt"
+    },
+    {
+      "step": "clean",
+      "title": "独立公开任务照常",
+      "start_seconds": 217.826,
+      "end_seconds": 248.6325,
+      "file": "08-clean.mp4",
+      "captions": "08-clean.vtt"
+    }
+  ]
+}
