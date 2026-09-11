@@ -6,6 +6,7 @@
   <meta name="referrer" content="no-referrer">
   <title>元星木 · 本地工作台</title>
   <script src="/app.js"></script>
+  <script src="/mail.js"></script>
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" href="/mark.svg" type="image/svg+xml">
 </head>
@@ -46,7 +47,7 @@
               <label class="file-picker" for="document-files"><span class="file-plus" aria-hidden="true">＋</span><span><strong>选择文本文件</strong><small id="file-limit-note">UTF-8 文本，每份最多 256 KB</small></span><input id="document-files" type="file" accept=".txt,.md,.csv,.json,.log,.yaml,.yml,.text,text/plain,text/markdown" multiple></label>
               <div id="document-list" class="document-list"></div>
               <p id="file-error" class="field-error" role="alert" hidden></p>
-              <p class="field-note">资料会复制到这份工作中。创建后，本版不能再添加资料，也不会额外配置发送目的地。</p>
+              <p class="field-note">资料会复制到这份工作中。创建后，本版不能再添加资料。需要发邮件时，由 AI 提交草稿，再由你核对并确认发送。</p>
             </div>
             <button id="create-submit" class="button button-primary button-wide" type="submit">创建独立工作<span aria-hidden="true">↗</span></button>
           </fieldset>
@@ -57,6 +58,27 @@
       <section class="work-section" aria-labelledby="works-title">
         <div class="works-heading"><div><p class="section-index">在这里查看与管理</p><h2 id="works-title">我的工作 <span id="work-count" class="count" hidden></span></h2></div><button id="refresh-button" class="button button-quiet" type="button">刷新状态 <span aria-hidden="true">↻</span></button></div>
         <p class="section-note">每份工作的运行状态和资料权限分别显示。</p>
+        <details id="mail-account-panel" class="mail-account-panel">
+          <summary><span>发件邮箱设置</span><span id="mail-account-status" class="mail-account-status">等待连接</span></summary>
+          <div class="mail-account-content">
+            <p class="field-note">设置用于提交邮件的邮箱。AI 可以拟稿，每封邮件仍需你在工作台核对并确认发送。</p>
+            <form id="mail-account-form" autocomplete="off">
+              <fieldset id="mail-account-fields" disabled>
+                <legend class="visually-hidden">发件邮箱设置</legend>
+                <div class="field"><label for="mail-from">发件邮箱地址</label><input id="mail-from" type="email" required maxlength="254" placeholder="you@example.com" autocomplete="off" spellcheck="false"></div>
+                <div class="field"><label for="mail-username">邮箱登录账号</label><input id="mail-username" type="text" required maxlength="1024" placeholder="通常与邮箱地址相同" autocomplete="off" spellcheck="false"></div>
+                <div class="field"><label for="mail-password">邮箱授权码或应用密码</label><input id="mail-password" type="password" required maxlength="16384" autocomplete="new-password" aria-describedby="mail-password-note"><p id="mail-password-note" class="field-note">填写邮箱服务商提供的发信凭证。浏览器不保存；保存后交给本机发信服务，AI 无法读取。</p></div>
+                <details id="mail-server-settings" class="mail-server-settings" open>
+                  <summary>邮箱服务器设置</summary>
+                  <div class="mail-server-fields"><div class="field"><label for="mail-host">发信服务器 <span class="optional">SMTP SSL</span></label><input id="mail-host" type="text" required maxlength="253" placeholder="smtp.example.com" autocomplete="off" spellcheck="false"></div><div class="field"><label for="mail-port">端口</label><input id="mail-port" type="number" required min="1" max="65535" step="1" value="465" inputmode="numeric"></div></div>
+                  <p class="field-note">请按邮箱服务商的说明填写；本版使用 SSL 加密连接。</p>
+                </details>
+                <div class="mail-account-actions"><button id="mail-account-save" class="button button-secondary" type="submit">保存发件邮箱</button><button id="mail-account-refresh" class="button button-quiet" type="button">重新读取设置</button></div>
+              </fieldset>
+              <p id="mail-account-message" class="form-message" role="status" aria-live="polite" hidden></p>
+            </form>
+          </div>
+        </details>
         <div id="profile-list" class="profile-list" aria-busy="true"><div class="empty-state"><span class="empty-symbol" aria-hidden="true">◇</span><h3>正在读取本机工作</h3><p>这里只显示本机实际创建的工作。</p></div></div>
         <p id="refresh-time" class="refresh-time" aria-live="off"></p>
         <aside class="usage-note"><span aria-hidden="true">i</span><p>关闭网页或工作台不会停止正在运行的工作。暂时不用时，请点击“暂时关闭”；正常关闭后可以再启动。</p></aside>
@@ -66,6 +88,34 @@
   </main>
   <dialog id="revoke-dialog" aria-labelledby="revoke-title" aria-describedby="revoke-description">
     <div class="dialog-body"><p class="section-index">收回资料权限</p><h2 id="revoke-title">永久收回这份工作的权限？</h2><p id="revoke-work-name" class="dialog-work-name"></p><p id="revoke-description">确认后，这份工作不能再通过元星木读取资料或发送内容。本版无法恢复这份权限。</p><p class="dialog-note">这不会清除 AI 已经读到的内容，也不会停止它的运行。如需停止，请另点“暂时关闭”。</p><div class="dialog-actions"><button id="cancel-revoke" class="button button-secondary" type="button" autofocus>暂不收回</button><button id="confirm-revoke" class="button button-danger" type="button">永久收回权限</button></div></div>
+  </dialog>
+  <dialog id="mail-dialog" class="mail-dialog" aria-labelledby="mail-title">
+    <div class="dialog-body">
+      <div class="mail-dialog-heading"><div><p id="mail-work-name" class="section-index"></p><h2 id="mail-title">邮件草稿</h2></div><button id="mail-close" class="button button-quiet" type="button" autofocus>关闭</button></div>
+      <p id="mail-feedback" class="form-message" role="status" aria-live="polite" hidden></p>
+      <section id="mail-list-panel" aria-label="这份工作的邮件草稿">
+        <div class="mail-list-toolbar"><p class="field-note">AI 提交的草稿会出现在这里。核对收件人、主题和全文后，才能发送。</p><button id="mail-list-refresh" class="button button-secondary" type="button">刷新草稿</button></div>
+        <div id="mail-drafts" class="mail-drafts" aria-busy="false"></div>
+      </section>
+      <section id="mail-detail-panel" aria-label="邮件全文与发送确认" hidden>
+        <div class="mail-detail-toolbar"><button id="mail-back" class="button button-quiet" type="button">返回草稿列表</button><button id="mail-reload" class="button button-quiet" type="button">重新读取草稿</button></div>
+        <div class="mail-detail-meta"><span id="mail-draft-status" class="status-badge"></span><span id="mail-version" class="field-note"></span></div>
+        <p id="mail-state-note" class="mail-state-note"></p>
+        <dl id="mail-read" class="mail-read" hidden><div><dt>发件人</dt><dd id="mail-read-from"></dd></div><div><dt>收件人</dt><dd id="mail-read-recipient"></dd></div><div><dt>主题</dt><dd id="mail-read-subject"></dd></div><div class="mail-body-field"><dt>全文</dt><dd id="mail-read-body" class="mail-full-body"></dd></div></dl>
+        <form id="mail-edit-form" class="mail-edit-form" autocomplete="off" hidden>
+          <fieldset id="mail-edit-fields"><legend class="visually-hidden">编辑邮件草稿</legend>
+            <div class="field"><label for="mail-edit-recipient">收件人邮箱</label><input id="mail-edit-recipient" type="email" required maxlength="254" autocomplete="off" spellcheck="false"></div>
+            <div class="field"><label for="mail-edit-subject">主题 <span class="optional">最多 200 个字符</span></label><input id="mail-edit-subject" type="text" maxlength="200" autocomplete="off"></div>
+            <div class="field"><label for="mail-edit-body">全文</label><textarea id="mail-edit-body" rows="12" spellcheck="false" aria-describedby="mail-body-limit"></textarea><p id="mail-body-limit" class="field-note">纯文本正文，最多 64 KB。</p></div>
+            <p class="field-note">保存后需要重新核对，保存草稿不会发送邮件。</p>
+            <div class="mail-edit-actions"><button id="mail-edit-save" class="button button-secondary" type="submit">保存修改</button><button id="mail-edit-discard" class="button button-quiet" type="button">放弃修改</button></div>
+          </fieldset>
+        </form>
+        <div id="mail-cancel-confirmation" class="mail-cancel-confirmation" hidden><p>弃用后，这份草稿不能再发送。</p><div class="mail-edit-actions"><button id="mail-cancel-confirm" class="button button-outline-danger" type="button">确认弃用草稿</button><button id="mail-cancel-keep" class="button button-secondary" type="button">保留草稿</button></div></div>
+        <div id="mail-review-confirmation" class="mail-review-confirmation"><label><input id="mail-reviewed" type="checkbox"><span>我已核对发件人、收件人、主题和全文</span></label><p id="mail-send-reason" class="field-note"></p></div>
+        <div class="mail-detail-actions"><div><button id="mail-edit-start" class="button button-secondary" type="button">编辑草稿</button><button id="mail-cancel-start" class="button button-quiet" type="button">弃用草稿</button></div><button id="mail-send" class="button button-primary" type="button" disabled>确认发送这封邮件</button><button id="mail-retry" class="button button-secondary" type="button" hidden>继续确认这次提交</button></div>
+      </section>
+    </div>
   </dialog>
 </body>
 </html>

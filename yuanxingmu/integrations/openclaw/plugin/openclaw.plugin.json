@@ -5,18 +5,20 @@
   "categories": ["security", "runtime"],
   "activation": {"onStartup": true},
   "contracts": {
-    "tools": ["yuanxingmu_read", "yuanxingmu_send", "yuanxingmu_status"]
+    "tools": ["yuanxingmu_read", "yuanxingmu_send", "yuanxingmu_status", "yuanxingmu_prepare_email"]
   },
   "toolMetadata": {
     "yuanxingmu_read": {"optional": true},
     "yuanxingmu_send": {"optional": true},
-    "yuanxingmu_status": {"optional": true}
+    "yuanxingmu_status": {"optional": true},
+    "yuanxingmu_prepare_email": {"optional": true}
   },
   "configSchema": {
     "type": "object",
     "additionalProperties": false,
     "required": ["python", "corePath", "workspace", "brokerSocket", "bwrap", "auditPath", "operatorSocket", "resourceIds", "destinationIds"],
     "properties": {
+      "reviewedMail": {"type": "boolean"},
       "python": {"type": "string", "pattern": "^/"},
       "corePath": {"type": "string", "pattern": "^/"},
       "workspace": {"type": "string", "pattern": "^/"},

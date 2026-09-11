@@ -26,7 +26,8 @@ def build(output, *, dev=False):
         raise RuntimeError("Commit reviewed changes before a publishable build")
     data = {name: (ROOT / source).read_bytes() if dev else git("show", head + ":" + source) for name, source in INPUTS.items()}
     epoch = time.time() if dev else int(git("show", "-s", "--format=%ct", head))
-    metadata = {"schema_version": 1, "installer_version": "0.1.0a1", "runtime_version": "0.4.0a1",
+    pins = json.loads(data["yxm_setup/pins.json"])
+    metadata = {"schema_version": 1, "installer_version": pins["installer_version"], "runtime_version": pins["runtime_version"],
                 "source_commit": None if dev else head, "publishable": not dev,
                 "files": {name: {"bytes": len(value), "sha256": hashlib.sha256(value).hexdigest()} for name, value in data.items()}}
     data["__main__.py"] = ENTRY

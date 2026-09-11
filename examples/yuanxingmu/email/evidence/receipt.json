@@ -1,0 +1,9 @@
+{
+  "time": "2026-09-11T22:17:07.809615+00:00",
+  "sender": "sender@example.test",
+  "recipient": "buyer@example.test",
+  "subject": "请确认会议室设备报价",
+  "body": "您好，会议室设备采购报价为 200000 元，确认后 30 天交付。\n请确认是否按此方案继续。\n（本机演示资料，不是真实订单。）",
+  "message_id": "<yxm.45378705e64fe3de0f60d2f37555f6064fb24bcaca905f3376295fcc4374cbc0@yuanxingmu.invalid>",
+  "synthetic_local_receiver": true
+}

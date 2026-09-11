@@ -1,7 +1,7 @@
 """Single-user loopback UI over the existing persistent OpenClaw authority.
 
 The browser cannot supply paths, commands, ports, or policy. Jobs are durable
-receipts, not instructions replayed after a restart. Secrets only reach init.
+receipts, not instructions replayed after a restart. Credentials stay on the host.
 """
 from __future__ import annotations
 
@@ -29,6 +29,7 @@ import webbrowser
 
 from .. import openclaw as core
 from ..gateway_network import _upstream
+from ..mail_transport import MailAccount, validate_draft
 
 LIMITS = {"documents": 8, "document_bytes": 262144, "total_document_bytes": 1048576}
 # JSON may escape every content character as six bytes.
@@ -58,6 +59,15 @@ def _fault(exc: Exception):
         return exc.public()
     # Never return exception text: upstream errors can contain keys or documents.
     reason = str(exc)
+    mail_errors = {
+        "mail_draft_changed": "这封草稿已经改变，请重新打开并核对最新内容。",
+        "mail_draft_not_pending": "这封草稿已经取消或开始发送，不能再修改或重新发送。",
+        "mail_account_changed": "发件邮箱已改变，请重新核对发件地址后再确认。",
+        "mail_account_missing": "请先设置这台电脑使用的发件邮箱。",
+        "reviewed_mail_not_enabled": "这项旧工作没有邮件核对功能，请保留原工作并建立新工作。",
+    }
+    if reason in mail_errors:
+        return {"code": reason, "message": mail_errors[reason]}
     if "task_revoked" in reason:
         return {"code": "task_revoked", "message": "这项工作的权限已永久收回，不能重新开启。"}
     if "profile_already_running_or_starting" in reason:
@@ -254,6 +264,13 @@ class Workbench:
                 raise ValueError("profile_identity_changed")
             if not isinstance(entry.get("port"), int) or not 1024 <= entry["port"] <= 65535:
                 raise ValueError("profile_port_changed")
+        if "mail_account" in catalog:
+            account = catalog["mail_account"]
+            if not isinstance(account, dict) or set(account) != {"id", "config"} or not isinstance(account["id"], str) or not HEX_ID.fullmatch(account["id"]):
+                raise ValueError("mail_account_changed")
+            MailAccount(**account["config"])
+        if not isinstance(catalog.get("mail_account_requests", {}), dict):
+            raise ValueError("mail_account_changed")
 
     def _check_storage(self):
         for path, expected, directory in (
@@ -320,6 +337,67 @@ class Workbench:
     def info(self):
         return {"application": "元星木", "runtime": copy.deepcopy(self.runtime_status), "limits": dict(LIMITS)}
 
+    def mail_account(self):
+        with self.mutex:
+            self._check_storage()
+            account = self.catalog.get("mail_account")
+            if not account:
+                return {"configured": False, "account_id": None, "from_address": "", "host": "", "port": 465, "username": ""}
+            return {"configured": True, "account_id": account["id"],
+                    **{name: account["config"][name] for name in ("from_address", "host", "port", "username")}}
+
+    def set_mail_account(self, value, request_key):
+        if not isinstance(request_key, str) or not HEX_ID.fullmatch(request_key):
+            raise APIError(400, "invalid_request_key", "操作标识无效，请重新提交。")
+        try:
+            if not isinstance(value, dict) or set(value) != {"host", "port", "username", "password", "from_address"}:
+                raise ValueError("invalid_fields")
+            account = MailAccount(**value)
+        except (TypeError, ValueError):
+            raise APIError(400, "invalid_mail_account", "请检查邮箱服务器、端口、账号、授权码和发件地址；这版使用加密的 SMTP 连接。") from None
+        config = {name: getattr(account, name) for name in value}
+        with self.mutex:
+            self._check_storage()
+            if self.closing or self.write_failed:
+                raise APIError(409, "manager_closing", "工作台正在关闭或保存失败，请重新打开后设置。")
+            fingerprint = hmac.new(bytes.fromhex(self.catalog["fingerprint_key"]),
+                json.dumps(config, sort_keys=True).encode(), hashlib.sha256).hexdigest()
+            requests = self.catalog.setdefault("mail_account_requests", {})
+            previous = requests.get(request_key)
+            if previous:
+                if not hmac.compare_digest(previous["fingerprint"], fingerprint):
+                    raise APIError(409, "request_conflict", "这次设置的内容已改变，请重新提交。")
+                if self.catalog.get("mail_account", {}).get("id") != previous["account_id"]:
+                    raise APIError(409, "mail_account_changed", "邮箱设置后来已经改变，请刷新后核对。")
+                return self.mail_account()
+            if len(requests) >= 512:
+                raise APIError(409, "settings_limit", "这份预览工作台的邮箱设置记录已达到上限，请保留原目录。")
+            current = self.catalog.get("mail_account")
+            identifier = current["id"] if current and current["config"] == config else uuid.uuid4().hex
+            self.catalog["mail_account"] = {"id": identifier, "config": config}
+            requests[request_key] = {"fingerprint": fingerprint, "account_id": identifier}
+            try:
+                self._save()
+            except Exception:
+                self.write_failed = True
+                raise
+            return self.mail_account()
+
+    def mail_view(self, identifier, draft_id=None):
+        lock = self._core_lock(identifier)
+        if not lock.acquire(blocking=False):
+            raise APIError(409, "profile_busy", "这项工作有操作正在执行，请稍后查看邮件。")
+        try:
+            with self.mutex:
+                path = self._profile_path(self._entry(identifier))
+                features = json.loads((path / "profile.json").read_text()).get("features", [])
+            if "reviewed_email_v1" not in features:
+                return {"supported": False, "active": False, "drafts": []}
+            result = core.review_profile(path, "get" if draft_id else "list", {"draft_id": draft_id} if draft_id else {})
+            return {"supported": True, **result}
+        finally:
+            lock.release()
+
     def _core_lock(self, identifier):
         with self.mutex:
             return self.core_locks.setdefault(identifier, threading.RLock())
@@ -363,7 +441,7 @@ class Workbench:
             self._check_storage()
             entry = copy.deepcopy(self._entry(identifier))
         result = {key: entry[key] for key in ("id", "name", "created_at", "model_id", "documents")}
-        result.update(status="failed", revoked=None, pending=None)
+        result.update(status="failed", revoked=None, pending=None, features=[])
         cached_pending = None
         try:
             if entry["phase"] != "created":
@@ -371,6 +449,7 @@ class Workbench:
             else:
                 with self.mutex:
                     path = self._profile_path(entry)
+                    result["features"] = [name for name in json.loads((path / "profile.json").read_text()).get("features", []) if name == "reviewed_email_v1"]
                 actual = self._remember(identifier, observed) if observed is not None else self._observe(identifier, path)
                 cached_pending = actual.get("_pending_observation")
                 if actual.get("status") not in STATUSES:
@@ -424,6 +503,21 @@ class Workbench:
             if not isinstance(value, dict) or value != expected:
                 raise APIError(400, "invalid_fields", "操作参数无效；收回权限需要明确确认。")
             payload = None
+        elif action in {"mail_edit", "mail_send", "mail_cancel"}:
+            fields = {"draft_id", "revision", "digest"}
+            fields |= {"draft"} if action == "mail_edit" else {"account_id", "confirm"} if action == "mail_send" else set()
+            if (not isinstance(value, dict) or set(value) != fields or not isinstance(value.get("draft_id"), str)
+                    or not HEX_ID.fullmatch(value["draft_id"]) or type(value.get("revision")) is not int or value["revision"] < 1
+                    or not isinstance(value.get("digest"), str) or not re.fullmatch(r"[0-9a-f]{64}", value["digest"])):
+                raise APIError(400, "invalid_mail_review", "邮件核对记录不完整，请重新打开草稿。")
+            payload = copy.deepcopy(value)
+            if action == "mail_edit":
+                try:
+                    payload["draft"] = validate_draft(value["draft"])
+                except ValueError:
+                    raise APIError(400, "invalid_mail_draft", "请填写一个收件邮箱、200 字以内的主题和 64 KB 以内的纯文本正文。") from None
+            if action == "mail_send" and (value["confirm"] != "send" or not isinstance(value["account_id"], str) or not HEX_ID.fullmatch(value["account_id"])):
+                raise APIError(400, "mail_confirmation_required", "请核对发件人、收件人、主题和全文，再明确确认这封邮件。")
         else:
             raise APIError(404, "not_found", "没有这个操作。")
         fingerprint_input = json.dumps([action, identifier, value], ensure_ascii=True, sort_keys=True, separators=(",", ":")).encode()
@@ -456,6 +550,12 @@ class Workbench:
                 if identifier in self.pending:
                     raise APIError(409, "profile_busy", "这项工作有操作尚未完成，请稍候。")
                 self._profile_path(entry)
+                if action == "mail_send":
+                    account = self.catalog.get("mail_account")
+                    if account is None:
+                        raise APIError(409, "mail_account_missing", "请先设置发件邮箱。")
+                    if account["id"] != payload["account_id"]:
+                        raise APIError(409, "mail_account_changed", "发件邮箱已改变，请重新核对发件地址。")
             job_id = uuid.uuid4().hex
             job = {"id": job_id, "profile_id": identifier, "action": action, "status": "running", "created_at": _now()}
             self.jobs[job_id] = job
@@ -505,7 +605,7 @@ class Workbench:
                 imported[document["name"]] = source
             core.init_profile(path, node=self.runtime.node, openclaw_package=self.runtime.openclaw_package,
                 bwrap=self.runtime.bwrap, model_url=payload["model_url"], model_id=payload["model_id"], api_key=payload["api_key"],
-                documents=imported, destinations={}, port=entry["port"])
+                documents=imported, destinations={}, port=entry["port"], reviewed_mail=True)
             with self.mutex:
                 self._check_storage()
                 entry["identity"] = _identity(path, directory=True)
@@ -526,6 +626,7 @@ class Workbench:
         core_lock = self._core_lock(entry["id"])
         core_lock.acquire()
         outcome = {}
+        extra = {}
         try:
             if job["action"] == "create":
                 self._create(entry, payload)
@@ -533,7 +634,19 @@ class Workbench:
             else:
                 with self.mutex:
                     path = self._profile_path(entry)
-                observed = core.start_profile(path) if job["action"] == "start" else core.control_profile(path, job["action"])
+                if job["action"].startswith("mail_"):
+                    if job["action"] == "mail_send":
+                        with self.mutex:
+                            self._check_storage()
+                            account = self.catalog.get("mail_account")
+                            if not account or account["id"] != payload["account_id"]:
+                                raise RuntimeError("mail_account_changed")
+                            payload["account"] = copy.deepcopy(account["config"])
+                    extra = core.review_profile(path, job["action"].removeprefix("mail_"), payload)
+                    extra.pop("ok", None)
+                    observed = core.control_profile(path, "status")
+                else:
+                    observed = core.start_profile(path) if job["action"] == "start" else core.control_profile(path, job["action"])
                 if job["action"] == "start" and observed.get("status") != "ready":
                     raise RuntimeError("start_unconfirmed")
                 if job["action"] == "revoke" and observed.get("task", {}).get("revoked") is not True:
@@ -547,7 +660,7 @@ class Workbench:
             summary = self.summary(entry["id"], observed=observed)
             if summary.get("error") and job["action"] in {"create", "start"}:
                 raise RuntimeError("state_unconfirmed")
-            outcome = {"status": "succeeded", "result": {"profile": summary}}
+            outcome = {"status": "succeeded", "result": {"profile": summary, **extra}}
             if job["action"] == "start":
                 url = observed.get("dashboard_url", "")
                 if not re.fullmatch(r"http://127\.0\.0\.1:" + str(entry["port"]) + r"/#token=[A-Za-z0-9_-]{16,128}", url):
@@ -655,6 +768,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.command != "POST" and length not in (None, "0"):
             raise APIError(400, "unexpected_body", "此操作不接收请求内容。")
         static = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript; charset=utf-8"),
+                  "/mail.js": ("mail.js", "text/javascript; charset=utf-8"),
                   "/styles.css": ("styles.css", "text/css; charset=utf-8"), "/mark.svg": ("mark.svg", "image/svg+xml")}
         if self.path in static and self.command == "GET":
             filename, content_type = static[self.path]
@@ -668,6 +782,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, manager.info())
             if self.path == "/api/profiles":
                 return self._send(200, manager.profiles())
+            if self.path == "/api/mail-account":
+                return self._send(200, manager.mail_account())
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/mail(?:/([0-9a-f]{32}))?", self.path)
+            if match:
+                return self._send(200, manager.mail_view(match[1], match[2]))
             match = re.fullmatch(r"/api/jobs/([0-9a-f]{32})", self.path)
             if match:
                 return self._send(200, manager.job(match[1]))
@@ -698,6 +817,11 @@ class Handler(BaseHTTPRequestHandler):
                 raise APIError(400, "invalid_json", "提交内容格式无效。") from None
             if self.path == "/api/profiles":
                 return self._send(202, manager.submit("create", None, value, request_key))
+            if self.path == "/api/mail-account":
+                return self._send(200, manager.set_mail_account(value, request_key))
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/mail/(edit|send|cancel)", self.path)
+            if match:
+                return self._send(202, manager.submit("mail_" + match[2], match[1], value, request_key))
             match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/(start|stop|revoke)", self.path)
             if match:
                 return self._send(202, manager.submit(match[2], match[1], value, request_key))

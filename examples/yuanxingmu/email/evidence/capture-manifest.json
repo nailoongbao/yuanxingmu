@@ -1,0 +1,135 @@
+{
+  "duration_seconds": 132.08,
+  "width": 1440,
+  "height": 1048,
+  "chapters": [
+    {
+      "step": "draft",
+      "title": "先让 AI 写草稿",
+      "start_seconds": 0.0,
+      "audio_start_seconds": 1.0,
+      "sources": [
+        {
+          "file": "01-native.webm",
+          "sha256": "a23cb5eb141009d299a8c8a8c21b7b7ad6a59d821e26cfcf3df1fb2fb3aba5b1",
+          "source_start_seconds": 0,
+          "source_end_seconds": 15.4,
+          "output_start_seconds": 0.0,
+          "output_seconds": 15.42
+        },
+        {
+          "file": "01-native.webm",
+          "sha256": "a23cb5eb141009d299a8c8a8c21b7b7ad6a59d821e26cfcf3df1fb2fb3aba5b1",
+          "source_start_seconds": 101.918,
+          "source_end_seconds": 111.64,
+          "output_start_seconds": 15.42,
+          "output_seconds": 9.71
+        }
+      ],
+      "end_seconds": 25.13
+    },
+    {
+      "step": "review",
+      "title": "还没发送，先看全文",
+      "start_seconds": 25.13,
+      "audio_start_seconds": 26.13,
+      "sources": [
+        {
+          "file": "02-review.webm",
+          "sha256": "46b2753abf1421cae6c1373dcf161cb8d5a83315f477e1976fcf2c1b6b4afe7e",
+          "source_start_seconds": 0,
+          "source_end_seconds": 21.52,
+          "output_start_seconds": 25.13,
+          "output_seconds": 21.5
+        }
+      ],
+      "end_seconds": 46.63
+    },
+    {
+      "step": "edit",
+      "title": "哪里不对，自己改",
+      "start_seconds": 46.63,
+      "audio_start_seconds": 47.63,
+      "sources": [
+        {
+          "file": "03-edit.webm",
+          "sha256": "17027377810c4430bbe1e2288b6551725d983d3a1c23dedd48e57978cedb3369",
+          "source_start_seconds": 0,
+          "source_end_seconds": 27.32,
+          "output_start_seconds": 46.63,
+          "output_seconds": 27.33
+        }
+      ],
+      "end_seconds": 73.96
+    },
+    {
+      "step": "send",
+      "title": "确认这一封，再发送",
+      "start_seconds": 73.96,
+      "audio_start_seconds": 74.96,
+      "sources": [
+        {
+          "file": "04-send.webm",
+          "sha256": "f3bd5dacd5f9b9214885ba0d4c170225a97ee03ef39bff8d1b97c57330efbbeb",
+          "source_start_seconds": 0,
+          "source_end_seconds": 22.8,
+          "output_start_seconds": 73.96,
+          "output_seconds": 22.79
+        }
+      ],
+      "end_seconds": 96.75
+    },
+    {
+      "step": "receipt",
+      "title": "核对实际收到的邮件",
+      "start_seconds": 96.75,
+      "audio_start_seconds": 97.75,
+      "sources": [
+        {
+          "file": "05-receipt.webm",
+          "sha256": "92f387e6175ca72f21021112a9f955f41181e1a34c552f4122fad015dd1994b3",
+          "source_start_seconds": 0,
+          "source_end_seconds": 18.72,
+          "output_start_seconds": 96.75,
+          "output_seconds": 18.71
+        }
+      ],
+      "end_seconds": 115.46
+    },
+    {
+      "step": "result",
+      "title": "知道结果，再决定下一步",
+      "start_seconds": 115.46,
+      "audio_start_seconds": 116.46,
+      "sources": [
+        {
+          "file": "06-result.webm",
+          "sha256": "f4346139a1b20bb944383270ee731b4e825c338035bca788e01b7d71c56d447f",
+          "source_start_seconds": 0,
+          "source_end_seconds": 16.64,
+          "output_start_seconds": 115.46,
+          "output_seconds": 16.63
+        }
+      ],
+      "end_seconds": 132.09
+    }
+  ],
+  "edits": "Only native model waiting omitted. Actual page frames preserved; local synthetic narration and fixed disclosure footer added.",
+  "model": "genuine Qwen3-4B inference",
+  "native_ui": "OpenClaw 2026.9.4",
+  "smtp": "non-relaying localhost TLS receiver",
+  "files": {
+    "yuanxingmu-email.mp4": {
+      "bytes": 3957862,
+      "sha256": "a6bef5b0fd302aaf7b554bc71df0d31676e722da5594c32d4668c3605ffea6f2"
+    },
+    "yuanxingmu-email.vtt": {
+      "bytes": 1817,
+      "sha256": "c5a04d91260d2b1018dbaadddbd775cd32eed92da2b1af2830ea05746136b9e4"
+    },
+    "poster.jpg": {
+      "bytes": 56459,
+      "sha256": "d97707bb01f1290f1258604c28352868f22cdf1ec3b47e5be582e66df01d42d5"
+    }
+  }
+}

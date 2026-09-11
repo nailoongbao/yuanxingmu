@@ -2,7 +2,7 @@
 
 **Give AI the files it needs. Keep control of its permissions.**
 
-Choose a document and let your own AI help you work through it. Yuanxingmu keeps each work item separate and lets you stop, reopen, or revoke its document access. After a private read, the task family cannot send to public destinations through the controlled sending tools, even after a restart. Your selected model service still receives the conversation and documents used for the task.
+Let AI read a quote and draft an email. Review the recipient and full text, edit anything that needs changing, then decide whether to send. Yuanxingmu keeps each work item separate and lets you stop, reopen, or revoke its document access. The drafting tool cannot confirm a send for you. Your selected model service still receives the conversation and documents used for the task.
 
 [中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/agent-defense-check/) · [Watch the demo](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
 
@@ -10,7 +10,13 @@ Choose a document and let your own AI help you work through it. Yuanxingmu keeps
 
 **Linux research prototype.** Verified with real bubblewrap, SQLite, isolated processes and an independent HTTP receiver using synthetic data. No attack-model evaluation or production protection rate. The existing repository URL remains `agent-defense-check`; the system is named Yuanxingmu.
 
-## Watch a real-model session
+## Draft first. Review before sending.
+
+New workbench profiles support email drafts. Review and edit the recipient, subject and full text, then confirm that exact message. Repeated confirmation cannot create another submission attempt; interrupted sends are never retried automatically. Approval does not grant the agent general sending permission.
+
+[Watch the email walkthrough](https://yh-l20.github.io/agent-defense-check/email-demo.html) · [User guide in Chinese](docs/email.zh-CN.md) · [Developer boundaries and tests](docs/REVIEWED-EMAIL.md). One recipient, plain text, and certificate-checked SMTP over TLS. Server acceptance is not a delivery guarantee. Existing profiles retain their original capabilities.
+
+## Watch the earlier document-permission session
 
 Read a quote, send it to an allowed internal receiver, then try an external send, restart, open a new chat, and revoke access. The new narrated recording uses the **native OpenClaw UI** with genuine local **Qwen3-4B** inference and synthetic documents.
 

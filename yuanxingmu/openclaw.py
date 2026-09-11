@@ -29,6 +29,7 @@ import uuid
 
 from .authority import AuthorizationError
 from .broker import Broker, MAX_CONTENT
+from .client import MAX_MESSAGE
 from .run import load_policy
 from .sandbox import sandbox_available, _system_mount_args, _reject_broad_grant, _overlaps
 
@@ -120,7 +121,8 @@ def _task_state(profile: Path, manifest: dict):
 def _public(profile: Path, manifest: dict):
     return {"profile": str(profile), "task_id": manifest["task_id"], "model": manifest["model"],
             "documents": manifest["documents"], "destinations": manifest["destinations"],
-            "url": f"http://127.0.0.1:{manifest['port']}/", "input_privacy": "private"}
+            "url": f"http://127.0.0.1:{manifest['port']}/", "input_privacy": "private",
+            "features": manifest.get("features", [])}
 
 
 def _process_identity(pid: int):
@@ -146,7 +148,7 @@ def _offline_lifecycle(profile: Path):
 
 def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Path,
                  model_url: str, model_id: str, api_key: str = "local-unused",
-                 documents: dict[str, Path] | None = None, destinations: dict | None = None,
+                 documents: dict[str, Path] | None = None, destinations: dict | None = None, reviewed_mail=False,
                  port: int = 18911, context_window: int = 32768, max_tokens: int = 2048) -> dict:
     """Create once. Inputs and policy are snapshots; init never overwrites a profile."""
     _linux()
@@ -211,7 +213,7 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
         resources[name] = {"path": "documents/" + name + ".txt", "labels": ["private"]}
     _save(profile / "policy.json", {"resources": resources, "destinations": destinations})
     loaded_resources, loaded_destinations = load_policy(profile / "policy.json")
-    with Broker(profile / "broker-state", loaded_resources, loaded_destinations) as broker:
+    with Broker(profile / "broker-state", loaded_resources, loaded_destinations, reviewed_mail=reviewed_mail) as broker:
         task = broker.create_task(initial_labels=["private"])
         broker.bind_workspace(task, profile / "workspace")
         family = broker.authority._db.execute("SELECT family_id FROM authority_tasks WHERE id=?", (task,)).fetchone()[0]
@@ -244,7 +246,8 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                     "input": ["text"], "reasoning": False, "contextWindow": context_window,
                     "maxTokens": max_tokens,
                     "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}}]}}},
-        "tools": {"allow": TOOLS, "sandbox": {"tools": {"allow": TOOLS}}, "fs": {"workspaceOnly": True},
+        "tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []),
+                  "sandbox": {"tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else [])}}, "fs": {"workspaceOnly": True},
                   "elevated": {"enabled": False}, "codeMode": {"enabled": False},
                   "exec": {"host": "sandbox", "timeoutSeconds": 25}},
         "plugins": {"allow": ["yuanxingmu"], "slots": {"memory": "none"},
@@ -253,7 +256,8 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                             "corePath": str(profile / "trusted-core"), "workspace": str(profile / "workspace"),
                             "brokerSocket": str(sockets / "broker.sock"), "operatorSocket": str(sockets / "operator.sock"),
                             "bwrap": str(bwrap), "auditPath": str(profile / "gateway-audit" / "adapter-events.jsonl"),
-                            "resourceIds": sorted(resources), "destinationIds": sorted(destinations)}}}},
+                            "resourceIds": sorted(resources), "destinationIds": sorted(destinations),
+                            "reviewedMail": reviewed_mail is True}}}},
     }
     _save(profile / "openclaw.json", config)
     immutable = [profile / "openclaw.json", profile / "policy.json", profile / "model-key", profile / "gateway-token",
@@ -264,6 +268,7 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
         ".", "workspace", "documents", "trusted-core", "plugin", "host-home", "openclaw-state",
         "broker-state", "broker-state/authority.sqlite3", "gateway-audit", "runtime-etc")}
     manifest = {"version": 2, "profile": str(profile), "profile_id": profile_id, "task_id": task, "family_id": family,
+                "features": ["reviewed_email_v1"] if reviewed_mail else [],
                 "node": str(node), "openclaw_package": str(openclaw_package), "bwrap": str(bwrap), "python": str(Path(sys.executable).resolve()),
                 "runtime": str(sockets), "port": port, "model": {"url": model_url, "id": model_id},
                 "documents": sorted(resources), "destinations": sorted(destinations),
@@ -338,7 +343,8 @@ def control_profile(profile: Path, action: str) -> dict:
                         "reason": "supervisor_unreachable_cleanup_not_confirmed", "task": _task_state(profile, manifest)}
             if action == "revoke":
                 resources, destinations = load_policy(profile / "policy.json")
-                with Broker(profile / "broker-state", resources, destinations) as broker:
+                with Broker(profile / "broker-state", resources, destinations,
+                            reviewed_mail="reviewed_email_v1" in manifest.get("features", [])) as broker:
                     broker.revoke(manifest["task_id"])
             return {"status": state, "operator_action": action, **_public(profile, manifest),
                     "task": _task_state(profile, manifest)}
@@ -351,6 +357,43 @@ def control_profile(profile: Path, action: str) -> dict:
             time.sleep(.1)
         raise RuntimeError("stop_not_confirmed; inspect lifecycle.json")
     return result
+
+
+def review_profile(profile: Path, action: str, value: dict | None = None) -> dict:
+    """Use only the unmounted host review endpoint; never the agent operator socket."""
+    _linux()
+    profile, manifest = _manifest(profile)
+    if "reviewed_email_v1" not in manifest.get("features", []):
+        raise AuthorizationError("reviewed_mail_not_enabled")
+    if action not in {"list", "get", "edit", "cancel", "send"} or (value is not None and (not isinstance(value, dict) or "op" in value)):
+        raise AuthorizationError("invalid_mail_review")
+    request = {"op": action, **(value or {})}
+    payload = json.dumps(request, ensure_ascii=True).encode() + b"\n"
+    if len(payload) > MAX_MESSAGE:
+        raise AuthorizationError("invalid_mail_review")
+    try:
+        with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as connection:
+            connection.settimeout(120)
+            connection.connect(str(Path(manifest["runtime"]) / "review.sock"))
+            connection.sendall(payload)
+            with connection.makefile("rb") as stream:
+                raw = stream.readline(MAX_MESSAGE + 1)
+        if len(raw) > MAX_MESSAGE or not raw.endswith(b"\n"):
+            raise RuntimeError("mail_review_response_unconfirmed")
+        result = json.loads(raw)
+        if not isinstance(result, dict) or result.get("ok") is not True:
+            raise AuthorizationError(result.get("reason", "mail_review_failed") if isinstance(result, dict) else "mail_review_failed")
+        return result
+    except (FileNotFoundError, ConnectionRefusedError):
+        # Missing service alone is insufficient. The supervisor lock and original
+        # profile validation are also required, and live failures never retry here.
+        with _profile_lock(profile):
+            manifest = validate_profile(profile)
+            if action not in {"list", "get"} and _offline_lifecycle(profile) != "stopped":
+                raise AuthorizationError("mail_profile_state_unconfirmed")
+            resources, destinations = load_policy(profile / "policy.json")
+            with Broker(profile / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+                return {"ok": True, **broker.review_mail(manifest["task_id"], request)}
 
 
 def _environment(profile: Path, manifest: dict):
@@ -479,7 +522,7 @@ def serve_profile(profile: Path):
         mode = runtime.stat(follow_symlinks=False)
         if not stat.S_ISDIR(mode.st_mode) or mode.st_uid != os.getuid() or mode.st_mode & 0o077:
             raise RuntimeError("unsafe_runtime_directory")
-        for name in ("broker.sock", "operator.sock"):
+        for name in ("broker.sock", "operator.sock", "review.sock"):
             path = runtime / name
             if path.exists() or path.is_symlink():
                 if not stat.S_ISSOCK(path.lstat().st_mode):
@@ -491,8 +534,13 @@ def serve_profile(profile: Path):
         gateway, server, thread, network = None, None, None, None
         resources, destinations = load_policy(profile / "policy.json")
         try:
-            with Broker(profile / "broker-state", resources, destinations) as broker:
+            with Broker(profile / "broker-state", resources, destinations,
+                        reviewed_mail="reviewed_email_v1" in manifest.get("features", [])) as broker:
                 broker.serve(manifest["task_id"], runtime / "broker.sock")
+                if "reviewed_email_v1" in manifest.get("features", []):
+                    # gateway_command mounts three individual sockets, never this
+                    # endpoint or its parent. Worker tools cannot approve a draft.
+                    broker.serve_reviews(manifest["task_id"], runtime / "review.sock")
 
                 class Handler(socketserver.StreamRequestHandler):
                     def handle(self):

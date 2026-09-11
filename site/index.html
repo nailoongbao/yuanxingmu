@@ -36,9 +36,9 @@
           <div class="preview-label"><span class="status-dot"></span> RESEARCH PREVIEW <span class="label-divider"></span> 研究原型</div>
           <p class="eyebrow hero-eyebrow">自己的模型，使用自己选定的资料</p>
           <h1 id="hero-title">让 AI 做事，<br><span>资料别乱发。</span></h1>
-          <p class="hero-description">连接自己的模型，交给它一份资料。<br>看报价、整理预算，在聊天里核对结果。<br class="desktop-break">暂时关闭后，还能带着原来的权限继续。</p>
+          <p class="hero-description">让 AI 读报价、写邮件。<br>收件人和全文，你看过再发。<br class="desktop-break">需要停下来时，工作和资料权限也由你掌握。</p>
           <div class="hero-actions">
-            <a class="button button-primary" href="workbench-demo.html">看上手演示 <span aria-hidden="true">↗</span></a>
+            <a class="button button-primary" href="email-demo.html">看邮件实机演示 <span aria-hidden="true">↗</span></a>
             <a class="text-link" href="start.html">了解怎样试用 <span aria-hidden="true">↗</span></a>
           </div>
           <p class="hero-footnote">自己的模型 · OpenClaw 原生界面 · Linux / WSL 预览版</p>
@@ -91,7 +91,7 @@
 
       <div class="capability-grid">
         <article><span class="feature-index">A / 选择资料</span><h3>交给它什么，你来选</h3><p>在工作台选择一份短文本，再进入 OpenClaw 聊天。让自己的模型读取报价、列出费用，在对话里查看结果。</p></article>
-        <article><span class="feature-index">B / 公开发送</span><h3>换个方式，也要检查</h3><p>聊天内容从一开始就按内部资料处理。发送演示中，向外发送和直接连接的尝试都没送达。</p></article>
+        <article><span class="feature-index">B / 核对邮件</span><h3>写好了，也要你确认</h3><p>AI 把邮件交到工作台。收件人、主题和全文都可以修改；你确认以后，只提交这一封邮件。</p></article>
         <article><span class="feature-index">C / 继续工作</span><h3>暂时关闭，下次继续</h3><p>正常关闭且权限未被收回时，可以继续原来的资料、聊天和权限。重新打开工作，不会清掉原来的限制。</p></article>
         <article><span class="feature-index">D / 收回权限</span><h3>不再需要，就收回权限</h3><p>收回后，后续通过元星木读取和发送资料会被拒绝。这个操作不能恢复；已经读到或发出的内容不会因此消失。</p></article>
       </div>
@@ -125,7 +125,7 @@
         <div class="start-copy"><p class="eyebrow">03 / 开始自己的工作</p><h2 id="start-title">从自己的资料，<br>开始一份工作。</h2><p>安装后连接自己的模型，<br>选资料、进入聊天、核对结果。</p><a class="button button-dark" href="start.html">查看安装与使用步骤 <span aria-hidden="true">↗</span></a></div>
         <div class="get-started-card"><div class="card-corner" aria-hidden="true">↗</div><span class="feature-index">开发者资料</span><h3>接入和开发，看这里</h3><p>代码、接入步骤和已知限制都放在公开仓库。<br>具体运行要求请看开发文档。</p><div class="repo-address"><code>yh-l20/agent-defense-check</code><button id="copy-repo" type="button" aria-label="复制公开仓库地址"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="11" height="12" rx="2"/><path d="M15 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></svg></button></div><span id="copy-feedback" class="copy-feedback" role="status">具体版本与运行要求，以仓库说明为准。</span><a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/yuanxingmu.md" target="_blank" rel="noopener noreferrer" class="card-link">打开开发文档 <span aria-hidden="true">→</span></a></div>
       </div>
-      <div class="limitations" aria-labelledby="limits-title"><div><p class="eyebrow">目前的范围</p><h3 id="limits-title">把限制也说清楚。</h3></div><div class="limitations-list"><details open><summary>演示覆盖哪些操作<span aria-hidden="true">+</span></summary><p>117 秒上手视频演示连接模型、导入报价、整理预算、关闭后重开和收回权限。另一个发送演示保留了内部送达、向外发送受限和 AI 读错文件的过程；它的收件位置使用测试服务，不是实际邮箱。两段视频都使用真实本地模型。</p></details><details><summary>现在可以怎样使用<span aria-hidden="true">+</span></summary><p>使用自己的模型接口，选择短文本，再进入 OpenClaw 聊天；工作台可以暂时关闭、重新打开工作，也可以永久收回资料权限。当前适用于 Ubuntu 24.04 / WSL Ubuntu 24.04、x86_64 电脑，首次需要终端操作。</p><p id="installer-status-note" data-installer-status="published">安装器预览已开放，可从<a href="start.html#install">使用页下载</a>。它会准备所需程序，原手工安装指南也保留在使用页。工作台默认没有额外发送位置，飞书、Slack 和邮箱连接器，以及“本人确认后发送邮件”的完整流程都尚未提供。</p></details><details><summary>允许执行，也可能做错<span aria-hidden="true">+</span></summary><p>演示中，AI 曾经读错文件、报错金额和日期。元星木检查操作权限，不能代替你核对答案。它也会保守阻止对外发送，即使那段文字本身没有敏感内容。</p></details></div></div>
+      <div class="limitations" aria-labelledby="limits-title"><div><p class="eyebrow">目前的范围</p><h3 id="limits-title">把限制也说清楚。</h3></div><div class="limitations-list"><details open><summary>演示覆盖哪些操作<span aria-hidden="true">+</span></summary><p>新的邮件视频演示 AI 起草、核对全文、修改并确认发送，再到本机测试收件箱核对实际收到的内容。原来的上手视频和发送权限视频也继续保留。视频都使用真实本地模型；资料与收件服务用于本机测试。</p></details><details><summary>现在可以怎样使用<span aria-hidden="true">+</span></summary><p>使用自己的模型接口，选择短文本，再进入 OpenClaw 聊天；工作台可以暂时关闭、重新打开工作，也可以永久收回资料权限。当前适用于 Ubuntu 24.04 / WSL Ubuntu 24.04、x86_64 电脑，首次需要终端操作。</p><p id="installer-status-note" data-installer-status="published">安装器预览已开放，可从<a href="start.html#install">使用页下载</a>。它会准备所需程序，原手工安装指南也保留在使用页。新版支持本人核对后发送一封纯文本邮件；旧版工作不会自动启用。飞书、Slack、邮件附件和直接导入 PDF 尚未提供。邮件功能需要 0.5 版；安装器版本请以使用页说明为准。</p></details><details><summary>允许执行，也可能做错<span aria-hidden="true">+</span></summary><p>演示中，AI 曾经读错文件、报错金额和日期。元星木检查操作权限，不能代替你核对答案。自动向外发送仍受限制。需要发邮件时，要由你核对具体收件人和全文，再明确确认。</p></details></div></div>
     </div>
   </section>
   </main>

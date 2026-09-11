@@ -47,6 +47,7 @@
     infoError: ""
   };
   const elements = {};
+  let mail = null;
   let lastProfileRender = "";
   const profileID = /^[a-f0-9]{32}$/;
   const resourceName = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
@@ -128,6 +129,7 @@
     state.createAttempt = null;
     state.requests.clear();
     state.dashboardURLs.clear();
+    mail?.reset();
     try { window.sessionStorage.removeItem(SESSION_KEY); } catch { /* Storage may be unavailable. */ }
     if (elements.apiKey) {
       elements.apiKey.value = "";
@@ -205,6 +207,7 @@
     elements.retryCreate.hidden = !(state.createAttempt && !state.createSending);
     elements.retryCreate.disabled = !authorized || state.createSending;
     elements.confirmRevoke.disabled = !authorized;
+    mail?.updateControls();
   }
 
   function setCreateMessage(message, isError = false) {
@@ -237,6 +240,7 @@
       elements.refreshTime.textContent = "状态更新于 " + new Date().toLocaleTimeString("zh-CN", {hour12: false});
       setConnection(true, "已连接本机");
       renderProfiles();
+      mail?.profilesChanged();
     } catch (error) {
       if (error.status !== 401) {
         state.profilesError = errorText(error);
@@ -252,7 +256,7 @@
     if (state.refreshing || !accessToken) return;
     state.refreshing = true;
     updateControls();
-    const results = await Promise.allSettled([api("/api/info"), refreshProfiles()]);
+    const results = await Promise.allSettled([api("/api/info"), refreshProfiles(), mail?.refreshAccount()]);
     if (results[0].status === "fulfilled") {
       const info = results[0].value;
       if (info.runtime && info.limits) {
@@ -600,6 +604,9 @@
       }
     } else card.append(node("p", "no-documents", "这份工作没有导入资料。"));
 
+    const mailEntry = mail?.profileEntry(profile);
+    if (mailEntry) card.append(mailEntry);
+
     const request = state.requests.get(profile.id);
     const job = pendingFor(profile);
     const busy = Boolean(request || job || profile.pending || ["starting", "stopping"].includes(profile.status));
@@ -711,6 +718,15 @@
       cancelRevoke: "cancel-revoke", confirmRevoke: "confirm-revoke"
     };
     for (const [key, id] of Object.entries(ids)) elements[key] = document.getElementById(id);
+    if (typeof window.createYuanxingmuMail === "function") {
+      mail = window.createYuanxingmuMail({
+        api, newKey, node,
+        authorized: () => Boolean(accessToken) && !state.authRejected,
+        getProfile: id => state.profiles.find(profile => profile.id === id),
+        upsertProfile, refreshProfiles
+      });
+      mail.boot();
+    }
     elements.documentFiles.addEventListener("change", () => { void importDocuments(); });
     elements.createForm.addEventListener("submit", event => { void submitCreate(event); });
     elements.retryCreate.addEventListener("click", () => { void submitCreate(); });
@@ -766,6 +782,7 @@
       state.refreshing = false;
       state.infoError = "";
       state.profilesError = "";
+      mail?.reset();
       updateControls();
       updateNotice();
       renderProfiles();

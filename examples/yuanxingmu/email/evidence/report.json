@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "date": "2026-09-12",
+  "kind": "genuine native OpenClaw plus local non-relaying TLS SMTP",
+  "openclaw": "2026.9.4",
+  "model_provenance": {
+    "model_repository": "Qwen/Qwen3-4B-GGUF",
+    "model_revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+    "runtime_release": "b10909",
+    "assets": [
+      {
+        "name": "llama-b10909-bin-ubuntu-x64.tar.gz",
+        "size": 16812361,
+        "sha256": "d0361742fa55787aa00fedb30e8ce88d6249cc9070429afa18befe73fbccebfb",
+        "verified": true
+      },
+      {
+        "name": "Qwen3-4B-Q4_K_M.gguf",
+        "size": 2497280256,
+        "sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+        "verified": true
+      }
+    ]
+  },
+  "synthetic_data": true,
+  "external_email_delivery": false,
+  "native_tool_names": [
+    "yuanxingmu_read",
+    "yuanxingmu_prepare_email"
+  ],
+  "draft_submitted_pending": true,
+  "original_draft": {
+    "recipient": "buyer@example.test",
+    "subject": "会议设备报价",
+    "body": "合成报价资料，仅用于本机演示\n项目：会议室设备采购。公开报价：200000 元。交付时间：确认后 30 天。\n"
+  },
+  "human_reviewed_draft": {
+    "id": "5c945f6e990a44e8a7449fec467ed983",
+    "recipient": "buyer@example.test",
+    "subject": "请确认会议室设备报价",
+    "body": "您好，会议室设备采购报价为 200000 元，确认后 30 天交付。\n请确认是否按此方案继续。\n（本机演示资料，不是真实订单。）",
+    "digest": "003f69626f6f9c6816ed7122602748fc97a699be8a6c30dd6a036c07a3c94bee",
+    "revision": 2,
+    "status": "acknowledged",
+    "attempt_id": "9a631c74c8f94a82a274aaf0114951f6",
+    "from_address": "sender@example.test"
+  },
+  "matching_smtp_messages_before_repeat": 1,
+  "matching_smtp_messages_after_three_new_http_confirmations": 1,
+  "repeat_confirmations": [
+    {
+      "status": "succeeded",
+      "draft_status": "acknowledged",
+      "attempt_unchanged": true
+    },
+    {
+      "status": "succeeded",
+      "draft_status": "acknowledged",
+      "attempt_unchanged": true
+    },
+    {
+      "status": "succeeded",
+      "draft_status": "acknowledged",
+      "attempt_unchanged": true
+    }
+  ],
+  "task_stopped": true,
+  "source_sha256": {
+    "broker.py": "c3877d48b959e6d38a736931632dcafae2d233e37865162024f806e0bfb069da",
+    "authority.py": "213659cbb52727226322b3a1b9e90b29b86bf981b573a63c4ae4ffc38091efb4",
+    "mail_drafts.py": "d829a287ea43deea28432d7e34a2c19e1b9b9788fc77ed4e9a79b5846735ebf7",
+    "mail_transport.py": "91fc9d3611ba0b6206e766fb6a903daaf32ed5355c245533490fd2057ad8f7e1",
+    "openclaw.py": "0a1faf3c4c1c441bdd94e183b7a82aa0860e7e03f2de2e77fdf11f8d9be707e2",
+    "integrations/openclaw/plugin/tools.mjs": "246bcb4b421fac3a4f6bd23e9ec1399f083d69bd1cb3e83ec3d3a09f28846eee",
+    "integrations/openclaw/plugin/config.mjs": "1d49c73315a7cd77fd3fee0c498cc64ba52f380989099a4c997d63e2c781a09a"
+  },
+  "limits": [
+    "One recorded normal workflow, not an attack-model evaluation or protection rate.",
+    "Synthetic quote and local TLS receiver; no external inbox was contacted.",
+    "AI was normally stopped before review. Scoped local test CA trusted by the workbench process; native supervisor kept its standard trust configuration.",
+    "SMTP acceptance does not prove recipient delivery. Credentials and private databases are excluded."
+  ]
+}

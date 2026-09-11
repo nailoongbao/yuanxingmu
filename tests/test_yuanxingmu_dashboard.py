@@ -171,6 +171,139 @@ class DashboardTests(unittest.TestCase):
         for forbidden in (self.secret, self.content, *additional):
             self.assertNotIn(forbidden, text)
 
+    def mail_fixture(self):
+        identifier, path, _ = self.create()
+        resources, destinations = load_policy(path / "policy.json")
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+            task_id = self.task_ids(path)[0]
+            row = broker.mail.submit(task_id, uuid.uuid4().hex, {
+                "recipient": "buyer@example.test", "subject": "报价待确认", "body": self.content})
+        return identifier, path, row
+
+    def mail_settings(self, **changes):
+        return {"host": "smtp.example.test", "port": 465, "username": "synthetic-user",
+                "password": "MAIL-SECRET-NEVER-IN-API", "from_address": "sender@example.test", **changes}
+
+    @staticmethod
+    def mail_reference(row):
+        return {"draft_id": row["id"], "revision": row["revision"], "digest": row["digest"]}
+
+    def test_mail_account_is_private_durable_and_changes_invalidate_old_confirmation(self):
+        self.assertFalse(self.request("GET", "/api/mail-account")[2]["configured"])
+        settings, key = self.mail_settings(), uuid.uuid4().hex
+        status, _, account = self.request("POST", "/api/mail-account", settings, key=key)
+        self.assertEqual(status, 200)
+        self.assertNotIn("password", account)
+        self.assertNotIn(settings["password"], json.dumps(account))
+        self.assertEqual(self.request("POST", "/api/mail-account", settings, key=key)[2], account)
+        self.assertEqual(self.request("POST", "/api/mail-account", self.mail_settings(password="changed"), key=key)[0], 409)
+        self._restart()
+        self.assertEqual(self.request("GET", "/api/mail-account")[2], account)
+        self.assertEqual((self.root / "catalog.json").stat().st_mode & 0o077, 0)
+        identifier, _, row = self.mail_fixture()
+        changed = self.request("POST", "/api/mail-account", self.mail_settings(from_address="new@example.test"))[2]
+        self.assertNotEqual(account["account_id"], changed["account_id"])
+        self.assertEqual(self.request("POST", "/api/mail-account", settings, key=key)[0], 409)
+        with mock.patch("yuanxingmu.broker.send_email") as send:
+            status, _, rejected = self.request("POST", f"/api/profiles/{identifier}/mail/send",
+                {**self.mail_reference(row), "account_id": account["account_id"], "confirm": "send"})
+            self.assertEqual(status, 409)
+            self.assertEqual(rejected["error"]["code"], "mail_account_changed")
+            send.assert_not_called()
+
+    def test_mail_routes_require_same_origin_token_and_exact_confirmation_fields(self):
+        identifier, _, row = self.mail_fixture()
+        reference = self.mail_reference(row)
+        settings = self.mail_settings()
+        account = self.request("POST", "/api/mail-account", settings)[2]
+        send_payload = {**reference, "account_id": account["account_id"], "confirm": "send"}
+        routes = [("GET", "/api/mail-account", None), ("POST", "/api/mail-account", settings),
+                  ("GET", f"/api/profiles/{identifier}/mail", None),
+                  ("GET", f"/api/profiles/{identifier}/mail/{row['id']}", None),
+                  ("POST", f"/api/profiles/{identifier}/mail/send", send_payload),
+                  ("POST", f"/api/profiles/{identifier}/mail/cancel", reference),
+                  ("POST", f"/api/profiles/{identifier}/mail/edit", {**reference, "draft": {
+                      "recipient": "buyer@example.test", "subject": "edited", "body": "edited"}})]
+        with mock.patch("yuanxingmu.broker.send_email") as send:
+            for method, route, value in routes:
+                with self.subTest(route=route, method=method):
+                    self.assertEqual(self.request(method, route, value, authenticated=False)[0], 401)
+                    self.assertEqual(self.request(method, route, value, headers={"Origin": "https://evil.example"})[0], 403)
+                    self.assertEqual(self.request(method, route, value, headers={"Host": "evil.example"})[0], 403)
+            for field in ("draft", "body", "password", "account", "from_address", "approved"):
+                self.assertEqual(self.request("POST", f"/api/profiles/{identifier}/mail/send", {**send_payload, field: "injected"})[0], 400)
+            self.assertEqual(self.request("POST", f"/api/profiles/{identifier}/mail/send", {**send_payload, "confirm": True})[0], 400)
+            send.assert_not_called()
+
+    def test_mail_edit_requires_fresh_content_and_send_attempt_is_never_repeated(self):
+        identifier, path, row = self.mail_fixture()
+        prefix = f"/api/profiles/{identifier}/mail"
+        listing = self.request("GET", prefix)[2]
+        self.assertTrue(listing["supported"])
+        self.assertNotIn("body", listing["drafts"][0])
+        self.assertEqual(self.request("GET", prefix + "/" + row["id"])[2]["draft"]["body"], self.content)
+        changed = {"recipient": "confirmed@example.test", "subject": "确认后的报价", "body": "只发确认的金额 200000 元。"}
+        edited = self.wait_job(self.request("POST", prefix + "/edit", {**self.mail_reference(row), "draft": changed})[2])["result"]["draft"]
+        self.assertEqual(edited["revision"], 2)
+        account = self.request("POST", "/api/mail-account", self.mail_settings())[2]
+        payload = {**self.mail_reference(edited), "account_id": account["account_id"], "confirm": "send"}
+        with mock.patch("yuanxingmu.broker.send_email", return_value={"outcome": "acknowledged"}) as send:
+            stale = self.wait_job(self.request("POST", prefix + "/send", {**payload, **self.mail_reference(row)})[2], expected="failed")
+            self.assertEqual(stale["error"]["code"], "mail_draft_changed")
+            send.assert_not_called()
+            key = uuid.uuid4().hex
+            accepted = self.request("POST", prefix + "/send", payload, key=key)[2]
+            sent = self.wait_job(accepted)
+            self.assertEqual(sent["result"]["draft"]["status"], "acknowledged")
+            self.assertEqual(send.call_args.args[1], changed)
+            self.assertNotIn(self.mail_settings()["password"], json.dumps(sent))
+            replay = self.request("POST", prefix + "/send", payload, key=key)[2]
+            self.assertEqual(replay["job"]["id"], accepted["job"]["id"])
+            self.wait_job(self.request("POST", prefix + "/send", payload)[2])
+            self._restart()
+            self.wait_job(self.request("POST", prefix + "/send", payload)[2])
+            send.assert_called_once()
+        self.assertEqual(core.control_profile(path, "status")["task"]["labels"], ["private"])
+        self.assertEqual(load_policy(path / "policy.json")[1], {})
+
+    def test_mail_unknown_result_is_durable_and_revocation_blocks_pending_draft(self):
+        identifier, path, row = self.mail_fixture()
+        prefix = f"/api/profiles/{identifier}/mail"
+        account = self.request("POST", "/api/mail-account", self.mail_settings())[2]
+        payload = {**self.mail_reference(row), "account_id": account["account_id"], "confirm": "send"}
+        with mock.patch("yuanxingmu.broker.send_email", return_value={"outcome": "unconfirmed"}) as send:
+            sent = self.wait_job(self.request("POST", prefix + "/send", payload)[2])
+            self.assertEqual(sent["result"]["draft"]["status"], "unconfirmed")
+            self._restart()
+            self.wait_job(self.request("POST", prefix + "/send", payload)[2])
+            send.assert_called_once()
+        resources, destinations = load_policy(path / "policy.json")
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+            other = broker.mail.submit(self.task_ids(path)[0], uuid.uuid4().hex, {
+                "recipient": "other@example.test", "subject": "不能发送", "body": "撤权检查"})
+        self.wait_job(self.request("POST", f"/api/profiles/{identifier}/revoke", {"confirm": "revoke"})[2])
+        with mock.patch("yuanxingmu.broker.send_email") as send:
+            failed = self.wait_job(self.request("POST", prefix + "/send", {
+                **payload, **self.mail_reference(other)})[2], expected="failed")
+            self.assertEqual(failed["error"]["code"], "task_revoked")
+            send.assert_not_called()
+        self.assertFalse(self.request("GET", prefix)[2]["active"])
+
+    def test_mail_cancellation_and_cross_work_draft_identity_are_enforced(self):
+        identifier, _, row = self.mail_fixture()
+        other_id, _, _ = self.create()
+        prefix = f"/api/profiles/{identifier}/mail"
+        reference = self.mail_reference(row)
+        failure = self.wait_job(self.request("POST", f"/api/profiles/{other_id}/mail/cancel", reference)[2], expected="failed")
+        self.assertEqual(failure["status"], "failed")
+        cancelled = self.wait_job(self.request("POST", prefix + "/cancel", reference)[2])["result"]["draft"]
+        self.assertEqual(cancelled["status"], "cancelled")
+        account = self.request("POST", "/api/mail-account", self.mail_settings())[2]
+        with mock.patch("yuanxingmu.broker.send_email") as send:
+            failure = self.wait_job(self.request("POST", prefix + "/send", {**reference, "account_id": account["account_id"], "confirm": "send"})[2], expected="failed")
+            self.assertEqual(failure["error"]["code"], "mail_draft_not_pending")
+            send.assert_not_called()
+
     def test_real_http_requires_token_and_returns_defensive_headers(self):
         with mock.patch.object(core, "init_profile") as initialize, mock.patch.object(core, "start_profile") as start, \
              mock.patch.object(core, "control_profile") as control:
@@ -330,7 +463,7 @@ class DashboardTests(unittest.TestCase):
         resources, destinations = load_policy(path / "policy.json")
         self.assertEqual(destinations, {})
         self.assertEqual(resources["quote"].labels, ("private",))
-        with Broker(path / "broker-state", resources, destinations) as broker:
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
             read = broker.dispatch(task_ids[0], {"op": "read", "resource": "quote"})
             self.assertTrue(read["allowed"])
             self.assertEqual(read["content"], self.content)
@@ -353,7 +486,7 @@ class DashboardTests(unittest.TestCase):
             initialize.assert_not_called()
             launch.assert_not_called()
         self.assertEqual(self.task_ids(path), task_ids)
-        with Broker(path / "broker-state", resources, destinations) as broker:
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
             self.assertEqual(broker.dispatch(task_ids[0], {"op": "read", "resource": "quote"})["reason"], "task_revoked")
 
     def test_uploads_are_private_snapshots_and_status_receipts_do_not_contain_secrets(self):

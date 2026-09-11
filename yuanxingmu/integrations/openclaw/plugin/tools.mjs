@@ -1,6 +1,7 @@
 /** Native tools bind one persistent task through its fixed host socket. */
 import { isBoundContext } from "./config.mjs";
 import { requestSocket } from "./socket-client.mjs";
+import { createHash } from "node:crypto";
 
 const MAX_CONTENT = 256 * 1024;
 
@@ -29,6 +30,13 @@ function resultMessage(operation, result) {
       ? "获准接收位置返回成功确认。"
       : "请求已获准，但没有收到成功确认；不能据此判断接收方是否已收到内容。";
   }
+  if (operation === "draft_email") {
+    if (result.status === "pending") return "草稿已交给元星木工作台。请用户核对收件人、主题和全文后亲自确认发送；现在尚未发送邮件。";
+    if (result.status === "acknowledged") return "这封邮件此前已经提交，邮箱服务已接收。此次没有重复发送；这不代表收件人已经收到或阅读。";
+    if (result.status === "unconfirmed" || result.status === "sending") return "这封邮件已有发送记录，但结果尚未确认。请用户先核对工作台和邮箱，不要重复起草或发送。";
+    if (result.status === "cancelled") return "这份草稿已经弃用，没有重新创建或发送。";
+    return "这份草稿已有处理记录，没有重新创建或发送。请用户在工作台核对实际状态。";
+  }
   return operation === "read" ? "权限服务已返回资料。" : "以下为当前任务的实际权限状态。";
 }
 
@@ -36,11 +44,17 @@ function toolResult(operation, result) {
   return { content: [{ type: "text", text: resultMessage(operation, result) + "\n" + JSON.stringify(result) }], details: result };
 }
 
-function payloadFor(operation, args, config) {
+function payloadFor(operation, args, config, requestKey) {
   if (operation === "describe") return exactKeys(args, []) ? { op: "describe" } : null;
   if (operation === "read") {
     return exactKeys(args, ["resource"]) && typeof args.resource === "string" && config.resourceIds.includes(args.resource)
       ? { op: "read", resource: args.resource } : null;
+  }
+  if (operation === "draft_email") {
+    return config.reviewedMail && exactKeys(args, ["recipient", "subject", "body"])
+      && [args.recipient, args.subject, args.body].every(value => typeof value === "string")
+      && args.recipient.length <= 254 && args.subject.length <= 400 && Buffer.byteLength(args.body, "utf8") <= 64 * 1024
+      ? { op: "draft_email", request_key: requestKey, draft: args } : null;
   }
   return exactKeys(args, ["destination", "body"]) && typeof args.destination === "string"
     && config.destinationIds.includes(args.destination) && typeof args.body === "string"
@@ -63,6 +77,13 @@ export function registerBrokerTools(api, config) {
       description: "查看这个配置绑定任务的实际资料权限。新建聊天和重新连接不会清除已经累积的限制。",
       parameters: { type: "object", properties: {}, additionalProperties: false } },
   ];
+  if (config.reviewedMail) declarations.push({ name: "yuanxingmu_prepare_email", operation: "draft_email", label: "起草待核对邮件",
+    description: "将一封纯文本邮件交给元星木工作台供用户核对。此工具不会发送邮件；必须由用户在工作台亲自确认。不能传入发件账户、密码、批准标记或额外收件人。",
+    parameters: { type: "object", additionalProperties: false, required: ["recipient", "subject", "body"], properties: {
+      recipient: {type:"string", maxLength:254, description:"一个明确的收件邮箱，不含姓名、抄送或列表"},
+      subject: {type:"string", maxLength:200, description:"邮件主题"},
+      body: {type:"string", maxLength:65536, description:"等待用户核对的完整纯文本正文"}
+    } } });
   for (const declaration of declarations) {
     const { operation, ...descriptor } = declaration;
     api.registerTool((context) => {
@@ -72,7 +93,11 @@ export function registerBrokerTools(api, config) {
           if (!isBoundContext(context, config)) {
             return toolResult(operation, { allowed: false, reason: "unbound_tool_context" });
           }
-          const payload = payloadFor(operation, args, config);
+          if (operation === "draft_email" && (typeof _toolCallId !== "string" || !_toolCallId || _toolCallId.length > 1024)) {
+            return toolResult(operation, {allowed:false, reason:"invalid_tool_call_id"});
+          }
+          const requestKey = operation === "draft_email" ? createHash("sha256").update(context.sessionKey + "\0" + _toolCallId).digest("hex") : null;
+          const payload = payloadFor(operation, args, config, requestKey);
           if (!payload) return toolResult(operation, { allowed: false, reason: "invalid_tool_arguments" });
           if (signal?.aborted) return toolResult(operation, { allowed: false, reason: "cancelled_before_request" });
           try {

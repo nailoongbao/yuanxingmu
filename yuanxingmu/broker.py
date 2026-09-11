@@ -23,6 +23,8 @@ import uuid
 
 from .authority import Authority, AuthorizationError
 from .client import MAX_MESSAGE
+from .mail_drafts import MailDrafts
+from .mail_transport import MailAccount, send_email
 
 MAX_CONTENT = 256 * 1024
 
@@ -74,7 +76,7 @@ class _Server(socketserver.ThreadingUnixStreamServer if hasattr(socketserver, "T
 class Broker:
     """Host-only management API; a worker receives only its mounted Unix socket."""
 
-    def __init__(self, state_dir: Path, resources: dict[str, Resource], destinations: dict[str, Destination]):
+    def __init__(self, state_dir: Path, resources: dict[str, Resource], destinations: dict[str, Destination], *, reviewed_mail=False):
         if not sys.platform.startswith("linux") or not hasattr(socket, "AF_UNIX"):
             raise RuntimeError("broker_requires_linux")
         import fcntl
@@ -92,6 +94,8 @@ class Broker:
         self._closed = False
         self.resources = dict(resources)
         self.destinations = dict(destinations)
+        self.reviewed_mail = reviewed_mail is True
+        self.mail = None
         self.authority = None
         try:
             binding = self._binding()
@@ -105,7 +109,13 @@ class Broker:
                     stream.flush()
                     os.fsync(stream.fileno())
             self.authority = Authority(self.state_dir / "authority.sqlite3")
+            if self.reviewed_mail:
+                self.mail = MailDrafts(self.authority)
+                # The exclusive broker lock proves no earlier sender is live.
+                self.mail.recover()
         except BaseException:
+            if self.authority is not None:
+                self.authority.close()
             self._file_lock.close()
             raise
 
@@ -137,7 +147,10 @@ class Broker:
                 raise ValueError("invalid_destination_headers")
             destination_binding[name] = {"url": destination.url, "labels": sorted(destination.labels),
                 "headers_sha256": _digest(json.dumps(destination.headers, sort_keys=True).encode())}
-        return {"version": 1, "resources": resource_binding, "destinations": destination_binding}
+        binding = {"version": 1, "resources": resource_binding, "destinations": destination_binding}
+        if self.reviewed_mail:
+            binding["reviewed_mail"] = 1
+        return binding
 
     def create_task(self, *, task_id: str | None = None, initial_labels: list[str] | None = None) -> str:
         with self._lock:
@@ -193,7 +206,8 @@ class Broker:
             try:
                 if self._closed:
                     raise AuthorizationError("broker_closed")
-                fields = {"read": {"op", "resource"}, "send": {"op", "destination", "body"}, "describe": {"op"}}
+                fields = {"read": {"op", "resource"}, "send": {"op", "destination", "body"}, "describe": {"op"},
+                          "draft_email": {"op", "request_key", "draft"}}
                 if not isinstance(operation, str) or operation not in fields or set(request) != fields[operation]:
                     raise AuthorizationError("invalid_request")
                 if operation == "describe":
@@ -211,6 +225,12 @@ class Broker:
                     if len(content) > MAX_CONTENT or _digest(content) != expected:
                         raise AuthorizationError("resource_changed")
                     result = {**decision, "content": content.decode("utf-8")}
+                elif operation == "draft_email":
+                    if self.mail is None:
+                        raise AuthorizationError("reviewed_mail_not_enabled")
+                    draft = self.mail.submit(task_id, request["request_key"], request["draft"])
+                    result = {"allowed": True, "reason": "mail_draft_saved", "draft_id": draft["id"],
+                              "digest": draft["digest"], "revision": draft["revision"], "status": draft["status"]}
                 else:
                     name, body = request["destination"], request["body"]
                     if not isinstance(name, str) or name not in self.destinations:
@@ -235,8 +255,88 @@ class Broker:
                 result = {"allowed": False, "reason": exc.reason}
             except (OSError, ValueError, TypeError):
                 result = {"allowed": False, "reason": "broker_operation_failed"}
-            self._event(task_id, operation or "invalid", result)
+            audit_operation = operation if isinstance(operation, str) and operation in {"read", "send", "describe", "draft_email"} else "invalid"
+            self._event(task_id, audit_operation, result)
             return result
+
+    def review_mail(self, task_id: str, request: dict) -> dict:
+        """Host-only approval. Never call this from dispatch or a worker socket."""
+        with self._lock:
+            if self._closed or self.mail is None:
+                raise AuthorizationError("reviewed_mail_unavailable")
+            fields = {
+                "list": {"op"}, "get": {"op", "draft_id"},
+                "edit": {"op", "draft_id", "revision", "digest", "draft"},
+                "cancel": {"op", "draft_id", "revision", "digest"},
+                "send": {"op", "draft_id", "revision", "digest", "account_id", "account", "confirm"},
+            }
+            op = request.get("op") if isinstance(request, dict) else None
+            if not isinstance(op, str) or op not in fields or set(request) != fields[op]:
+                raise AuthorizationError("invalid_mail_review")
+            if op == "list":
+                return self.mail.list(task_id)
+            if op == "get":
+                return self.mail.get(task_id, request["draft_id"])
+            args = (task_id, request["draft_id"], request["revision"], request["digest"])
+            if op == "edit":
+                return {"draft": self.mail.edit(*args, request["draft"])}
+            if op == "cancel":
+                return {"draft": self.mail.cancel(*args)}
+            if request["confirm"] != "send":
+                raise AuthorizationError("mail_confirmation_required")
+            try:
+                account = MailAccount(**request["account"])
+            except (ValueError, TypeError):
+                raise AuthorizationError("invalid_mail_account") from None
+            decision = self.mail.begin_send(*args, request["account_id"], account.from_address)
+            draft = decision["draft"]
+            if not decision["started"]:
+                return {"draft": draft}
+            # begin_send committed a single-use attempt before any network I/O.
+            # This same lock also orders revoke and every other broker endpoint.
+            try:
+                outcome = send_email(account, {name: draft[name] for name in ("recipient", "subject", "body")},
+                                     draft["attempt_id"])["outcome"]
+            except BaseException:
+                self.mail.finish_send(task_id, draft["id"], draft["attempt_id"], "unconfirmed")
+                raise
+            return {"draft": self.mail.finish_send(task_id, draft["id"], draft["attempt_id"], outcome)}
+
+    def serve_reviews(self, task_id: str, socket_path: Path) -> Path:
+        """Bind a host-only socket. Its path must not be mounted into any agent."""
+        with self._lock:
+            if self._closed or self.mail is None:
+                raise AuthorizationError("reviewed_mail_unavailable")
+            socket_path = Path(socket_path).absolute()
+            if len(os.fsencode(socket_path)) > 100:
+                raise ValueError("unix_socket_path_too_long")
+            socket_path.parent.mkdir(mode=0o700, parents=True, exist_ok=True)
+            broker = self
+
+            class Handler(socketserver.StreamRequestHandler):
+                def handle(self):
+                    self.connection.settimeout(120)
+                    try:
+                        raw = self.rfile.readline(MAX_MESSAGE + 1)
+                        if len(raw) > MAX_MESSAGE or not raw.endswith(b"\n"):
+                            raise AuthorizationError("invalid_mail_review")
+                        result = broker.review_mail(task_id, json.loads(raw))
+                        response = {"ok": True, **result}
+                    except AuthorizationError as exc:
+                        response = {"ok": False, "reason": exc.reason}
+                    except (OSError, ValueError, TypeError, RuntimeError):
+                        response = {"ok": False, "reason": "mail_review_failed"}
+                    try:
+                        self.wfile.write(json.dumps(response, ensure_ascii=True).encode() + b"\n")
+                    except OSError:
+                        pass
+
+            server = _Server(str(socket_path), Handler)
+            socket_path.chmod(0o600)
+            thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": .05}, daemon=True)
+            self._servers.append((server, thread, socket_path))
+            thread.start()
+            return socket_path
 
     def serve(self, task_id: str, socket_path: Path) -> Path:
         """The trusted host binds identity once, before mounting this single socket."""

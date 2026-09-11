@@ -1,0 +1,22 @@
+{
+  "report.json": {
+    "bytes": 3410,
+    "sha256": "9a6210c0e855731d120a7669f2f2d2a64150bc2846e98484a20ddcdfa9c44a5f"
+  },
+  "native-transcript.redacted.jsonl": {
+    "bytes": 4147,
+    "sha256": "6245e8c8329106de6059f9df84bf5787fbca883ed494652267c370f543d5e493"
+  },
+  "receipt.json": {
+    "bytes": 492,
+    "sha256": "04b4ea189bf1dbf53a37a889f744c775dbe78945a63f5109eb71d8a26ed769f5"
+  },
+  "capture-manifest.json": {
+    "bytes": 4068,
+    "sha256": "91188145219001a6699a6cf2128a5126d99c7a8c2425cfea9656924a5ba71e0b"
+  },
+  "report.md": {
+    "bytes": 1063,
+    "sha256": "74caf3d8bfdebf716725d3efda220cfc5d7cf907fa13cb96a3b5926895264aaf"
+  }
+}
