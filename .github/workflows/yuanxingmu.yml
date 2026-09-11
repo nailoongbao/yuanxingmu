@@ -24,7 +24,6 @@ jobs:
     timeout-minutes: 10
     env:
       YUANXINGMU_TEST_BWRAP: /opt/yuanxingmu/bin/bwrap
-      YUANXINGMU_SANDBOX_EVIDENCE_DIR: ${{ runner.temp }}/yuanxingmu-sandbox-evidence
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -57,6 +56,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/yuanxingmu-diagnostics"
           python -I -m yuanxingmu doctor --bwrap "$YUANXINGMU_TEST_BWRAP" | tee "$RUNNER_TEMP/yuanxingmu-diagnostics/doctor.json"
       - name: Verify authority, broker, command and process boundaries
+        env:
+          YUANXINGMU_SANDBOX_EVIDENCE_DIR: ${{ runner.temp }}/yuanxingmu-sandbox-evidence
         run: python -m unittest discover -s tests -p 'test_yuanxingmu*.py' -v
       - name: Verify installed demo against independent receiver
         run: python -I -m yuanxingmu demo --bwrap "$YUANXINGMU_TEST_BWRAP" --output "$RUNNER_TEMP/yuanxingmu-receipts"
