@@ -1,0 +1,48 @@
+name: Yuanxingmu execution boundary
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'yuanxingmu/**'
+      - 'tests/test_yuanxingmu*'
+      - 'pyproject.toml'
+      - '.github/workflows/yuanxingmu.yml'
+  pull_request:
+    paths:
+      - 'yuanxingmu/**'
+      - 'tests/test_yuanxingmu*'
+      - 'pyproject.toml'
+      - '.github/workflows/yuanxingmu.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  isolation:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install packaged Linux isolation
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes bubblewrap
+      - name: Install package
+        run: python -m pip install .
+      - name: Require actual isolation availability
+        run: python -I -m yuanxingmu doctor
+      - name: Verify authority, broker, command and process boundaries
+        run: python -m unittest discover -s tests -p 'test_yuanxingmu*.py' -v
+      - name: Verify installed demo against independent receiver
+        run: python -I -m yuanxingmu demo --output "$RUNNER_TEMP/yuanxingmu-receipts"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: yuanxingmu-receipts
+          path: ${{ runner.temp }}/yuanxingmu-receipts
+          if-no-files-found: warn
+          retention-days: 30

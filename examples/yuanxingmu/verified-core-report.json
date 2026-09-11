@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "system": "Yuanxingmu",
+  "status": "passed",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "3.12.3",
+  "sandbox": {
+    "available": true,
+    "platform": "linux",
+    "bwrap": "/home/liyihao24/codex-yuanxingmu-tools/bubblewrap-0.9.0/usr/bin/bwrap",
+    "version": "bubblewrap 0.9.0",
+    "reason": "Linux namespace and read-only runtime smoke test passed"
+  },
+  "scope": "Synthetic Python workers; real Linux isolation, SQLite and independent HTTP receipts. No model attack evaluation.",
+  "runs": [
+    {
+      "name": "read_and_send",
+      "pid": 728,
+      "returncode": 0,
+      "exited": true,
+      "stdout": "{\"read\": true, \"plain\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 5}, \"encoded\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 6}, \"public_summary\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 7}, \"internal\": {\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"internal\", \"labels\": [\"internal\"], \"blocked_labels\": [], \"revision\": 2, \"event_id\": 8, \"request_id\": \"26af98ba5dad47f1994c725a8c499b73\", \"http_status\": 200, \"outcome\": \"acknowledged\"}}\n",
+      "stderr": ""
+    },
+    {
+      "name": "existing_child",
+      "pid": 736,
+      "returncode": 0,
+      "exited": true,
+      "stdout": "{\"denied\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_aa5adc6a3a534a3abfd30d7581d067f8\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 9}, \"internal\": {\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_aa5adc6a3a534a3abfd30d7581d067f8\", \"destination_id\": \"internal\", \"labels\": [\"internal\"], \"blocked_labels\": [], \"revision\": 2, \"event_id\": 10, \"request_id\": \"8300fd75a33642dc9f7e4f3bc37af60b\", \"http_status\": 200, \"outcome\": \"acknowledged\"}}\n",
+      "stderr": ""
+    },
+    {
+      "name": "direct_bypass",
+      "pid": 741,
+      "returncode": 0,
+      "exited": true,
+      "stdout": "{\"direct_network_denied\": true, \"host_resource_hidden\": true, \"authority_hidden\": true, \"identity_field_rejected\": true, \"arbitrary_url_rejected\": true, \"worker_cannot_create_root\": true, \"worker_cannot_clear_labels\": true, \"workspace_write_works\": true, \"hostname_namespace\": \"1\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "broker_restart",
+      "pid": 750,
+      "returncode": 0,
+      "exited": true,
+      "stdout": "{\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 11}\n",
+      "stderr": ""
+    },
+    {
+      "name": "independent_public",
+      "pid": 753,
+      "returncode": 0,
+      "exited": true,
+      "stdout": "{\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_87496c749a3247c89824402ad0c515fe\", \"destination_id\": \"public\", \"labels\": [], \"blocked_labels\": [], \"revision\": 1, \"event_id\": 13, \"request_id\": \"5f351db49a1a4588a77ae6ab9f479f3d\", \"http_status\": 200, \"outcome\": \"acknowledged\"}\n",
+      "stderr": ""
+    },
+    {
+      "name": "revoked_task",
+      "pid": 758,
+      "returncode": 0,
+      "exited": true,
+      "stdout": "{\"allowed\": false, \"reason\": \"task_revoked\"}\n",
+      "stderr": ""
+    }
+  ],
+  "receiver_pid": 723,
+  "tasks": {
+    "root": "task_5a00749b16eb497c9ca290901424b8cf",
+    "child_before_read": "task_aa5adc6a3a534a3abfd30d7581d067f8",
+    "clean": "task_87496c749a3247c89824402ad0c515fe"
+  },
+  "observed_business_cost": {
+    "public_text_after_private_read_blocked": true,
+    "explanation": "Task-wide labels conservatively block even harmless public summaries after private reads; no automatic declassification."
+  },
+  "checks": {
+    "private_export_denied": true,
+    "encoded_export_denied": true,
+    "internal_send_acknowledged": true,
+    "existing_child_inherits_read": true,
+    "child_internal_send_acknowledged": true,
+    "direct_network_denied": true,
+    "host_resource_hidden": true,
+    "authority_hidden": true,
+    "identity_field_rejected": true,
+    "arbitrary_url_rejected": true,
+    "worker_cannot_create_root": true,
+    "worker_cannot_clear_labels": true,
+    "workspace_write_works": true,
+    "broker_restart_preserves_restriction": true,
+    "independent_public_task_works": true,
+    "revocation_reaches_child": true,
+    "missing_broker_fails_closed": true,
+    "receiver_exactly_three_expected_receipts": true,
+    "public_receiver_only_public_content": true
+  },
+  "receipts": [
+    {
+      "receiver": "/internal",
+      "request_id": "26af98ba5dad47f1994c725a8c499b73",
+      "body_sha256": "f27af59fa7d01bc3c75d84ee15157d940324b65c0db85600ec8a83ccdb795335",
+      "body": "SYNTHETIC-INTERNAL-ORDER-9471"
+    },
+    {
+      "receiver": "/internal",
+      "request_id": "8300fd75a33642dc9f7e4f3bc37af60b",
+      "body_sha256": "885b9e05e360a933ab9503a7f983e7484a612731b0011ce38ef3c8ba5dd115a0",
+      "body": "child internal correction"
+    },
+    {
+      "receiver": "/public",
+      "request_id": "5f351db49a1a4588a77ae6ab9f479f3d",
+      "body_sha256": "40ea48999f8b7d7698f66cff3749dcfb5beb1bb6a6274c4f2b57b2f68ef5c2a3",
+      "body": "Public release notes"
+    }
+  ],
+  "all_workers_exited": true,
+  "receiver_exited": true,
+  "source_sha256": {
+    "yuanxingmu/authority.py": "fc6498b3df38d2a8c215408c030cbb6c217288eb8caf0327d66d384b12c30c3e",
+    "yuanxingmu/broker.py": "c97cebba3818887aac2f1a54191465bd28352ec387920f6e471da518aeb90fa8",
+    "yuanxingmu/cli.py": "4b10bd7158dc4917c1169612a140ee9ddc9a1450dab28abc84a4a6a496809e2a",
+    "yuanxingmu/client.py": "da3ecd5d69635028724e4911493a79d95b05d9897c1f79f6f0dd9ce5844fabfc",
+    "yuanxingmu/demo.py": "403ce3e4709f4de64512abe692fb8f4c46c6fb8c3711573a59e40a82dc2f8467",
+    "yuanxingmu/receipts.py": "a69ebeebd499526418fa23797168ee9b83c686e232c315f52db71e634c694882",
+    "yuanxingmu/run.py": "42662b7ae71dabfbf069ebd58a1b89e2a90929895ea427921bc3c1a0082d381a",
+    "yuanxingmu/sandbox.py": "dd693c87fe532150b55cce2e3ced72fd6dae7c04520dd595434cfb2306305d23",
+    "yuanxingmu/worker.py": "3aa6977d8dd049f178135783d7f925915b855cea251952dda670a67469618f53",
+    "yuanxingmu/__init__.py": "973918d2f9ccc14666bc0dbe04ce6e745693c4ae8912c9cbf8233adb539bc547",
+    "yuanxingmu/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+  },
+  "verification": {
+    "date": "2026-09-11",
+    "original_results_sha256": "2cd057a62704060ccc12b6512adf919bdcb923f5b2fd1990544125dc4c9228c1",
+    "receiver_file_sha256": "dba441fd9e0e5186aa55637fe381e3d74cac3d9c9efc46e99cf387765fb33a49",
+    "source_hashes_independently_checked_before_publication": true,
+    "warning": "Synthetic Python workers; not a real LLM evaluation or complete host-framework validation."
+  }
+}
