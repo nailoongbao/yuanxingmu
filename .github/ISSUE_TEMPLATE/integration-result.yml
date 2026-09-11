@@ -1,0 +1,57 @@
+name: Report an integration result
+description: Share an installation problem, an unsupported configuration, or an observed defense result.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Useful reports include what actually happened and whether normal work still succeeded.
+        Use synthetic examples. Configuration files and generated candidates can contain credentials;
+        share a redacted description instead of uploading them unchanged.
+  - type: dropdown
+    id: result_type
+    attributes:
+      label: What did you encounter?
+      options:
+        - Installation or demo failure
+        - Configuration or policy is unsupported
+        - A prohibited operation reached the destination
+        - A necessary normal operation was blocked
+        - A successful integration result
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Versions and setup
+      description: Include your OS, Python version, Agent Defense Check version or commit, agent framework/client, and relevant gateway or MCP package versions.
+      placeholder: "Ubuntu 24.04; Python 3.12; Agent Defense Check 0.1.0a1; ..."
+    validations:
+      required: true
+  - type: textarea
+    id: workflow
+    attributes:
+      label: What should the agent be allowed to do?
+      description: Describe the normal task, the data it reads, and who may receive the result. If reporting installation only, say which README step you reached.
+    validations:
+      required: true
+  - type: textarea
+    id: observed
+    attributes:
+      label: What happened, and how did you verify it?
+      description: Include the exact command and error, or explain what the destination received. A static inspect result or an unverified plan does not establish whether an operation was blocked.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Provide the smallest synthetic example that reproduces the result. For integration issues, describe which tools share a connection and whether a task or client was closed or resumed.
+    validations:
+      required: false
+  - type: textarea
+    id: normal_work
+    attributes:
+      label: Effect on normal work
+      description: If you tried a repair, which required operations still succeeded or stopped working? If you have not tested them, say so.
+    validations:
+      required: false

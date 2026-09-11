@@ -1,0 +1,48 @@
+name: Runtime demo
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  linux-demo:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Prepare evidence directory
+        run: mkdir -p "$RUNNER_TEMP/agent-defense-evidence"
+      - name: Install gateway in its own environment
+        run: |
+          python -m venv .venv-gateway 2>&1 | tee "$RUNNER_TEMP/agent-defense-evidence/gateway-install.log"
+          .venv-gateway/bin/python -m pip install -r requirements-gateway.txt . 2>&1 | tee -a "$RUNNER_TEMP/agent-defense-evidence/gateway-install.log"
+          .venv-gateway/bin/python -m pip check 2>&1 | tee -a "$RUNNER_TEMP/agent-defense-evidence/gateway-install.log"
+      - name: Install aggregator in its own environment
+        run: |
+          python -m venv .venv-aggregation 2>&1 | tee "$RUNNER_TEMP/agent-defense-evidence/aggregation-install.log"
+          .venv-aggregation/bin/python -m pip install -r requirements-aggregation.txt 2>&1 | tee -a "$RUNNER_TEMP/agent-defense-evidence/aggregation-install.log"
+          .venv-aggregation/bin/python -m pip check 2>&1 | tee -a "$RUNNER_TEMP/agent-defense-evidence/aggregation-install.log"
+      - name: Run installed demo with synthetic services and receipts
+        run: |
+          .venv-gateway/bin/python -I -m defensecheck demo \
+            --gateway-python "$GITHUB_WORKSPACE/.venv-gateway/bin/python" \
+            --aggregation-python "$GITHUB_WORKSPACE/.venv-aggregation/bin/python" \
+            --output "$RUNNER_TEMP/agent-defense-evidence/demo" 2>&1 | tee "$RUNNER_TEMP/agent-defense-evidence/demo.log"
+      - name: Preserve runtime evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-runtime-evidence
+          path: ${{ runner.temp }}/agent-defense-evidence/
+          if-no-files-found: warn
+          retention-days: 30

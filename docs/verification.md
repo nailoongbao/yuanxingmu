@@ -2,11 +2,11 @@
 
 The useful result is a concrete behavior change: **three prohibited sends reached the downstream service with separate connections; zero reached it with the candidate; three legitimate sends still arrived.**
 
-This page records a local Windows experiment. The gateway, policy engine and aggregator are actual third-party packages. The read service, receiving service, data and HTTP rule adapter are authored test components. No model or real email provider participated.
+This page records local Windows and Ubuntu/WSL experiments. The gateway, policy engine and aggregator are actual third-party packages. The read service, receiving service, data and HTTP rule adapter are authored test components. No model or real email provider participated.
 
 ## Evidence reference
 
-The final artifact reference is `output/installed-wheel-03/results.json`, generated on 2026-09-11 by running the installed wheel. The command exited zero with status `verified_for_demo_contract`. Run output is local and ignored by Git; the demo creates the same evidence structure in a fresh output directory.
+The Windows artifact reference is `output/installed-wheel-03/results.json`, generated on 2026-09-11 by running the installed wheel. The command exited zero with status `verified_for_demo_contract`. Run output is local and ignored by Git; the demo creates the same evidence structure in a fresh output directory.
 
 The runtime-tested wheel had SHA-256 `584f69be1134db092500a52950edca827fceb70c9651195ca24388c1402ce156` and is preserved locally as `output/release-license-check/before-license-fix.whl`. Its `output/installed-wheel-03/wheel-verification.json` records that all 13 package Python files matched across the source tree, wheel, installed package and demo source hashes at the time of that run.
 
@@ -18,14 +18,26 @@ Before publication, the alpha was repackaged to include the complete upstream Ap
 | Invariant policy engine | `invariant-ai 0.3.5` |
 | FastMCP runtime | `fastmcp-slim 4.0.3` |
 | MCP packages in aggregation environment | `mcp 2.2.0`, `mcp-types 2.2.0` |
-| Full demo platform | Windows, Python 3.12.9 |
-| Full Linux demo | Not run |
+| Full Windows demo | Windows, Python 3.12.9 |
+| Full Linux demo | Ubuntu 24.04.3 under WSL2, Python 3.12.3 |
 
 The gateway provenance records the pinned archive URL and SHA-256 `765813aba3bb201beff502aac0a11eab4f3f064d54234a8f6ec9c521a81b5f83`. Thirty installed gateway Python files matched their installation `RECORD` hashes. This is an installation-integrity check; the run did not download the archive again and compare every installed file against it.
 
-Both Windows source-tree and installed-wheel suites checked 59 tests: 58 passed and one was skipped because Windows did not permit creating a test symbolic link. Neither suite had failures or errors. The Linux core suite passed all 59 tests, including the real interpreter-symlink case. An independent Linux ProcessWitness run also passed eight component tests. These checks do not constitute a full Linux gateway/aggregator demo.
+The original local Windows source-tree and installed-wheel suites checked 59 tests: 58 passed and one was skipped because Windows did not permit creating a test symbolic link. Neither suite had failures or errors. The Linux core suite passed all 59 tests, including the real interpreter-symlink case. An independent Linux ProcessWitness run also passed eight component tests. The published commit `3460f2b2c19e7e7450638775777218a4701b7c2f` subsequently passed all 59 core tests on each GitHub-hosted platform, Windows and Linux, plus package installation and isolated CLI startup ([Checks run](https://github.com/yh-l20/agent-defense-check/actions/runs/34600845986)). Core tests are separate from full runtime verification.
 
-Earlier records remain historical: `integration-01` failed its then-current shutdown criterion because fixture finalizer records were missing; that absence alone did not prove a process leak. `integration-02`, `installed-wheel-01` and `installed-wheel-02` are intermediate Windows records. The installed-wheel-03 run above is the final reference.
+Earlier records remain historical: `integration-01` failed its then-current shutdown criterion because fixture finalizer records were missing; that absence alone did not prove a process leak. `integration-02`, `installed-wheel-01` and `installed-wheel-02` are intermediate Windows records. The installed-wheel-03 run above is the Windows reference.
+
+### Published alpha on Ubuntu/WSL
+
+The public `v0.1.0a1` source ZIP was installed in two new environments on Ubuntu 24.04.3 under WSL2, Python 3.12.3, and exercised with the Linux README recipe. No dependency constraints or README commands were changed. The source ZIP SHA-256 was `ab9bfa9e1fcdd99391e876f5fa33f9cadeae4040ff2bd769ecc49cfc9f9f1f5d`; all 39 original archive files stayed unchanged. All 13 installed package Python files matched the exercised sources and the published wheel.
+
+The demo exited zero with `verified_for_demo_contract`: prohibited receipts went from 3 to 0, and all 3 legitimate sends arrived. Policy history, final ledgers and artifact bindings reconciled. All six backend processes were captured alive and later observed exiting through Linux pidfds. The two baseline services did not write finalizer records; the four candidate and clean-public services did. The rule service exited zero without forced termination. These observations do not establish graceful cleanup of every backend.
+
+The [selected-fields Linux report](../examples/verified-linux-demo-report.json) includes counts, package versions, process observations and installation conditions. Its raw `results.json` SHA-256 is `5ea4fde7128fb08d59c4980b7bdbd45e01cd0262e53de61abccb259584b4ce05`. All 25 original evidence files are retained locally and were checked against their copy manifest; the published summary omits local paths and synthetic payloads.
+
+Both environments passed `pip check`. Their installation plans selected no Torch, Triton or NVIDIA/CUDA packages. The demo took 5.524 seconds in this run. The recorded install times used a cache warmed by `pip --dry-run`; neither those timings nor pip's rounded wheel-size announcements are cold-install or network-transfer benchmarks.
+
+The manual [Runtime demo workflow](https://github.com/yh-l20/agent-defense-check/actions/workflows/runtime-demo.yml) runs the installed package on GitHub-hosted Linux and uploads runtime evidence, including after a failed demo when files are available. Evidence expires after 30 days. A passing hosted run must be checked separately; the Ubuntu/WSL result does not establish its outcome.
 
 ## The actual workflow
 
@@ -108,4 +120,4 @@ The demonstrated effect is a repaired connection layout for one explicit rule an
 
 A host must keep private context attached to its guarded connection and separate users' execution contexts. Connection resets, direct tool access, shell/network routes and shared state remain outside this repair. Actual recipient permissions, groups, CC/BCC and attachment handling also need separate support.
 
-Longer traces previously reached the policy engine's default work limit. The bounded demo makes no performance or safety claim for unlimited sessions. The full Linux installation and demo remain unverified.
+Longer traces previously reached the policy engine's default work limit. The bounded demo makes no performance or safety claim for unlimited sessions. The Ubuntu/WSL result covers its recorded platform and dependencies; it does not establish compatibility with every Linux distribution or Python version.

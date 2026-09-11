@@ -1,0 +1,165 @@
+{
+  "recorded_utc": "2026-09-11T13:27:48.429758+00:00",
+  "status": "passed_public_alpha_linux_readme_recipe",
+  "release": "v0.1.0a1",
+  "public_commit": "3460f2b2c19e7e7450638775777218a4701b7c2f",
+  "source_zip_sha256": "ab9bfa9e1fcdd99391e876f5fa33f9cadeae4040ff2bd769ecc49cfc9f9f1f5d",
+  "public_source_members_checked": 39,
+  "public_source_members_unchanged": true,
+  "installed_project_matches_exercised_sources": true,
+  "installed_project_source_count": 13,
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+  "readme_commands_changed": false,
+  "dependency_constraints_changed": false,
+  "command_scheduling": "The two pip plans ran concurrently, and the two independent environment installs ran concurrently.",
+  "environment_adjustments": "Task-owned PIP_CACHE_DIR and TMPDIR; disabled pip progress bars; unbuffered output.",
+  "timing_seconds": {
+    "plan-gateway": 43.579,
+    "plan-aggregation": 41.988,
+    "install-gateway": 23.89,
+    "install-aggregation": 19.064,
+    "demo": 5.524,
+    "check-gateway": 0.496,
+    "check-aggregation": 0.6
+  },
+  "timing_caveat": "Dry-run fetched wheels into a new task cache. Install timings used that warmed cache; they are not standalone cold-install measurements. Timings exclude agent review gaps.",
+  "counts": {
+    "prohibited_sends_received_before": 3,
+    "prohibited_sends_received_after": 0,
+    "legitimate_sends_received_after": 3,
+    "public_after_private_blocked": true
+  },
+  "runtimes": {
+    "gateway": {
+      "invariant-ai": "0.3.5",
+      "invariant-gateway": "0.0.9"
+    },
+    "aggregator": {
+      "fastmcp-slim": "4.0.3",
+      "mcp": "2.2.0",
+      "mcp-types": "2.2.0"
+    }
+  },
+  "complete_history_observed": true,
+  "all_final_ledgers_reconciled": true,
+  "artifact_bindings_unchanged": true,
+  "process_cleanup": [
+    {
+      "phase": "before",
+      "pidfd_observation": {
+        "backend": "linux_pidfd",
+        "status": "exited",
+        "all_captured_alive": true,
+        "all_exited": true,
+        "graceful_shutdown": "not_assessed",
+        "timeout_seconds": 5,
+        "elapsed_seconds": 2.6e-05,
+        "processes": [
+          {
+            "pid": 673,
+            "captured_alive": true,
+            "state": "exited",
+            "error": null
+          },
+          {
+            "pid": 686,
+            "captured_alive": true,
+            "state": "exited",
+            "error": null
+          }
+        ]
+      },
+      "gateway_processes_exit_cleanly": true,
+      "graceful_finalizers": {
+        "read": false,
+        "write": false
+      }
+    },
+    {
+      "phase": "after",
+      "pidfd_observation": {
+        "backend": "linux_pidfd",
+        "status": "exited",
+        "all_captured_alive": true,
+        "all_exited": true,
+        "graceful_shutdown": "not_assessed",
+        "timeout_seconds": 5,
+        "elapsed_seconds": 2.5e-05,
+        "processes": [
+          {
+            "pid": 746,
+            "captured_alive": true,
+            "state": "exited",
+            "error": null
+          },
+          {
+            "pid": 747,
+            "captured_alive": true,
+            "state": "exited",
+            "error": null
+          }
+        ]
+      },
+      "gateway_processes_exit_cleanly": true,
+      "graceful_finalizers": {
+        "read": true,
+        "write": true
+      }
+    },
+    {
+      "phase": "clean",
+      "pidfd_observation": {
+        "backend": "linux_pidfd",
+        "status": "exited",
+        "all_captured_alive": true,
+        "all_exited": true,
+        "graceful_shutdown": "not_assessed",
+        "timeout_seconds": 5,
+        "elapsed_seconds": 1.7e-05,
+        "processes": [
+          {
+            "pid": 797,
+            "captured_alive": true,
+            "state": "exited",
+            "error": null
+          },
+          {
+            "pid": 798,
+            "captured_alive": true,
+            "state": "exited",
+            "error": null
+          }
+        ]
+      },
+      "gateway_processes_exit_cleanly": true,
+      "graceful_finalizers": {
+        "read": true,
+        "write": true
+      }
+    }
+  ],
+  "rule_service_returncode": 0,
+  "rule_service_forced_termination": false,
+  "raw_result_sha256": "5ea4fde7128fb08d59c4980b7bdbd45e01cd0262e53de61abccb259584b4ce05",
+  "copied_evidence_files": 25,
+  "pip_check_gateway": "passed",
+  "pip_check_aggregation": "passed",
+  "scope": "One Ubuntu 24.04.3 / WSL / Python 3.12.3 x86_64 run using synthetic services and real third-party runtimes. No production or actual model attack tested.",
+  "installation": {
+    "gateway": {
+      "package_count": 61,
+      "torch_cuda_triton_packages": [],
+      "approximate_sum_announced_wheel_mb": 25.151,
+      "planning_seconds": 43.579
+    },
+    "aggregation": {
+      "package_count": 68,
+      "torch_cuda_triton_packages": [],
+      "approximate_sum_announced_wheel_mb": 17.233,
+      "planning_seconds": 41.988
+    },
+    "size_note": "Rounded wheel-size announcements from pip, not measured network transfer."
+  },
+  "notice": "Selected fields from the observed run; local paths and synthetic payloads are omitted. The complete original evidence was retained locally with hashes checked."
+}

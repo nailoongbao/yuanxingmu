@@ -15,7 +15,7 @@
            两段历史                               一段受检查的历史
 ```
 
-本地 Windows 示例里，三个危险发送从 **修复前收到 3 次，变为修复后收到 0 次**；两次改为内部发送，以及一个新的公开发送任务，仍全部收到。用的是**真实第三方运行时、两个独立假数据服务**。这能验证这条接入方式的效果，尚不能证明真实企业部署或模型攻击防御已经完成，详见[验证记录](docs/verification.md)。
+Windows 和 Ubuntu/WSL 示例里，三个危险发送从 **修复前收到 3 次，变为修复后收到 0 次**；两次改为内部发送，以及一个新的公开发送任务，仍全部收到。用的是**真实第三方运行时、两个独立假数据服务**。这能验证这条接入方式的效果，尚不能证明真实企业部署或模型攻击防御已经完成，详见[验证记录](docs/verification.md)。
 
 另有可复跑的 [LangChain 1.4.0 接入示例](examples/langchain/README.md)：应用关闭连接后继续使用旧工具，确实出现了一次私密外发；给工具绑定任务期限后，旧工具在重连之前就被拒绝，任务内的正常改正仍能完成。已测的默认 stdio 保持连接方式原本就能拦住违规发送，不能把这件事宣传为默认配置有漏洞。
 
@@ -35,7 +35,24 @@ $aggregationPython = (Resolve-Path .\.venv-aggregation\Scripts\python.exe).Path
 & $gatewayPython -m defensecheck demo --gateway-python $gatewayPython --aggregation-python $aggregationPython --output .\output\first-run
 ```
 
-每次使用新的输出目录。演示会保存前后配置、规则、调用记录、接收端回执、进程观察和结果。安装后演示只使用本地假资料，不调用模型、真实邮箱或生产服务。Linux 的整套演示尚未验证；[英文说明](README.md)中的 Linux 命令只是待验证的操作示例。
+每次使用新的输出目录。演示会保存前后配置、规则、调用记录、接收端回执、进程观察和结果。安装后演示只使用本地假资料，不调用模型、真实邮箱或生产服务。
+
+## 在 Linux 运行演示
+
+公开 `v0.1.0a1` 源码包已在 Ubuntu 24.04.3 / WSL2 / Python 3.12.3 完整运行。两个新建环境的 `pip check` 均通过，6 个后端进程均由 Linux pidfd 确认退出；[结果摘要](examples/verified-linux-demo-report.json)记录了范围与安装条件。
+
+```bash
+python3.12 -m venv .venv-gateway
+.venv-gateway/bin/python -m pip install -r requirements-gateway.txt .
+python3.12 -m venv .venv-aggregation
+.venv-aggregation/bin/python -m pip install -r requirements-aggregation.txt
+.venv-gateway/bin/python -m defensecheck demo \
+  --gateway-python .venv-gateway/bin/python \
+  --aggregation-python .venv-aggregation/bin/python \
+  --output output/first-run
+```
+
+仓库还提供手动触发的 [Runtime demo 工作流](https://github.com/yh-l20/agent-defense-check/actions/workflows/runtime-demo.yml)，用于在 GitHub 的 Linux 环境运行演示并保留 30 天证据。其运行结果与上述 Ubuntu/WSL 记录分别报告。
 
 ## 接入自己的配置
 
@@ -69,4 +86,4 @@ $aggregationPython = (Resolve-Path .\.venv-aggregation\Scripts\python.exe).Path
 
 第一版还不判断真实资料读者、群组、访客、抄送或附件权限。它使用官方已有的 `analyze_pending` 接口处理这条绑定工具调用的规则，不会自动改写任意策略。重新连接却保留模型记忆、其他网络或 shell 入口、跨用户共享连接，以及长历史触及规则引擎计算上限，都需要单独处理。
 
-欢迎贡献可复现的接入问题、被候选修改破坏的正常流程，或一个带独立回执的小范围修复。提交时保留版本和脱敏配置，不带真实凭证或私密资料。
+可通过[集成反馈表](https://github.com/yh-l20/agent-defense-check/issues/new?template=integration-result.yml)提交安装失败、不支持的配置、防御缺口或成功接入结果。请说明版本、接收端实际收到什么，以及正常工作是否还能完成；配置只提供移除凭证后的描述，不带真实私密资料。

@@ -15,7 +15,7 @@ client → gateway → sending service                              → sending 
           separate histories                     one guarded history
 ```
 
-In the local Windows example, three prohibited sends reached the receiving service before the change and none afterward. Two internal corrections and a separate public send still arrived. These are results from **real third-party runtimes with synthetic services and data**; [the evidence and its scope](docs/verification.md) are explicit.
+In the Windows and Ubuntu/WSL examples, three prohibited sends reached the receiving service before the change and none afterward. Two internal corrections and a separate public send still arrived. These are results from **real third-party runtimes with synthetic services and data**; [the evidence and its scope](docs/verification.md) are explicit.
 
 The [LangChain 1.4.0 example](examples/langchain/README.md) also runs actual framework tools. It reproduces a private send after an application closes its client and reuses an old tool, then makes those tool references expire with their task. Normal corrections still work inside the task. The framework's default stdio keep-alive path already passed the tested protection checks.
 
@@ -50,7 +50,9 @@ The acceptance contract requires the following together:
 
 Process exit and graceful application cleanup are reported separately. A missing finalizer record does not by itself establish either a leaked process or graceful cleanup.
 
-The full Linux demo has **not** been validated. The following is an untested installation/run recipe, not a Linux support claim:
+## Try the demo on Linux
+
+The published `v0.1.0a1` source ZIP passed the full demo on Ubuntu 24.04.3 under WSL2 with Python 3.12.3. Both fresh environments passed `pip check`, and all six backend processes were observed exiting through Linux pidfds. See the [recorded result](examples/verified-linux-demo-report.json) for the exact scope and installation conditions.
 
 ```bash
 python3.12 -m venv .venv-gateway
@@ -62,6 +64,8 @@ python3.12 -m venv .venv-aggregation
   --aggregation-python .venv-aggregation/bin/python \
   --output output/first-run
 ```
+
+The [Runtime demo workflow](https://github.com/yh-l20/agent-defense-check/actions/workflows/runtime-demo.yml) also provides a manual GitHub-hosted Linux run and retains its evidence for 30 days. Its results are separate from the Ubuntu/WSL run above.
 
 ## Use an existing configuration
 
@@ -111,4 +115,4 @@ A trusted host must keep private context attached to the guarded connection and 
 
 Unit tests cover exact policy generation, configuration preservation, unsupported inputs, candidate hashes, and planning without command execution. Runtime enforcement requires the separate demo.
 
-Useful contributions are reproducible deployment mismatches, normal workflows a proposed change breaks, or a small additional repair with independent receipts. Include versions and a sanitized configuration. The upstream gateway keeps its usual log under `.invariant`; the bundled demo uses synthetic data throughout.
+Use the [integration report form](https://github.com/yh-l20/agent-defense-check/issues/new?template=integration-result.yml) to share installation failures, unsupported configurations, observed defense gaps, or successful integrations. Include versions, what actually reached the destination, and whether normal work still succeeded. Describe configuration with credentials removed. The upstream gateway keeps its usual log under `.invariant`; the bundled demo uses synthetic data throughout.
