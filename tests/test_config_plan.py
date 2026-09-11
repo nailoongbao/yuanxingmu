@@ -148,8 +148,10 @@ class PlanTests(unittest.TestCase):
         self.assertEqual(entry["args"][:7], [
             "-m", "gateway", "mcp", "--verbose", "--project-name", "candidate-project", "--exec",
         ])
+        # Preserve the supplied invocation path, including Windows short names
+        # and virtualenv symlinks, rather than its resolved target.
         self.assertEqual(entry["args"][7:], [
-            str(self.python.resolve()), str(files["aggregator"]), str(files["upstreams"]),
+            str(self.python), str(files["aggregator"]), str(files["upstreams"]),
             "--require-tool", "internal_get_inbox", "--require-tool", "mail_send_email",
         ])
         self.assertEqual(files["aggregator"].read_bytes(), self.launcher_bytes)
