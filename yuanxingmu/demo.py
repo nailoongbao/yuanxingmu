@@ -28,7 +28,8 @@ def run_demo(output: Path, *, bwrap: Path | None = None) -> dict:
     public = output / "public.txt"
     public.write_text("Public release notes", encoding="utf-8")
     receiver_file = output / "receiver.jsonl"
-    receiver = subprocess.Popen([sys.executable, "-m", "yuanxingmu.receipts", "--output", str(receiver_file)],
+    bootstrap = "import runpy,sys;sys.path.insert(0,sys.argv.pop(1));runpy.run_module('yuanxingmu.receipts',run_name='__main__')"
+    receiver = subprocess.Popen([sys.executable, "-I", "-c", bootstrap, str(source_root), "--output", str(receiver_file)],
         env={"PATH": "/usr/bin:/bin", "PYTHONPATH": str(source_root), "PYTHONUNBUFFERED": "1"},
         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, start_new_session=True, close_fds=True)
     runs = []

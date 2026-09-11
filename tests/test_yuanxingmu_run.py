@@ -11,6 +11,28 @@ from yuanxingmu.sandbox import sandbox_available
 
 @unittest.skipUnless(sys.platform.startswith("linux"), "Linux execution only")
 class OperatorRunTests(unittest.TestCase):
+    def test_demo_receiver_ignores_model_writable_current_directory(self):
+        bwrap = Path(os.environ["YUANXINGMU_TEST_BWRAP"]) if os.environ.get("YUANXINGMU_TEST_BWRAP") else None
+        if not sandbox_available(bwrap=bwrap)["available"]:
+            self.skipTest("bubblewrap unavailable")
+        package = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory(prefix="yxm-shadow-") as folder:
+            root = Path(folder)
+            untrusted = root / "cwd"
+            shadow = untrusted / "yuanxingmu"
+            shadow.mkdir(parents=True)
+            marker = root / "host-import-marker"
+            (shadow / "__init__.py").write_text("from pathlib import Path\nPath(" + repr(str(marker)) + ").write_text('unexpected host import')\n")
+            (shadow / "receipts.py").write_text("raise RuntimeError('untrusted module imported')\n")
+            bootstrap = "import runpy,sys;sys.path.insert(0,sys.argv.pop(1));runpy.run_module('yuanxingmu',run_name='__main__')"
+            command = [sys.executable, "-I", "-c", bootstrap, str(package), "demo", "--output", str(root / "evidence")]
+            if bwrap:
+                command += ["--bwrap", str(bwrap)]
+            result = subprocess.run(command, cwd=untrusted, env={"PATH": "/usr/bin:/bin"},
+                                    capture_output=True, text=True, timeout=20, close_fds=True)
+            self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertFalse(marker.exists(), "worker-controlled cwd executed inside the trusted host")
+
     def test_operator_cli_resumes_persisted_task_and_refuses_workspace_identity_reset(self):
         bwrap = Path(os.environ["YUANXINGMU_TEST_BWRAP"]) if os.environ.get("YUANXINGMU_TEST_BWRAP") else None
         if not sandbox_available(bwrap=bwrap)["available"]:

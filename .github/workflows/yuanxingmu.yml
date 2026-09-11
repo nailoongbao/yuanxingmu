@@ -22,6 +22,9 @@ jobs:
   isolation:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
+    env:
+      YUANXINGMU_TEST_BWRAP: /opt/yuanxingmu/bin/bwrap
+      YUANXINGMU_SANDBOX_EVIDENCE_DIR: ${{ runner.temp }}/yuanxingmu-sandbox-evidence
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -30,19 +33,56 @@ jobs:
       - name: Install packaged Linux isolation
         run: |
           sudo apt-get update
-          sudo apt-get install --yes bubblewrap
+          sudo apt-get install --yes bubblewrap apparmor
+          sudo install -d -o root -g root -m 0755 /opt/yuanxingmu /opt/yuanxingmu/bin
+          sudo install -o root -g root -m 0755 /usr/bin/bwrap /opt/yuanxingmu/bin/bwrap
+          cmp /usr/bin/bwrap /opt/yuanxingmu/bin/bwrap
+          # Permit this executable to establish the namespaces used by sandbox.py.
+          # The profile itself does not supply the sandbox's execution restrictions.
+          sudo tee /etc/apparmor.d/yuanxingmu-bwrap >/dev/null <<'PROFILE'
+          abi <abi/4.0>,
+          include <tunables/global>
+
+          profile yuanxingmu-bwrap /opt/yuanxingmu/bin/bwrap flags=(unconfined) {
+            userns,
+          }
+          PROFILE
+          sudo apparmor_parser --replace /etc/apparmor.d/yuanxingmu-bwrap
+          test "$(sysctl -n kernel.apparmor_restrict_unprivileged_userns)" = "1"
       - name: Install package
         run: python -m pip install .
       - name: Require actual isolation availability
-        run: python -I -m yuanxingmu doctor
+        run: |
+          set -o pipefail
+          mkdir -p "$RUNNER_TEMP/yuanxingmu-diagnostics"
+          python -I -m yuanxingmu doctor --bwrap "$YUANXINGMU_TEST_BWRAP" | tee "$RUNNER_TEMP/yuanxingmu-diagnostics/doctor.json"
       - name: Verify authority, broker, command and process boundaries
         run: python -m unittest discover -s tests -p 'test_yuanxingmu*.py' -v
       - name: Verify installed demo against independent receiver
-        run: python -I -m yuanxingmu demo --output "$RUNNER_TEMP/yuanxingmu-receipts"
+        run: python -I -m yuanxingmu demo --bwrap "$YUANXINGMU_TEST_BWRAP" --output "$RUNNER_TEMP/yuanxingmu-receipts"
+      - name: Preserve isolation diagnostics after failure
+        if: failure()
+        run: |
+          set +e
+          mkdir -p "$RUNNER_TEMP/yuanxingmu-diagnostics"
+          {
+            uname -a
+            cat /etc/os-release
+            dpkg-query -W bubblewrap apparmor
+            stat -c '%n %U:%G %a' /opt/yuanxingmu /opt/yuanxingmu/bin /opt/yuanxingmu/bin/bwrap
+            sha256sum /usr/bin/bwrap /opt/yuanxingmu/bin/bwrap
+            sysctl kernel.apparmor_restrict_unprivileged_userns kernel.unprivileged_userns_clone user.max_user_namespaces
+            sudo aa-status
+          } > "$RUNNER_TEMP/yuanxingmu-diagnostics/host.txt" 2>&1
+          sudo dmesg --color=never 2>/dev/null | awk '/apparmor=/ && /(yuanxingmu-bwrap|unprivileged_userns|comm="bwrap")/' | tail -n 100 > "$RUNNER_TEMP/yuanxingmu-diagnostics/apparmor-bwrap.txt"
+          exit 0
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: yuanxingmu-receipts
-          path: ${{ runner.temp }}/yuanxingmu-receipts
+          path: |
+            ${{ runner.temp }}/yuanxingmu-receipts
+            ${{ runner.temp }}/yuanxingmu-sandbox-evidence
+            ${{ runner.temp }}/yuanxingmu-diagnostics
           if-no-files-found: warn
           retention-days: 30

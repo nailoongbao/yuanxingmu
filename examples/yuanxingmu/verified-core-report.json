@@ -15,23 +15,23 @@
   "runs": [
     {
       "name": "read_and_send",
-      "pid": 728,
+      "pid": 681,
       "returncode": 0,
       "exited": true,
-      "stdout": "{\"read\": true, \"plain\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 5}, \"encoded\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 6}, \"public_summary\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 7}, \"internal\": {\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"internal\", \"labels\": [\"internal\"], \"blocked_labels\": [], \"revision\": 2, \"event_id\": 8, \"request_id\": \"26af98ba5dad47f1994c725a8c499b73\", \"http_status\": 200, \"outcome\": \"acknowledged\"}}\n",
+      "stdout": "{\"read\": true, \"plain\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_bf756fdf206446568d3cdf423b450bc5\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 5}, \"encoded\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_bf756fdf206446568d3cdf423b450bc5\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 6}, \"public_summary\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_bf756fdf206446568d3cdf423b450bc5\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 7}, \"internal\": {\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_bf756fdf206446568d3cdf423b450bc5\", \"destination_id\": \"internal\", \"labels\": [\"internal\"], \"blocked_labels\": [], \"revision\": 2, \"event_id\": 8, \"request_id\": \"0bae1f4cc70c432db96f730295e47cf7\", \"http_status\": 200, \"outcome\": \"acknowledged\"}}\n",
       "stderr": ""
     },
     {
       "name": "existing_child",
-      "pid": 736,
+      "pid": 689,
       "returncode": 0,
       "exited": true,
-      "stdout": "{\"denied\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_aa5adc6a3a534a3abfd30d7581d067f8\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 9}, \"internal\": {\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_aa5adc6a3a534a3abfd30d7581d067f8\", \"destination_id\": \"internal\", \"labels\": [\"internal\"], \"blocked_labels\": [], \"revision\": 2, \"event_id\": 10, \"request_id\": \"8300fd75a33642dc9f7e4f3bc37af60b\", \"http_status\": 200, \"outcome\": \"acknowledged\"}}\n",
+      "stdout": "{\"denied\": {\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_0f60b1094c5c45e38f1b03735b59bcfa\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 9}, \"internal\": {\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_0f60b1094c5c45e38f1b03735b59bcfa\", \"destination_id\": \"internal\", \"labels\": [\"internal\"], \"blocked_labels\": [], \"revision\": 2, \"event_id\": 10, \"request_id\": \"65cab604af084f559ad1179b6524954e\", \"http_status\": 200, \"outcome\": \"acknowledged\"}}\n",
       "stderr": ""
     },
     {
       "name": "direct_bypass",
-      "pid": 741,
+      "pid": 694,
       "returncode": 0,
       "exited": true,
       "stdout": "{\"direct_network_denied\": true, \"host_resource_hidden\": true, \"authority_hidden\": true, \"identity_field_rejected\": true, \"arbitrary_url_rejected\": true, \"worker_cannot_create_root\": true, \"worker_cannot_clear_labels\": true, \"workspace_write_works\": true, \"hostname_namespace\": \"1\"}\n",
@@ -39,34 +39,34 @@
     },
     {
       "name": "broker_restart",
-      "pid": 750,
+      "pid": 703,
       "returncode": 0,
       "exited": true,
-      "stdout": "{\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_5a00749b16eb497c9ca290901424b8cf\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 11}\n",
+      "stdout": "{\"allowed\": false, \"reason\": \"destination_cannot_receive_labels\", \"task_id\": \"task_bf756fdf206446568d3cdf423b450bc5\", \"destination_id\": \"public\", \"labels\": [\"internal\"], \"blocked_labels\": [\"internal\"], \"revision\": 2, \"event_id\": 11}\n",
       "stderr": ""
     },
     {
       "name": "independent_public",
-      "pid": 753,
+      "pid": 706,
       "returncode": 0,
       "exited": true,
-      "stdout": "{\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_87496c749a3247c89824402ad0c515fe\", \"destination_id\": \"public\", \"labels\": [], \"blocked_labels\": [], \"revision\": 1, \"event_id\": 13, \"request_id\": \"5f351db49a1a4588a77ae6ab9f479f3d\", \"http_status\": 200, \"outcome\": \"acknowledged\"}\n",
+      "stdout": "{\"allowed\": true, \"reason\": \"send_authorized\", \"task_id\": \"task_46e78db0650347089ea32e086f93c9cd\", \"destination_id\": \"public\", \"labels\": [], \"blocked_labels\": [], \"revision\": 1, \"event_id\": 13, \"request_id\": \"093b4666b1934037a80f342356afe1c5\", \"http_status\": 200, \"outcome\": \"acknowledged\"}\n",
       "stderr": ""
     },
     {
       "name": "revoked_task",
-      "pid": 758,
+      "pid": 711,
       "returncode": 0,
       "exited": true,
       "stdout": "{\"allowed\": false, \"reason\": \"task_revoked\"}\n",
       "stderr": ""
     }
   ],
-  "receiver_pid": 723,
+  "receiver_pid": 676,
   "tasks": {
-    "root": "task_5a00749b16eb497c9ca290901424b8cf",
-    "child_before_read": "task_aa5adc6a3a534a3abfd30d7581d067f8",
-    "clean": "task_87496c749a3247c89824402ad0c515fe"
+    "root": "task_bf756fdf206446568d3cdf423b450bc5",
+    "child_before_read": "task_0f60b1094c5c45e38f1b03735b59bcfa",
+    "clean": "task_46e78db0650347089ea32e086f93c9cd"
   },
   "observed_business_cost": {
     "public_text_after_private_read_blocked": true,
@@ -96,19 +96,19 @@
   "receipts": [
     {
       "receiver": "/internal",
-      "request_id": "26af98ba5dad47f1994c725a8c499b73",
+      "request_id": "0bae1f4cc70c432db96f730295e47cf7",
       "body_sha256": "f27af59fa7d01bc3c75d84ee15157d940324b65c0db85600ec8a83ccdb795335",
       "body": "SYNTHETIC-INTERNAL-ORDER-9471"
     },
     {
       "receiver": "/internal",
-      "request_id": "8300fd75a33642dc9f7e4f3bc37af60b",
+      "request_id": "65cab604af084f559ad1179b6524954e",
       "body_sha256": "885b9e05e360a933ab9503a7f983e7484a612731b0011ce38ef3c8ba5dd115a0",
       "body": "child internal correction"
     },
     {
       "receiver": "/public",
-      "request_id": "5f351db49a1a4588a77ae6ab9f479f3d",
+      "request_id": "093b4666b1934037a80f342356afe1c5",
       "body_sha256": "40ea48999f8b7d7698f66cff3749dcfb5beb1bb6a6274c4f2b57b2f68ef5c2a3",
       "body": "Public release notes"
     }
@@ -120,7 +120,7 @@
     "yuanxingmu/broker.py": "c97cebba3818887aac2f1a54191465bd28352ec387920f6e471da518aeb90fa8",
     "yuanxingmu/cli.py": "4b10bd7158dc4917c1169612a140ee9ddc9a1450dab28abc84a4a6a496809e2a",
     "yuanxingmu/client.py": "da3ecd5d69635028724e4911493a79d95b05d9897c1f79f6f0dd9ce5844fabfc",
-    "yuanxingmu/demo.py": "403ce3e4709f4de64512abe692fb8f4c46c6fb8c3711573a59e40a82dc2f8467",
+    "yuanxingmu/demo.py": "6d13f20cdc9a493aff33988b3750e38aa33cf52fd790431b15b6175f9276eb46",
     "yuanxingmu/receipts.py": "a69ebeebd499526418fa23797168ee9b83c686e232c315f52db71e634c694882",
     "yuanxingmu/run.py": "42662b7ae71dabfbf069ebd58a1b89e2a90929895ea427921bc3c1a0082d381a",
     "yuanxingmu/sandbox.py": "dd693c87fe532150b55cce2e3ced72fd6dae7c04520dd595434cfb2306305d23",
@@ -130,8 +130,8 @@
   },
   "verification": {
     "date": "2026-09-11",
-    "original_results_sha256": "2cd057a62704060ccc12b6512adf919bdcb923f5b2fd1990544125dc4c9228c1",
-    "receiver_file_sha256": "dba441fd9e0e5186aa55637fe381e3d74cac3d9c9efc46e99cf387765fb33a49",
+    "original_results_sha256": "bb1176d959fc611620d5ed3d63af1d9ab146220faf1f26c6040696d09a4be3e9",
+    "receiver_file_sha256": "457d506675474957239ca5099559beebcf33c1dff7a1df74558f73a354cc3715",
     "source_hashes_independently_checked_before_publication": true,
     "warning": "Synthetic Python workers; not a real LLM evaluation or complete host-framework validation."
   }
