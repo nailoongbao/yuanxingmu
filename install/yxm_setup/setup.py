@@ -23,8 +23,8 @@ import urllib.request
 import uuid
 import zipfile
 
-VERSION = "0.1.0a1"
-RUNTIME = "0.4.0a1"
+VERSION = "0.2.0a1"
+RUNTIME = "0.5.0a1"
 MARKER = "INSTALLATION.json"
 APPARMOR = b'''abi <abi/4.0>,
 include <tunables/global>
@@ -285,7 +285,7 @@ def extract_wheel(root: Path, archive: Path):
             if item.is_dir():
                 continue
             path = member(item.filename)
-            if (item.filename in names or path.parts[0] not in {"yuanxingmu", "defensecheck", "agent_defense_check-0.4.0a1.dist-info"}
+            if (item.filename in names or path.parts[0] not in {"yuanxingmu", "defensecheck", "agent_defense_check-0.5.0a1.dist-info"}
                     or stat.S_ISLNK(item.external_attr >> 16)):
                 raise InstallError("Python 包内容与安装范围不符。")
             names.add(item.filename)
@@ -539,7 +539,7 @@ def install(root: Path, *, system_deps=False, cache=None, shortcut=True):
             print("这个目录已经装好，运行文件检查通过。没有覆盖已有资料或运行版本。", flush=True)
             return state
         components = state["components"]
-        print("1/4 准备元星木（固定版本 0.4.0a1）", flush=True)
+        print("1/4 准备元星木（固定版本 0.5.0a1）", flush=True)
         if components.get("app") != "complete":
             wheel = fetch(root, pins["wheel"], cache)
             clear_partial(root, "app")

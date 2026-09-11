@@ -113,7 +113,13 @@ def smoke(root, report_path):
                 {"name": "quote", "filename": "quote.txt", "content": "仅供安装验收的合成资料：报价为 10000 元。"}]})
         identifier = created["profile_id"]
         prefix = "/api/profiles/" + identifier
-        check("real OpenClaw profile is initialized", request("/api/profiles")["profiles"][0]["id"] == identifier)
+        installed_profile = request("/api/profiles")["profiles"][0]
+        check("real OpenClaw profile is initialized", installed_profile["id"] == identifier)
+        check("installed profile exposes reviewed email", "reviewed_email_v1" in installed_profile.get("features", []))
+        initial_mail = request(prefix + "/mail")
+        check("new reviewed email queue is empty", initial_mail.get("supported") is True
+              and initial_mail.get("active") is True and initial_mail.get("drafts") == [])
+        check("new installation has no sender account", request("/api/mail-account").get("configured") is False)
         started = operation(prefix + "/start", {})
         check("native OpenClaw WebUI responds", native_page(started))
         operation(prefix + "/stop", {})
@@ -161,7 +167,7 @@ def smoke(root, report_path):
             failures.append("Acceptance scenario did not finish")
         result = {"schema_version": 1, "time": datetime.now(timezone.utc).isoformat(),
             "passed": scenario_completed and not failures, "scenario_completed": scenario_completed,
-            "scope": "Fresh installed launcher, actual OpenClaw initialization, native WebUI HTTP, duplicate refusal, reopen, revoke and stop; no model inference or message sending.",
+            "scope": "Fresh installed launcher, actual OpenClaw initialization, native WebUI HTTP, duplicate refusal, reopen, revoke and stop, reviewed-email feature, empty draft list and unconfigured sender; no model inference or message sending.",
             "checks": checks, "failures": failures}
         report_path.parent.mkdir(parents=True, exist_ok=True)
         with report_path.open("x") as output:

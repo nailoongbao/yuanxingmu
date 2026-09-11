@@ -1,12 +1,12 @@
 {
-  "installer_version": "0.1.0a1",
-  "runtime_version": "0.4.0a1",
-  "runtime_commit": "3d645d6c9a4ed673535684bf98f50e9ebb807a5a",
+  "installer_version": "0.2.0a1",
+  "runtime_version": "0.5.0a1",
+  "runtime_commit": "6859475748c8041d1164d013786400a107eb7214",
   "wheel": {
-    "name": "agent_defense_check-0.4.0a1-py3-none-any.whl",
-    "url": "https://github.com/yh-l20/agent-defense-check/releases/download/v0.4.0a1/agent_defense_check-0.4.0a1-py3-none-any.whl",
-    "bytes": 128482,
-    "sha256": "feb103cf98c8249f4b723162e5a13bdb8c645489c30cc362b7db423dadf320f9"
+    "name": "agent_defense_check-0.5.0a1-py3-none-any.whl",
+    "bytes": 150831,
+    "sha256": "177d30cb0dedd329bc2751a1b134b8b08184978e07a06b0209f68680e8058954",
+    "url": "https://github.com/yh-l20/agent-defense-check/releases/download/v0.5.0a1/agent_defense_check-0.5.0a1-py3-none-any.whl"
   },
   "node": {
     "version": "24.16.0",

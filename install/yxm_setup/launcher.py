@@ -24,8 +24,8 @@ import threading
 import webbrowser
 
 
-INSTALLER_VERSION = "0.1.0a1"
-RUNTIME_VERSION = "0.4.0a1"
+INSTALLER_VERSION = "0.2.0a1"
+RUNTIME_VERSION = "0.5.0a1"
 HASH = re.compile(r"[0-9a-f]{64}")
 DEFAULT_PORT = 18910
 
