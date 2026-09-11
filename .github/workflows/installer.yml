@@ -22,6 +22,16 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
+      - name: Prepare standard system directory permissions on disposable runner
+        run: |
+          # Hosted tool images can make /opt writable for tool installation.
+          # The installer requires the ownership used by standard Ubuntu;
+          # keep its production rejection of writable system ancestors intact.
+          test -d /opt && test ! -L /opt
+          stat -c '%n %U:%G %a' /opt
+          sudo chown root:root /opt
+          sudo chmod 0755 /opt
+          stat -c '%n %U:%G %a' /opt
       - name: Build installer from this exact commit
         run: /usr/bin/python3 install/build_zipapp.py --output "$RUNNER_TEMP/yuanxingmu-installer.pyz"
       - name: Install fixed public runtime and check actual Ubuntu isolation
