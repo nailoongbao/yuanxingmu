@@ -82,7 +82,7 @@
         <div class="preview-label"><span class="status-dot" aria-hidden="true"></span> RESEARCH PREVIEW <span class="label-divider"></span> 使用预览版</div>
         <h1 id="start-title">用自己的模型，<br><span>从一份短文本开始。</span></h1>
         <p class="hero-description">先安装本机工作台，再连接自己的模型、选择允许使用的资料。<br>到 OpenClaw 原来的聊天界面里，看报价、整理预算、核对结果。</p>
-        <p class="hero-description">想看 AI 拟稿、自己核对后再发邮件？<a href="email-demo.html">观看新的邮件演示 →</a> 邮件功能需要 0.5 版；下方 0.1 安装器暂时仍安装 0.4 版。</p>
+        <p class="hero-description">想看 AI 拟稿、自己核对后再发邮件？<a href="email-demo.html">观看新的邮件演示 →</a></p>
         <div class="hero-actions"><a class="button button-primary" href="#install">查看安装方式 <span aria-hidden="true">↓</span></a><a class="text-link" href="#workbench">已经装好，打开工作台 <span aria-hidden="true">→</span></a></div>
         <p class="start-trust-note"><strong>你选择的模型会看到聊天内容和它读取的资料。</strong><br>云端模型需要把这些内容发送给模型服务。“默认不能发送”指不能另外发往未配置的接收位置，不包括正常的模型请求。</p>
       </section>
@@ -99,19 +99,27 @@
             <p>首版适用于 <strong>Ubuntu 24.04 / WSL Ubuntu 24.04、x86_64 电脑</strong>，需要系统 Python 3.12 或更新版本。请准备<strong>至少 2 GB 可用空间</strong>和网络连接；首次还会下载 Node.js 与 OpenClaw。</p>
             <details><summary>Windows 用户：先准备 Ubuntu / WSL</summary><p>安装器在 Ubuntu 中运行，不会替你安装 WSL。在 PowerShell 中运行下面的命令，按屏幕提示完成系统安装，再打开 Ubuntu 24.04。后续命令都在 Ubuntu 终端中运行；已有合适环境可以跳过。</p><pre><code>wsl --install -d Ubuntu-24.04</code></pre></details>
             <div class="installer-preview" id="installer-preview" data-installer-status="published">
-              <span class="installer-status" id="installer-release-status">Ubuntu / WSL 安装预览 · 0.1.0a1</span>
+              <span class="installer-status" id="installer-release-status">Ubuntu / WSL 安装预览 · 0.2.0a1</span>
               <h3>下载一个文件，准备所需程序。</h3>
               <p id="installer-release-note">安装器已发布。新目录安装、关闭后重开和收回权限，已在 Ubuntu 与 WSL 检查通过。首次需要在 Ubuntu 终端运行下面的一条命令。</p>
-              <div class="installer-links"><a class="installer-download" id="installer-download" href="https://github.com/yh-l20/agent-defense-check/releases/download/installer-0.1.0a1/yuanxingmu-installer-0.1.0a1.pyz">下载安装器（66 KB） ↓</a><a href="https://github.com/yh-l20/agent-defense-check/releases/tag/installer-0.1.0a1" target="_blank" rel="noopener noreferrer">版本与核验记录 ↗</a></div>
+              <p>带邮件核对功能的新版安装器。已经有旧版时，请使用新的安装目录；旧资料和聊天继续保留。</p><div class="installer-links"><a class="installer-download" id="installer-download" href="https://github.com/yh-l20/agent-defense-check/releases/download/installer-0.2.0a1/yuanxingmu-installer-0.2.0a1.pyz">下载安装器（约 67 KB） ↓</a><a href="https://github.com/yh-l20/agent-defense-check/releases/tag/installer-0.2.0a1" target="_blank" rel="noopener noreferrer">版本与核验记录 ↗</a></div>
               <details id="installer-preview-steps" open><summary>下载后，按这一步安装</summary>
-                <p>把下载的 <code>yuanxingmu-installer-0.1.0a1.pyz</code> 放到 Ubuntu 的主目录（<code>~</code>），然后在 Ubuntu 终端运行：</p>
-                <pre><code>/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.1.0a1.pyz" --system-deps</code></pre>
+                <p>把下载的 <code>yuanxingmu-installer-0.2.0a1.pyz</code> 放到 Ubuntu 的主目录（<code>~</code>），然后在 Ubuntu 终端运行：</p>
+                <pre><code>/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.2.0a1.pyz" --system-deps</code></pre>
                 <p>Windows / WSL 用户可以先在 Ubuntu 终端运行 <code>cd ~</code>，再运行 <code>explorer.exe .</code>，把下载的文件拖进打开的文件夹。</p>
                 <p>点击“复制”取得完整命令；手机上也可以左右滑动查看。</p>
                 <p><code>--system-deps</code> 允许安装 Ubuntu 提供的隔离程序 bubblewrap，系统可能要求输入你的密码。需要额外配置时，只为元星木使用的程序设置 AppArmor 规则，保留系统的整体限制。隔离检查失败时，安装会停止。</p>
-                <p>安装器固定准备元星木 <strong>0.4.0a1</strong>、Node.js <strong>24.16.0</strong> 和 OpenClaw <strong>2026.9.4</strong>，不需要你分别操作 pip、Git 或 npm。已经备齐系统依赖时，可以省略命令末尾的 <code>--system-deps</code>。</p>
+                <p>已经装过旧版，请改用下方“保留旧版，另装新版”中的完整命令。</p>
+                <p>安装器固定准备元星木 <strong>0.5.0a1</strong>、Node.js <strong>24.16.0</strong> 和 OpenClaw <strong>2026.9.4</strong>，不需要你分别操作 pip、Git 或 npm。已经备齐系统依赖时，可以省略命令末尾的 <code>--system-deps</code>。</p>
                 <p>默认安装到 <code>~/yuanxingmu</code>。已有安装不会被覆盖；中断后重新运行同一安装器，只会继续它自己尚未完成的安装。无法确认已有目录时会停下来，请保留原目录和工作记录。</p>
                 <p>安装器不会提供模型账号。安装完成后，仍需要你填写自己的模型接口，并选择允许使用的资料。</p>
+              </details>
+              <details id="installer-existing-install"><summary>已经装过旧版：保留旧版，另装新版</summary>
+                <p>同样先把下载的安装器放到 Ubuntu 主目录，再运行这一条完整命令，把新版装到另一个目录：</p>
+                <pre><code>/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.2.0a1.pyz" --system-deps --install-root "$HOME/yuanxingmu-mail"</code></pre>
+                <p>装好以后，用下面的命令打开新版。以后也用同一条命令：</p>
+                <pre><code>"$HOME/yuanxingmu-mail/open-yuanxingmu"</code></pre>
+                <p>旧资料和聊天保留在旧版中；新版请重新填写模型连接、放入资料并新建工作。两个版本请分开使用，先关闭旧版中的工作并退出旧工作台，再打开新版。</p>
               </details>
             </div>
             <details id="manual-install"><summary>现有手工安装步骤（也保留给开发者）</summary>
@@ -147,8 +155,9 @@ npm install --prefix "$YXM_DIR/openclaw" openclaw@2026.9.4
           </section>
           <section id="workbench" aria-labelledby="workbench-title">
             <p class="eyebrow">02 / 打开工作台</p><h2 id="workbench-title">打开你的本机工作台。</h2>
-            <p>使用安装器完成安装后，在 Ubuntu 终端运行：</p>
+            <p>首次按默认位置安装的，在 Ubuntu 终端运行：</p>
             <pre><code>"$HOME/yuanxingmu/open-yuanxingmu"</code></pre>
+            <p>如果你按“保留旧版，另装新版”安装，请使用<a href="#installer-existing-install">那里提供的新版启动命令</a>。下文默认目录是 <code>~/yuanxingmu</code>，另装的新版目录是 <code>~/yuanxingmu-mail</code>。</p>
             <details id="manual-launch"><summary>以前按手工步骤安装的，怎样打开？</summary><p>继续使用原来的入口。按本页手工步骤安装在默认目录时，运行：</p><pre><code>"$HOME/yuanxingmu/.venv/bin/python" -I -m yuanxingmu desk</code></pre></details>
             <p>程序会尝试打开浏览器。如果没有自动打开，请把终端中完整的 <code>http://127.0.0.1:18910/#access=…</code> 链接复制到这台电脑的浏览器。</p>
             <div class="start-note"><strong>使用期间请保留这个终端，管理链接请只供自己使用。</strong>工作台重启后会给出新链接，已有工作和权限仍保留。它与稍后打开的 OpenClaw 聊天入口不同。</div>
@@ -186,8 +195,9 @@ npm install --prefix "$YXM_DIR/openclaw" openclaw@2026.9.4
           </section>
           <section id="daily" aria-labelledby="daily-title">
             <p class="eyebrow">日常使用</p><h2 id="daily-title">关闭后，下次还可以继续。</h2>
-            <p>用安装器安装的工作台，下次仍用这一行打开，原有工作会继续显示：</p>
+            <p>下次仍用首次打开时的同一条命令，原有工作会继续显示。默认位置安装的命令是：</p>
             <pre><code>"$HOME/yuanxingmu/open-yuanxingmu"</code></pre>
+            <p>保留旧版、另装新版的，请继续用 <code>"$HOME/yuanxingmu-mail/open-yuanxingmu"</code> 打开新版。</p>
             <p>手工安装请使用<a href="#manual-launch">原来的启动命令</a>。安装器提供的入口发现工作台已经打开时，会提示你回到原窗口；不会接管占用端口的其他程序。</p>
             <div class="start-table-wrap" role="region" aria-label="日常操作说明" tabindex="0"><table><thead><tr><th scope="col">页面操作</th><th scope="col">实际效果</th></tr></thead><tbody><tr><td>启动工作 / 获取聊天入口</td><td>继续原来的资料、聊天和权限，再进入 OpenClaw。</td></tr><tr><td>刷新状态</td><td>查看实际运行状态，不改变权限。</td></tr><tr><td>暂时关闭</td><td>关闭这项工作及其运行中的命令。正常关闭且权限未被收回时，可以再启动。</td></tr></tbody></table></div>
             <div class="start-note"><strong>关闭终端或浏览器，不会停止已经运行的 AI。</strong>今天先不用了，请在卡片中点击“暂时关闭”，等页面确认已停止，再退出工作台。</div>
@@ -206,7 +216,7 @@ npm install --prefix "$YXM_DIR/openclaw" openclaw@2026.9.4
             <details><summary>模型连接失败，或没有读取资料</summary><p>模型报 401、404 或无法调用工具时，核对密钥、接口地址、模型名称及工具调用支持。资料太长时，先用短文本重新建立工作。本版没有编辑已建工作模型配置的表单，需改配置时请建立新工作。</p></details>
             <details><summary>启动失败、端口被占用或服务异常中断</summary><p>先刷新页面查看实际状态。每项工作的目录位于 <code>~/yuanxingmu/workbench/profiles/</code>，可查看其中的 <code>supervisor.log</code> 和 <code>gateway.stderr.log</code>；具体排错见下方命令行指南。</p><p>如果状态是“运行中断”或“状态待确认”，表示异常退出后的清理还没有确认。保留日志与 <code>lifecycle.json</code>，先检查记录中的进程，不要删除权限库或改状态绕过检查。</p></details>
             <details><summary>更换版本或直接修改实例配置后不能启动</summary><p>当前实例保留创建时的资料副本与校验记录。请使用指定的 OpenClaw 2026.9.4，不要直接修改生成的配置或替换运行文件。本版暂未提供原地升级与恢复撤销权限的流程。</p></details>
-            <details><summary>能直接接飞书、Slack 或邮箱吗？</summary><p>当前发送扩展需要开发者配置固定的 JSON 接收接口，还不是这些服务的现成连接器。“起草邮件、由本人确认后发送”的完整流程尚未实现。这个入门流程直接在聊天里看结果，无须配置接收方。</p></details>
+            <details><summary>怎样让 AI 写邮件，由我确认发送？</summary><p>新版支持先让 AI 起草，再由你核对或修改收件人、主题和全文，最后明确确认发送。在工作台设置自己的发件邮箱，再新建一份工作；旧工作不会自动获得邮件功能。按<a href="email-demo.html">邮件演示中的四步</a>操作，或查看<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/email.zh-CN.md" target="_blank" rel="noopener noreferrer">完整邮件指南 ↗</a>。目前每封只支持一个收件人和纯文本正文，暂不支持附件。飞书和 Slack 的直接连接尚未提供。</p></details>
             <details><summary>工作台支持哪些聊天界面？</summary><p>目前支持 OpenClaw 2026.9.4。仓库中的 Hermes 终端接入实验是另一项验证，不代表工作台已经提供 Hermes 聊天界面。</p></details>
             <p>这是一个需要实际环境验证的预览版，没有通用防护率承诺。继续查看<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台完整指南 ↗</a>；高级参数与排错仍见<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">命令行指南 ↗</a>。</p>
           </section>
