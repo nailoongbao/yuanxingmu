@@ -27,8 +27,8 @@ import zipfile
 from . import hermes as hermes_installer
 from .launcher import LauncherError, hermes_runtime_files
 
-VERSION = "0.2.0a1"
-RUNTIME = "0.5.0a1"
+VERSION = "0.3.0a1"
+RUNTIME = "0.6.0a1"
 MARKER = "INSTALLATION.json"
 APPARMOR = b'''abi <abi/4.0>,
 include <tunables/global>

@@ -19,7 +19,7 @@ permissions:
 jobs:
   fresh-ubuntu:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - name: Prepare standard system directory permissions on disposable runner
@@ -36,8 +36,8 @@ jobs:
         run: /usr/bin/python3 install/build_zipapp.py --output "$RUNNER_TEMP/yuanxingmu-installer.pyz"
       - name: Install fixed public runtime and check actual Ubuntu isolation
         run: /usr/bin/python3 -I "$RUNNER_TEMP/yuanxingmu-installer.pyz" --install-root "$HOME/yuanxingmu-acceptance" --system-deps --no-shortcut
-      - name: Exercise installed launcher and native OpenClaw
-        run: /usr/bin/python3 -I install/smoke_install.py --install-root "$HOME/yuanxingmu-acceptance" --report "$RUNNER_TEMP/installer-acceptance.json"
+      - name: Exercise installed launcher and native OpenClaw and Hermes
+        run: /usr/bin/python3 -I install/smoke_install.py --install-root "$HOME/yuanxingmu-acceptance" --framework both --report "$RUNNER_TEMP/installer-acceptance.json"
       - name: Verify a completed install without replacing runtime or work
         run: /usr/bin/python3 -I install/check_reuse.py --installer "$RUNNER_TEMP/yuanxingmu-installer.pyz" --install-root "$HOME/yuanxingmu-acceptance"
       - name: Upload public acceptance result only
