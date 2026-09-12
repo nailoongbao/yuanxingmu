@@ -346,7 +346,8 @@ class MailBrokerTests(unittest.TestCase):
                 endpoint.bind(str(runtime / name))
                 endpoint.listen(1)
             resources, destinations = load_policy(profile / "policy.json")
-            broker = stack.enter_context(Broker(profile / "broker-state", resources, destinations, reviewed_mail=True))
+            from yuanxingmu.protection import profile_services
+            broker = stack.enter_context(Broker(profile / "broker-state", resources, destinations, **profile_services(profile, manifest)))
             worker = broker.serve(manifest["task_id"], runtime / "broker.sock")
             review = broker.serve_reviews(manifest["task_id"], runtime / "review.sock")
             self.assertEqual(stat.S_IMODE(review.stat().st_mode), 0o600)

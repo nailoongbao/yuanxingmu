@@ -144,12 +144,21 @@ def _operator_protection_status(profile: Path, manifest: dict, broker: Broker):
             broker._require_healthy()
             configured = "layered_defense_v1" in manifest.get("features", [])
             if not configured and broker.guards is None:
-                return {"schema_version": 1, "state": "not_configured"}
+                if broker.protected_data is None:
+                    return {"schema_version": 1, "state": "not_configured"}
+                quarantine = broker.quarantine.status(manifest["task_id"])
+                return {"schema_version": 1, "state": "available", "paused": quarantine["paused"],
+                        "revoked": quarantine["revoked"], "protected_fields_enabled": True,
+                        "layers": {layer: {"enabled": False, "mode": "enforce"}
+                                   for layer in ("input", "memory", "command", "alignment", "foundation")},
+                        "foundation_config_enabled": False, "skill_semantic_enabled": False,
+                        "foundation_scan": {"state": "disabled"}}
             if not configured or broker.guards is None or broker.quarantine is None:
                 raise RuntimeError("incomplete_live_defense")
             quarantine = broker.quarantine.status(manifest["task_id"])
             policy = broker.guards.policy
             result = {"schema_version": 1, "state": "available",
+                      "protected_fields_enabled": broker.protected_data is not None,
                       "paused": quarantine["paused"], "revoked": quarantine["revoked"],
                       "layers": {layer: {"enabled": getattr(policy, layer + "_enabled"),
                                          "mode": policy.effective_mode(layer)}
@@ -291,6 +300,8 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
         resources[name] = {"path": "documents/" + name + ".txt", "labels": ["private"]}
     _save(profile / "policy.json", {"resources": resources, "destinations": destinations})
     loaded_resources, loaded_destinations = load_policy(profile / "policy.json")
+    from .protection import save_protected_profile
+    protected_data = save_protected_profile(profile, loaded_resources)
     _bytes(profile / "model-key", api_key.encode())
     from .judge_profile import save_judge_profile
     judge_files = save_judge_profile(profile, judge_config)
@@ -311,7 +322,8 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
         _save(profile / "action-automation.json", action_automation)
     with Broker(profile / "broker-state", loaded_resources, loaded_destinations,
                 reviewed_mail=reviewed_mail, guards=guards, action_targets=targets,
-                input_containment=guards is not None, action_automation=action_automation) as broker:
+                input_containment=guards is not None, action_automation=action_automation,
+                protected_data=protected_data) as broker:
         task = broker.create_task(initial_labels=["private"])
         broker.bind_workspace(task, profile / "workspace")
         family = broker.authority._db.execute("SELECT family_id FROM authority_tasks WHERE id=?", (task,)).fetchone()[0]
@@ -362,6 +374,7 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
     }
     _save(profile / "openclaw.json", config)
     immutable = [profile / "openclaw.json", profile / "policy.json", profile / "model-key", profile / "gateway-token",
+                 profile / "protected-data.json",
                  profile / "broker-state" / "bindings.json", profile / "broker-state" / "workspaces.json"]
     if defense_policy is not None:
         immutable.append(profile / "defense-policy.json")
@@ -386,6 +399,9 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                 "runtime_files": {str(p): _hash(p) for p in (node, bwrap, openclaw_package / "package.json", openclaw_package / "openclaw.mjs")}}
     if judge_config is not None:
         manifest["features"].append("independent_judge_v1")
+    for feature in ("protected_fields_v1", "quarantine_v1", "buffered_response_v1"):
+        if feature not in manifest["features"]:
+            manifest["features"].append(feature)
     if action_automation is not None:
         manifest["features"].append("automatic_actions_v1")
     _save(profile / "profile.json", manifest)
@@ -407,7 +423,12 @@ def validate_profile(profile: Path) -> dict:
             raise RuntimeError("profile_directory_or_ledger_replaced: " + name)
     for name, digest in manifest["files"].items():
         candidate = profile / name
-        if candidate.is_symlink() or _hash(candidate) != digest:
+        if name == "protected-data.json":
+            from .protection import _read_protected_profile
+            observed = hashlib.sha256(_read_protected_profile(candidate)).hexdigest()
+        else:
+            observed = _hash(candidate) if not candidate.is_symlink() else None
+        if observed != digest:
             raise RuntimeError("profile_file_changed: " + name)
     for directory in ("documents", "trusted-core", "plugin", "runtime-etc"):
         actual = {str(p.relative_to(profile)) for p in (profile / directory).rglob("*") if p.is_file()}
@@ -492,7 +513,7 @@ def review_profile(profile: Path, action: str, value: dict | None = None) -> dic
     is_quarantine = action.startswith("quarantine_")
     is_protection = action.startswith("protection_")
     feature = "layered_defense_v1" if is_tool or is_quarantine or is_protection else "reviewed_actions_v1" if is_action else "reviewed_email_v1"
-    if feature not in manifest.get("features", []):
+    if feature not in manifest.get("features", []) and not (is_quarantine and "protected_fields_v1" in manifest.get("features", [])):
         raise AuthorizationError("reviewed_actions_not_enabled" if is_action else "reviewed_mail_not_enabled")
     if action not in {"list", "get", "edit", "cancel", "send", "action_list", "action_get", "action_edit", "action_cancel", "action_commit", "tool_list", "tool_get", "tool_approve", "tool_deny", "quarantine_status", "quarantine_resume", "protection_set"} or (value is not None and (not isinstance(value, dict) or "op" in value)):
         raise AuthorizationError("invalid_mail_review")
@@ -697,7 +718,7 @@ def serve_profile(profile: Path):
                     if not report.allowed:
                         raise RuntimeError("启动检查未通过；请查看 foundation-report.json。")
                 broker.serve(manifest["task_id"], runtime / "broker.sock")
-                if {"reviewed_email_v1", "reviewed_actions_v1", "layered_defense_v1"}.intersection(manifest.get("features", [])):
+                if {"reviewed_email_v1", "reviewed_actions_v1", "layered_defense_v1", "protected_fields_v1"}.intersection(manifest.get("features", [])):
                     # gateway_command mounts three individual sockets, never this
                     # endpoint or its parent. Worker tools cannot approve a draft.
                     broker.serve_reviews(manifest["task_id"], runtime / "review.sock")
@@ -735,7 +756,8 @@ def serve_profile(profile: Path):
                 from .model_output import ModelOutputGuard
                 network = HostNetwork(runtime, model_url=manifest["model"]["url"],
                                       api_key=(profile / "model-key").read_text(), webui_port=manifest["port"],
-                                      output_guard=ModelOutputGuard(broker, manifest["task_id"]) if broker.guards is not None else None)
+                                      output_guard=ModelOutputGuard(broker, manifest["task_id"])
+                                      if broker.guards is not None or broker.protected_data is not None else None)
                 network.__enter__()
                 with (profile / "gateway.stdout.log").open("ab") as out, (profile / "gateway.stderr.log").open("ab") as err:
                     os.fchmod(out.fileno(), 0o600)

@@ -251,8 +251,12 @@
         const value = await api("/api/profiles/" + id + "/protection");
         if (own !== generation || id !== selected) return;
         content.replaceChildren();
-        if (!value.supported) {content.append(node("p","field-note",value.message));return;}
         if(value.quarantine) content.append(quarantine(value.quarantine,id,own));
+        if(value.protected_fields?.enabled) {
+          content.append(node("h3","","敏感字段自动隐藏"),node("p","field-note","资料里明确标记的底价、密码和令牌会先隐藏，再交给 AI。回答、工具参数和发送内容也会检查已登记的值；下方开关不会关闭这道保护。"));
+          content.append(node("p","field-note","当前仅支持固定标签和有限的数字格式，尚不能保证识别未标记、任意编码或推算出的秘密。"));
+        }
+        if (!value.supported) {content.append(node("p","field-note",value.message));return;}
         content.append(node("h3","","你确定的工作目标"),node("p","mail-full-body",value.objective));
         if(value.judge) content.append(node("p","field-note",(value.judge.independent ? "独立检查模型：" : "检查与工作使用同一模型：")+value.judge.id+"；每次最多等待 "+value.judge.timeout_seconds+" 秒。"));
         content.append(node("p","field-note","默认处理方式："+(modeNames[value.mode] || value.mode)+(value.per_layer_settings ? "。每层实际采用的方式见下方。" : "。")));

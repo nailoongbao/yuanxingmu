@@ -54,6 +54,7 @@ function statusText(result) {
     lines.push(`- ${label}：${mode}`);
   }
   if (available) {
+    if (protection.protected_fields_enabled === true) lines.push("敏感字段保护：自动隐藏资料中的已登记字段，检查回答和提交；不受五层开关影响。");
     const enabled = value => value === true ? "开启" : value === false ? "关闭" : "未确认";
     if (protection.layers?.foundation?.enabled === false) {
       lines.push("基础配置和技能语义检查：随安装与技能层关闭。");

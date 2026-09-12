@@ -490,7 +490,7 @@ def _migrate_approval_ledger(db):
 class Actions:
     """Review ledger sharing the authority database and its audit transactions."""
 
-    def __init__(self, authority: Authority, targets: dict[str, ActionTarget]):
+    def __init__(self, authority: Authority, targets: dict[str, ActionTarget], *, check_content=None):
         if type(targets) is not dict or len(targets) > 128:
             raise ValueError("invalid_action_targets")
         configured = {}
@@ -499,6 +499,7 @@ class Actions:
                 raise ValueError("invalid_action_target")
             configured[key] = target
         self.authority = authority
+        self.check_content = check_content
         self.targets = MappingProxyType(configured)
         with authority._transaction() as db:
             _migrate_approval_ledger(db)
@@ -668,6 +669,10 @@ class Actions:
                 raise AuthorizationError("action_target_changed")
             if row["before_json"] is not None and _snapshot(target) != json.loads(row["before_json"]):
                 raise AuthorizationError("action_file_changed")
+            if self.check_content is not None:
+                # Exact stored revision, before budget or a single-use attempt.
+                # This callback is pure and must not open another transaction.
+                self.check_content(json.loads(row["proposal_json"]))
             now, attempt_id = _now(), uuid.uuid4().hex
             mode, source, scope = "manual", "host_confirmation", None
             if automation is not None:

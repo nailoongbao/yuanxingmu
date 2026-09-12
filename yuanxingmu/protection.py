@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import stat
 
 
 _SETTINGS_INTENTS = {"set", "reset_defaults", "restore_creation"}
@@ -265,6 +266,20 @@ def apply_profile_settings(profile, manifest, broker, changes, *, running=True, 
 def profile_services(profile: Path, manifest: dict):
     features = manifest.get("features", [])
     options = {"reviewed_mail": "reviewed_email_v1" in features}
+    protected = profile / "protected-data.json"
+    if "protected_fields_v1" in features:
+        from .protected_data import HostProtectedData
+        from .run import load_policy
+        expected = manifest["files"].get("protected-data.json")
+        if not expected or protected.is_symlink():
+            raise ValueError("profile_protected_data_changed")
+        raw = _read_protected_profile(protected)
+        if hashlib.sha256(raw).hexdigest() != expected:
+            raise ValueError("profile_protected_data_changed")
+        resources, _ = load_policy(profile / "policy.json")
+        options["protected_data"] = HostProtectedData.from_private_json(raw, resources=_protected_resources(resources))
+    elif protected.exists() or protected.is_symlink() or "protected-data.json" in manifest["files"]:
+        raise ValueError("profile_protected_data_feature_missing")
     if "layered_defense_v1" in features:
         options["guards"] = load_guards(profile, manifest["model"], pins=manifest["files"], features=features)
         options["input_containment"] = "input_containment_v1" in features
@@ -283,6 +298,45 @@ def profile_services(profile: Path, manifest: dict):
         options["action_automation"] = AutomaticActionPolicy.from_config(
             json.loads(raw), options["action_targets"]).to_config()
     return options
+
+
+def _read_protected_profile(path):
+    from .protected_data import MAX_PRIVATE_BYTES
+    descriptor = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
+    try:
+        info = os.fstat(descriptor)
+        if (not stat.S_ISREG(info.st_mode) or info.st_nlink != 1 or stat.S_IMODE(info.st_mode) & 0o077
+                or info.st_uid != os.getuid() or info.st_size > MAX_PRIVATE_BYTES):
+            raise ValueError("profile_protected_data_changed")
+        with os.fdopen(descriptor, "rb", closefd=False) as stream:
+            raw = stream.read(MAX_PRIVATE_BYTES + 1)
+        if len(raw) > MAX_PRIVATE_BYTES:
+            raise ValueError("profile_protected_data_changed")
+        return raw
+    finally:
+        os.close(descriptor)
+
+
+def _protected_resources(resources):
+    from .broker import MAX_CONTENT
+    from .protected_data import HostResource
+    result = {}
+    for name, resource in resources.items():
+        with Path(resource.path).open("rb") as stream:
+            raw = stream.read(MAX_CONTENT + 1)
+        if len(raw) > MAX_CONTENT:
+            raise ValueError("protected_source_too_large")
+        result[name] = HostResource(raw.decode("utf-8"), hashlib.sha256(raw).hexdigest())
+    return result
+
+
+def save_protected_profile(profile, resources):
+    """Create the host-private set once; it is never in a native process mount."""
+    from .protected_data import HostProtectedData
+    from .openclaw import _bytes
+    data = HostProtectedData.compile(_protected_resources(resources))
+    _bytes(profile / "protected-data.json", data.to_private_json())
+    return data
 
 
 def load_action_targets(profile: Path):

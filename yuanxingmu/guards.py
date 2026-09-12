@@ -657,10 +657,14 @@ class Guards:
         self.judge = judge
         self.skill_purpose = skill_purpose
         self._audit = audit
+        # Installed only by the trusted Broker; independent of layer settings.
+        self.check_content = None
         self._judge_busy = threading.Lock()
         self._objective_hash = _hash(policy.objective.encode("utf-8"))
 
     def _finish(self, result: GuardResult, *, raw_verdict: str | None = None) -> GuardResult:
+        if self.check_content is not None:
+            self.check_content({"result": result.to_dict(), "raw_verdict": raw_verdict})
         if self.policy.effective_mode(result.layer) == "observe" and result.assessed:
             result = replace(result, verdict="allow", would_verdict=result.verdict, enforced=False,
                              reason="仅观察，未拦截：" + result.reason, withheld=False)
@@ -906,6 +910,9 @@ class Guards:
                            **({"host_facts": host_facts} if host_facts is not None else {}))
 
     def _judge(self, layer: str, purpose: str, candidate: dict, *, host_facts=None) -> GuardResult:
+        if self.check_content is not None:
+            # Before opening a connection or starting the request thread.
+            self.check_content({"objective": self.policy.objective, "candidate": candidate, "host_facts": host_facts})
         raw = _json(candidate)
         candidate = _strict_json(raw)
         evidence = {"method": "model", "purpose": purpose, "candidate_sha256": _hash(raw), "candidate_bytes": len(raw),

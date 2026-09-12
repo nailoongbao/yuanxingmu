@@ -159,7 +159,9 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
         guards = load_guards(profile, {"url": model_url, "id": model_id})
         save_settings_baseline(profile, guards.policy)
     loaded_resources, loaded_destinations = load_policy(profile / "policy.json")
-    broker_options = {"reviewed_mail": reviewed_mail}
+    from .protection import save_protected_profile
+    broker_options = {"reviewed_mail": reviewed_mail,
+                      "protected_data": save_protected_profile(profile, loaded_resources)}
     if guards is not None:
         broker_options["guards"] = guards
         broker_options["input_containment"] = True
@@ -215,7 +217,7 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
     host._save(profile / "hermes-config.yaml", config)
     host._bytes(profile / "hermes-home" / "config.yaml", b"{}\n")
     immutable = [profile / name for name in ("hermes-config.yaml", "hermes-binding.json", "policy.json", "model-key", "gateway-token",
-                 "broker-state/bindings.json", "broker-state/workspaces.json")]
+                 "protected-data.json", "broker-state/bindings.json", "broker-state/workspaces.json")]
     if defense_policy is not None:
         immutable.append(profile / "defense-policy.json")
         immutable.append(profile / "defense-baseline.json")
@@ -235,6 +237,7 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
                 + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1", "per_layer_settings_v1", "settings_history_v1", "defense_baseline_v1", "skill_rules_v1", "skill_purpose_v1", "input_containment_v1"] if defense_policy is not None else [])
                 + (["independent_judge_v1"] if judge_config is not None else [])
                 + (["automatic_actions_v1"] if action_automation is not None else []))
+    features = list(dict.fromkeys([*features, "protected_fields_v1", "quarantine_v1", "buffered_response_v1"]))
     manifest = {"version": 2, "framework": "hermes", "profile": str(profile), "profile_id": profile_id,
                 "task_id": task, "family_id": family, "features": features, **runtime,
                 "python": str(bootstrap_python), "runtime": str(sockets), "port": port,

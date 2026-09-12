@@ -25,6 +25,7 @@ from .authority import Authority, AuthorizationError
 from .client import MAX_MESSAGE
 from .mail_drafts import MailDrafts
 from .mail_transport import MailAccount, send_email
+from .protected_boundary import ProtectedContentError, check_candidate
 
 MAX_CONTENT = 256 * 1024
 
@@ -78,7 +79,11 @@ class Broker:
 
     def __init__(self, state_dir: Path, resources: dict[str, Resource], destinations: dict[str, Destination], *,
                  reviewed_mail=False, guards=None, action_targets=None, input_containment=False,
-                 action_automation=None):
+                 action_automation=None, protected_data=None):
+        if protected_data is not None:
+            from .protected_data import HostProtectedData
+            if type(protected_data) is not HostProtectedData:
+                raise ValueError("invalid_host_protected_data")
         if type(input_containment) is not bool or (input_containment and guards is None):
             raise ValueError("input_containment_requires_guards")
         if action_automation is not None and (guards is None or action_targets is None):
@@ -111,6 +116,7 @@ class Broker:
         self.destinations = dict(destinations)
         self.reviewed_mail = reviewed_mail is True
         self.guards = guards
+        self.protected_data = protected_data
         self.input_containment = input_containment
         self.action_targets = None if action_targets is None else dict(action_targets)
         self.automatic_policy = automatic_policy
@@ -134,19 +140,20 @@ class Broker:
             self.authority = Authority(self.state_dir / "authority.sqlite3")
             if self.guards is not None:
                 from .tool_reviews import ToolReviews
-                from .quarantine import Quarantine
                 self.tool_reviews = ToolReviews(self.authority)
                 self.tool_reviews.recover()
+            if self.guards is not None or self.protected_data is not None:
+                from .quarantine import Quarantine
                 self.quarantine = Quarantine(self.authority)
             if self.action_targets is not None:
                 from .actions import Actions
-                self.actions = Actions(self.authority, self.action_targets)
+                self.actions = Actions(self.authority, self.action_targets, check_content=self._check_protected)
                 self.actions.recover()
                 if self.automatic_policy is not None:
                     from .action_automation import ActionAutomation
                     self.automation = ActionAutomation(self.authority, self.action_targets, self.automatic_policy)
             if self.reviewed_mail:
-                self.mail = MailDrafts(self.authority)
+                self.mail = MailDrafts(self.authority, check_content=self._check_protected)
                 # The exclusive broker lock proves no earlier sender is live.
                 self.mail.recover()
             if self.quarantine is not None:
@@ -199,9 +206,17 @@ class Broker:
             destination_binding[name] = {"url": destination.url, "labels": sorted(destination.labels),
                 "headers_sha256": _digest(json.dumps(destination.headers, sort_keys=True).encode())}
         binding = {"version": 1, "resources": resource_binding, "destinations": destination_binding}
+        if self.protected_data is not None:
+            from .protected_data import HostProtectedData, HostResource
+            # A caller cannot attach a set compiled from different documents.
+            resources = {name: HostResource(Path(self.resources[name].path).read_bytes().decode("utf-8"), item["sha256"])
+                         for name, item in resource_binding.items()}
+            HostProtectedData.from_private_json(self.protected_data.to_private_json(), resources=resources)
+            binding["protected_data"] = self.protected_data.binding_digest()
         if self.reviewed_mail:
             binding["reviewed_mail"] = 1
         if self.guards is not None:
+            self.guards.check_content = self._check_protected
             # Settings changes must rewrite this binding under the host lock.
             # Credentials are represented by a digest only. Newly introduced
             # defaults are omitted to preserve old persisted profile bindings.
@@ -280,7 +295,29 @@ class Broker:
         with self.authority._transaction() as db:
             self.authority._task(db, task_id)
 
+    def _check_protected(self, candidate):
+        # Pure: also safe inside Actions/MailDrafts' admission transaction.
+        check_candidate(self.protected_data, candidate)
+
+    def _protected_failure(self, task_id, error):
+        # No source text, field value, or low-entropy value hash in the audit.
+        try:
+            self._event(task_id, "protected_content_withheld", {"allowed": False, "reason": error.reason})
+            self.quarantine.pause(task_id, layer="data", code=error.reason, reason=str(error))
+        except Exception:
+            self._fault = True
+            raise
+
+    def _protect(self, task_id, candidate):
+        """Model boundary entry; caller holds the broker lock, outside DB work."""
+        try:
+            self._check_protected(candidate)
+        except ProtectedContentError as exc:
+            self._protected_failure(task_id, exc)
+            raise
+
     def _guard_tool(self, task_id, tool, arguments, *, action_request=False):
+        self._check_protected({"tool": tool, "arguments": arguments})
         if self.guards is None:
             return
         if not self.authority.describe(task_id)["active"]:
@@ -307,6 +344,7 @@ class Broker:
 
     def _guard_native_tool(self, task_id, tool, arguments, *, alignment=True):
         """Return review to the native human approval hook; never execute here."""
+        self._check_protected({"tool": tool, "arguments": arguments})
         checks = [self.guards.check_memory(tool, arguments)]
         source = arguments.get("source_tool")
         if isinstance(source, dict) and isinstance(source.get("tool"), str) and isinstance(source.get("arguments"), dict):
@@ -394,7 +432,7 @@ class Broker:
                 stream.flush()
                 os.fsync(stream.fileno())
         except Exception:
-            if self.guards is not None:
+            if self.guards is not None or self.protected_data is not None:
                 self._fault = True
             raise
 
@@ -423,6 +461,7 @@ class Broker:
                         raise AuthorizationError("task_revoked")
                     from .tool_reviews import candidate
                     candidate(request["tool"], request["arguments"])
+                    self._check_protected({"tool": request["tool"], "arguments": request["arguments"]})
                     if operation == "request_tool_review":
                         result = self.tool_reviews.prior(task_id, request["request_key"], request["tool"], request["arguments"])
                         if result is None:
@@ -485,6 +524,7 @@ class Broker:
                         if check:
                             self._pause_for_check(task_id, check)
                     else:
+                        self._check_protected(request["text"])
                         check = self.guards.check_input(request["text"])
                         self._guard_result(task_id, check)
                         result = {"allowed": True, "reason": "input_check_completed", "mode": self.guards.policy.effective_mode("input")}
@@ -504,6 +544,9 @@ class Broker:
                     if len(content) > MAX_CONTENT or _digest(content) != expected:
                         raise AuthorizationError("resource_changed")
                     text = content.decode("utf-8")
+                    if self.protected_data is not None:
+                        text = self.protected_data.redacted(name, expected)
+                        self._check_protected(text)
                     if self.guards is not None:
                         self._guard_result(task_id, self.guards.check_input(text))
                     result = {**decision, "content": text}
@@ -536,6 +579,8 @@ class Broker:
                 self._event(task_id, operation, result)
                 return result
             except AuthorizationError as exc:
+                if isinstance(exc, ProtectedContentError):
+                    self._protected_failure(task_id, exc)
                 result = {"allowed": False, "reason": exc.reason}
                 if str(exc) != exc.reason:
                     result["message"] = str(exc)
@@ -582,6 +627,7 @@ class Broker:
             args = (task_id, request["draft_id"], request["revision"], request["digest"])
             self._require_healthy()
             if op == "edit":
+                self._protect(task_id, request["draft"])
                 return {"draft": self.mail.edit(*args, request["draft"])}
             if op == "cancel":
                 return {"draft": self.mail.cancel(*args)}
@@ -591,7 +637,11 @@ class Broker:
                 account = MailAccount(**request["account"])
             except (ValueError, TypeError):
                 raise AuthorizationError("invalid_mail_account") from None
-            decision = self.mail.begin_send(*args, request["account_id"], account.from_address)
+            try:
+                decision = self.mail.begin_send(*args, request["account_id"], account.from_address)
+            except ProtectedContentError as exc:
+                self._protected_failure(task_id, exc)
+                raise
             draft = decision["draft"]
             if not decision["started"]:
                 return {"draft": draft}
@@ -624,12 +674,17 @@ class Broker:
             args = (task_id, request["action_id"], request["revision"], request["digest"])
             self._require_healthy()
             if op == "action_edit":
+                self._protect(task_id, request["proposal"])
                 return {"action": self.actions.edit(*args, request["proposal"])}
             if op == "action_cancel":
                 return {"action": self.actions.cancel(*args)}
             if request["confirm"] != "commit":
                 raise AuthorizationError("action_confirmation_required")
-            return self.actions.commit(*args)
+            try:
+                return self.actions.commit(*args)
+            except ProtectedContentError as exc:
+                self._protected_failure(task_id, exc)
+                raise
 
     def review_tool(self, task_id: str, request: dict) -> dict:
         with self._lock:
@@ -670,7 +725,7 @@ class Broker:
     def serve_reviews(self, task_id: str, socket_path: Path) -> Path:
         """Bind a host-only socket. Its path must not be mounted into any agent."""
         with self._lock:
-            if self._closed or (self.mail is None and self.actions is None and self.tool_reviews is None):
+            if self._closed or (self.mail is None and self.actions is None and self.tool_reviews is None and self.quarantine is None):
                 raise AuthorizationError("reviewed_mail_unavailable")
             socket_path = Path(socket_path).absolute()
             if len(os.fsencode(socket_path)) > 100:

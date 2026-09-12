@@ -92,9 +92,13 @@ class OpenClawStatusTests(unittest.TestCase):
         self.assertTrue(result["paused"])
         self.assertTrue(result["revoked"])
 
-    def test_absent_layered_defense_and_unhealthy_service_are_not_active_protection(self):
+    def test_new_field_protection_is_separate_from_absent_semantic_layers_and_faults(self):
         self.initialize(layered=False)
-        self.assertEqual(self.status(), {"schema_version": 1, "state": "not_configured"})
+        status = self.status()
+        self.assertEqual(status["state"], "available")
+        self.assertTrue(status["protected_fields_enabled"])
+        self.assertTrue(all(layer["enabled"] is False for layer in status["layers"].values()))
+        self.assertFalse(status["paused"])
         self.broker._fault = True
         self.assertEqual(self.status(), {"schema_version": 1, "state": "unavailable"})
 

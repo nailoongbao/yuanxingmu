@@ -351,10 +351,12 @@ class DashboardTests(unittest.TestCase):
     def mail_fixture(self):
         identifier, path, _ = self.create()
         resources, destinations = load_policy(path / "policy.json")
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
+        from yuanxingmu.protection import profile_services
+        with Broker(path / "broker-state", resources, destinations, **profile_services(path, core.validate_profile(path))) as broker:
             task_id = self.task_ids(path)[0]
+            masked = broker.dispatch(task_id, {"op": "read", "resource": "quote"})["content"]
             row = broker.mail.submit(task_id, uuid.uuid4().hex, {
-                "recipient": "buyer@example.test", "subject": "报价待确认", "body": self.content})
+                "recipient": "buyer@example.test", "subject": "报价待确认", "body": masked})
         return identifier, path, row
 
     def mail_settings(self, **changes):
@@ -418,7 +420,7 @@ class DashboardTests(unittest.TestCase):
         listing = self.request("GET", prefix)[2]
         self.assertTrue(listing["supported"])
         self.assertNotIn("body", listing["drafts"][0])
-        self.assertEqual(self.request("GET", prefix + "/" + row["id"])[2]["draft"]["body"], self.content)
+        self.assertEqual(self.request("GET", prefix + "/" + row["id"])[2]["draft"]["body"], row["body"])
         changed = {"recipient": "confirmed@example.test", "subject": "确认后的报价", "body": "只发确认的金额 200000 元。"}
         edited = self.wait_job(self.request("POST", prefix + "/edit", {**self.mail_reference(row), "draft": changed})[2])["result"]["draft"]
         self.assertEqual(edited["revision"], 2)
@@ -455,7 +457,8 @@ class DashboardTests(unittest.TestCase):
             self.wait_job(self.request("POST", prefix + "/send", payload)[2])
             send.assert_called_once()
         resources, destinations = load_policy(path / "policy.json")
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
+        from yuanxingmu.protection import profile_services
+        with Broker(path / "broker-state", resources, destinations, **profile_services(path, core.validate_profile(path))) as broker:
             other = broker.mail.submit(self.task_ids(path)[0], uuid.uuid4().hex, {
                 "recipient": "other@example.test", "subject": "不能发送", "body": "撤权检查"})
         self.wait_job(self.request("POST", f"/api/profiles/{identifier}/revoke", {"confirm": "revoke"})[2])
@@ -640,10 +643,12 @@ class DashboardTests(unittest.TestCase):
         resources, destinations = load_policy(path / "policy.json")
         self.assertEqual(destinations, {})
         self.assertEqual(resources["quote"].labels, ("private",))
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
+        from yuanxingmu.protection import profile_services
+        with Broker(path / "broker-state", resources, destinations, **profile_services(path, core.validate_profile(path))) as broker:
             read = broker.dispatch(task_ids[0], {"op": "read", "resource": "quote"})
             self.assertTrue(read["allowed"])
-            self.assertEqual(read["content"], self.content)
+            self.assertNotIn("186000", read["content"])
+            self.assertIn("DOCUMENT-CONTENT-MUST-STAY-PRIVATE", read["content"])
             denied = broker.dispatch(task_ids[0], {"op": "send", "destination": "public", "body": self.content})
             self.assertEqual(denied["reason"], "unknown_destination")
         with mock.patch.object(core, "control_profile", wraps=core.control_profile) as control:
@@ -663,7 +668,7 @@ class DashboardTests(unittest.TestCase):
             initialize.assert_not_called()
             launch.assert_not_called()
         self.assertEqual(self.task_ids(path), task_ids)
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
+        with Broker(path / "broker-state", resources, destinations, **profile_services(path, core.validate_profile(path))) as broker:
             self.assertEqual(broker.dispatch(task_ids[0], {"op": "read", "resource": "quote"})["reason"], "task_revoked")
 
     def test_uploads_are_private_snapshots_and_status_receipts_do_not_contain_secrets(self):

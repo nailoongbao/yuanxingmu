@@ -105,7 +105,9 @@ class OpenClawProfileTests(unittest.TestCase):
     def open_broker(self, profile=None):
         profile = profile or self.profile
         resources, destinations = load_policy(profile / "policy.json")
-        return Broker(profile / "broker-state", resources, destinations)
+        from yuanxingmu.protection import profile_services
+        manifest = self.api.validate_profile(profile)
+        return Broker(profile / "broker-state", resources, destinations, **profile_services(profile, manifest))
 
     def test_new_defense_profile_pins_input_containment_on_reopen(self):
         from yuanxingmu.protection import profile_services
@@ -544,7 +546,9 @@ console.log(JSON.stringify(evidence));
         with self.open_broker() as broker:
             result = broker.dispatch(manifest["task_id"], {"op": "read", "resource": "quote"})
             self.assertTrue(result["allowed"])
-            self.assertEqual(result["content"].encode("utf-8"), original)
+            self.assertNotIn("186000", result["content"])
+            self.assertIn("合成测试资料", result["content"])
+            self.assertEqual(snapshot.read_bytes(), original)
 
     def test_missing_persisted_security_files_fail_without_recreating_them(self):
         for filename in ("authority.sqlite3", "bindings.json", "workspaces.json"):

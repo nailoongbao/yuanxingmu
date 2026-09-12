@@ -94,8 +94,9 @@ class MailDrafts:
     directory and knows that no previous transport attempt is still running.
     """
 
-    def __init__(self, authority: Authority):
+    def __init__(self, authority: Authority, *, check_content=None):
         self.authority = authority
+        self.check_content = check_content
         with authority._transaction() as db:
             for statement in _SCHEMA:
                 db.execute(statement)
@@ -243,6 +244,8 @@ class MailDrafts:
                 raise AuthorizationError("mail_draft_not_pending")
             account = _key(account_id, "invalid_mail_account_id")
             sender = _canonical({"recipient": from_address, "subject": "", "body": ""})["recipient"]
+            if self.check_content is not None:
+                self.check_content({key: row[key] for key in ("recipient", "subject", "body")})
             now, attempt_id = _now(), uuid.uuid4().hex
             db.execute("""UPDATE mail_drafts SET status='sending',attempt_id=?,account_id=?,from_address=?,
                 approved_at=?,updated_at=? WHERE id=?""",

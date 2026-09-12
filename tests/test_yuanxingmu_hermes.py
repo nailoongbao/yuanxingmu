@@ -50,14 +50,16 @@ class HermesProfileTests(unittest.TestCase):
         self.assertEqual(result["framework"], "hermes")
         manifest = openclaw.validate_profile(self.profile)
         resources, destinations = load_policy(self.profile / "policy.json")
-        with Broker(self.profile / "broker-state", resources, destinations) as broker:
+        from yuanxingmu.protection import profile_services
+        options = profile_services(self.profile, manifest)
+        with Broker(self.profile / "broker-state", resources, destinations, **options) as broker:
             state = broker.authority.describe(manifest["task_id"])
             self.assertEqual(state["labels"], ["private"])
             before = broker.authority._db.execute("SELECT count(*) FROM authority_tasks").fetchone()[0]
             broker.revoke(manifest["task_id"])
         self.assertFalse(openclaw._task_state(self.profile, manifest)["active"])
         openclaw.validate_profile(self.profile)
-        with Broker(self.profile / "broker-state", resources, destinations) as broker:
+        with Broker(self.profile / "broker-state", resources, destinations, **options) as broker:
             self.assertEqual(broker.authority._db.execute("SELECT count(*) FROM authority_tasks").fetchone()[0], before)
 
     def test_created_settings_baseline_is_host_only_and_hash_bound(self):

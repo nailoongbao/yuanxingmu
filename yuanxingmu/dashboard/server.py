@@ -66,6 +66,8 @@ def _fault(exc: Exception):
         "mail_account_missing": "请先设置这台电脑使用的发件邮箱。",
         "reviewed_mail_not_enabled": "这项旧工作没有邮件核对功能，请保留原工作并建立新工作。",
         "task_paused": "这份工作已暂停，请查看最新防护记录并由你确认恢复。",
+        "protected_value_blocked": "发现已登记的敏感字段，内容已扣留。请在防护记录查看暂停原因。",
+        "protected_check_failed": "无法完整检查敏感字段，内容已扣留。请在防护记录查看原因。",
         "defense_storage_fault": "防护状态写入失败，后续操作已停止。请保留记录、检查存储并重启服务。",
         "quarantine_incident_changed": "暂停原因已更新，请重新读取并核对，旧确认没有恢复工作。",
         "defense_baseline_unavailable": "这份旧工作没有保存创建时设置，不能恢复。当前设置未改变。",
@@ -576,8 +578,11 @@ class Workbench:
         with self.mutex:
             path = self._profile_path(self._entry(identifier))
         manifest = core.validate_profile(path)
+        protected_fields = {"enabled": "protected_fields_v1" in manifest.get("features", []), "mode": "enforce"}
         if "layered_defense_v1" not in manifest.get("features", []):
-            return {"supported": False, "events": [], "message": "这项工作保留原有权限和隔离；没有启用新增的五层检查。"}
+            return {"supported": False, "events": [], "protected_fields": protected_fields,
+                    "quarantine": core.review_profile(path, "quarantine_status") if protected_fields["enabled"] else None,
+                    "message": "这项工作没有启用额外的五层语义与规则检查。"}
         from ..guards import GuardPolicy
         policy = GuardPolicy.from_dict(json.loads((path / "defense-policy.json").read_text()))
         events = []
@@ -620,6 +625,7 @@ class Workbench:
         if baseline["supported"]:
             baseline["changes"] = settings_diff(policy.settings(), baseline["settings"])
         return {"supported": True, "framework": manifest.get("framework", "openclaw"),
+                "protected_fields": protected_fields,
                 "editable": (stopped or live_settings) and not (quarantine or {}).get("storage_fault", False),
                 "live_settings": live_settings and not stopped,
                 "judge": judge,
@@ -692,7 +698,7 @@ class Workbench:
                 with self.mutex:
                     path = self._profile_path(entry)
                     result["features"] = [name for name in json.loads((path / "profile.json").read_text()).get("features", [])
-                                          if name in {"reviewed_email_v1", "reviewed_actions_v1", "layered_defense_v1", "quarantine_v1", "buffered_response_v1"}]
+                                          if name in {"reviewed_email_v1", "reviewed_actions_v1", "layered_defense_v1", "quarantine_v1", "buffered_response_v1", "protected_fields_v1"}]
                 actual = self._remember(identifier, observed) if observed is not None else self._observe(identifier, path)
                 cached_pending = actual.get("_pending_observation")
                 if actual.get("status") not in STATUSES:
