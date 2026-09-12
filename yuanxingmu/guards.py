@@ -485,6 +485,12 @@ def _command_programs(command: str, depth: int = 0) -> tuple[list[tuple[str, lis
     effects = []
     parts = _segments(command)
     for part in parts:
+        if len(part) == 1 and isinstance(part[0], _ShellExpansion):
+            children, _, child_effects = _command_programs(str(part[0]), depth + 1)
+            programs.extend(children)
+            effects.extend(child_effects)
+            uncertain = True
+            continue
         argv = []
         index = 0
         while index < len(part):
@@ -691,6 +697,66 @@ def _strings(value):
 class _Redirection(str):
     """A shell operator seen before unquoting, never a printed argument."""
 
+    def __new__(cls, value: str, *, heredoc_expands: bool = False):
+        token = super().__new__(cls, value)
+        token.heredoc_expands = heredoc_expands
+        return token
+
+
+class _ShellExpansion(str):
+    """Unevaluated code extracted from an expandable here-document body."""
+
+
+def _heredoc_expansions(body: str) -> list[str]:
+    """Extract bounded, explicit substitutions; never evaluate shell text.
+
+    Quotes in the body do not suppress expansion: quoting the delimiter does.
+    More complex or incomplete syntax remains subject to the heredoc review.
+    """
+    commands = []
+    index = 0
+    while index < len(body):
+        if body[index] == "\\":
+            index += 2
+            continue
+        if body.startswith("$(", index):
+            start = cursor = index + 2
+            depth = 1
+            quote = ""
+            while cursor < len(body):
+                char = body[cursor]
+                if char == "\\" and quote != "'":
+                    cursor += 2
+                    continue
+                if quote:
+                    if char == quote:
+                        quote = ""
+                elif char in {"'", '"'}:
+                    quote = char
+                elif char == "(":
+                    depth += 1
+                elif char == ")":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                cursor += 1
+            if depth == 0:
+                if not body.startswith("$((", index):
+                    commands.append(body[start:cursor])
+                index = cursor + 1
+                continue
+            break  # One incomplete substitution must not cause quadratic rescans.
+        elif body[index] == "`":
+            cursor = index + 1
+            while cursor < len(body) and body[cursor] != "`":
+                cursor += 2 if body[cursor] == "\\" else 1
+            if cursor < len(body):
+                commands.append(body[index + 1:cursor])
+                index = cursor + 1
+                continue
+        index += 1
+    return commands
+
 
 def _segments(command: str) -> list[list[str]]:
     # Split before unquoting: shlex alone loses the distinction between a real
@@ -700,6 +766,7 @@ def _segments(command: str) -> list[list[str]]:
     continued = []
     line_start_part = 0
     quote = ""
+    word_started = False
     start = index = 0
     while index < len(command):
         char = command[index]
@@ -707,6 +774,8 @@ def _segments(command: str) -> list[list[str]]:
             if command[index + 1:index + 2] == "\n":
                 continued.append(command[start:index])
                 start = index + 2
+            else:
+                word_started = True
             index += 2
             continue
         if quote:
@@ -714,6 +783,14 @@ def _segments(command: str) -> list[list[str]]:
                 quote = ""
         elif char in {"'", '"'}:
             quote = char
+            word_started = True
+        elif char == "#" and not word_started:
+            parts[-1].extend(shlex.split("".join(continued) + command[start:index]))
+            continued.clear()
+            end = command.find("\n", index)
+            index = len(command) if end < 0 else end
+            start = index
+            continue
         elif char in "<>" or command[index:index + 2] == "&>":
             prefix = "".join(continued) + command[start:index]
             continued.clear()
@@ -722,15 +799,21 @@ def _segments(command: str) -> list[list[str]]:
             parts[-1].extend(shlex.split(prefix))
             operator = next(value for value in ("&>>", "<<<", "<<-", ">>", "<<", "<>", "<&", ">&", "&>", ">|", "<", ">")
                             if command.startswith(value, index))
-            parts[-1].append(_Redirection(operator))
+            expands = False
+            if operator in {"<<", "<<-"}:
+                delimiter_word = re.compile(r"[ \t]*([^ \t\r\n;&|()<>]*)").match(command, index + len(operator))[1]
+                expands = not any(c in delimiter_word for c in "'\"\\")
+            parts[-1].append(_Redirection(operator, heredoc_expands=expands))
             index += len(operator)
             start = index
+            word_started = False
             continue
         elif char in ";&|()\n":
             parts[-1].extend(shlex.split("".join(continued) + command[start:index]))
             continued.clear()
             if parts[-1]:
                 parts.append([])
+            word_started = False
             if char == "\n":
                 # Here-document bodies start after the command's newline.
                 # Skip only their literal lines; retain real commands before
@@ -739,21 +822,30 @@ def _segments(command: str) -> list[list[str]]:
                 for part in parts[line_start_part:]:
                     for offset, token in enumerate(part[:-1]):
                         if isinstance(token, _Redirection) and token in {"<<", "<<-"} and not isinstance(part[offset + 1], _Redirection):
-                            documents.append((part[offset + 1], token == "<<-"))
+                            documents.append((part[offset + 1], token == "<<-", token.heredoc_expands))
                 index += 1
-                for delimiter, strip_tabs in documents:
+                for delimiter, strip_tabs, expands in documents:
+                    body_start = body_end = index
                     while index < len(command):
                         end = command.find("\n", index)
                         if end < 0:
                             end = len(command)
                         line = command[index:end]
+                        body_end = index
                         index = min(end + 1, len(command))
                         if (line.lstrip("\t") if strip_tabs else line) == delimiter:
                             break
+                        body_end = index
+                    if expands:
+                        for code in _heredoc_expansions(command[body_start:body_end]):
+                            parts[-1].append(_ShellExpansion(code))
+                            parts.append([])
                 start = index
                 line_start_part = len(parts) - 1
                 continue
             start = index + 1
+        else:
+            word_started = char not in " \t\r"
         index += 1
     parts[-1].extend(shlex.split("".join(continued) + command[start:]))
     return [part for part in parts if part]
