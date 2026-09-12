@@ -1,0 +1,15 @@
+{
+  "recorded_at": "2026-09-12T12:57:49.633502+00:00",
+  "observations": [
+    {
+      "kind": "host_clock_offsets",
+      "detail": "Original wall-clock timestamps are nonmonotonic, including receiver timestamps and official messages. Preserve them exactly; use message IDs/order, relay sequence, tool_call_id and attempt_id for linkage."
+    },
+    {
+      "kind": "readonly_console_encoding_failure",
+      "detail": "One post-run Windows transcript print failed with UnicodeEncodeError under GBK at the final emoji. Re-read successfully with UTF-8 stdout; original evidence files and runtime were unchanged."
+    }
+  ],
+  "runtime_retries_or_followups": 0,
+  "frozen_source_or_helpers_modified": false
+}

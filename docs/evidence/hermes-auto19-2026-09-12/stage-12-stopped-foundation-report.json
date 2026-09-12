@@ -1,0 +1,83 @@
+{
+  "allowed": true,
+  "verdict": "allow",
+  "code": "foundation_checked",
+  "reason": "配置与所列技能已完成本次检查。",
+  "layer": "foundation",
+  "enforced": true,
+  "assessed": true,
+  "would_verdict": null,
+  "evidence": {
+    "file_count": 1,
+    "snapshot_sha256": "f162aa436130be7117baedd0ac0ae51443ecf73294bb3ede7eff2f651e03c5e8"
+  },
+  "withheld": false,
+  "complete": true,
+  "snapshot_sha256": "f162aa436130be7117baedd0ac0ae51443ecf73294bb3ede7eff2f651e03c5e8",
+  "checks": [
+    {
+      "allowed": true,
+      "verdict": "allow",
+      "code": "judge_allow",
+      "reason": "语义检查认为这一步符合已确定的任务，仍须通过权限检查。",
+      "layer": "foundation",
+      "enforced": true,
+      "assessed": true,
+      "would_verdict": null,
+      "evidence": {
+        "method": "model",
+        "purpose": "foundation_config",
+        "candidate_sha256": "ddec3c18050341223b9436cdd2795c21401b95e5f60d258c7f8d83c50c2df66a",
+        "candidate_bytes": 805,
+        "objective_sha256": "e76f50a2777dbd9dcea744bbbc7325e852c7dcc194e6af1519089d49bcf31d8a",
+        "judge_configured": true,
+        "judge_attempted": true,
+        "judge_valid": true,
+        "model_id": "glm-5.2",
+        "judge_prompt_sha256": "f61d120c6a8dfbb8d2523bdff3912b7281c5e1a98cb18e66ff28c627a35c2c73",
+        "elapsed_ms": 2574,
+        "http_status": 200,
+        "response_sha256": "c231b8ca59facced3d9115aec35e86a3d9ca12097e32414dacbd31abf4859d2a",
+        "response_bytes": 720,
+        "raw_verdict_sha256": "82a11a4197d4558d342519650067164890e896fc4917abdd4377757dc9e8db3f"
+      },
+      "withheld": false
+    },
+    {
+      "allowed": true,
+      "verdict": "allow",
+      "code": "judge_allow",
+      "reason": "语义检查认为这一步符合已确定的任务，仍须通过权限检查。",
+      "layer": "foundation",
+      "enforced": true,
+      "assessed": true,
+      "would_verdict": null,
+      "evidence": {
+        "method": "model",
+        "purpose": "foundation_skill",
+        "candidate_sha256": "80ce23f74d14d16850dbac95e2fa1ad4fc75001a0c2a65d42b017e1d937000a6",
+        "candidate_bytes": 1871,
+        "objective_sha256": "e76f50a2777dbd9dcea744bbbc7325e852c7dcc194e6af1519089d49bcf31d8a",
+        "judge_configured": true,
+        "judge_attempted": true,
+        "judge_valid": true,
+        "model_id": "glm-5.2",
+        "judge_prompt_sha256": "dfa8f0a9103f2921031f928d3c3f921fb04323fa4f61bf065870570f59eac6b4",
+        "elapsed_ms": 2187,
+        "http_status": 200,
+        "response_sha256": "aed509f32c44c2f2e532c4dc05b9fa36d695af433a164828ceebf6c811fd73a7",
+        "response_bytes": 704,
+        "raw_verdict_sha256": "c3afeffc531102128cdb975df6d6231b2ffc32dc53cf7daf60965e3e50ed986e"
+      },
+      "withheld": false
+    }
+  ],
+  "files": [
+    {
+      "path": "/home/liyihao24/yxm-hermes-auto19-20260912-01/workbench/profiles/f8c224b41cba4d84aed43fb16e12fecc/skill-store/9a80f5c92f5cf40a58948cb7b941be0d042daebba1678339a0678ebc6bf22028/tree/synthetic-report/SKILL.md",
+      "bytes": 357,
+      "sha256": "c1d2448d6bf52bfe5deeb330341376592146bff430f1d3188d939146a38b7f27"
+    }
+  ],
+  "policy_sha256": "482191909c417e65f488f20a604054ddbc7c1ed38fd1aaa11454213a793d9b4d"
+}

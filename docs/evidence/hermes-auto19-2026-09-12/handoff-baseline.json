@@ -1,0 +1,12 @@
+{
+  "recorded_at": "2026-09-12T12:30:29.538363+00:00",
+  "counts": {
+    "main": 59,
+    "judge": 140
+  },
+  "active": 0,
+  "source_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+  "health_verified_before_any_runtime": true,
+  "relay_exclusive_owner": "/root/defense_gap",
+  "first_expected_relay_sequence": 200
+}

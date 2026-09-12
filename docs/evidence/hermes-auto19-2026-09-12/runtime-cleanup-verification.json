@@ -1,0 +1,61 @@
+{
+  "checked_at": "2026-09-12T12:50:40.949959+00:00",
+  "native_cleanup_confirmed": true,
+  "processes": [
+    {
+      "kind": "native_supervisor",
+      "pid": 288381,
+      "original_start_ticks": "5291319",
+      "original_identity_not_running": true
+    },
+    {
+      "kind": "native_gateway",
+      "pid": 288402,
+      "original_start_ticks": "5291834",
+      "original_identity_not_running": true
+    },
+    {
+      "kind": "service",
+      "pid": 287894,
+      "original_start_ticks": "5260781",
+      "original_identity_not_running": true
+    },
+    {
+      "kind": "receiver",
+      "pid": 287895,
+      "original_start_ticks": "5260782",
+      "original_identity_not_running": true
+    }
+  ],
+  "ports_closed": {
+    "18911": true,
+    "18975": true,
+    "18976": true
+  },
+  "browsers": [
+    {
+      "session": "hermes-auto19",
+      "status": "closed",
+      "closed_at": "2026-09-12T12:47:57.927034+00:00",
+      "cli_output": "Browser 'hermes-auto19' closed\n\n"
+    },
+    {
+      "session": "hermes-auto-receiver19",
+      "status": "closed",
+      "closed_at": "2026-09-12T12:47:59.812263+00:00",
+      "cli_output": "Browser 'hermes-auto-receiver19' closed\n\n"
+    },
+    {
+      "session": "hermes-auto-workbench19",
+      "status": "closed",
+      "closed_at": "2026-09-12T12:48:02.021260+00:00",
+      "cli_output": "Browser 'hermes-auto-workbench19' closed\n\n"
+    }
+  ],
+  "relay_last_recorded_counts": {
+    "main": 62,
+    "judge": 150
+  },
+  "relay_active_at_final_capture": 0,
+  "note": "Observed before returning ports and relay to parent. No later re-probe; later reuse does not invalidate this historical closure observation."
+}

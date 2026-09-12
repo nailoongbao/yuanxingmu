@@ -1,0 +1,9 @@
+{
+  "status": "stopped",
+  "supervisor_pid": 288381,
+  "supervisor_start": "5291319",
+  "task_id": "task_189b376a07024a02958a26453b15abb1",
+  "gateway_pid": 288402,
+  "gateway_start": "5291834",
+  "cleanup_confirmed": true
+}

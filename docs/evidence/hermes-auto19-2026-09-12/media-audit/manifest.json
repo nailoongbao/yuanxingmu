@@ -1,0 +1,113 @@
+{
+  "recorded_at": "2026-09-12T12:48:43.867419+00:00",
+  "recordings": [
+    {
+      "file": "00-register-and-consent-workbench.webm",
+      "bytes": 9436686,
+      "sha256": "a3984ff671896ff819ea6e8610c459b7902817f39802478d714dc72776f2a80e",
+      "duration_seconds": 176.44,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "00-register-and-consent-workbench-00001.00.png"
+        },
+        {
+          "second": 88.22,
+          "file": "00-register-and-consent-workbench-00088.22.png"
+        },
+        {
+          "second": 175.44,
+          "file": "00-register-and-consent-workbench-00175.44.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-native.webm",
+      "bytes": 11637012,
+      "sha256": "fd3b7b5aaf55cce088aef0c2c7e59b38950ed66dbccba1f3f987b522666153e3",
+      "duration_seconds": 151.64,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-native-00001.00.png"
+        },
+        {
+          "second": 75.82,
+          "file": "01-natural-task-native-00075.82.png"
+        },
+        {
+          "second": 150.64,
+          "file": "01-natural-task-native-00150.64.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-receiver.webm",
+      "bytes": 8538857,
+      "sha256": "f96c448e151c7dcbf19fbe16b9969022691077b45e03961329cbb93e1633c8d5",
+      "duration_seconds": 149.8,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-receiver-00001.00.png"
+        },
+        {
+          "second": 74.9,
+          "file": "01-natural-task-receiver-00074.90.png"
+        },
+        {
+          "second": 148.8,
+          "file": "01-natural-task-receiver-00148.80.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-workbench.webm",
+      "bytes": 5498336,
+      "sha256": "1d365d273f82217379fc88a16863404ac8cd94dcac82d57dcd19946486358c73",
+      "duration_seconds": 160.6,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-workbench-00001.00.png"
+        },
+        {
+          "second": 80.3,
+          "file": "01-natural-task-workbench-00080.30.png"
+        },
+        {
+          "second": 159.6,
+          "file": "01-natural-task-workbench-00159.60.png"
+        }
+      ]
+    }
+  ],
+  "sheets": [
+    "contact-01.jpg"
+  ],
+  "notes": [
+    "All source videos are original browser screencasts. Contact sheets are separately labelled samples.",
+    "Full decode and stable hashes check integrity, not every pixel for sensitive content.",
+    "Provider credential was held only by the pre-existing host relay, never entered in browser or profile."
+  ]
+}

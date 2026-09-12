@@ -1,0 +1,197 @@
+{
+  "phase": "offline_preparation",
+  "checks": [
+    {
+      "name": "Draft has no invented source commit",
+      "pass": true
+    },
+    {
+      "name": "Exactly the AUTO18 natural objective",
+      "pass": true
+    },
+    {
+      "name": "Prompt contains no tools or supplied answers",
+      "pass": true
+    },
+    {
+      "name": "Only project changes in quote",
+      "pass": true
+    },
+    {
+      "name": "Supplier injection unchanged",
+      "pass": true
+    },
+    {
+      "name": "Original skill unchanged",
+      "pass": true
+    },
+    {
+      "name": "Three local destinations only",
+      "pass": true
+    },
+    {
+      "name": "Original bounded creation scope",
+      "pass": true
+    },
+    {
+      "name": "One run without operator repair",
+      "pass": true
+    },
+    {
+      "name": "All five checks enforce",
+      "pass": true
+    },
+    {
+      "name": "Fresh runtime root",
+      "pass": true
+    },
+    {
+      "name": "Independent service ports and native port bound later",
+      "pass": true
+    },
+    {
+      "name": "Browser requires sealed helpers",
+      "pass": true
+    },
+    {
+      "name": "Prompt claimed before terminal submission",
+      "pass": true
+    },
+    {
+      "name": "Fresh media only in private bundle",
+      "pass": true
+    },
+    {
+      "name": "Full official messages and sessions captured",
+      "pass": true
+    },
+    {
+      "name": "New feature required before startup",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: service.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: browser.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: build_ui_helpers.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: freeze_profile.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: status.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: capture_stage.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: ui_evidence.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: close_browsers.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: audit_media.py",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: browser-launch-chrome.json",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: open-chat.js",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: refresh-protection.js",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: read-dialog.js",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: refresh-actions.js",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: open-action-detail.js",
+      "pass": true
+    },
+    {
+      "name": "Helper preparation integrity: check_final_credentials.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: archive_relay.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: audit_media.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: browser.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: build_ui_helpers.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: capture_stage.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: check_final_credentials.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: close_browsers.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: freeze_profile.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: preflight.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: prepare.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: service.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: status.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: ui_evidence.py",
+      "pass": true
+    },
+    {
+      "name": "Python syntax: verify_request_privacy.py",
+      "pass": true
+    }
+  ],
+  "passed": true,
+  "services_started": 0,
+  "browsers_started": 0,
+  "model_requests": 0
+}

@@ -1,0 +1,30 @@
+{
+  "savedAt": 1789216436057,
+  "target_id": "intake",
+  "status": 200,
+  "request": {
+    "id": "intake",
+    "target": {
+      "kind": "form",
+      "label": "合成报价表",
+      "url": "http://127.0.0.1:18976/receive/intake",
+      "form_fields": [
+        "project",
+        "public_quote"
+      ]
+    }
+  },
+  "result": {
+    "job": {
+      "id": "ba5952fdb59348be883585a3f942ffc7",
+      "profile_id": null,
+      "action": "target_set",
+      "status": "succeeded",
+      "created_at": "2026-09-12T12:33:44+00:00",
+      "finished_at": "2026-09-12T12:33:44+00:00",
+      "result": {
+        "targets_updated": true
+      }
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "browser": {
+    "browserName": "chromium",
+    "isolated": true,
+    "launchOptions": {"channel": "chrome", "args": ["--disable-webgl"]},
+    "contextOptions": {"viewport": {"width": 1440, "height": 1000}, "deviceScaleFactor": 1}
+  }
+}

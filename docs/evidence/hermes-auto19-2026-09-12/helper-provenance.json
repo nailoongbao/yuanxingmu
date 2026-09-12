@@ -1,0 +1,82 @@
+{
+  "service.py": {
+    "source": "hermes-auto18-20260912/service.py",
+    "source_sha256": "a1e5277f7a5a5abba73311899a3c32aa06d4fc5f26fd847422d6117603647adc",
+    "prepared_sha256": "94b9df152122889ffd6ef2d4bc76d594fef02f893c634f4cd593d69fc306bf87"
+  },
+  "browser.py": {
+    "source": "hermes-auto18-20260912/browser.py",
+    "source_sha256": "0967b5a77c5cd2bbc70a59aa7b44ee02dfc0b4927cf3e7a02c16bc0d1ac81fd9",
+    "prepared_sha256": "f94271f8fbc2e2f25b3f310cc54c959fe8dc2fb701739f2c69348476f818bd5d"
+  },
+  "build_ui_helpers.py": {
+    "source": "hermes-auto18-20260912/build_ui_helpers.py",
+    "source_sha256": "d2cc4232eccf327717f8ad47c28e27bd469946d39a454fc99d86001be0dd7332",
+    "prepared_sha256": "acf56667a492a6289a4afb1ff930ca8a60e392e91c14ee9825473a246a24f664"
+  },
+  "freeze_profile.py": {
+    "source": "hermes-auto18-20260912/freeze_profile.py",
+    "source_sha256": "0d6dba7c16bc787990e1c9f2887e675648f52a9e3e16eb77e1575e266a94c3ec",
+    "prepared_sha256": "3bf9435541ea9b366db7edb2ea7da1a24ea26cac0d609da4c75e8c418bcc6345"
+  },
+  "status.py": {
+    "source": "hermes-auto18-20260912/status.py",
+    "source_sha256": "370be86de2c1466b1f9080e6bd5aecd7e49cea7d7d0a0bb7fbd8dd9cc8cde7f6",
+    "prepared_sha256": "9a6ae5f03cca7d7a6679fbfc7b9b627e2b1393e9426b45946b6e9c7bdebc7f91"
+  },
+  "capture_stage.py": {
+    "source": "hermes-auto18-20260912/capture_stage.py",
+    "source_sha256": "8e9f6a1c1c18b2de6c0fc5ca26f518378a939d6ecd633593c349c38d6b99e506",
+    "prepared_sha256": "b806020726deb9d73d032a132c7f461b70c8d3da9de54165a1554a331333cf3f"
+  },
+  "ui_evidence.py": {
+    "source": "hermes-auto18-20260912/ui_evidence.py",
+    "source_sha256": "2860fb68f5a672035b586d86ee3cc1a9013b2f8f3d9ea7b408addbdde11e8daf",
+    "prepared_sha256": "2860fb68f5a672035b586d86ee3cc1a9013b2f8f3d9ea7b408addbdde11e8daf"
+  },
+  "close_browsers.py": {
+    "source": "hermes-auto18-20260912/close_browsers.py",
+    "source_sha256": "45228dd2d48f6fa7127222affce9d11c1807bd575a2709b9e15a5ac4f57a92b2",
+    "prepared_sha256": "3918d54801d3af73bda8ad95d9aa5350246c412f938dc102f39ecf7b7a7fda3b"
+  },
+  "audit_media.py": {
+    "source": "hermes-auto18-20260912/audit_media.py",
+    "source_sha256": "d82c3ee6172985bacc5b7fb58a3a19040143bdf7d75b8f7bd3f9f4dbbea495c1",
+    "prepared_sha256": "7733ac213c539c7e7ac9df073e1874aef2f607bb8c00e16f11417ea53eaa926b"
+  },
+  "browser-launch-chrome.json": {
+    "source": "hermes-auto18-20260912/browser-launch-chrome.json",
+    "source_sha256": "c152105cb5c86be0d6d589da30f69236fcc891ff2ffa8e90437dd85c56f4ca47",
+    "prepared_sha256": "c152105cb5c86be0d6d589da30f69236fcc891ff2ffa8e90437dd85c56f4ca47"
+  },
+  "open-chat.js": {
+    "source": "hermes-auto18-20260912/open-chat.js",
+    "source_sha256": "8c1a31d8bd6765a1bb02f7634d0194e160439c96e645b010c02aa40e91f2b401",
+    "prepared_sha256": "8c1a31d8bd6765a1bb02f7634d0194e160439c96e645b010c02aa40e91f2b401"
+  },
+  "refresh-protection.js": {
+    "source": "hermes-auto18-20260912/refresh-protection.js",
+    "source_sha256": "102390583cd2f93221aeec1f567bffe79a1846ee6edd8149a13ea474c27e5d51",
+    "prepared_sha256": "102390583cd2f93221aeec1f567bffe79a1846ee6edd8149a13ea474c27e5d51"
+  },
+  "read-dialog.js": {
+    "source": "hermes-auto18-20260912/read-dialog.js",
+    "source_sha256": "f92ce53d1cbedee95d4107e2398caeda3d21bce2a4491d30a6df77448b3a5e88",
+    "prepared_sha256": "f92ce53d1cbedee95d4107e2398caeda3d21bce2a4491d30a6df77448b3a5e88"
+  },
+  "refresh-actions.js": {
+    "source": "hermes-auto18-20260912/refresh-actions.js",
+    "source_sha256": "410b9cb40e7a1c3a9e61bcc1da614c61d977dddfdcba752e2465565b296f41e7",
+    "prepared_sha256": "410b9cb40e7a1c3a9e61bcc1da614c61d977dddfdcba752e2465565b296f41e7"
+  },
+  "open-action-detail.js": {
+    "source": "hermes-auto18-20260912/open-action-detail.js",
+    "source_sha256": "bcf648d26fade3ef57150829429c5072a1d809be274f8225a7cfca9ca0f07d0d",
+    "prepared_sha256": "bcf648d26fade3ef57150829429c5072a1d809be274f8225a7cfca9ca0f07d0d"
+  },
+  "check_final_credentials.py": {
+    "source": "hermes-auto18-20260912/check_final_credentials.py",
+    "source_sha256": "f0308292ce07cb99931e3e469fc379aa8ab462171875432f8747667f0433add1",
+    "prepared_sha256": "819c7521c401db6a327bf07110d12124cae853c0583276133ef35a8120b301e4"
+  }
+}

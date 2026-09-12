@@ -1,0 +1,24 @@
+{
+  "source_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+  "version": "0.7.0a1",
+  "git_blob_files_verified": 853,
+  "source_archive_sha256": "df791af80b02bc9d8789121dbd09489c9c4d99948ff624e1922717f3e98f793f",
+  "source_archive_in_export": false,
+  "full_source_file_hashes": "runtime-source-freeze.json",
+  "all_original_main_and_judge_requests_in_export": true,
+  "same_model_separate_requests": true,
+  "model": {
+    "url": "http://127.0.0.1:18112/main/v1",
+    "id": "glm-5.2",
+    "thinking": "disabled by disclosed relay"
+  },
+  "judge": {
+    "url": "http://127.0.0.1:18112/judge/v1",
+    "id": "glm-5.2",
+    "timeout_seconds": 45
+  },
+  "fixed_relay_sequence": {
+    "first": 200,
+    "last": 212
+  }
+}

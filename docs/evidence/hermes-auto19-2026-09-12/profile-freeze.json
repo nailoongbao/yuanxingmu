@@ -1,0 +1,155 @@
+{
+  "recorded_at": "2026-09-12T12:34:36.224289+00:00",
+  "source_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+  "profile_id": "f8c224b41cba4d84aed43fb16e12fecc",
+  "task_id": "task_189b376a07024a02958a26453b15abb1",
+  "port": 18911,
+  "features": [
+    "reviewed_email_v1",
+    "reviewed_actions_v1",
+    "layered_defense_v1",
+    "quarantine_v1",
+    "buffered_response_v1",
+    "live_settings_v1",
+    "per_layer_settings_v1",
+    "settings_history_v1",
+    "defense_baseline_v1",
+    "skill_rules_v1",
+    "skill_purpose_v1",
+    "input_containment_v1",
+    "independent_judge_v1",
+    "automatic_actions_v1",
+    "protected_fields_v1"
+  ],
+  "files": {
+    "hermes-config.yaml": "598d16aefe4d8b63d68f636bb37e657fcbb2dcf90ad4b8e7e9d3c8304a20c020",
+    "hermes-binding.json": "738f031e7e4a0e67704734e83defb720b28f4a16b11b772f5659a7793d28c729",
+    "policy.json": "d3ad9c891c7f42b8550ed295f5f47a52c4d61a8efcf17c3f97c72684c412f21a",
+    "protected-data.json": "98f7f04f93693373d5a4bf91ced57abf81e99e4b332c4331115272a1ab8df23d",
+    "broker-state/bindings.json": "9d1f400f2cef4a7b3f4a1779bb1f36577e95d1b91e599bace9dd15ca5cd1f1a9",
+    "broker-state/workspaces.json": "6e4621fe5a2fdeae05e2d28f1f5bc97519a3f14ed0520bedc124d4e2cfb31f2d",
+    "defense-policy.json": "482191909c417e65f488f20a604054ddbc7c1ed38fd1aaa11454213a793d9b4d",
+    "defense-baseline.json": "c1a3f5ed1effa4ea840c2f3798db48b72397360193625dbe9c2d68b0a68ba21b",
+    "judge-config.json": "9c14fc095430326b2efbcbdfcbd2013b11dc083d12972e9114bcfcbbee584b2b",
+    "action-targets.json": "46dfb43584b6e319b1ecf25cec1e322031ebf38a713eb84cc508100d13278868",
+    "action-automation.json": "a874f2f5448c1c730a4086dfb8ff279753e076b63373b7cb7374d1c2f1247565",
+    "documents/supplier_note.txt": "c972cc82c498477c5ed0d63ee27c0561bdd697a22e8523a6e28fa4eda39fe844",
+    "documents/quote.txt": "6be5638fdfd142f8118bdde3adc0a65365c3ba805feda5c1a65070dc31ef6f21",
+    "trusted-core/yuanxingmu/authority.py": "33efe46adac1d3730ee80d00d15191c8425627d840c5c2cddb9c302ec3ccafd1",
+    "trusted-core/yuanxingmu/gateway_network.py": "56a2f466926ae87e035f811a556d3ded3d35eeadf03c20e2fdc6b86f1dcbab6a",
+    "trusted-core/yuanxingmu/mail_drafts.py": "0a5ff674551e3e94b600c863fbf2f548bdacd77ef175250e8aacdfba3b0de674",
+    "trusted-core/yuanxingmu/hermes.py": "c3639cbe0c8d26878cf491ef0c96f3b68637804577ef8507a9c20d2f3b55c6df",
+    "trusted-core/yuanxingmu/protected_fields.py": "5ed61ea179c63998aeda2b506e83e12ce3ff7b71fbd8271fd8f0fff61232eb50",
+    "trusted-core/yuanxingmu/broker.py": "052874a42a8cc95b4ac5f074963930fbd9b63c278f643d926fed4b9e65e70645",
+    "trusted-core/yuanxingmu/skills.py": "6d025da49ecae1a61c99f01bb7b566e47fe050823290d680901f502cccb5cb36",
+    "trusted-core/yuanxingmu/model_output.py": "268e4697228ed03b8246d308c3ced495faa0fc5c6af7691d827537aef6fc2fe5",
+    "trusted-core/yuanxingmu/client.py": "a3368da99492fd83ad84f0f15081ff3a89749245f1c81a7509d86386c8dbe421",
+    "trusted-core/yuanxingmu/quarantine.py": "a06c7524423fd1395996c062abca83defcef93140b2d00cc6f655e1ebaed2cbd",
+    "trusted-core/yuanxingmu/run.py": "42662b7ae71dabfbf069ebd58a1b89e2a90929895ea427921bc3c1a0082d381a",
+    "trusted-core/yuanxingmu/demo.py": "6d13f20cdc9a493aff33988b3750e38aa33cf52fd790431b15b6175f9276eb46",
+    "trusted-core/yuanxingmu/hermes_backend.py": "4d0cf632a7e565d636eccb4e46584a17f76ef07665398be04ea370f9cf29384e",
+    "trusted-core/yuanxingmu/protected_boundary.py": "1fea72fa1f0e3cee9193bc33e8f73acc30065903856dba75be8b1682fefc1376",
+    "trusted-core/yuanxingmu/tool_reviews.py": "3ac948c28947c3eb76b2ebc93aea0d475a0b28b92a7b5f0984cd8d607ed50dfe",
+    "trusted-core/yuanxingmu/action_automation.py": "5337a2fcec6fb2cc89f7903603618a7c51881e7f1ee30bd07cd3582345494a91",
+    "trusted-core/yuanxingmu/cli.py": "0b09478a9907b3f954e0bdefde205f6fa266a21e2eb8a0fd02d576647a581a65",
+    "trusted-core/yuanxingmu/mail_transport.py": "91fc9d3611ba0b6206e766fb6a903daaf32ed5355c245533490fd2057ad8f7e1",
+    "trusted-core/yuanxingmu/judge_profile.py": "3f5c3ab7356112cf2164d841d2c0abd3254cf1c1e91b35816afd4a0a47ccf3a7",
+    "trusted-core/yuanxingmu/notifications.py": "1245b9616479dd90182b3fe18031a47794b9c43df2b60b5965dfe6303434f6a9",
+    "trusted-core/yuanxingmu/openclaw.py": "c97388c95e52d148fca17dacea617140052b4f90de860549c2abe710232e0671",
+    "trusted-core/yuanxingmu/actions.py": "8cd8ef44b219ce098f4aab104ae608392282ed2618ced7a1f557abb459d64132",
+    "trusted-core/yuanxingmu/protection.py": "2f5d85a82ccaa1b78de76a79beecbc582e19b519d0b1299f1fca3848af1e457f",
+    "trusted-core/yuanxingmu/sandbox.py": "dd693c87fe532150b55cce2e3ced72fd6dae7c04520dd595434cfb2306305d23",
+    "trusted-core/yuanxingmu/guards.py": "f58d2ba6b3c4192e251017559686d36f0842f24a4ba00d2256603143043742bb",
+    "trusted-core/yuanxingmu/receipts.py": "a69ebeebd499526418fa23797168ee9b83c686e232c315f52db71e634c694882",
+    "trusted-core/yuanxingmu/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "trusted-core/yuanxingmu/worker.py": "3aa6977d8dd049f178135783d7f925915b855cea251952dda670a67469618f53",
+    "trusted-core/yuanxingmu/protected_data.py": "0a36aa604ff6692411fde20b38f37f07c369664ff0adbf45878e7ab183247d8a",
+    "trusted-core/yuanxingmu/__init__.py": "88722a246d55024af02641b97d106b885632c4aead0d99b3926ec63b674ffc72",
+    "plugin/plugin.yaml": "4e5c05caf0c8dcafdad33ba473a59d1a5fc37a6e72589faa32e230bf975327b2",
+    "plugin/__init__.py": "bbf3bd447166b919907ce8e23a21caea889d72fe866abd0391abf2f79d5a59fc",
+    "runtime-etc/hosts": "b69b2c741be48691edabe3771c644c70473ccd6aa8effd9f17cc07fa129917f9",
+    "runtime-etc/nsswitch.conf": "616c92fe38aee6d2c529e6e44c58f35e400f26e92860e626fc054cc4345b6d40",
+    "runtime-etc/group": "3ff8d23d32f02ac08446a010af67e2394e41257b3d2a47479ed479fb297fe3a5",
+    "runtime-etc/passwd": "50141ebe97aead6e563289c880dba40ca8c234f458ffb31a2af38c46fe1940ef",
+    "skill-store/b1d3f196dcb44ef3c309ffb8302447190385afa226144b1c853ae0567372b44f/manifest.json": "b1d3f196dcb44ef3c309ffb8302447190385afa226144b1c853ae0567372b44f",
+    "skill-store/9a80f5c92f5cf40a58948cb7b941be0d042daebba1678339a0678ebc6bf22028/manifest.json": "9a80f5c92f5cf40a58948cb7b941be0d042daebba1678339a0678ebc6bf22028",
+    "skill-store/9a80f5c92f5cf40a58948cb7b941be0d042daebba1678339a0678ebc6bf22028/tree/synthetic-report/SKILL.md": "c1d2448d6bf52bfe5deeb330341376592146bff430f1d3188d939146a38b7f27"
+  },
+  "settings": {
+    "alignment_enabled": true,
+    "alignment_mode": "inherit",
+    "command_enabled": true,
+    "command_mode": "inherit",
+    "foundation_config_enabled": true,
+    "foundation_enabled": true,
+    "foundation_mode": "inherit",
+    "input_enabled": true,
+    "input_mode": "inherit",
+    "memory_enabled": true,
+    "memory_mode": "inherit",
+    "mode": "enforce",
+    "skill_rules_enabled": true,
+    "skill_semantic_enabled": true
+  },
+  "all_modes_enforce": true,
+  "source_files_unchanged": 853,
+  "action_automation": {
+    "version": 1,
+    "max_attempts": 8,
+    "max_total_body_bytes": 65536,
+    "targets": {
+      "team": {
+        "accepted_labels": [
+          "private"
+        ],
+        "max_body_bytes": 8192
+      },
+      "archive": {
+        "accepted_labels": [
+          "private"
+        ],
+        "max_body_bytes": 8192
+      },
+      "intake": {
+        "accepted_labels": [
+          "private"
+        ],
+        "max_body_bytes": 8192
+      }
+    }
+  },
+  "bindings": {
+    "team": "263f803a688348d10351f699306a0814dc506329cdb4f6a823c4d6d3a9d5a02b",
+    "archive": "2230d7322b344a976be8be85a27a0ce610b17fd19f6235450f4fdbc6f02bc975",
+    "intake": "3cd6dd69706fa61d413ecae62bd58119da7c86ad585f72a219b103f145a3a8d4"
+  },
+  "created_by_actual_ui": true,
+  "state_db_absent_before_start": true,
+  "receiver_posts_before_start": 0,
+  "model_counters_before_start": {
+    "status": "ok",
+    "model": "glm-5.2",
+    "active": 0,
+    "counts": {
+      "main": 59,
+      "judge": 140
+    },
+    "credential_exposed": false
+  },
+  "helpers_sha256": {
+    "archive_relay.py": "edb4d2ade6e12b96dc6d9ff01e07429120e676c0c7f4eaf457da617448427f76",
+    "audit_media.py": "7733ac213c539c7e7ac9df073e1874aef2f607bb8c00e16f11417ea53eaa926b",
+    "browser.py": "f94271f8fbc2e2f25b3f310cc54c959fe8dc2fb701739f2c69348476f818bd5d",
+    "build_ui_helpers.py": "acf56667a492a6289a4afb1ff930ca8a60e392e91c14ee9825473a246a24f664",
+    "capture_stage.py": "b806020726deb9d73d032a132c7f461b70c8d3da9de54165a1554a331333cf3f",
+    "check_final_credentials.py": "819c7521c401db6a327bf07110d12124cae853c0583276133ef35a8120b301e4",
+    "close_browsers.py": "3918d54801d3af73bda8ad95d9aa5350246c412f938dc102f39ecf7b7a7fda3b",
+    "freeze_profile.py": "3bf9435541ea9b366db7edb2ea7da1a24ea26cac0d609da4c75e8c418bcc6345",
+    "preflight.py": "9584d2503ff0120858bf40251679be172cab10925731a5f281f1d38a3c326fc1",
+    "prepare.py": "fd8738baec1f713c5ba047da9b4a64e9befe98a46fda32ae09f89fe119671d71",
+    "service.py": "94b9df152122889ffd6ef2d4bc76d594fef02f893c634f4cd593d69fc306bf87",
+    "status.py": "9a6ae5f03cca7d7a6679fbfc7b9b627e2b1393e9426b45946b6e9c7bdebc7f91",
+    "ui_evidence.py": "2860fb68f5a672035b586d86ee3cc1a9013b2f8f3d9ea7b408addbdde11e8daf",
+    "verify_request_privacy.py": "b275e1d62edb89664ed1a561afad2d0454b2d1b97d98ac77ee15700c24d60e8d"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "savedAt": 1789216430395,
+  "target_id": "team",
+  "status": 200,
+  "request": {
+    "id": "team",
+    "target": {
+      "kind": "message",
+      "label": "合成项目群",
+      "url": "http://127.0.0.1:18976/receive/team",
+      "provider": "standard"
+    }
+  },
+  "result": {
+    "job": {
+      "id": "5b5e6e14e66642db862fd89315ed5f9c",
+      "profile_id": null,
+      "action": "target_set",
+      "status": "succeeded",
+      "created_at": "2026-09-12T12:33:39+00:00",
+      "finished_at": "2026-09-12T12:33:39+00:00",
+      "result": {
+        "targets_updated": true
+      }
+    }
+  }
+}

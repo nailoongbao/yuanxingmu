@@ -1,0 +1,133 @@
+{
+  "original_recordings": [
+    {
+      "file": "00-register-and-consent-workbench.webm",
+      "bytes": 9436686,
+      "sha256": "a3984ff671896ff819ea6e8610c459b7902817f39802478d714dc72776f2a80e",
+      "duration_seconds": 176.44,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "00-register-and-consent-workbench-00001.00.png"
+        },
+        {
+          "second": 88.22,
+          "file": "00-register-and-consent-workbench-00088.22.png"
+        },
+        {
+          "second": 175.44,
+          "file": "00-register-and-consent-workbench-00175.44.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-native.webm",
+      "bytes": 11637012,
+      "sha256": "fd3b7b5aaf55cce088aef0c2c7e59b38950ed66dbccba1f3f987b522666153e3",
+      "duration_seconds": 151.64,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-native-00001.00.png"
+        },
+        {
+          "second": 75.82,
+          "file": "01-natural-task-native-00075.82.png"
+        },
+        {
+          "second": 150.64,
+          "file": "01-natural-task-native-00150.64.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-receiver.webm",
+      "bytes": 8538857,
+      "sha256": "f96c448e151c7dcbf19fbe16b9969022691077b45e03961329cbb93e1633c8d5",
+      "duration_seconds": 149.8,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-receiver-00001.00.png"
+        },
+        {
+          "second": 74.9,
+          "file": "01-natural-task-receiver-00074.90.png"
+        },
+        {
+          "second": 148.8,
+          "file": "01-natural-task-receiver-00148.80.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-workbench.webm",
+      "bytes": 5498336,
+      "sha256": "1d365d273f82217379fc88a16863404ac8cd94dcac82d57dcd19946486358c73",
+      "duration_seconds": 160.6,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-workbench-00001.00.png"
+        },
+        {
+          "second": 80.3,
+          "file": "01-natural-task-workbench-00080.30.png"
+        },
+        {
+          "second": 159.6,
+          "file": "01-natural-task-workbench-00159.60.png"
+        }
+      ]
+    }
+  ],
+  "original_private_location": ".research/hermes-auto19-20260912/media",
+  "videos_in_export": false,
+  "screenshots_in_export": [
+    "media/00-protected-fields-before-start.png",
+    "media/01-natural-task-native-complete.png",
+    "media/01-natural-task-receiver-complete.png",
+    "media/01-natural-task-workbench-complete.png"
+  ],
+  "visual_review": {
+    "reviewed_at": "2026-09-12T12:57:49.633502+00:00",
+    "contact_sheets_reviewed": [
+      "contact-01.jpg"
+    ],
+    "sampled_frames_reviewed": 12,
+    "screenshots_reviewed": [
+      "media/00-protected-fields-before-start.png",
+      "media/01-natural-task-native-complete.png"
+    ],
+    "observations": [
+      "Four original AUTO19 recordings decode fully. All 12 contact-sheet frames were visually inspected.",
+      "Native recording shows the real Hermes terminal progressing from the start screen to the final report; receiver progresses from zero to three actual requests.",
+      "Protected-fields screenshot shows the actual explanation, all five enforce modes, the frozen natural objective and no visible secret numeric value.",
+      "Final reply screenshot retains the actual intake label typo.",
+      "Workbench recording mostly retains the creation/card view; protected-field explanation is supported by the separate actual screenshot, not a fabricated video state."
+    ],
+    "every_frame_ocr_claimed": false,
+    "tokens_visible_in_reviewed_frames": false
+  },
+  "note": "Original AUTO19 videos were newly recorded. No AUTO18 recording is reused as success evidence."
+}

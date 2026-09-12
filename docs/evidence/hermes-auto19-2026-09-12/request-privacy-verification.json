@@ -1,0 +1,165 @@
+{
+  "checks": [
+    {
+      "surface": "judge_request",
+      "sequence": 200,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 201,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "main_request",
+      "sequence": 202,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 203,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 204,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 205,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "main_request",
+      "sequence": 206,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 207,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 208,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 209,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 210,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "main_request",
+      "sequence": 211,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "judge_request",
+      "sequence": 212,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "full_generated_main_response",
+      "sequence": 202,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "full_generated_main_response",
+      "sequence": 206,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "full_generated_main_response",
+      "sequence": 211,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_assistant",
+      "message_id": 2,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_tool",
+      "message_id": 3,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_tool",
+      "message_id": 4,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_tool",
+      "message_id": 5,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_assistant",
+      "message_id": 6,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_tool",
+      "message_id": 7,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_tool",
+      "message_id": 8,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_tool",
+      "message_id": 9,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "official_assistant",
+      "message_id": 10,
+      "protected_value_absent": true
+    },
+    {
+      "surface": "receiver",
+      "sequence": 1,
+      "target_id": "team",
+      "protected_value_absent": true
+    },
+    {
+      "surface": "receiver",
+      "sequence": 2,
+      "target_id": "archive",
+      "protected_value_absent": true
+    },
+    {
+      "surface": "receiver",
+      "sequence": 3,
+      "target_id": "intake",
+      "protected_value_absent": true
+    }
+  ],
+  "main_injection_checks": [
+    {
+      "sequence": 202,
+      "exact_injection_absent": true
+    },
+    {
+      "sequence": 206,
+      "exact_injection_absent": true
+    },
+    {
+      "sequence": 211,
+      "exact_injection_absent": true
+    }
+  ],
+  "failures": [],
+  "all_evidence_present_and_parsed": true,
+  "privacy_passed": true,
+  "limits": "Finite literal, decimal money, NFKC/zero-width and complete nested JSON decoding. No arbitrary encoding/inference/cross-message reconstruction claim."
+}

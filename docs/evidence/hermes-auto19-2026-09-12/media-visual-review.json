@@ -1,0 +1,20 @@
+{
+  "reviewed_at": "2026-09-12T12:57:49.633502+00:00",
+  "contact_sheets_reviewed": [
+    "contact-01.jpg"
+  ],
+  "sampled_frames_reviewed": 12,
+  "screenshots_reviewed": [
+    "media/00-protected-fields-before-start.png",
+    "media/01-natural-task-native-complete.png"
+  ],
+  "observations": [
+    "Four original AUTO19 recordings decode fully. All 12 contact-sheet frames were visually inspected.",
+    "Native recording shows the real Hermes terminal progressing from the start screen to the final report; receiver progresses from zero to three actual requests.",
+    "Protected-fields screenshot shows the actual explanation, all five enforce modes, the frozen natural objective and no visible secret numeric value.",
+    "Final reply screenshot retains the actual intake label typo.",
+    "Workbench recording mostly retains the creation/card view; protected-field explanation is supported by the separate actual screenshot, not a fabricated video state."
+  ],
+  "every_frame_ocr_claimed": false,
+  "tokens_visible_in_reviewed_frames": false
+}

@@ -1,0 +1,13 @@
+{
+  "clickedAt": 1789216572928,
+  "status": 202,
+  "result": {
+    "job": {
+      "id": "be34cf9669bf463aaa746a33d96c987f",
+      "profile_id": "f8c224b41cba4d84aed43fb16e12fecc",
+      "action": "start",
+      "status": "running",
+      "created_at": "2026-09-12T12:36:01+00:00"
+    }
+  }
+}
