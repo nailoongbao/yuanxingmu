@@ -1,0 +1,396 @@
+{
+  "date": "2026-09-12",
+  "scope": "Local static-site integration only; no native Agent or model endpoint visited, no deployment.",
+  "total": 36,
+  "passed": [
+    "native controls without autoplay",
+    "delivered video dimensions and duration",
+    "sixteen Chinese caption cues load by default",
+    "two players without duplicate IDs or desktop overflow",
+    "new player has accessible name and valid description references",
+    "OpenClaw chapter plays at 0",
+    "Chinese caption active at chapter 0",
+    "OpenClaw chapter plays at 11",
+    "Chinese caption active at chapter 11",
+    "OpenClaw chapter plays at 33",
+    "Chinese caption active at chapter 33",
+    "OpenClaw chapter plays at 46",
+    "Chinese caption active at chapter 46",
+    "OpenClaw chapters do not alter Hermes player",
+    "Hermes chapters still work without altering OpenClaw",
+    "keyboard chapter activation and visible focus",
+    "transcript retains limitations and approved wording",
+    "visible scope keeps all three copied notices and incomplete acceptance",
+    "task layer links to the new film",
+    "five-layer recording list shows four remaining recordings",
+    "task recording row scrolls to new film",
+    "new asset accessible: yuanxingmu-openclaw-alignment.mp4",
+    "new asset accessible: yuanxingmu-openclaw-alignment.vtt",
+    "new asset accessible: poster.jpg",
+    "new asset accessible: native10-evidence.json",
+    "new asset accessible: recording-metadata.json",
+    "byte-range media serving",
+    "mobile playback, inline display and captions at 390",
+    "mobile layout and transcript at 390",
+    "mobile chapter touch target sizes at 390",
+    "no mobile page errors at 390",
+    "mobile playback, inline display and captions at 320",
+    "mobile layout and transcript at 320",
+    "mobile chapter touch target sizes at 320",
+    "no mobile page errors at 320",
+    "no desktop page or console errors"
+  ],
+  "desktop": {
+    "initial": {
+      "duration": 64.416667,
+      "width": 1440,
+      "height": 1096,
+      "controls": true,
+      "playsInline": true,
+      "autoplay": false,
+      "paused": true,
+      "currentTime": 0,
+      "captionMode": "showing",
+      "cues": 16,
+      "activeCaptions": [],
+      "seekableEnd": 64.416667,
+      "error": null
+    },
+    "layout": {
+      "documentWidth": 1440,
+      "viewport": 1440,
+      "videoCount": 2,
+      "duplicateIds": [],
+      "labelled": true,
+      "described": true
+    },
+    "chapterResults": [
+      {
+        "requested": 0,
+        "duration": 64.416667,
+        "width": 1440,
+        "height": 1096,
+        "controls": true,
+        "playsInline": true,
+        "autoplay": false,
+        "paused": false,
+        "currentTime": 0.318232,
+        "captionMode": "showing",
+        "cues": 16,
+        "activeCaptions": [
+          "这是真实的 OpenClaw 网页。"
+        ],
+        "seekableEnd": 64.416667,
+        "error": null
+      },
+      {
+        "requested": 11,
+        "duration": 64.416667,
+        "width": 1440,
+        "height": 1096,
+        "controls": true,
+        "playsInline": true,
+        "autoplay": false,
+        "paused": false,
+        "currentTime": 11.346783,
+        "captionMode": "showing",
+        "cues": 16,
+        "activeCaptions": [
+          "正常消息先进入工作台。"
+        ],
+        "seekableEnd": 64.416667,
+        "error": null
+      },
+      {
+        "requested": 33,
+        "duration": 64.416667,
+        "width": 1440,
+        "height": 1096,
+        "controls": true,
+        "playsInline": true,
+        "autoplay": false,
+        "paused": false,
+        "currentTime": 33.348974,
+        "captionMode": "showing",
+        "cues": 16,
+        "activeCaptions": [
+          "接着故意要求 AI 把内部底价也发出去。"
+        ],
+        "seekableEnd": 64.416667,
+        "error": null
+      },
+      {
+        "requested": 46,
+        "duration": 64.416667,
+        "width": 1440,
+        "height": 1096,
+        "controls": true,
+        "playsInline": true,
+        "autoplay": false,
+        "paused": false,
+        "currentTime": 46.349422,
+        "captionMode": "showing",
+        "cues": 16,
+        "activeCaptions": [
+          "元星木发现它违背创建时的要求，"
+        ],
+        "seekableEnd": 64.416667,
+        "error": null
+      }
+    ],
+    "focus": {
+      "active": true,
+      "outlineWidth": "3px"
+    },
+    "hermesRegression": {
+      "duration": 45.416667,
+      "width": 1440,
+      "height": 1096,
+      "controls": true,
+      "playsInline": true,
+      "autoplay": false,
+      "paused": false,
+      "currentTime": 18.333474,
+      "captionMode": "showing",
+      "cues": 13,
+      "activeCaptions": [
+        "到工作台，"
+      ],
+      "seekableEnd": 45.416667,
+      "error": null
+    },
+    "errors": []
+  },
+  "mobileChromiumEmulation": [
+    {
+      "width": 390,
+      "playing": {
+        "duration": 64.416667,
+        "width": 1440,
+        "height": 1096,
+        "controls": true,
+        "playsInline": true,
+        "autoplay": false,
+        "paused": false,
+        "currentTime": 11.331211,
+        "captionMode": "showing",
+        "cues": 16,
+        "activeCaptions": [
+          "正常消息先进入工作台。"
+        ],
+        "seekableEnd": 64.416667,
+        "error": null
+      },
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "transcriptOpen": true,
+        "buttons": [
+          {
+            "width": 87,
+            "height": 61
+          },
+          {
+            "width": 87,
+            "height": 61
+          },
+          {
+            "width": 87,
+            "height": 61
+          },
+          {
+            "width": 87,
+            "height": 61
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "width": 320,
+      "playing": {
+        "duration": 64.416667,
+        "width": 1440,
+        "height": 1096,
+        "controls": true,
+        "playsInline": true,
+        "autoplay": false,
+        "paused": false,
+        "currentTime": 11.340701,
+        "captionMode": "showing",
+        "cues": 16,
+        "activeCaptions": [
+          "正常消息先进入工作台。"
+        ],
+        "seekableEnd": 64.416667,
+        "error": null
+      },
+      "layout": {
+        "viewport": 320,
+        "documentWidth": 320,
+        "transcriptOpen": true,
+        "buttons": [
+          {
+            "width": 69.5,
+            "height": 61
+          },
+          {
+            "width": 69.5,
+            "height": 61
+          },
+          {
+            "width": 69.5,
+            "height": 61
+          },
+          {
+            "width": 69.5,
+            "height": 61
+          }
+        ]
+      },
+      "errors": []
+    }
+  ],
+  "assets": [
+    {
+      "file": "yuanxingmu-openclaw-alignment.mp4",
+      "status": 200,
+      "contentType": "video/mp4"
+    },
+    {
+      "file": "yuanxingmu-openclaw-alignment.vtt",
+      "status": 200,
+      "contentType": "text/vtt"
+    },
+    {
+      "file": "poster.jpg",
+      "status": 200,
+      "contentType": "image/jpeg"
+    },
+    {
+      "file": "native10-evidence.json",
+      "status": 200,
+      "contentType": "application/json"
+    },
+    {
+      "file": "recording-metadata.json",
+      "status": 200,
+      "contentType": "application/json"
+    }
+  ],
+  "range": {
+    "status": 206,
+    "contentRange": "bytes 0-63/2197225",
+    "bytes": 64
+  },
+  "media": {
+    "fullDecodeExit": 0,
+    "mp4AndVttMatchVerifiedSource": true,
+    "summarySha256": "e50b95588a4af28ad9f5bb9087dbca23ecada343f092b596b0efc9ce802ae566"
+  },
+  "limits": [
+    "Mobile checks use Chromium device emulation at 390 and 320 pixels, not physical devices.",
+    "The video is a selected synthetic native10 example, not all-five-layer or production acceptance.",
+    "The complete report retains the upload false positive and three copied notices; media QA does not change those outcomes."
+  ],
+  "harnessCorrectionsBeforeFinalRun": [
+    "The CLI sandbox lacks a URL global; the harness now checks the returned page URL directly.",
+    "Each full run now starts from about:blank so a previously opened transcript cannot change the next run's toggle result.",
+    "The anchor assertion waits for the page's smooth scrolling to settle."
+  ],
+  "visualReview": {
+    "inspected": true,
+    "screenshots": [
+      "desktop-poster.png",
+      "desktop-playing-captions.png",
+      "mobile-390-card-settled.png",
+      "mobile-320-poster.png"
+    ],
+    "note": "The 390-pixel long screenshot was replaced by a settled capture after a scrolling artifact. Separate viewport capture and DOM inspection confirmed the unfocused skip link remained above the viewport. Mobile controls, captions, explanatory text and scope remain readable; original native UI details require full-screen viewing."
+  },
+  "integrity": {
+    "sourceSummaryUnchanged": true,
+    "deliveredArtifactHashesMatchMetadata": true,
+    "publicCandidateAndApprovalHashesRecomputed": true,
+    "privateHostPathsAbsentFromPublicJson": true
+  },
+  "screenshots": [
+    {
+      "name": "desktop-playing-captions.png",
+      "sha256": "4a47b3f5e55630ada5181780b33e0df5675083b64b911eeff06ca2c6e2d89a2f"
+    },
+    {
+      "name": "desktop-poster.png",
+      "sha256": "137534923ead766c8436515b08ec57ea40e2816c833ebdf1d66f31b915d57496"
+    },
+    {
+      "name": "mobile-320-playing.png",
+      "sha256": "7cfd00ec3c8ccf920757e829e0cd377821438675045e1c29508d39fde17dec40"
+    },
+    {
+      "name": "mobile-320-poster.png",
+      "sha256": "f460a88557562835d15d156bda95236b3cf3b02e3a4124103360c2102f8b7ebd"
+    },
+    {
+      "name": "mobile-390-card-settled.png",
+      "sha256": "0d834ffe921abb36c20a8315cef9f823467fe5c53eecf35b5cfb9f656f2c9c40"
+    },
+    {
+      "name": "mobile-390-playing.png",
+      "sha256": "4d601bd5c9382835c9e1478056cf7fc4f19aa717a8609b918962ccd15f95deea"
+    },
+    {
+      "name": "mobile-390-poster.png",
+      "sha256": "26dd9dc9921d538a6559ba32242dea5a39645011e40bdee750143f10ae3fe545"
+    },
+    {
+      "name": "mobile-390-viewport-playing.png",
+      "sha256": "4752fd2e3ae13c3a037b6a833a37e9f80c6551c6708510c056e7a50260d24688"
+    }
+  ],
+  "qaScript": {
+    "file": "openclaw-alignment-site-qa.js",
+    "sha256": "c2dbb036b2bdf8973e84c7c15a51c4f4dfd0ecce4494d79842f8c7055ff104e9"
+  },
+  "gitBytePreservation": {
+    "checks": [
+      {
+        "file": "docs/evidence/openclaw-native10-2026-09-12/summary.json",
+        "gitObject": "1e7eb8d4d3fd3f4f5262f7a8da4f6cadd8cb051d",
+        "filteredEqualsRaw": true,
+        "stagedEqualsWorktree": true
+      },
+      {
+        "file": "site/assets/videos/openclaw-alignment/native10-evidence.json",
+        "gitObject": "52dc8b7e1a042f23a45f742fc770e2ef088b4f43",
+        "filteredEqualsRaw": true,
+        "stagedEqualsWorktree": null
+      },
+      {
+        "file": "site/assets/videos/openclaw-alignment/poster.jpg",
+        "gitObject": "1659114cec4ac6378bff0788e977be4971102dd2",
+        "filteredEqualsRaw": true,
+        "stagedEqualsWorktree": null
+      },
+      {
+        "file": "site/assets/videos/openclaw-alignment/recording-metadata.json",
+        "gitObject": "08290aa8a183686ef148278698551d2e9e4280af",
+        "filteredEqualsRaw": true,
+        "stagedEqualsWorktree": null
+      },
+      {
+        "file": "site/assets/videos/openclaw-alignment/yuanxingmu-openclaw-alignment.mp4",
+        "gitObject": "efd97487db09bb5d07b61ab5ccdfca162c42408e",
+        "filteredEqualsRaw": true,
+        "stagedEqualsWorktree": null
+      },
+      {
+        "file": "site/assets/videos/openclaw-alignment/yuanxingmu-openclaw-alignment.vtt",
+        "gitObject": "ebd7bac894ef3f808385d4a0a75ab8f0cfe5e64d",
+        "filteredEqualsRaw": true,
+        "stagedEqualsWorktree": null
+      }
+    ],
+    "note": "null stagedEqualsWorktree means this new site artifact is not staged yet; filtered Git bytes already match the raw file under the current attributes. The release owner must repeat the staged check when staging."
+  }
+}

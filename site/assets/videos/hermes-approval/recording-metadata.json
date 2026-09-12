@@ -1,0 +1,41 @@
+{
+  "title": "写文件之前，先由你确认",
+  "date": "2026-09-12",
+  "duration_seconds": 45.42,
+  "width": 1440,
+  "height": 1096,
+  "video_codec": "H.264",
+  "audio_codec": "AAC",
+  "native_ui": "Official Hermes 0.21.2 / 2026.9.11 WebUI",
+  "model": "Qwen3-4B with independent Qwen3-8B judge",
+  "scope": "Hermes native12: one official write_file call, actual Workbench one-time approval and exact local file result. This is not a complete five-layer video evaluation.",
+  "edits": "Only explicit spans of actual recordings; no synthesized page content. Narration, captions and fixed footer added.",
+  "poster": {
+    "file": "poster.jpg",
+    "source_time_seconds": 22,
+    "edit": "Full frame from delivered video; no UI changes."
+  },
+  "evidence": {
+    "file": "approval.json",
+    "sha256": "ebeb476b71ac994c56dedb83d8fc6be275073d0b6f88b7e0ea7ff1f859eb7b07"
+  },
+  "source_render_manifest_sha256": "5f097802f4b1532c1aab46d2b652477a60aeda7199932551d4b96bda321475d5",
+  "files": {
+    "yuanxingmu-hermes-approval.mp4": {
+      "bytes": 1894889,
+      "sha256": "72a47c3235506900d3d2a0367146070b8c6d32f829dae96eb6813e71529837ab"
+    },
+    "yuanxingmu-hermes-approval.vtt": {
+      "bytes": 877,
+      "sha256": "cfeccd6f627b567d2539e9f2037405b3234ce2aebb1975d7215286a3b1ed13a1"
+    },
+    "poster.jpg": {
+      "bytes": 172688,
+      "sha256": "424ddc3375d5165cdcbbae7ea1096115c84f3ff80a7686c5a9bc70e2abb3033f"
+    },
+    "approval.json": {
+      "bytes": 12548,
+      "sha256": "ebeb476b71ac994c56dedb83d8fc6be275073d0b6f88b7e0ea7ff1f859eb7b07"
+    }
+  }
+}

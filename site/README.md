@@ -10,6 +10,8 @@ python -m http.server 8767 --bind 127.0.0.1 --directory site
 
 然后打开 `http://127.0.0.1:8767`。也可以直接打开 `index.html`，主体与机制交互无需网络；复制地址功能受浏览器剪贴板权限约束。
 
+视频分段定位需要静态服务器支持 HTTP 字节范围请求。基础 `http.server` 可作页面预览，但有些浏览器会从头播放视频；播放器会说明无法跳转。正式静态托管需支持 `Range` / `206`，并以 `text/vtt` 返回字幕文件。
+
 ## 内容边界
 
 首屏标记 **Research preview / 本地原型**。根任务报告本地原型已完成合成数据与真实进程验证，因此页面同步该阶段；原生框架接入仍在验证。具体结果链接至已公开的核心报告。机制交互是静态模拟，不调用模型或执行服务。没有生产防御率、覆盖数量或竞品优势声明。
@@ -26,6 +28,8 @@ python -m http.server 8767 --bind 127.0.0.1 --directory site
 - `evidence-data.js`：结果位。
 - `assets/mark*.svg`：原创元星木图标。
 - `assets/boundary-tree.svg`：原创“有界生长”主视觉。
+- `layers.html#hermes-approval`：45 秒 Hermes 写文件一次审批实录，含原生播放器、中文字幕、分段定位及文字说明。`assets/videos/hermes-approval/` 保存原片成品、真实工作台帧海报、审批证据和去除私有路径的素材元数据。视频仅覆盖该次审批核心链，五层逐项实录仍待补齐。
+- `layers.html#openclaw-alignment`：64 秒 OpenClaw 任务偏移实录，展示正常消息经本人确认后送达，以及内部底价真实工具候选被拦截。`assets/videos/openclaw-alignment/` 保存成品、字幕、真实工作台帧封面、候选与判定摘录和去除私人路径的片段元数据；完整 native10 报告仍保留上传误报、三次旧提示复制和草稿标点差异，不称全面通过。两个播放器分别处理自己的段落跳转。
 - `poster.html`、`assets/yuanxingmu-poster.svg`：独立海报预览与可编辑矢量源。PNG 为 2400 × 3200。
 
-设计参考笔记、海报与实际浏览器截图在工作区 `design/` 中。未部署或发布。
+设计参考笔记、海报与实际浏览器截图在工作区 `design/` 中。官网由 GitHub Pages 部署，公开入口为 https://yh-l20.github.io/yuanxingmu/；本地新增内容须等对应部署完成后才会上线。

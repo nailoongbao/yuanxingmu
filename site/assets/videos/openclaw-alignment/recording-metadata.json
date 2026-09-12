@@ -1,0 +1,97 @@
+{
+  "title": "任务做偏了，在执行前停住",
+  "date": "2026-09-12",
+  "duration_seconds": 64.42,
+  "width": 1440,
+  "height": 1096,
+  "video_codec": "H.264",
+  "audio_codec": "AAC",
+  "native_ui": "Official OpenClaw 2026.9.4 WebUI",
+  "model": "Qwen3-4B with independent Qwen3-8B judge, thinking disabled",
+  "scope": "One synthetic native10 message approval and one actual private-floor disclosure candidate blocked before execution. This is a selected video excerpt, not a complete five-layer evaluation.",
+  "disclosure": "真实 OpenClaw 网页 · 合成报价与本机接收端 · 单次案例 · 已剪去等待与其他测试",
+  "edits": "Only explicit spans of actual recordings; no synthesized page content. Narration, captions and fixed footer added.",
+  "poster": {
+    "file": "poster.jpg",
+    "source_video_time_seconds": 14,
+    "original_recording": "02-message.webm",
+    "original_recording_time_seconds": 55,
+    "edit": "Full actual Workbench frame from the delivered video; no UI changes. The delivered video's existing footer is retained."
+  },
+  "source_summary_sha256": "e50b95588a4af28ad9f5bb9087dbca23ecada343f092b596b0efc9ce802ae566",
+  "source_input_manifest_sha256": "db89f538062b04bc6b82b2f4bea7fb7392d2334305629a3e9183807f38155d3a",
+  "source_render_manifest_sha256": "fbe41535f5bb4001255b40c51487d2437b447c911a73430fc66eafce9f99930e",
+  "narration_sha256": "c160fbf29185a20f9773127c57d9ae74850fb09b2a13a27bf4971f7ec4b26886",
+  "timeline": [
+    {
+      "sha256": "de6ec3993268ca4b372e4ed301a2ae0f53f4e743904b984db1dfa9e41e30ea7c",
+      "start": 31,
+      "end": 42,
+      "output_start": 0,
+      "output_duration": 11.0,
+      "file": "02-message.webm"
+    },
+    {
+      "sha256": "de6ec3993268ca4b372e4ed301a2ae0f53f4e743904b984db1dfa9e41e30ea7c",
+      "start": 52,
+      "end": 60,
+      "output_start": 11.0,
+      "output_duration": 8.0,
+      "file": "02-message.webm"
+    },
+    {
+      "sha256": "de6ec3993268ca4b372e4ed301a2ae0f53f4e743904b984db1dfa9e41e30ea7c",
+      "start": 84,
+      "end": 98,
+      "output_start": 19.0,
+      "output_duration": 14.0,
+      "file": "02-message.webm"
+    },
+    {
+      "sha256": "8e4d16aabcab551a5a856af5d8f5851af5756088122a534d85002d65d5efd67b",
+      "start": 0,
+      "end": 13,
+      "output_start": 33.0,
+      "output_duration": 13.0,
+      "file": "07-private-disclosure.webm"
+    },
+    {
+      "sha256": "8e4d16aabcab551a5a856af5d8f5851af5756088122a534d85002d65d5efd67b",
+      "start": 14,
+      "end": 24,
+      "output_start": 46.0,
+      "output_duration": 10.0,
+      "file": "07-private-disclosure.webm"
+    },
+    {
+      "sha256": "8e4d16aabcab551a5a856af5d8f5851af5756088122a534d85002d65d5efd67b",
+      "start": 79,
+      "end": 87.4,
+      "output_start": 56.0,
+      "output_duration": 8.42,
+      "file": "07-private-disclosure.webm"
+    }
+  ],
+  "evidence": {
+    "file": "native10-evidence.json",
+    "sha256": "2ac1994a75ffc6ba59d1b7d275a3fc3810e5c48b7bf03f9abbd745e92a6a2fe6"
+  },
+  "files": {
+    "yuanxingmu-openclaw-alignment.mp4": {
+      "bytes": 2197225,
+      "sha256": "9f2b44440e66914f3e4d61b9d653c4211b060c7f92b7fa54c89946ee8ba1db71"
+    },
+    "yuanxingmu-openclaw-alignment.vtt": {
+      "bytes": 1119,
+      "sha256": "7d63e2794e11be3c08a23d69162a0c9b3ecef9f63f47a8cb33c6cda54a81ab76"
+    },
+    "poster.jpg": {
+      "bytes": 112168,
+      "sha256": "8b7f010cbca33c160f7905ecb560690667a5799a4b23dccd2afe7007be03c8b3"
+    },
+    "native10-evidence.json": {
+      "bytes": 18659,
+      "sha256": "2ac1994a75ffc6ba59d1b7d275a3fc3810e5c48b7bf03f9abbd745e92a6a2fe6"
+    }
+  }
+}

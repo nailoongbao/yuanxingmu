@@ -1,0 +1,263 @@
+{
+  "date": "2026-09-12",
+  "scope": "Local static-site integration only; no model calls or deployment.",
+  "media": {
+    "complete_ffmpeg_decode_exit": 0,
+    "duration_seconds": 45.42,
+    "resolution": "1440x1096",
+    "video_codec": "H.264",
+    "audio_codec": "AAC",
+    "delivered_hashes_match_source": true,
+    "poster": "Full actual Workbench frame at 22 seconds"
+  },
+  "desktop": {
+    "initial": {
+      "duration": 45.416667,
+      "width": 1440,
+      "height": 1096,
+      "controls": true,
+      "playsInline": true,
+      "autoplay": false,
+      "paused": true,
+      "currentTime": 0,
+      "captionMode": "showing",
+      "cues": 13,
+      "label": "Hermes 写文件：等待确认、工作台允许一次、实际写入完成",
+      "descriptionIds": "approval-viewing-note approval-scope"
+    },
+    "playing": {
+      "paused": false,
+      "currentTime": 19.02266,
+      "activeCaptions": [
+        "可以核对文件位置、写入内容和完整操作。"
+      ],
+      "error": null
+    },
+    "keyboard": {
+      "paused": false,
+      "currentTime": 32.21226
+    },
+    "transcriptVisible": true,
+    "assets": [
+      {
+        "path": "assets/videos/hermes-approval/yuanxingmu-hermes-approval.mp4",
+        "status": 200,
+        "contentType": "video/mp4"
+      },
+      {
+        "path": "assets/videos/hermes-approval/yuanxingmu-hermes-approval.vtt",
+        "status": 200,
+        "contentType": "text/vtt"
+      },
+      {
+        "path": "assets/videos/hermes-approval/poster.jpg",
+        "status": 200,
+        "contentType": "image/jpeg"
+      },
+      {
+        "path": "assets/videos/hermes-approval/approval.json",
+        "status": 200,
+        "contentType": "application/json"
+      },
+      {
+        "path": "assets/videos/hermes-approval/recording-metadata.json",
+        "status": 200,
+        "contentType": "application/json"
+      },
+      {
+        "path": "email-demo.html",
+        "status": 200,
+        "contentType": "text/html"
+      },
+      {
+        "path": "workbench-demo.html",
+        "status": 200,
+        "contentType": "text/html"
+      }
+    ],
+    "layout": {
+      "viewport": 1440,
+      "documentWidth": 1425,
+      "videoCount": 1,
+      "duplicateIds": []
+    },
+    "errors": []
+  },
+  "mobile_chromium_emulation": [
+    {
+      "width": 390,
+      "playing": {
+        "currentTime": 19.022944,
+        "paused": false,
+        "captionMode": "showing",
+        "activeCaptions": [
+          "可以核对文件位置、写入内容和完整操作。"
+        ],
+        "width": 1440,
+        "height": 1096,
+        "playsInline": true,
+        "seekableEnd": 45.416667,
+        "error": null
+      },
+      "layout": {
+        "viewport": 390,
+        "documentWidth": 390,
+        "transcriptOpen": true,
+        "buttons": [
+          {
+            "text": "00:00等待确认",
+            "width": 87,
+            "height": 61
+          },
+          {
+            "text": "00:18核对内容",
+            "width": 87,
+            "height": 61
+          },
+          {
+            "text": "00:26允许这次",
+            "width": 87,
+            "height": 61
+          },
+          {
+            "text": "00:32查看结果",
+            "width": 87,
+            "height": 61
+          }
+        ]
+      },
+      "errors": []
+    },
+    {
+      "width": 320,
+      "playing": {
+        "currentTime": 19.0137,
+        "paused": false,
+        "captionMode": "showing",
+        "activeCaptions": [
+          "可以核对文件位置、写入内容和完整操作。"
+        ],
+        "width": 1440,
+        "height": 1096,
+        "playsInline": true,
+        "seekableEnd": 45.416667,
+        "error": null
+      },
+      "layout": {
+        "viewport": 320,
+        "documentWidth": 320,
+        "transcriptOpen": true,
+        "buttons": [
+          {
+            "text": "00:00等待确认",
+            "width": 69.5,
+            "height": 61
+          },
+          {
+            "text": "00:18核对内容",
+            "width": 69.5,
+            "height": 61
+          },
+          {
+            "text": "00:26允许这次",
+            "width": 69.5,
+            "height": 61
+          },
+          {
+            "text": "00:32查看结果",
+            "width": 69.5,
+            "height": 61
+          }
+        ]
+      },
+      "errors": []
+    }
+  ],
+  "accessibility_and_links": {
+    "progressive": {
+      "nativeControls": true,
+      "chaptersHidden": true,
+      "transcriptVisible": true,
+      "fallbackLink": "assets/videos/hermes-approval/yuanxingmu-hermes-approval.mp4"
+    },
+    "homeLinkDestination": "/layers.html#hermes-approval",
+    "range": {
+      "status": 206,
+      "contentRange": "bytes 0-63/1894889",
+      "bytes": 64
+    },
+    "accessibility": {
+      "buttonFocused": true,
+      "focusOutline": "3px",
+      "videoLabelPresent": true,
+      "describedByIdsPresent": true,
+      "transcriptMatchesCaptionText": true,
+      "chapters": [
+        {
+          "text": "00:00等待确认",
+          "seconds": 0
+        },
+        {
+          "text": "00:18核对内容",
+          "seconds": 18
+        },
+        {
+          "text": "00:26允许这次",
+          "seconds": 26
+        },
+        {
+          "text": "00:32查看结果",
+          "seconds": 32
+        }
+      ]
+    }
+  },
+  "basic_server_fallback": {
+    "seekableEnd": 0,
+    "currentTime": 0.215647,
+    "paused": false,
+    "error": null,
+    "status": "当前预览暂不支持跳转，可从头播放或打开视频文件观看。"
+  },
+  "limits": [
+    "Mobile results are Chromium emulation at 390px and 320px, not physical iOS/Android device tests.",
+    "Captions, transcript, labels, keyboard use, focus visibility and touch target sizes were checked; this is not a full assistive-technology audit.",
+    "Original Hermes terminal text is small. The page keeps a full-screen suggestion and equivalent written narration.",
+    "A basic Python static server lacks byte-range support; chapter buttons explain that limitation and play from the beginning. Range-capable preview passed real seeking.",
+    "The video covers one Hermes file approval. Separate current-version videos for all five defense layers are still pending."
+  ],
+  "screenshots": [
+    {
+      "name": "desktop-playing-captions.png",
+      "sha256": "9cf065a03bc510fb13e5c4c394a9e205b0ac904a8656c22f5ad5ef6d86cd77ed"
+    },
+    {
+      "name": "desktop-poster.png",
+      "sha256": "36b5da57bae6db6953b28cf4cc0cb072ec1225778e21cb8a7ff587bc2050ab5a"
+    },
+    {
+      "name": "mobile-320-playing.png",
+      "sha256": "4c92cdbe5104c38ccb0612a27b1b0f5a0af6213a47a6170f8d5ed85be8f46a89"
+    },
+    {
+      "name": "mobile-320-poster.png",
+      "sha256": "3470c0e52a1ca92b7a602de9145260a0577b7c9bf82d65c1eedd571dac792bce"
+    },
+    {
+      "name": "mobile-390-playing.png",
+      "sha256": "c08eb1c24ffcbc6b647c08875902532db5df2ad259e990ea1ad383d7fea0dc8b"
+    },
+    {
+      "name": "mobile-390-poster.png",
+      "sha256": "928200a4a84ee85ce06ef523822bd9ab74009a8b71eca277f0256d9e8e380530"
+    },
+    {
+      "name": "mobile-final-card.png",
+      "sha256": "70b40f38a33091fcdf6f45a194eb67ab6a1e08486dd1cdfc9a3309769a1e128f"
+    },
+    {
+      "name": "mobile-final-poster.png",
+      "sha256": "80485d072125dbb6d68a454ce8730cc1d85ab614993998fee6fdde42f2ccb132"
+    }
+  ]
+}
