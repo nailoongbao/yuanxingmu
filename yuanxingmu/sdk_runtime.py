@@ -37,6 +37,30 @@ SDK_TOOLS = ["yuanxingmu_read", "yuanxingmu_describe", "yuanxingmu_action_target
              "yuanxingmu_propose_action", "yuanxingmu_draft_email"]
 _BOOTSTRAP = ("import sys; sys.path.insert(0, sys.argv.pop(1)); "
               "from yuanxingmu.adapters.smolagents_runtime import main; raise SystemExit(main())")
+_SDK_RUNTIMES = {
+    "smolagents": {
+        "version": SDK_VERSION,
+        "packages": (("smolagents", SDK_VERSION),),
+        "bootstrap": _BOOTSTRAP,
+        "answer_tools": ("final_answer",),
+    },
+    "langgraph": {
+        "version": "1.2.11",
+        "packages": (("langgraph", "1.2.11"), ("langgraph_prebuilt", "1.1.0"),
+                     ("langgraph_checkpoint", "4.2.0"), ("langchain_core", "1.6.2"),
+                     ("pydantic", "2.13.5")),
+        "bootstrap": ("import sys; sys.path.insert(0, sys.argv.pop(1)); "
+                      "from yuanxingmu.adapters.langgraph_runtime import main; raise SystemExit(main())"),
+        "answer_tools": (),
+    },
+}
+
+
+def _sdk(framework: str) -> dict:
+    # Names select trusted, fixed entry points, never arbitrary Python modules.
+    if type(framework) is not str or framework not in _SDK_RUNTIMES:
+        raise ValueError("sdk_framework_not_supported")
+    return _SDK_RUNTIMES[framework]
 
 
 def _read_private(path: Path, maximum: int) -> bytes:
@@ -72,8 +96,9 @@ def _save_new(path: Path, value: dict) -> None:
         os.close(directory)
 
 
-def _python_runtime(value: Path, profile: Path) -> tuple[Path, Path]:
+def _python_runtime(value: Path, profile: Path, *, framework: str = "smolagents") -> tuple[Path, Path]:
     """Inspect files only; do not execute a dependency in the trusted host."""
+    definition = _sdk(framework)
     raw = Path(value).absolute()
     if raw.parent.name != "bin":
         raise ValueError("sdk_python_requires_dedicated_venv")
@@ -86,16 +111,21 @@ def _python_runtime(value: Path, profile: Path) -> tuple[Path, Path]:
         raise ValueError("sdk_python_not_executable")
     if not python.resolve(strict=True).is_relative_to(Path("/usr")):
         raise ValueError("sdk_venv_requires_system_python")
-    metadata = list(venv.glob("lib/python*/site-packages/smolagents-*.dist-info/METADATA"))
-    if len(metadata) != 1 or metadata[0].stat().st_size > 256 * 1024:
-        raise ValueError("sdk_smolagents_version_not_verified")
-    fields = metadata[0].read_text(encoding="utf-8").split("\n\n", 1)[0].splitlines()
-    if [line for line in fields if line.startswith("Version:")] != ["Version: " + SDK_VERSION]:
-        raise ValueError("sdk_requires_smolagents_1_26_0")
+    for package, expected in definition["packages"]:
+        metadata = list(venv.glob("lib/python*/site-packages/" + package + "-*.dist-info/METADATA"))
+        if len(metadata) != 1 or metadata[0].stat().st_size > 256 * 1024:
+            raise ValueError("sdk_" + framework + "_version_not_verified")
+        fields = metadata[0].read_text(encoding="utf-8").split("\n\n", 1)[0].splitlines()
+        if [line for line in fields if line.startswith("Version:")] != ["Version: " + expected]:
+            if framework == "smolagents":
+                raise ValueError("sdk_requires_smolagents_1_26_0")
+            raise ValueError("sdk_requires_pinned_" + framework + "_packages")
     return python, venv
 
 
-def _session(profile: Path, manifest: dict, name: str, python: Path, *, resume: bool) -> tuple[Path, dict]:
+def _session(profile: Path, manifest: dict, name: str, python: Path, *, resume: bool,
+             framework: str = "smolagents") -> tuple[Path, dict]:
+    definition = _sdk(framework)
     if type(name) is not str or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,47}", name) is None:
         raise ValueError("sdk_session_name_invalid")
     parent = profile / "sdk-sessions"
@@ -103,8 +133,8 @@ def _session(profile: Path, manifest: dict, name: str, python: Path, *, resume: 
         parent.mkdir(mode=0o700)
     _private_directory(parent)
     folder = parent / name
-    binding = {"version": 1, "framework": "smolagents", "task_id": manifest["task_id"],
-               "family_id": manifest["family_id"], "python": str(python), "sdk_version": SDK_VERSION}
+    binding = {"version": 1, "framework": framework, "task_id": manifest["task_id"],
+               "family_id": manifest["family_id"], "python": str(python), "sdk_version": definition["version"]}
     if resume:
         _private_directory(folder)
         value = _object(_read_private(folder / "session.json", 8192))
@@ -122,10 +152,12 @@ def _session(profile: Path, manifest: dict, name: str, python: Path, *, resume: 
 
 
 class _SdkOutputGuard:
-    def __init__(self, broker: Broker, task_id: str, model_id: str, max_tokens: int, *, automatic_actions=False):
+    def __init__(self, broker: Broker, task_id: str, model_id: str, max_tokens: int, *, automatic_actions=False,
+                 framework: str = "smolagents"):
+        definition = _sdk(framework)
         self.guard = ModelOutputGuard(broker, task_id)
         self.model_id, self.max_tokens = model_id, max_tokens
-        self.tool_names = {*SDK_TOOLS, "final_answer"}
+        self.tool_names = {*SDK_TOOLS, *definition["answer_tools"]}
         if automatic_actions:
             self.tool_names.add("yuanxingmu_request_action")
 
@@ -204,7 +236,8 @@ def _collect(process, cancelled: threading.Event, timeout: int) -> tuple[int, by
 
 class _Operator:
     """Same authenticated local control path as native profiles, never mounted."""
-    def __init__(self, profile, manifest, broker, lifecycle, cancelled):
+    def __init__(self, profile, manifest, broker, lifecycle, cancelled, *, framework="smolagents"):
+        _sdk(framework)
         self.path = Path(manifest["runtime"]) / "operator.sock"
 
         class Handler(socketserver.StreamRequestHandler):
@@ -220,7 +253,7 @@ class _Operator:
                     with broker._lock:
                         if action == "revoke":
                             broker.revoke(manifest["task_id"])
-                        result = {**host._public(profile, manifest), "execution_framework": "smolagents",
+                        result = {**host._public(profile, manifest), "execution_framework": framework,
                                   "operator_action": action, "status": "stopping" if action == "stop" else lifecycle["status"],
                                   "task": broker.authority.describe(manifest["task_id"]),
                                   "protection": host._operator_protection_status(profile, manifest, broker)}
@@ -246,9 +279,10 @@ class _Operator:
 
 def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
                 resume: bool = False, max_steps: int = 12, max_tokens: int = 2048,
-                timeout: int = 600) -> dict:
+                timeout: int = 600, framework: str = "smolagents") -> dict:
     """Run one complete SDK turn. A new session never mints a new task/family."""
     host._linux()
+    definition = _sdk(framework)
     if (type(prompt) is not str or not prompt.strip() or len(prompt.encode("utf-8")) > MAX_PROMPT
             or type(resume) is not bool or type(max_steps) is not int or not 1 <= max_steps <= 64
             or type(max_tokens) is not int or not 128 <= max_tokens <= 8192
@@ -267,11 +301,11 @@ def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
         state = host._task_state(profile, manifest)
         if not state["active"] or state.get("paused"):
             raise RuntimeError("sdk_task_not_active")
-        python, venv = _python_runtime(sdk_python, profile)
+        python, venv = _python_runtime(sdk_python, profile, framework=framework)
         ready = sandbox_available(bwrap=Path(manifest["bwrap"]))
         if not ready["available"]:
             raise RuntimeError("sdk_sandbox_unavailable")
-        folder, binding = _session(profile, manifest, session, python, resume=resume)
+        folder, binding = _session(profile, manifest, session, python, resume=resume, framework=framework)
         if resume:
             # A missing host journal cannot become a fresh nonce history.
             _private_directory(folder / "model-responses")
@@ -288,14 +322,14 @@ def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
         run_id = uuid.uuid4().hex
         automatic_actions = "automatic_actions_v1" in manifest["features"]
         config_path = runtime / ("sdk-" + run_id + ".json")
-        config = {"version": 1, "framework": "smolagents", "session_id": binding["session_id"],
+        config = {"version": 1, "framework": framework, "session_id": binding["session_id"],
                   "task_id": manifest["task_id"], "model_id": manifest["model"]["id"],
                   "max_steps": max_steps, "max_tokens": max_tokens, "prompt": prompt, "resume": resume,
-                  "checkpoint": "/workspace/.yuanxingmu-smolagents-" + binding["session_id"] + ".json",
+                  "checkpoint": "/workspace/.yuanxingmu-" + framework + "-" + binding["session_id"] + ".json",
                   "broker_socket": str(BROKER_SOCKET_PATH), "model_socket": str(MODEL_SOCKET_PATH),
                   "automatic_actions": automatic_actions}
         _save_new(config_path, config)
-        lifecycle = {"status": "starting", "execution_framework": "smolagents", "supervisor_pid": os.getpid(),
+        lifecycle = {"status": "starting", "execution_framework": framework, "supervisor_pid": os.getpid(),
                      "supervisor_start": host._process_identity(os.getpid()), "task_id": manifest["task_id"],
                      "session_id": binding["session_id"], "cleanup_confirmed": False}
         host._save(profile / "lifecycle.json", lifecycle)
@@ -315,8 +349,8 @@ def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
                     broker._require_admission(manifest["task_id"])
                 # Derive the configuration of THIS execution, not a statement
                 # copied from the otherwise inactive native gateway.
-                foundation = {"framework": "smolagents", "bind": "loopback", "auth_enabled": True,
-                              "tool_names": [*SDK_TOOLS, "final_answer", *(["yuanxingmu_request_action"] if automatic_actions else [])], "allow_elevated": False,
+                foundation = {"framework": framework, "bind": "loopback", "auth_enabled": True,
+                              "tool_names": [*SDK_TOOLS, *definition["answer_tools"], *(["yuanxingmu_request_action"] if automatic_actions else [])], "allow_elevated": False,
                               "allow_direct_network": False, "isolated_execution": True,
                               "per_user_sessions": True, "credentials_host_only": True, "skills_pinned": True}
                 report = broker.guards.scan_foundation(foundation, ())
@@ -329,17 +363,17 @@ def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
                     operations.add("request_action")
                 broker.serve(manifest["task_id"], runtime / "broker.sock", allowed_operations=operations)
                 broker.serve_reviews(manifest["task_id"], runtime / "review.sock")
-                operator = _Operator(profile, manifest, broker, lifecycle, cancelled)
+                operator = _Operator(profile, manifest, broker, lifecycle, cancelled, framework=framework)
                 stack.callback(operator.close)
                 from .sdk_model_store import ModelStore
                 store = ModelStore(folder / "model-responses", binding["session_id"])
                 guard = _SdkOutputGuard(broker, manifest["task_id"], manifest["model"]["id"], max_tokens,
-                                        automatic_actions=automatic_actions)
+                                        automatic_actions=automatic_actions, framework=framework)
                 stack.enter_context(HostModel(runtime, model_url=manifest["model"]["url"],
                                              api_key=_read_private(profile / "model-key", 16384).decode("utf-8"),
                                              output_guard=guard, model_store=store))
                 package = Path(__file__).resolve().parent
-                process = start(command=[str(python), "-I", "-B", "-c", _BOOTSTRAP, str(package.parent),
+                process = start(command=[str(python), "-I", "-B", "-c", definition["bootstrap"], str(package.parent),
                                          "--config", str(config_path)],
                                 workspace=workspace, broker_socket=runtime / "broker.sock", model_socket=runtime / "model.sock",
                                 readonly_paths=[package, venv, config_path], bwrap=Path(manifest["bwrap"]),
@@ -360,7 +394,7 @@ def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
                 checked = guard(envelope, "application/json")
                 answer = _object(checked)["choices"][0]["message"]["content"]
                 answer_allowed = checked == envelope
-                result = {"status": "completed" if answer_allowed else "withheld", "framework": "smolagents",
+                result = {"status": "completed" if answer_allowed else "withheld", "framework": framework,
                           "task_id": manifest["task_id"], "session_id": binding["session_id"], "answer": answer}
                 host._save(folder / ("run-" + run_id + ".json"), {key: item for key, item in result.items() if key != "answer"})
             finally:
@@ -391,4 +425,4 @@ def cli(args) -> dict:
         raise ValueError("sdk_prompt_too_large")
     return run_session(profile=args.profile, sdk_python=args.sdk_python, session=args.session,
                        prompt=raw.decode("utf-8"), resume=args.resume, max_steps=args.max_steps,
-                       max_tokens=args.max_tokens, timeout=args.timeout)
+                       max_tokens=args.max_tokens, timeout=args.timeout, framework=args.framework)

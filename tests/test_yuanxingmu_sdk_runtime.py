@@ -33,6 +33,15 @@ def bwrap():
 
 
 class SdkConfigurationTests(unittest.TestCase):
+    def test_unknown_framework_never_opens_profile_or_imports_a_worker(self):
+        for framework in (None, True, [], {}, "unknown", "langgraph_runtime", "package.module"):
+            with self.subTest(framework=framework), patch.object(runtime.host, "_linux"), \
+                    patch.object(runtime.host, "_manifest") as manifest:
+                with self.assertRaisesRegex(ValueError, "sdk_framework_not_supported"):
+                    runtime.run_session(profile=Path("unused"), sdk_python=Path("unused"),
+                                        session="test", prompt="normal", framework=framework)
+                manifest.assert_not_called()
+
     def test_invalid_limits_never_touch_profile_or_launch(self):
         for values in ({"max_steps": True}, {"max_steps": 65}, {"max_tokens": 100000},
                        {"timeout": 0}, {"resume": "true"}, {"prompt": ""}):
@@ -57,6 +66,18 @@ class SdkConfigurationTests(unittest.TestCase):
                       {"tools": [{"type": "function", "function": {"name": "yuanxingmu_send"}}]}):
             with self.subTest(extra=extra), self.assertRaises(ValueError):
                 guard.preflight(json.dumps({**good, **extra}).encode())
+
+    def test_langgraph_model_inventory_does_not_grant_the_smolagents_answer_tool(self):
+        class Guard:
+            def preflight(self, raw):
+                return None
+        with patch.object(runtime, "ModelOutputGuard", return_value=Guard()):
+            guard = runtime._SdkOutputGuard(object(), "task", "model", 2048, framework="langgraph")
+        good = {"model": "model", "messages": [{"role": "user", "content": "normal"}], "max_tokens": 512}
+        self.assertIsNone(guard.preflight(json.dumps(good).encode()))
+        for name in ("final_answer", "yuanxingmu_send", "yuanxingmu_request_action"):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "sdk_remote_tools_not_allowed"):
+                guard.preflight(json.dumps({**good, "tools": [{"type": "function", "function": {"name": name}}]}).encode())
 
 
 @unittest.skipUnless(sys.platform.startswith("linux"), "Linux SDK process boundary")
@@ -86,6 +107,45 @@ class SdkHostTests(unittest.TestCase):
         original.symlink_to(renamed)
         with self.assertRaises(OSError):
             runtime._session(profile, manifest, "hello", Path("/sdk/bin/python"), resume=True)
+
+    def test_framework_switch_cannot_rebind_a_session_or_create_new_task_authority(self):
+        profile = self.root / "profile"
+        profile.mkdir(mode=0o700)
+        manifest = {"task_id": "existing-task", "family_id": "existing-family"}
+        folder, smol = runtime._session(profile, manifest, "one", Path("/sdk/bin/python"), resume=False)
+        original = (folder / "session.json").read_bytes()
+        with self.assertRaisesRegex(ValueError, "sdk_session_binding_changed"):
+            runtime._session(profile, manifest, "one", Path("/sdk/bin/python"), resume=True, framework="langgraph")
+        self.assertEqual((folder / "session.json").read_bytes(), original)
+        _, graph = runtime._session(profile, manifest, "two", Path("/graph/bin/python"), resume=False, framework="langgraph")
+        self.assertEqual(graph["framework"], "langgraph")
+        self.assertEqual(graph["sdk_version"], "1.2.11")
+        self.assertEqual((graph["task_id"], graph["family_id"]), (smol["task_id"], smol["family_id"]))
+        self.assertNotEqual(graph["session_id"], smol["session_id"])
+        self.assertEqual(runtime._session(profile, manifest, "two", Path("/graph/bin/python"), resume=True,
+                                         framework="langgraph")[1], graph)
+
+    def test_langgraph_runtime_checks_every_pinned_package_without_executing_sdk(self):
+        venv = self.root / "sdk"
+        (venv / "bin").mkdir(parents=True)
+        python = venv / "bin/python"
+        python.symlink_to("/usr/bin/python3")
+        (venv / "pyvenv.cfg").write_text("home = /usr/bin\n", encoding="utf-8")
+        metadata = {}
+        for name, version in runtime._sdk("langgraph")["packages"]:
+            path = venv / "lib/python3.12/site-packages" / (name + "-" + version + ".dist-info/METADATA")
+            path.parent.mkdir(parents=True)
+            path.write_text("Name: " + name + "\nVersion: " + version + "\n\n", encoding="utf-8")
+            metadata[name] = path
+        with patch.object(runtime.subprocess, "run", side_effect=AssertionError("executed SDK on host")):
+            self.assertEqual(runtime._python_runtime(python, self.root / "profile", framework="langgraph"), (python, venv))
+            core = metadata["langchain_core"]
+            core.write_text("Name: langchain-core\nVersion: 0.0.0\n\n", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "sdk_requires_pinned_langgraph_packages"):
+                runtime._python_runtime(python, self.root / "profile", framework="langgraph")
+            core.unlink()
+            with self.assertRaisesRegex(ValueError, "sdk_langgraph_version_not_verified"):
+                runtime._python_runtime(python, self.root / "profile", framework="langgraph")
 
     def test_raw_rpc_cannot_bypass_the_sdk_operation_subset(self):
         secret = self.root / "secret.txt"
@@ -249,6 +309,9 @@ class SdkModelBridgeTests(unittest.TestCase):
 @unittest.skipUnless(sys.platform.startswith("linux") and os.environ.get("YUANXINGMU_SMOLAGENTS_PYTHON"),
                      "Set YUANXINGMU_SMOLAGENTS_PYTHON to an installed smolagents 1.26.0 Linux venv")
 class SdkFullLoopTests(unittest.TestCase):
+    framework = "smolagents"
+    sdk_python_environment = "YUANXINGMU_SMOLAGENTS_PYTHON"
+
     def setUp(self):
         if not sandbox_available(bwrap=bwrap())["available"]:
             self.skipTest("bubblewrap unavailable")
@@ -276,6 +339,8 @@ class SdkFullLoopTests(unittest.TestCase):
                             "type": "function", "function": {"name": "yuanxingmu_read", "arguments": '{"resource":"quote"}'}}]}
                     elif len(owner.model_requests) == 2 and owner.automatic_calls:
                         message = {"role": "assistant", "content": None, "tool_calls": owner.automatic_calls}
+                    elif owner.framework == "langgraph":
+                        message = {"role": "assistant", "content": "PUBLIC SDK DONE"}
                     else:
                         message = {"role": "assistant", "content": None, "tool_calls": [{"id": "provider-final",
                             "type": "function", "function": {"name": "final_answer", "arguments": '{"answer":"PUBLIC SDK DONE"}'}}]}
@@ -306,13 +371,15 @@ class SdkFullLoopTests(unittest.TestCase):
         self.thread.join(timeout=2)
 
     def run_sdk(self, **overrides):
-        return runtime.run_session(profile=self.fixture.profile,
-            sdk_python=Path(os.environ["YUANXINGMU_SMOLAGENTS_PYTHON"]), session="normal",
-            prompt="Read quote and provide a short public summary.", timeout=30, **overrides)
+        values = {"profile": self.fixture.profile, "sdk_python": Path(os.environ[self.sdk_python_environment]),
+                  "session": "normal", "prompt": "Read quote and provide a short public summary.",
+                  "timeout": 30, "framework": self.framework, **overrides}
+        return runtime.run_session(**values)
 
     def test_full_loop_is_isolated_resumable_and_revocation_survives(self):
         first = self.run_sdk()
         self.assertEqual(first["status"], "completed")
+        self.assertEqual(first["framework"], self.framework)
         self.assertEqual(first["answer"], "PUBLIC SDK DONE")
         self.assertEqual(len(self.model_requests), 2)
         self.assertGreater(len(self.judge_requests), 0)
@@ -335,6 +402,7 @@ class SdkFullLoopTests(unittest.TestCase):
 
     def test_automatic_message_upload_and_form_once_then_resume_without_duplicates(self):
         receipts = []
+        self.automatic_receipts = receipts
 
         class Receiver(BaseHTTPRequestHandler):
             def log_message(self, *args):
@@ -376,6 +444,7 @@ class SdkFullLoopTests(unittest.TestCase):
             "name": "yuanxingmu_request_action", "arguments": json.dumps({"proposal": {
                 "kind": name, "target_id": name, "payload": payloads[name]}})}} for name in targets]
         result = self.run_sdk()
+        self.automatic_result = result
         self.assertEqual(result["status"], "completed")
         self.assertEqual(len(self.model_requests), 3)
         self.assertEqual(len(receipts), 3)
@@ -384,6 +453,36 @@ class SdkFullLoopTests(unittest.TestCase):
         self.assertEqual(self.run_sdk(resume=True)["session_id"], result["session_id"])
         self.assertEqual(len(receipts), 3)
         self.assertEqual(len(self.model_requests), 3)
+
+
+class LangGraphFullLoopTests(SdkFullLoopTests):
+    # Set explicitly: the decorated smolagents parent may be skipped in an
+    # environment containing only LangGraph, but this class must still run.
+    __unittest_skip__ = not (sys.platform.startswith("linux") and os.environ.get("YUANXINGMU_LANGGRAPH_PYTHON"))
+    __unittest_skip_why__ = "Set YUANXINGMU_LANGGRAPH_PYTHON to the pinned LangGraph Linux venv"
+    framework = "langgraph"
+    sdk_python_environment = "YUANXINGMU_LANGGRAPH_PYTHON"
+
+    def test_new_session_on_another_framework_keeps_original_automatic_budget(self):
+        if not os.environ.get("YUANXINGMU_SMOLAGENTS_PYTHON"):
+            self.skipTest("Both pinned SDK environments are required for cross-framework execution")
+        self.test_automatic_message_upload_and_form_once_then_resume_without_duplicates()
+        original = self.automatic_result
+        self.model_requests.clear()
+        # A second, different SDK performs a complete loop on the same stopped
+        # profile, using a new session and therefore new tool-call identities.
+        self.framework = "smolagents"
+        changed = self.run_sdk(session="different-framework",
+                               sdk_python=Path(os.environ["YUANXINGMU_SMOLAGENTS_PYTHON"]))
+        self.assertEqual(changed["status"], "completed")
+        self.assertEqual(changed["framework"], "smolagents")
+        self.assertEqual(changed["task_id"], original["task_id"])
+        self.assertNotEqual(changed["session_id"], original["session_id"])
+        self.assertEqual(len(self.automatic_receipts), 3)
+        self.assertEqual(len(self.model_requests), 3)
+        observed = json.dumps(self.model_requests[-1]["messages"])
+        self.assertEqual(observed.count("automatic_attempt_budget_exhausted"), 3)
+        self.assertNotIn("162000", observed)
 
 
 if __name__ == "__main__":
