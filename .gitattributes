@@ -32,6 +32,7 @@ docs/evidence/pending-effect-2026-09-12/** -text whitespace=trailing-space,space
 docs/evidence/hermes-auto16-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/hermes-auto17-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/hermes-auto18-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/protected-fields-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 # Frozen external runners retain their recorded whitespace; SSE needs final blank events.
 docs/evidence/automatic-work-2026-09-12/verification-runner.py -whitespace
 docs/evidence/review-facts-2026-09-12/verification-runner.py -whitespace

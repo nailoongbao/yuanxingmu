@@ -1,0 +1,28 @@
+Observed baseline: separate protected connections.
+Observed candidate: one unchanged gateway, existing aggregator, two original services.
+Observed baseline: separate protected connections.
+Observed candidate: one unchanged gateway, existing aggregator, two original services.
+1/4 准备元星木（固定版本 0.6.0a1）
+这个目录已经装好，运行文件检查通过。没有覆盖已有资料或运行版本。
+这个目录已经装好，运行文件检查通过。没有覆盖已有资料或运行版本。
+1/5 准备元星木（固定版本 0.6.0a1）
+2/5 检查这台电脑的实际隔离能力
+3/5 安装固定版本的 Node.js 与 OpenClaw（首次可能需要几分钟）
+4/5 安装 Hermes 独立环境，构建官方网页与终端（首次可能需要几分钟）
+1/4 准备元星木（固定版本 0.6.0a1）
+2/4 检查这台电脑的实际隔离能力
+3/4 安装固定版本的 Node.js 与 OpenClaw（首次可能需要几分钟）
+1/4 准备元星木（固定版本 0.6.0a1）
+2/4 检查这台电脑的实际隔离能力
+3/4 安装固定版本的 Node.js 与 OpenClaw（首次可能需要几分钟）
+1/4 准备元星木（固定版本 0.6.0a1）
+2/4 检查这台电脑的实际隔离能力
+3/4 安装固定版本的 Node.js 与 OpenClaw（首次可能需要几分钟）
+1/4 准备元星木（固定版本 0.6.0a1）
+2/4 检查这台电脑的实际隔离能力
+3/4 安装固定版本的 Node.js 与 OpenClaw（首次可能需要几分钟）
+4/4 核对运行环境并准备日常入口
+----------------------------------------------------------------------
+Ran 984 tests in 85.689s
+
+OK (skipped=202)

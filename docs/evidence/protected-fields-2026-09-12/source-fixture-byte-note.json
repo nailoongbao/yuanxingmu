@@ -1,0 +1,16 @@
+[
+  {
+    "file": "tests/fixtures/demo-evidence.json",
+    "line_endings_only": true,
+    "parsed_json_equal": true,
+    "worktree_sha256": "d3c6f2dfff1ff2959827b6548c06c5994503a0554be322b60556c794cab146db",
+    "commit_sha256": "45b893fcd544effbdd0bb7425615959b62978de6bbb3ab068f1b47a861c931e1"
+  },
+  {
+    "file": "tests/fixtures/invariant-fixed.provenance.json",
+    "line_endings_only": true,
+    "parsed_json_equal": true,
+    "worktree_sha256": "1e44be71b3cd0b5f529432e941922b7a29850374aea4b48eb13a145915c903ea",
+    "commit_sha256": "bd95744cf5d04a43ff8d46d6545916c5538b10d1083f661b2596909a6568a679"
+  }
+]

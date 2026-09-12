@@ -1,0 +1,8 @@
+Observed baseline: separate protected connections.
+Observed candidate: one unchanged gateway, existing aggregator, two original services.
+Observed baseline: separate protected connections.
+Observed candidate: one unchanged gateway, existing aggregator, two original services.
+----------------------------------------------------------------------
+Ran 984 tests in 18.128s
+
+OK (skipped=647)
