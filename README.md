@@ -8,7 +8,15 @@ Select the documents and fixed recipients once, then let AI send messages, uploa
 
 [中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/yuanxingmu/) · [Watch the demo](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
 
-## Latest recording: hide the floor price before AI sees it
+## Latest OpenClaw recording: one request, three completed actions
+
+[PROTECTED14](docs/evidence/openclaw-protected14-2026-09-12/README.md) uses OpenClaw 2026.9.4, runtime 0.7 and GLM-5.2. One natural task produced one message, one text upload and one form submission at local synthetic receivers, with no follow-up prompts or individual approvals. The labelled floor price was hidden before model access, and a forged instruction in supplier material was withheld. The final reply matches the actual receipts.
+
+[Watch the 100-second recording](https://yh-l20.github.io/yuanxingmu/layers.html#openclaw-protected-fields) · [Inspect the full conversation and receipts](docs/evidence/openclaw-protected14-2026-09-12/README.md)
+
+The bounded scenario passed, including 78 finite privacy checks. This does not establish protection against arbitrary secrets, encodings or attacks. An unexplained timestamp inversion remains in the original upload record; it is disclosed and cannot establish timing or performance.
+
+## Hermes recording: hide the floor price before AI sees it
 
 In [AUTO19](docs/evidence/hermes-auto19-2026-09-12/REPORT.zh-CN.md), one natural request led Hermes to send a message, upload text and fill a form. The explicitly labelled internal floor price was hidden before reaching the model. A supplier note containing a fake system instruction was withheld, and the authorized work continued without individual approvals or manual recovery.
 

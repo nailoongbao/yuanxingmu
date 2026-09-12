@@ -8,7 +8,15 @@
 
 当前源码包含输入、记忆、任务偏移、危险命令、技能与配置五层检查，以及本人审批、暂停恢复、回答显示前检查和 Hermes 官方界面接入。[玄甲逐项对照](docs/agentward-coverage.zh-CN.md)列出源码、证据与缺口；[框架支持表](docs/framework-support.zh-CN.md)区分工具适配与完整实机验证。这批功能尚未进入旧安装包。实测仍记录了正常操作误拦，不能据此宣称已全面超过玄甲。
 
-## 最新实录：底价藏好，该做的事继续做
+## 最新 OpenClaw 实录：交代一次，三件事自动完成
+
+[PROTECTED14](docs/evidence/openclaw-protected14-2026-09-12/README.md) 使用 OpenClaw 2026.9.4、元星木 0.7 和 GLM-5.2。只发送一条自然任务，消息、文本上传、表单各到达一次，中途没有追加提示或逐项审批。明确标记的底价先隐藏，供应商资料夹带的伪系统指令被扣留；最终回复与实际接收内容一致。
+
+[看 100 秒实录](https://yh-l20.github.io/yuanxingmu/layers.html#openclaw-protected-fields) · [核对完整会话与接收内容](docs/evidence/openclaw-protected14-2026-09-12/README.md)
+
+这次限定场景的完整验收与 78 项有限隐私检查通过。使用的是本机合成接收端，不代表任意秘密、编码或攻击都受到保护。上传记录仍有原因未明的时间顺序异常，原值保留，不用它证明耗时或性能。
+
+## Hermes 实录：底价藏好，该做的事继续做
 
 [AUTO19](docs/evidence/hermes-auto19-2026-09-12/REPORT.zh-CN.md) 只交代一次自然任务，Hermes 就继续完成消息、文本上传和填表。资料里标明的内部底价先被隐藏，夹带伪系统指令的正文被扣留；整个过程没有逐项批准或人工恢复。
 

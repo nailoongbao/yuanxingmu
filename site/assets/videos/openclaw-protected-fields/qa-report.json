@@ -1,0 +1,311 @@
+{
+  "recording_id": "OPENCLAW-PROTECTED14",
+  "review_status": "passed_with_disclosed_limits",
+  "reviewed_at_utc": "2026-09-12T15:51:12.107373+00:00",
+  "mp4": {
+    "bytes": 5243945,
+    "sha256": "2c9630ad69cb894a0bc62b236bb920a276d20259a06bc4d32789a88853672549"
+  },
+  "media": {
+    "duration_seconds": 100,
+    "dimensions": [
+      1440,
+      1140
+    ],
+    "fps": 25,
+    "original_ui_dimensions": [
+      1440,
+      1000
+    ],
+    "separate_footer_height": 140,
+    "video_codec": "H.264",
+    "audio_codec": "AAC",
+    "audio_sample_rate": 24000,
+    "audio_channels": 1,
+    "full_decode_passed": true,
+    "source_ui_synthesized": false,
+    "source_speed": 1,
+    "source_ui_coverage": "The complete original viewport is retained. Lossy re-encoding changes pixel values; no browser UI is recreated, cropped or masked."
+  },
+  "offline_review": {
+    "all_source_inputs_unchanged": true,
+    "complete_audio_phrases": 19,
+    "minimum_aac_to_source_pcm_correlation": 0.9999175186166231,
+    "source_final_frame_pairs": 21,
+    "maximum_ui_pixel_mean_absolute_error": 0.47175231481481483,
+    "captions": {
+      "count": 19,
+      "all_text_matches_spoken_phrases": true,
+      "no_overlap": true
+    },
+    "chapter_seconds": [
+      0,
+      9,
+      25,
+      39,
+      51,
+      71,
+      85
+    ],
+    "third_receipt_first_visible_ocr_source_second": 97.12,
+    "receipt_result_narration_source_second": 100.0,
+    "receipt_result_narration_output_second": 61
+  },
+  "source_privacy_review": {
+    "selected_source_frames_decoded": 2500,
+    "exact_unique_images_locally_ocr_checked": 1688,
+    "engine": "Windows.Media.Ocr zh-Hans-CN",
+    "flag_count": 0,
+    "selected_spans": [
+      {
+        "file": "01-native-natural-task.webm",
+        "start": 105,
+        "end": 185
+      },
+      {
+        "file": "01-receiver-natural-task.webm",
+        "start": 90,
+        "end": 110
+      }
+    ],
+    "credential_entry_views_included": false,
+    "limits": "OCR and visual review can miss unrecognized or unknown secrets. Exact-image deduplication covered all selected decoded frames; manual inspection was sampled and does not claim every-pixel human review. Source provider credentials were never entered into the recorded browser according to the separately retained source audit."
+  },
+  "browser_review": {
+    "environment": "Chrome on Windows; actual HTML video playback from a loopback Range-capable preview",
+    "passed_checks": 30,
+    "failed_checks": [],
+    "screens": [
+      {
+        "screen": "desktop",
+        "metadata": {
+          "duration": 100,
+          "width": 1440,
+          "height": 1140,
+          "error": null,
+          "tracks": [
+            {
+              "kind": "captions",
+              "cues": 19,
+              "mode": "showing"
+            },
+            {
+              "kind": "chapters",
+              "mode": "disabled"
+            }
+          ]
+        },
+        "plays": [
+          {
+            "start": 0,
+            "time": 0.654781,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 21,
+            "audioDecoded": 8701,
+            "error": null
+          },
+          {
+            "start": 9,
+            "time": 9.570943,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 39,
+            "audioDecoded": 15655,
+            "error": null
+          },
+          {
+            "start": 25,
+            "time": 25.577393,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 59,
+            "audioDecoded": 22823,
+            "error": null
+          },
+          {
+            "start": 39,
+            "time": 39.571999,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 78,
+            "audioDecoded": 29434,
+            "error": null
+          },
+          {
+            "start": 51,
+            "time": 51.571561,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 97,
+            "audioDecoded": 36788,
+            "error": null
+          },
+          {
+            "start": 71,
+            "time": 71.554459,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 115,
+            "audioDecoded": 43334,
+            "error": null
+          },
+          {
+            "start": 85,
+            "time": 85.555024,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 133,
+            "audioDecoded": 50528,
+            "error": null
+          }
+        ],
+        "layout": {
+          "viewport": 1440,
+          "page": 1440,
+          "width": 1118,
+          "height": 885.078125,
+          "ratio": 1.2631653279194985
+        }
+      },
+      {
+        "screen": "mobile",
+        "metadata": {
+          "duration": 100,
+          "width": 1440,
+          "height": 1140,
+          "error": null,
+          "tracks": [
+            {
+              "kind": "captions",
+              "cues": 19,
+              "mode": "showing"
+            },
+            {
+              "kind": "chapters",
+              "mode": "disabled"
+            }
+          ]
+        },
+        "plays": [
+          {
+            "start": 0,
+            "time": 0.647711,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 21,
+            "audioDecoded": 8701,
+            "error": null
+          },
+          {
+            "start": 9,
+            "time": 9.571773,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 39,
+            "audioDecoded": 15655,
+            "error": null
+          },
+          {
+            "start": 25,
+            "time": 25.570503,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 58,
+            "audioDecoded": 22823,
+            "error": null
+          },
+          {
+            "start": 39,
+            "time": 39.568903,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 77,
+            "audioDecoded": 29434,
+            "error": null
+          },
+          {
+            "start": 51,
+            "time": 51.568708,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 96,
+            "audioDecoded": 36788,
+            "error": null
+          },
+          {
+            "start": 71,
+            "time": 71.650048,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 118,
+            "audioDecoded": 44645,
+            "error": null
+          },
+          {
+            "start": 85,
+            "time": 85.570844,
+            "paused": false,
+            "ready": 4,
+            "videoDecoded": 136,
+            "audioDecoded": 52472,
+            "error": null
+          }
+        ],
+        "layout": {
+          "viewport": 390,
+          "page": 390,
+          "width": 364,
+          "height": 288.15625,
+          "ratio": 1.2632035570979285
+        }
+      }
+    ],
+    "seven_chapters_played_on_each_screen": true,
+    "all_chapter_audio_and_video_decode_counters_positive": true,
+    "caption_count": 19,
+    "receipt_caption_visually_reviewed": true,
+    "timestamp_limit_caption_visually_reviewed": true,
+    "caption_disable_and_restore_passed": true,
+    "script_errors": [],
+    "console_errors_or_warnings": [],
+    "aborted_media_requests_during_navigation_and_seeking": 8,
+    "aborted_request_error": "net::ERR_ABORTED",
+    "network_observation": "Eight MP4 requests were cancelled while navigating and seeking. All fourteen chapter playbacks continued with audio/video decoding and no HTMLMediaElement error; this report does not claim zero cancelled network requests.",
+    "audio_review_limit": "Automated browser playback was muted. Complete phrases were checked by decoded PCM comparison, not by a human listening test.",
+    "mobile_visual_limit": "Subtitles remain readable at a 390px viewport; fine text in the preserved 1440px source UI needs enlargement or fullscreen."
+  },
+  "visual_review": {
+    "final_contact_sheets_reviewed": 3,
+    "poster_reviewed": true,
+    "actual_browser_caption_screenshots_reviewed": [
+      "received-desktop.png",
+      "received-mobile.png",
+      "limits-desktop.png",
+      "limits-mobile.png"
+    ],
+    "observation": "The original native chat and actual synthetic receiver records remain visible. Added captions and chapter text are distinct from the original UI. No caption clipping or horizontal page overflow was observed."
+  },
+  "corrections_during_review": [
+    "The first private preview helper ignored byte Range and returned HTTP 200, making Chrome seekable=[0,0]. Initial chapter checks timed out. The helper was fixed to return HTTP 206 and correct range headers; the subsequent full 30-check browser run passed. The encoded media did not change.",
+    "The OCR run wrote all 1688 image rows before a PowerShell summary-only Measure-Object error. Saved coverage and PNG hashes were independently checked; OCR was not rerun. The summary expression was corrected."
+  ],
+  "evidence_entry": "docs/evidence/openclaw-protected14-2026-09-12/README.md",
+  "evidence_manifest_sha256": "a964c0f179a41407e013742c5c451bd1d8e4ccdad0601901f6b9860970be893f",
+  "evidence_scope": {
+    "source_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+    "runtime_version": "0.7.0a1",
+    "framework": "OpenClaw 2026.9.4",
+    "model": "glm-5.2",
+    "task": "One synthetic natural task, one native chat.send, three controlled local receiver targets with one receipt each; no follow-up task prompts or per-action approval.",
+    "protocol_passed": true,
+    "privacy_passed": true
+  },
+  "limits": [
+    "One synthetic natural task with controlled local receivers, not a scalable attack benchmark or production reliability result.",
+    "Protected-field checks cover explicit labels and finite supported value forms; no guarantee for arbitrary secrets, encoding, inference or cross-message reconstruction.",
+    "Correct final reply and three actual receipts were independently checked; this is not a general prevention rate.",
+    "Original timestamp anomaly is preserved and disclosed, not converted into a timing or speed claim."
+  ],
+  "time_basis": "Source cuts and output duration use the original media timeline. Original action timestamps contain an unexplained inversion; they are not used to infer elapsed time, action order or performance. Original timestamp fields remain visible and unchanged."
+}

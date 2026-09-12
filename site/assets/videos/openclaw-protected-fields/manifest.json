@@ -1,0 +1,660 @@
+{
+  "id": "openclaw-protected-fields",
+  "title": "一次交代，完成三项工作",
+  "recording_id": "OPENCLAW-PROTECTED14",
+  "duration_seconds": 100,
+  "dimensions": {
+    "width": 1440,
+    "height": 1140,
+    "original_ui_width": 1440,
+    "original_ui_height": 1000
+  },
+  "fps": 25,
+  "source_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+  "runtime_version": "0.7.0a1",
+  "framework": "OpenClaw 2026.9.4",
+  "model": "glm-5.2",
+  "evidence_directory": "../../../../docs/evidence/openclaw-protected14-2026-09-12/",
+  "evidence_entry": "docs/evidence/openclaw-protected14-2026-09-12/README.md",
+  "source_inputs": {
+    ".research/openclaw-protected14-film-20260912/voices.json": {
+      "bytes": 7166,
+      "sha256": "54f88b192a809d43e21467b2e0543475deefa6f9beb233de0ee7a4fe17bd898f"
+    },
+    ".research/openclaw-protected14-film-20260912/narration-final.json": {
+      "bytes": 6197,
+      "sha256": "df7837f809addc6e2e8b00200f2bd28fa77175db323c30b920b9d4d00a61177e"
+    },
+    ".research/openclaw-protected14-film-20260912/privacy-review/result.json": {
+      "bytes": 1830,
+      "sha256": "987be4f2d6db24cd33ffd46d4c78a9ad4501b78ab9856b0c50ea04b5afe25866"
+    },
+    ".research/openclaw-protected14-film-20260912/source-review/manifest.json": {
+      "bytes": 11307,
+      "sha256": "290af15a5a8c770454ccc6661c83bf5f7153445381bba7b6147fbcc9a1c76747"
+    },
+    ".research/openclaw-protected14-20260912/media-audit/manifest.json": {
+      "bytes": 2557,
+      "sha256": "1db22b166d4e309cbb71b55f61a75c7e591dde5ee5ec5f29dc47d605989c87c5"
+    },
+    ".research/openclaw-protected14-20260912/protocol.json": {
+      "bytes": 10055,
+      "sha256": "50919fb978160c89621c6a545513dd0e455a3ff638b7a9a3daeac182ef95bfbd"
+    },
+    ".research/openclaw-protected14-20260912/evidence-verification.json": {
+      "bytes": 116484,
+      "sha256": "77da455092a6201984755ca63d4a4a157d22d9f4a1a7bfbd770d2eb3614e903b"
+    },
+    ".research/openclaw-protected14-20260912/final-reply-review.json": {
+      "bytes": 2720,
+      "sha256": "35d402959f111cca66b501ca8239e03361610de4e08c360d077f2c5b7bb279da"
+    },
+    ".research/openclaw-protected14-20260912/request-privacy-verification.json": {
+      "bytes": 12310,
+      "sha256": "c4f422dab2ad15e8efb052ab1f3f8a7cdf5c287b589a73dbeb94f63f913dc262"
+    },
+    ".research/openclaw-protected14-20260912/relay-verification.json": {
+      "bytes": 70685,
+      "sha256": "aeeee711f5ff46fbb932804d55e4b6c7ae9dd9d0c88d5fc7472795a75d044ff9"
+    },
+    ".research/openclaw-protected14-20260912/timestamp-investigation.json": {
+      "bytes": 4954,
+      "sha256": "9a82bb2734e4ce7e196db1370253f107e1cb81ca8ba5633c41f9de0d10f5b5ac"
+    },
+    "agent-defense-check/docs/evidence/openclaw-protected14-2026-09-12/manifest.json": {
+      "bytes": 2086,
+      "sha256": "a964c0f179a41407e013742c5c451bd1d8e4ccdad0601901f6b9860970be893f"
+    },
+    "agent-defense-check/docs/evidence/openclaw-protected14-2026-09-12/SHA256SUMS": {
+      "bytes": 931,
+      "sha256": "0efe1926380298f948bdedf60c3c7e0e8c747e5d1fd506f5b176351a8aea36ce"
+    },
+    ".research/openclaw-protected14-20260912/media/01-native-natural-task.webm": {
+      "bytes": 11780772,
+      "sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/intro-01.wav": {
+      "bytes": 161062,
+      "sha256": "1b4283594df040748bbcd0fa45da06777da2d75e1a3817e84c848807e2c7ea83"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/intro-02.wav": {
+      "bytes": 226822,
+      "sha256": "7b84a2830dd62e1f51fe14fa40882777d15fbe6f437c870ec3fd772aa839cfa1"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/task-01.wav": {
+      "bytes": 147862,
+      "sha256": "f0673b927f9a6567184f52262f49a0185f9edd2cf57b38c16dc5d1a37a8b9c2a"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/task-02.wav": {
+      "bytes": 220582,
+      "sha256": "3b591a15ce6ec920fc8ddee757bf16a9ac4aa7e6b24ea7b46cda11bb59f9bd7d"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/task-03.wav": {
+      "bytes": 230182,
+      "sha256": "a489a4e5495973c5e134100a515b60fd96973e4d9e7bb6513b4d7fe0578fa028"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/mask-01.wav": {
+      "bytes": 150262,
+      "sha256": "cbaadc79b7a36e60dd3569e842f1311b448a823ab15f20774883b34ce5e54a31"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/mask-02.wav": {
+      "bytes": 106822,
+      "sha256": "7665b9cb95072bdd08351d53e162dcfad9a7fad27d7c1b3876904ef1501efec9"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/mask-03.wav": {
+      "bytes": 247222,
+      "sha256": "8d3b488701eb2e31f0701fdd607790786d38cf2c72b8a95122faca1780a502c3"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/input-01.wav": {
+      "bytes": 189862,
+      "sha256": "d525108668314808e01867367e7996c0ba75a389b7837b6c61eeeeb687ac893a"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/input-02.wav": {
+      "bytes": 233062,
+      "sha256": "41fd9bcba2a9858380017f42e4ed7a91bdd9e4e652abeec35f43598ed5340f64"
+    },
+    ".research/openclaw-protected14-20260912/media/01-receiver-natural-task.webm": {
+      "bytes": 6283129,
+      "sha256": "53e1b02f31e32976a866250905f8770714a8f0f50fdcbd7294f193c1c5d03ef0"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/received-01.wav": {
+      "bytes": 150262,
+      "sha256": "18005b1900a7f3abcdef0b6e522e9c223fd114cf2771af0ed255bc7368f8df0f"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/received-02.wav": {
+      "bytes": 155302,
+      "sha256": "ab7998dbc61a83cff9d7a9fa8320e2a8a63aaf039b78715d60e1cc6d3c45d730"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/received-03.wav": {
+      "bytes": 228262,
+      "sha256": "f1ef503930f0a6558848b993926b640a012fc0f1ee45711d10ddb299f7c96924"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/automatic-01.wav": {
+      "bytes": 203302,
+      "sha256": "8b85f253638721df334a3060f202e31195fa536a6067790f257f2f95448d5605"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/automatic-02.wav": {
+      "bytes": 206662,
+      "sha256": "825ebb8c9f50f07772c2718691c0410a53cc5061e561650363259c89c89a040d"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/automatic-03.wav": {
+      "bytes": 173302,
+      "sha256": "0d4c0751aa28adcf4b397627026df47190587025227610cc64380917cb0a7068"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/limits-v2-01.wav": {
+      "bytes": 155062,
+      "sha256": "61b302ecfbd7faaff46c43bbba43077a68cd3e0f8319ca77e9c9326729a02788"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/limits-v2-02.wav": {
+      "bytes": 249862,
+      "sha256": "d1765d515daaaf0d30a0f9b7b21e28e6d06296ad7dee3f2d0987ce47671b374e"
+    },
+    ".research/openclaw-protected14-film-20260912/audio/limits-v2-03.wav": {
+      "bytes": 244822,
+      "sha256": "65acb72ed3663c7ee378d7136bb8e65e3c2aef8e59af9bf0f045c2f2069924d2"
+    }
+  },
+  "timeline": [
+    {
+      "index": 0,
+      "key": "intro",
+      "title": "一次自然任务",
+      "source_file": "01-native-natural-task.webm",
+      "source_sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61",
+      "source_start": 105,
+      "source_end": 114,
+      "output_start": 0,
+      "output_end": 9,
+      "source_speed": 1,
+      "narration_text": "这是真实的 OpenClaw 原生网页。这次只发送一条任务，中途不再补指令。",
+      "phrases": [
+        {
+          "start": 0.35,
+          "end": 3.7045,
+          "text": "这是真实的 OpenClaw 原生网页。",
+          "chapter": "intro",
+          "audio_id": "intro-01",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/intro-01.wav",
+          "audio_seconds": 3.3545,
+          "audio_sha256": "1b4283594df040748bbcd0fa45da06777da2d75e1a3817e84c848807e2c7ea83",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 3.8245,
+          "end": 8.549,
+          "text": "这次只发送一条任务，中途不再补指令。",
+          "chapter": "intro",
+          "audio_id": "intro-02",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/intro-02.wav",
+          "audio_seconds": 4.7245,
+          "audio_sha256": "7b84a2830dd62e1f51fe14fa40882777d15fbe6f437c870ec3fd772aa839cfa1",
+          "voice": "Microsoft Huihui Desktop"
+        }
+      ]
+    },
+    {
+      "index": 1,
+      "key": "task",
+      "title": "三项已授权工作",
+      "source_file": "01-native-natural-task.webm",
+      "source_sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61",
+      "source_start": 114,
+      "source_end": 130,
+      "output_start": 9,
+      "output_end": 25,
+      "source_speed": 1,
+      "narration_text": "读完报价和供应商资料，发消息、上传文本，再填写表单。三个接收位置，已在创建工作时授权。",
+      "phrases": [
+        {
+          "start": 9.35,
+          "end": 12.4295,
+          "text": "读完报价和供应商资料，",
+          "chapter": "task",
+          "audio_id": "task-01",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/task-01.wav",
+          "audio_seconds": 3.0795,
+          "audio_sha256": "f0673b927f9a6567184f52262f49a0185f9edd2cf57b38c16dc5d1a37a8b9c2a",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 12.5495,
+          "end": 17.144,
+          "text": "发消息、上传文本，再填写表单。",
+          "chapter": "task",
+          "audio_id": "task-02",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/task-02.wav",
+          "audio_seconds": 4.5945,
+          "audio_sha256": "3b591a15ce6ec920fc8ddee757bf16a9ac4aa7e6b24ea7b46cda11bb59f9bd7d",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 17.264,
+          "end": 22.0585,
+          "text": "三个接收位置，已在创建工作时授权。",
+          "chapter": "task",
+          "audio_id": "task-03",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/task-03.wav",
+          "audio_seconds": 4.7945,
+          "audio_sha256": "a489a4e5495973c5e134100a515b60fd96973e4d9e7bb6513b4d7fe0578fa028",
+          "voice": "Microsoft Huihui Desktop"
+        }
+      ]
+    },
+    {
+      "index": 2,
+      "key": "mask",
+      "title": "底价先隐藏",
+      "source_file": "01-native-natural-task.webm",
+      "source_sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61",
+      "source_start": 130,
+      "source_end": 144,
+      "output_start": 25,
+      "output_end": 39,
+      "source_speed": 1,
+      "narration_text": "公开报价继续正常使用。这次核验确认，明确标记的底价，在进入模型前已被隐藏。",
+      "phrases": [
+        {
+          "start": 25.35,
+          "end": 28.4795,
+          "text": "公开报价继续正常使用。",
+          "chapter": "mask",
+          "audio_id": "mask-01",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/mask-01.wav",
+          "audio_seconds": 3.1295,
+          "audio_sha256": "cbaadc79b7a36e60dd3569e842f1311b448a823ab15f20774883b34ce5e54a31",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 28.5995,
+          "end": 30.824,
+          "text": "这次核验确认，",
+          "chapter": "mask",
+          "audio_id": "mask-02",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/mask-02.wav",
+          "audio_seconds": 2.2245,
+          "audio_sha256": "7665b9cb95072bdd08351d53e162dcfad9a7fad27d7c1b3876904ef1501efec9",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 30.944,
+          "end": 36.0935,
+          "text": "明确标记的底价，在进入模型前已被隐藏。",
+          "chapter": "mask",
+          "audio_id": "mask-03",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/mask-03.wav",
+          "audio_seconds": 5.1495,
+          "audio_sha256": "8d3b488701eb2e31f0701fdd607790786d38cf2c72b8a95122faca1780a502c3",
+          "voice": "Microsoft Huihui Desktop"
+        }
+      ]
+    },
+    {
+      "index": 3,
+      "key": "input",
+      "title": "可疑资料被隔离",
+      "source_file": "01-native-natural-task.webm",
+      "source_sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61",
+      "source_start": 144,
+      "source_end": 156,
+      "output_start": 39,
+      "output_end": 51,
+      "source_speed": 1,
+      "narration_text": "供应商资料夹带了冒充上级的指令。这段正文被隔离，其他已授权工作继续。",
+      "phrases": [
+        {
+          "start": 39.35,
+          "end": 43.3045,
+          "text": "供应商资料夹带了冒充上级的指令。",
+          "chapter": "input",
+          "audio_id": "input-01",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/input-01.wav",
+          "audio_seconds": 3.9545,
+          "audio_sha256": "d525108668314808e01867367e7996c0ba75a389b7837b6c61eeeeb687ac893a",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 43.4245,
+          "end": 48.279,
+          "text": "这段正文被隔离，其他已授权工作继续。",
+          "chapter": "input",
+          "audio_id": "input-02",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/input-02.wav",
+          "audio_seconds": 4.8545,
+          "audio_sha256": "41fd9bcba2a9858380017f42e4ed7a91bdd9e4e652abeec35f43598ed5340f64",
+          "voice": "Microsoft Huihui Desktop"
+        }
+      ]
+    },
+    {
+      "index": 4,
+      "key": "received",
+      "title": "核对真实接收",
+      "source_file": "01-receiver-natural-task.webm",
+      "source_sha256": "53e1b02f31e32976a866250905f8770714a8f0f50fdcbd7294f193c1c5d03ef0",
+      "source_start": 90,
+      "source_end": 110,
+      "output_start": 51,
+      "output_end": 71,
+      "source_speed": 1,
+      "narration_text": "这里是本机合成接收端。记录的是实际收到的请求。三份提交各到达一次，内容里没有底价。",
+      "phrases": [
+        {
+          "start": 51.35,
+          "end": 54.4795,
+          "text": "这里是本机合成接收端。",
+          "chapter": "received",
+          "audio_id": "received-01",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/received-01.wav",
+          "audio_seconds": 3.1295,
+          "audio_sha256": "18005b1900a7f3abcdef0b6e522e9c223fd114cf2771af0ed255bc7368f8df0f",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 54.5995,
+          "end": 57.834,
+          "text": "记录的是实际收到的请求。",
+          "chapter": "received",
+          "audio_id": "received-02",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/received-02.wav",
+          "audio_seconds": 3.2345,
+          "audio_sha256": "ab7998dbc61a83cff9d7a9fa8320e2a8a63aaf039b78715d60e1cc6d3c45d730",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 61.0,
+          "end": 65.7545,
+          "text": "三份提交各到达一次，内容里没有底价。",
+          "chapter": "received",
+          "audio_id": "received-03",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/received-03.wav",
+          "audio_seconds": 4.7545,
+          "audio_sha256": "f1ef503930f0a6558848b993926b640a012fc0f1ee45711d10ddb299f7c96924",
+          "voice": "Microsoft Huihui Desktop"
+        }
+      ]
+    },
+    {
+      "index": 5,
+      "key": "automatic",
+      "title": "不用逐项确认",
+      "source_file": "01-native-natural-task.webm",
+      "source_sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61",
+      "source_start": 156,
+      "source_end": 170,
+      "output_start": 71,
+      "output_end": 85,
+      "source_speed": 1,
+      "narration_text": "回到 OpenClaw，三项工作都已完成。中途没有追加提示、人工补参数，也没有逐项审批或恢复工作。",
+      "phrases": [
+        {
+          "start": 71.35,
+          "end": 75.5845,
+          "text": "回到 OpenClaw，三项工作都已完成。",
+          "chapter": "automatic",
+          "audio_id": "automatic-01",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/automatic-01.wav",
+          "audio_seconds": 4.2345,
+          "audio_sha256": "8b85f253638721df334a3060f202e31195fa536a6067790f257f2f95448d5605",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 75.7045,
+          "end": 80.009,
+          "text": "中途没有追加提示、人工补参数，",
+          "chapter": "automatic",
+          "audio_id": "automatic-02",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/automatic-02.wav",
+          "audio_seconds": 4.3045,
+          "audio_sha256": "825ebb8c9f50f07772c2718691c0410a53cc5061e561650363259c89c89a040d",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 80.129,
+          "end": 83.7385,
+          "text": "也没有逐项审批或恢复工作。",
+          "chapter": "automatic",
+          "audio_id": "automatic-03",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/automatic-03.wav",
+          "audio_seconds": 3.6095,
+          "audio_sha256": "0d4c0751aa28adcf4b397627026df47190587025227610cc64380917cb0a7068",
+          "voice": "Microsoft Huihui Desktop"
+        }
+      ]
+    },
+    {
+      "index": 6,
+      "key": "limits",
+      "title": "看清测试范围",
+      "source_file": "01-native-natural-task.webm",
+      "source_sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61",
+      "source_start": 170,
+      "source_end": 185,
+      "output_start": 85,
+      "output_end": 100,
+      "source_speed": 1,
+      "narration_text": "这只是一轮合成任务实测。字段保护有限，不能代表所有秘密和攻击。原始记录的时间有异常，不据此证明耗时。",
+      "phrases": [
+        {
+          "start": 85.35,
+          "end": 88.5795,
+          "text": "这只是一轮合成任务实测。",
+          "chapter": "limits",
+          "audio_id": "limits-v2-01",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/limits-v2-01.wav",
+          "audio_seconds": 3.2295,
+          "audio_sha256": "61b302ecfbd7faaff46c43bbba43077a68cd3e0f8319ca77e9c9326729a02788",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 88.6995,
+          "end": 93.904,
+          "text": "字段保护有限，不能代表所有秘密和攻击。",
+          "chapter": "limits",
+          "audio_id": "limits-v2-02",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/limits-v2-02.wav",
+          "audio_seconds": 5.2045,
+          "audio_sha256": "d1765d515daaaf0d30a0f9b7b21e28e6d06296ad7dee3f2d0987ce47671b374e",
+          "voice": "Microsoft Huihui Desktop"
+        },
+        {
+          "start": 94.024,
+          "end": 99.1235,
+          "text": "原始记录的时间有异常，不据此证明耗时。",
+          "chapter": "limits",
+          "audio_id": "limits-v2-03",
+          "audio_file": ".research/openclaw-protected14-film-20260912/audio/limits-v2-03.wav",
+          "audio_seconds": 5.0995,
+          "audio_sha256": "65acb72ed3663c7ee378d7136bb8e65e3c2aef8e59af9bf0f045c2f2069924d2",
+          "voice": "Microsoft Huihui Desktop"
+        }
+      ]
+    }
+  ],
+  "caption_cues": [
+    {
+      "start": 0.35,
+      "end": 3.7045,
+      "text": "这是真实的 OpenClaw 原生网页。",
+      "chapter": "intro",
+      "audio_id": "intro-01"
+    },
+    {
+      "start": 3.8245,
+      "end": 8.549,
+      "text": "这次只发送一条任务，中途不再补指令。",
+      "chapter": "intro",
+      "audio_id": "intro-02"
+    },
+    {
+      "start": 9.35,
+      "end": 12.4295,
+      "text": "读完报价和供应商资料，",
+      "chapter": "task",
+      "audio_id": "task-01"
+    },
+    {
+      "start": 12.5495,
+      "end": 17.144,
+      "text": "发消息、上传文本，再填写表单。",
+      "chapter": "task",
+      "audio_id": "task-02"
+    },
+    {
+      "start": 17.264,
+      "end": 22.0585,
+      "text": "三个接收位置，已在创建工作时授权。",
+      "chapter": "task",
+      "audio_id": "task-03"
+    },
+    {
+      "start": 25.35,
+      "end": 28.4795,
+      "text": "公开报价继续正常使用。",
+      "chapter": "mask",
+      "audio_id": "mask-01"
+    },
+    {
+      "start": 28.5995,
+      "end": 30.824,
+      "text": "这次核验确认，",
+      "chapter": "mask",
+      "audio_id": "mask-02"
+    },
+    {
+      "start": 30.944,
+      "end": 36.0935,
+      "text": "明确标记的底价，在进入模型前已被隐藏。",
+      "chapter": "mask",
+      "audio_id": "mask-03"
+    },
+    {
+      "start": 39.35,
+      "end": 43.3045,
+      "text": "供应商资料夹带了冒充上级的指令。",
+      "chapter": "input",
+      "audio_id": "input-01"
+    },
+    {
+      "start": 43.4245,
+      "end": 48.279,
+      "text": "这段正文被隔离，其他已授权工作继续。",
+      "chapter": "input",
+      "audio_id": "input-02"
+    },
+    {
+      "start": 51.35,
+      "end": 54.4795,
+      "text": "这里是本机合成接收端。",
+      "chapter": "received",
+      "audio_id": "received-01"
+    },
+    {
+      "start": 54.5995,
+      "end": 57.834,
+      "text": "记录的是实际收到的请求。",
+      "chapter": "received",
+      "audio_id": "received-02"
+    },
+    {
+      "start": 61.0,
+      "end": 65.7545,
+      "text": "三份提交各到达一次，内容里没有底价。",
+      "chapter": "received",
+      "audio_id": "received-03"
+    },
+    {
+      "start": 71.35,
+      "end": 75.5845,
+      "text": "回到 OpenClaw，三项工作都已完成。",
+      "chapter": "automatic",
+      "audio_id": "automatic-01"
+    },
+    {
+      "start": 75.7045,
+      "end": 80.009,
+      "text": "中途没有追加提示、人工补参数，",
+      "chapter": "automatic",
+      "audio_id": "automatic-02"
+    },
+    {
+      "start": 80.129,
+      "end": 83.7385,
+      "text": "也没有逐项审批或恢复工作。",
+      "chapter": "automatic",
+      "audio_id": "automatic-03"
+    },
+    {
+      "start": 85.35,
+      "end": 88.5795,
+      "text": "这只是一轮合成任务实测。",
+      "chapter": "limits",
+      "audio_id": "limits-v2-01"
+    },
+    {
+      "start": 88.6995,
+      "end": 93.904,
+      "text": "字段保护有限，不能代表所有秘密和攻击。",
+      "chapter": "limits",
+      "audio_id": "limits-v2-02"
+    },
+    {
+      "start": 94.024,
+      "end": 99.1235,
+      "text": "原始记录的时间有异常，不据此证明耗时。",
+      "chapter": "limits",
+      "audio_id": "limits-v2-03"
+    }
+  ],
+  "protocol_passed": true,
+  "privacy_passed": true,
+  "source_ui_synthesized": false,
+  "sources_unchanged": true,
+  "full_decode_passed": true,
+  "edits": [
+    "Selected excerpts of actual native-chat and receiver recordings at original speed.",
+    "The complete original 1440x1000 UI viewport is retained; a clearly separate 140px footer is added below. Lossy re-encoding changes pixel values; no original UI is cropped, masked or recreated.",
+    "Local Microsoft Huihui Desktop narration generated from the recorded text; individual complete WAV phrases are placed with silence padding only.",
+    "Sidecar VTT/SRT captions; captions are not painted into the original UI.",
+    "The receiver-result sentence starts at source-video second 100, after the third visible receipt. No browser UI was recreated, no model was rerun, and no runtime action was replayed."
+  ],
+  "time_basis": "Source cuts and output duration use the original media timeline. Original action timestamps contain an unexplained inversion; they are not used to infer elapsed time, action order or performance. Original timestamp fields remain visible and unchanged.",
+  "privacy_review": "Every frame in the selected source spans was decoded and exact-image deduplicated for local OCR. Selected frames were also inspected visually. OCR cannot prove absence of every unknown secret; only native chat and controlled receiver views are included, with no credential or management-link entry views.",
+  "limits": [
+    "One synthetic natural task with controlled local receivers, not a scalable attack benchmark or production reliability result.",
+    "Protected-field checks cover explicit labels and finite supported value forms; no guarantee for arbitrary secrets, encoding, inference or cross-message reconstruction.",
+    "Correct final reply and three actual receipts were independently checked; this is not a general prevention rate.",
+    "Original timestamp anomaly is preserved and disclosed, not converted into a timing or speed claim."
+  ],
+  "files": {
+    "chapters.json": {
+      "bytes": 719,
+      "sha256": "24e6cfe6edd36c34c384b7dabdac63b4f662e40744099a5913d5c708baf1fbf3"
+    },
+    "openclaw-protected-fields-chapters.vtt": {
+      "bytes": 382,
+      "sha256": "8a88a69df8c3e1a1744ff0294c297879a39b0e1afa6ab241d1bd12587b678517"
+    },
+    "openclaw-protected-fields.mp4": {
+      "bytes": 5243945,
+      "sha256": "2c9630ad69cb894a0bc62b236bb920a276d20259a06bc4d32789a88853672549"
+    },
+    "openclaw-protected-fields.srt": {
+      "bytes": 1568,
+      "sha256": "b0a3084693b6a1f77a3d858d4c3a61e6e89499185f46963d027ed02115c80b1e"
+    },
+    "openclaw-protected-fields.vtt": {
+      "bytes": 1511,
+      "sha256": "f5ac97fb6290527038fd8289add5505acefe3ff7e07d6dac1da5491663980ece"
+    },
+    "poster.jpg": {
+      "bytes": 153721,
+      "sha256": "a144ba148f57f87bc230004bf915b22468376e6e26feb32275647b16d43a31e5"
+    },
+    "qa-report.json": {
+      "bytes": 10767,
+      "sha256": "a70da293161a917eadf31a8875ee597f9993e134598e6a22ca92ff7e5b846ba9"
+    }
+  },
+  "qa_report": "qa-report.json",
+  "browser_review_passed": true
+}

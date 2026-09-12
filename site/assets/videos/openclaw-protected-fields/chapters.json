@@ -1,0 +1,44 @@
+[
+  {
+    "start": 0,
+    "end": 9,
+    "label": "一次自然任务",
+    "key": "intro"
+  },
+  {
+    "start": 9,
+    "end": 25,
+    "label": "三项已授权工作",
+    "key": "task"
+  },
+  {
+    "start": 25,
+    "end": 39,
+    "label": "底价先隐藏",
+    "key": "mask"
+  },
+  {
+    "start": 39,
+    "end": 51,
+    "label": "可疑资料被隔离",
+    "key": "input"
+  },
+  {
+    "start": 51,
+    "end": 71,
+    "label": "核对真实接收",
+    "key": "received"
+  },
+  {
+    "start": 71,
+    "end": 85,
+    "label": "不用逐项确认",
+    "key": "automatic"
+  },
+  {
+    "start": 85,
+    "end": 100,
+    "label": "看清测试范围",
+    "key": "limits"
+  }
+]
