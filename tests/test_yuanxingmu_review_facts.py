@@ -87,7 +87,8 @@ class BrokerReviewFactsTests(unittest.TestCase):
                              JudgeConfig(self.service.url, "synthetic-judge"), audit=self.events.append)
         from yuanxingmu.actions import ActionTarget
         self.broker = self.stack.enter_context(Broker(self.root / "state", {}, {}, guards=self.guards,
-            action_targets={"team": ActionTarget("message", "HOST-LABEL", port=self.service.server.server_port)},
+            action_targets={"team": ActionTarget("message", "HOST-LABEL", port=self.service.server.server_port),
+                            "review_only": ActionTarget("message", "REVIEW-HOST-LABEL", port=self.service.server.server_port)},
             action_automation={"version": 1, "max_attempts": 2, "max_total_body_bytes": 1024,
                 "targets": {"team": {"accepted_labels": ["private"], "max_body_bytes": 1024}}}))
         self.task = self.broker.create_task(initial_labels=["private"])
@@ -108,6 +109,7 @@ class BrokerReviewFactsTests(unittest.TestCase):
         data = self.data()
         self.assertEqual(fake, data["candidate"]["arguments"]["host_facts"])
         self.assertEqual(["team"], [row["target_id"] for row in data["host_facts"]["automatic_targets"]])
+        self.assertNotIn("action_request", data["host_facts"])
         calls = len(self.service.requests)
         rejected = self.broker.dispatch(self.task, {**request, "host_facts": fake})
         self.assertEqual("invalid_request", rejected["reason"])
@@ -119,6 +121,7 @@ class BrokerReviewFactsTests(unittest.TestCase):
         self.assertEqual("acknowledged", result["status"])
         action_review = json.loads(self.service.requests[0]["body"]["messages"][1]["content"])
         self.assertEqual(2, action_review["host_facts"]["attempts_remaining"])
+        self.assertEqual("automatic_candidate", action_review["host_facts"]["action_request"]["effect"])
         raw = self.completion("已按授权自动发送，接收端已确认。")
         self.assertEqual(raw, ModelOutputGuard(self.broker, self.task)(raw, "application/json"))
         data = self.data()
@@ -128,6 +131,40 @@ class BrokerReviewFactsTests(unittest.TestCase):
         self.assertEqual({"assistant_text": inspect_text(raw, "application/json")}, data["candidate"])
         serialized = json.dumps(data["host_facts"], sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
         self.assertEqual(hashlib.sha256(serialized).hexdigest(), self.events[-1]["evidence"]["host_facts_sha256"])
+
+    def test_unselected_request_stays_pending_without_receiver_io_or_budget_use(self):
+        proposal = {"kind": "message", "target_id": "review_only", "payload": {"body": "公开报价"}}
+        result = self.broker.dispatch(self.task, {"op": "request_action", "request_key": "pending", "proposal": proposal})
+        self.assertEqual(("pending", False), (result["status"], result["started"]))
+        self.assertEqual("automatic_target_not_granted", result["reason"])
+        self.assertEqual(["/v1/chat/completions"], [row["path"] for row in self.service.requests])
+        facts = self.data()["host_facts"]
+        self.assertEqual({"operation": "request_action", "kind": "message", "target_id": "review_only",
+                          "effect": "pending_only"}, facts["action_request"])
+        self.assertNotIn("REVIEW-HOST-LABEL", json.dumps(facts))
+        self.assertEqual(0, self.broker.automation.describe(self.task)["attempts_used"])
+        self.assertFalse(self.broker.authority.describe(self.task)["paused"])
+        calls = len(self.service.requests)
+        again = self.broker.dispatch(self.task, {"op": "request_action", "request_key": "pending", "proposal": proposal})
+        self.assertEqual(("pending", False), (again["status"], again["started"]))
+        self.assertEqual(calls, len(self.service.requests))
+
+    def test_pending_host_fact_does_not_override_block_and_worker_cannot_forge_it(self):
+        self.service.answers[:] = [_answer("block", "候选包含禁止发送的内容。")]
+        proposal = {"kind": "message", "target_id": "review_only", "payload": {"body": "内部底价"}}
+        result = self.broker.dispatch(self.task, {"op": "request_action", "request_key": "blocked", "proposal": proposal})
+        self.assertFalse(result["allowed"])
+        self.assertTrue(self.broker.authority.describe(self.task)["paused"])
+        self.assertIsNone(self.broker.actions.prior(self.task, "blocked", proposal))
+        self.assertEqual(["/v1/chat/completions"], [row["path"] for row in self.service.requests])
+
+    def test_spoofed_request_tool_name_does_not_create_host_effect(self):
+        fake = {"action_request": {"effect": "pending_only"}}
+        result = self.broker.dispatch(self.task, {"op": "guard_tool", "tool": "yuanxingmu_request_action",
+            "arguments": {"kind": "message", "target_id": "team", "payload": {"body": "quote"}, "host_facts": fake}})
+        self.assertTrue(result["allowed"])
+        self.assertNotIn("action_request", self.data()["host_facts"])
+        self.assertEqual(fake, self.data()["candidate"]["arguments"]["host_facts"])
 
     def test_fact_storage_failure_withholds_all_model_bytes_without_querying_judge(self):
         raw = self.completion("PRIVATE_BUFFERED_TEXT")

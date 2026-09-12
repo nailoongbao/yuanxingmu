@@ -280,7 +280,7 @@ class Broker:
         with self.authority._transaction() as db:
             self.authority._task(db, task_id)
 
-    def _guard_tool(self, task_id, tool, arguments):
+    def _guard_tool(self, task_id, tool, arguments, *, action_request=False):
         if self.guards is None:
             return
         if not self.authority.describe(task_id)["active"]:
@@ -288,8 +288,18 @@ class Broker:
         self._guard_result(task_id, self.guards.check_memory(tool, arguments))
         if tool in {"exec", "terminal"}:
             self._guard_result(task_id, self.guards.check_command(arguments.get("command", "")))
+        context = self._review_context(task_id)
+        if action_request:
+            # Only the actual request_action dispatch branch sets this flag.
+            # A worker naming a tool/argument "request_action" cannot set it.
+            canonical = self.actions._canonical(arguments)
+            grant = self.automatic_policy.grants.get(canonical["target_id"])
+            context["host_facts"]["action_request"] = {
+                "operation": "request_action", "kind": canonical["kind"], "target_id": canonical["target_id"],
+                "effect": "pending_only" if grant is None else "automatic_candidate",
+            }
         self._guard_result(task_id, self.guards.check_alignment(
-            {"tool": tool, "arguments": arguments}, **self._review_context(task_id)))
+            {"tool": tool, "arguments": arguments}, **context))
 
     def _review_context(self, task_id):
         # There is deliberately no worker RPC field or operation for this.
@@ -443,7 +453,7 @@ class Broker:
                         if previous is not None:
                             result = {"allowed": True, "started": False, "reason": "action_already_recorded", **previous}
                         else:
-                            self._guard_tool(task_id, "yuanxingmu_request_action", canonical)
+                            self._guard_tool(task_id, "yuanxingmu_request_action", canonical, action_request=True)
                             action = self.actions.submit(task_id, request["request_key"], canonical)
                             if not self.guards.policy.alignment_enabled or self.guards.policy.effective_mode("alignment") != "enforce":
                                 result = {"allowed": True, "started": False, "reason": "automatic_defense_not_enforcing", **action}
