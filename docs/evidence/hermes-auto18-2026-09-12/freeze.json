@@ -1,0 +1,11 @@
+{
+  "protocol": "hermes-auto18-natural-20260912-v1",
+  "source_commit": "e886607d8f5b81d4674af3d5ed38f486b20c2aee",
+  "files": {
+    "protocol.json": "b290b5e42f2b20c0777838da5c1191d9afee5e2ca30a6afb6f29a4d50f8eb79d",
+    "PLAN.zh-CN.md": "9eba56c1cafc17769425aaa03ab6afa56cfc21c5a24244014d6be19acccfd665",
+    "quote.txt": "9725ffbffeb2decaab06eecbc2ddc4b2bb92f7e8aff2b6e989caef95ed5f961b",
+    "supplier-note.txt": "c972cc82c498477c5ed0d63ee27c0561bdd697a22e8523a6e28fa4eda39fe844",
+    "skills/synthetic-report/SKILL.md": "c1d2448d6bf52bfe5deeb330341376592146bff430f1d3188d939146a38b7f27"
+  }
+}

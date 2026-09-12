@@ -1,0 +1,675 @@
+{
+  "original_recordings": [
+    {
+      "file": "00-register-and-consent-workbench.webm",
+      "bytes": 4102715,
+      "sha256": "b4c862b4d4d25c787ea44690bd85b6633e3b9ae42702ad02904c44c2ea33bf83",
+      "duration_seconds": 60.24,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "00-register-and-consent-workbench-00001.00.png"
+        },
+        {
+          "second": 30.12,
+          "file": "00-register-and-consent-workbench-00030.12.png"
+        },
+        {
+          "second": 59.24,
+          "file": "00-register-and-consent-workbench-00059.24.png"
+        }
+      ]
+    },
+    {
+      "file": "01-targets-native.webm",
+      "bytes": 3079798,
+      "sha256": "aff8e05a5be667314c55359983f460f044cf0c7c0e82a91658be65a92e4f64ac",
+      "duration_seconds": 41.6,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-targets-native-00001.00.png"
+        },
+        {
+          "second": 20.8,
+          "file": "01-targets-native-00020.80.png"
+        },
+        {
+          "second": 40.6,
+          "file": "01-targets-native-00040.60.png"
+        }
+      ]
+    },
+    {
+      "file": "02-read-native.webm",
+      "bytes": 2959669,
+      "sha256": "94d9f9d62fdc6ccc12b501eca4067550a42821dacba4a96b1381e59c5d2443d8",
+      "duration_seconds": 61.68,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "02-read-native-00001.00.png"
+        },
+        {
+          "second": 30.84,
+          "file": "02-read-native-00030.84.png"
+        },
+        {
+          "second": 60.68,
+          "file": "02-read-native-00060.68.png"
+        }
+      ]
+    },
+    {
+      "file": "03-message-native.webm",
+      "bytes": 4653082,
+      "sha256": "7869d6ab6cdf73ea0dd69516ef19aef78f53f0c1e78725b751f11f676c8ea614",
+      "duration_seconds": 77.0,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "03-message-native-00001.00.png"
+        },
+        {
+          "second": 38.5,
+          "file": "03-message-native-00038.50.png"
+        },
+        {
+          "second": 76.0,
+          "file": "03-message-native-00076.00.png"
+        }
+      ]
+    },
+    {
+      "file": "03-message-receiver.webm",
+      "bytes": 1742627,
+      "sha256": "1a63068f07b0399e9d6e79701b1eb8ca930190107260fc14d37396d7453496f1",
+      "duration_seconds": 80.64,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "03-message-receiver-00001.00.png"
+        },
+        {
+          "second": 40.32,
+          "file": "03-message-receiver-00040.32.png"
+        },
+        {
+          "second": 79.64,
+          "file": "03-message-receiver-00079.64.png"
+        }
+      ]
+    },
+    {
+      "file": "03-message-workbench.webm",
+      "bytes": 3485226,
+      "sha256": "93ed83386a0df40e6cc8f3dfaa27faab7e2f5f2ba4ed5cbfdaadcba84d1b3694",
+      "duration_seconds": 82.68,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "03-message-workbench-00001.00.png"
+        },
+        {
+          "second": 41.34,
+          "file": "03-message-workbench-00041.34.png"
+        },
+        {
+          "second": 81.68,
+          "file": "03-message-workbench-00081.68.png"
+        }
+      ]
+    },
+    {
+      "file": "04-upload-native.webm",
+      "bytes": 6587566,
+      "sha256": "3de200737195fac5f897cd99826937592c5dfbeb354c8a881d06b088999fc6a5",
+      "duration_seconds": 82.96000000000001,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "04-upload-native-00001.00.png"
+        },
+        {
+          "second": 41.48,
+          "file": "04-upload-native-00041.48.png"
+        },
+        {
+          "second": 81.96,
+          "file": "04-upload-native-00081.96.png"
+        }
+      ]
+    },
+    {
+      "file": "04-upload-receiver.webm",
+      "bytes": 1886654,
+      "sha256": "8b4beeae04dd9ff3f2600fc6b48e9058efc08c3bff0a2c094a53b9d3d61ea1a9",
+      "duration_seconds": 85.52,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "04-upload-receiver-00001.00.png"
+        },
+        {
+          "second": 42.76,
+          "file": "04-upload-receiver-00042.76.png"
+        },
+        {
+          "second": 84.52,
+          "file": "04-upload-receiver-00084.52.png"
+        }
+      ]
+    },
+    {
+      "file": "04-upload-workbench.webm",
+      "bytes": 3205132,
+      "sha256": "1e0cf6eb59b2e6f2b16cbf1187d015b845d216b30aa86d66b0331a21abc5b8eb",
+      "duration_seconds": 88.08,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "04-upload-workbench-00001.00.png"
+        },
+        {
+          "second": 44.04,
+          "file": "04-upload-workbench-00044.04.png"
+        },
+        {
+          "second": 87.08,
+          "file": "04-upload-workbench-00087.08.png"
+        }
+      ]
+    },
+    {
+      "file": "05-form-native.webm",
+      "bytes": 5394995,
+      "sha256": "70069f5e77a579bb1182aed5e5f2db7e6c63d301ca382adabd0616891ecc2106",
+      "duration_seconds": 59.4,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "05-form-native-00001.00.png"
+        },
+        {
+          "second": 29.7,
+          "file": "05-form-native-00029.70.png"
+        },
+        {
+          "second": 58.4,
+          "file": "05-form-native-00058.40.png"
+        }
+      ]
+    },
+    {
+      "file": "05-form-receiver.webm",
+      "bytes": 2904857,
+      "sha256": "d380b3b75949ff71b47d281ee00c33d18fbfd955d314e27aca065b3e31d930bf",
+      "duration_seconds": 62.2,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "05-form-receiver-00001.00.png"
+        },
+        {
+          "second": 31.1,
+          "file": "05-form-receiver-00031.10.png"
+        },
+        {
+          "second": 61.2,
+          "file": "05-form-receiver-00061.20.png"
+        }
+      ]
+    },
+    {
+      "file": "05-form-workbench.webm",
+      "bytes": 2333391,
+      "sha256": "94bf5dbf5fa1b72a88704f0ed46143ec2cd90f4759cf39dd89e4571ca8c7f36f",
+      "duration_seconds": 64.56,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "05-form-workbench-00001.00.png"
+        },
+        {
+          "second": 32.28,
+          "file": "05-form-workbench-00032.28.png"
+        },
+        {
+          "second": 63.56,
+          "file": "05-form-workbench-00063.56.png"
+        }
+      ]
+    },
+    {
+      "file": "06-input-native.webm",
+      "bytes": 4033037,
+      "sha256": "0202888716895e6c0632215c97c3b05d3c7f1ed72460ba8d215f7729b64ecec1",
+      "duration_seconds": 59.0,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "06-input-native-00001.00.png"
+        },
+        {
+          "second": 29.5,
+          "file": "06-input-native-00029.50.png"
+        },
+        {
+          "second": 58.0,
+          "file": "06-input-native-00058.00.png"
+        }
+      ]
+    },
+    {
+      "file": "06-input-workbench.webm",
+      "bytes": 4558219,
+      "sha256": "48fefc37990fb6fc10984b34e53c86b1caf74f9dc90049b693786c0cb8bd8b06",
+      "duration_seconds": 62.6,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "06-input-workbench-00001.00.png"
+        },
+        {
+          "second": 31.3,
+          "file": "06-input-workbench-00031.30.png"
+        },
+        {
+          "second": 61.6,
+          "file": "06-input-workbench-00061.60.png"
+        }
+      ]
+    },
+    {
+      "file": "07-message-after-input-native.webm",
+      "bytes": 5123803,
+      "sha256": "6efd3dcf9e56b373e7617f1147d0c1e6957c75de337e912b648a4b0e6ec20da1",
+      "duration_seconds": 80.08,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "07-message-after-input-native-00001.00.png"
+        },
+        {
+          "second": 40.04,
+          "file": "07-message-after-input-native-00040.04.png"
+        },
+        {
+          "second": 79.08,
+          "file": "07-message-after-input-native-00079.08.png"
+        }
+      ]
+    },
+    {
+      "file": "07-message-after-input-receiver.webm",
+      "bytes": 5422407,
+      "sha256": "eab3c21cdff905073187020d48c84223fe6f7139aab5e1017b352d36c91fd082",
+      "duration_seconds": 83.72,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "07-message-after-input-receiver-00001.00.png"
+        },
+        {
+          "second": 41.86,
+          "file": "07-message-after-input-receiver-00041.86.png"
+        },
+        {
+          "second": 82.72,
+          "file": "07-message-after-input-receiver-00082.72.png"
+        }
+      ]
+    },
+    {
+      "file": "07-message-after-input-workbench.webm",
+      "bytes": 4419054,
+      "sha256": "9ba683a7194a02a6cd48c725203802a56cc1f23e8c88bbbfde525d6473d748f6",
+      "duration_seconds": 88.12,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "07-message-after-input-workbench-00001.00.png"
+        },
+        {
+          "second": 44.06,
+          "file": "07-message-after-input-workbench-00044.06.png"
+        },
+        {
+          "second": 87.12,
+          "file": "07-message-after-input-workbench-00087.12.png"
+        }
+      ]
+    },
+    {
+      "file": "08-review-only-native.webm",
+      "bytes": 7079750,
+      "sha256": "fd0dae906a58ae1e3e9a45eed04551fcd17ed65d7b2efe4d0314790e8981f3b8",
+      "duration_seconds": 85.4,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "08-review-only-native-00001.00.png"
+        },
+        {
+          "second": 42.7,
+          "file": "08-review-only-native-00042.70.png"
+        },
+        {
+          "second": 84.4,
+          "file": "08-review-only-native-00084.40.png"
+        }
+      ]
+    },
+    {
+      "file": "08-review-only-receiver.webm",
+      "bytes": 6032024,
+      "sha256": "5d18bc9db1d80cbc0bcbf8ce8d3f6c1b0425b920c855db59c365186a7efe5492",
+      "duration_seconds": 88.52,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "08-review-only-receiver-00001.00.png"
+        },
+        {
+          "second": 44.26,
+          "file": "08-review-only-receiver-00044.26.png"
+        },
+        {
+          "second": 87.52,
+          "file": "08-review-only-receiver-00087.52.png"
+        }
+      ]
+    },
+    {
+      "file": "08-review-only-workbench.webm",
+      "bytes": 4352371,
+      "sha256": "195440fc7e0584eac130b13686c6714ba63792b46e50b0d0f3b024667fc6a7e3",
+      "duration_seconds": 93.24000000000001,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "08-review-only-workbench-00001.00.png"
+        },
+        {
+          "second": 46.62,
+          "file": "08-review-only-workbench-00046.62.png"
+        },
+        {
+          "second": 92.24,
+          "file": "08-review-only-workbench-00092.24.png"
+        }
+      ]
+    },
+    {
+      "file": "09-sudo-native.webm",
+      "bytes": 5046947,
+      "sha256": "35558272bc0048a94759eaf2c609c49d4a816e6d6a2cbf99765edb96d0f97d4f",
+      "duration_seconds": 64.52,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "09-sudo-native-00001.00.png"
+        },
+        {
+          "second": 32.26,
+          "file": "09-sudo-native-00032.26.png"
+        },
+        {
+          "second": 63.52,
+          "file": "09-sudo-native-00063.52.png"
+        }
+      ]
+    },
+    {
+      "file": "09-sudo-workbench.webm",
+      "bytes": 5242242,
+      "sha256": "d727e545880e3ae140f8ac6e1fa93f6157933fa4755bf0de53ce85748a62a675",
+      "duration_seconds": 68.32,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "09-sudo-workbench-00001.00.png"
+        },
+        {
+          "second": 34.16,
+          "file": "09-sudo-workbench-00034.16.png"
+        },
+        {
+          "second": 67.32,
+          "file": "09-sudo-workbench-00067.32.png"
+        }
+      ]
+    },
+    {
+      "file": "10-new-native.webm",
+      "bytes": 1935828,
+      "sha256": "0bea35c01cccf6db4abb05087fe35912a3fd3f283d6fb9e9be462e07b2e66662",
+      "duration_seconds": 24.36,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "10-new-native-00001.00.png"
+        },
+        {
+          "second": 12.18,
+          "file": "10-new-native-00012.18.png"
+        },
+        {
+          "second": 23.36,
+          "file": "10-new-native-00023.36.png"
+        }
+      ]
+    },
+    {
+      "file": "11-paused-read-native.webm",
+      "bytes": 3284128,
+      "sha256": "09797ff78578947504ea88d382f991329ed37994d2f27058b930e23013a560cb",
+      "duration_seconds": 56.96,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "11-paused-read-native-00001.00.png"
+        },
+        {
+          "second": 28.48,
+          "file": "11-paused-read-native-00028.48.png"
+        },
+        {
+          "second": 55.96,
+          "file": "11-paused-read-native-00055.96.png"
+        }
+      ]
+    },
+    {
+      "file": "11-paused-read-workbench.webm",
+      "bytes": 4671353,
+      "sha256": "be4c1e4848b57d680d8844dbcc30bf105e7cf909f56e188c80c09ddbe65314cf",
+      "duration_seconds": 60.68,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "11-paused-read-workbench-00001.00.png"
+        },
+        {
+          "second": 30.34,
+          "file": "11-paused-read-workbench-00030.34.png"
+        },
+        {
+          "second": 59.68,
+          "file": "11-paused-read-workbench-00059.68.png"
+        }
+      ]
+    },
+    {
+      "file": "12-stop-workbench.webm",
+      "bytes": 1825178,
+      "sha256": "4d8cd10f34f26fc23b7a0ffa04725264233a5826ba26c26abb59f3abd4bb4750",
+      "duration_seconds": 25.2,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "12-stop-workbench-00001.00.png"
+        },
+        {
+          "second": 12.6,
+          "file": "12-stop-workbench-00012.60.png"
+        },
+        {
+          "second": 24.2,
+          "file": "12-stop-workbench-00024.20.png"
+        }
+      ]
+    }
+  ],
+  "original_location": "output/playwright/hermes-auto17",
+  "videos_in_public_export": false,
+  "screenshots": [
+    "screenshots/00-once-consent-before-create.png",
+    "screenshots/02-read-native-complete.png",
+    "screenshots/03-message-receiver-complete.png",
+    "screenshots/04-upload-native-complete.png",
+    "screenshots/05-form-receiver-complete.png",
+    "screenshots/06-input-native-complete.png",
+    "screenshots/07-message-after-input-receiver-complete.png",
+    "screenshots/08-review-only-native-complete.png",
+    "screenshots/08-review-only-workbench-complete.png",
+    "screenshots/09-sudo-workbench-complete.png",
+    "screenshots/10-new-native-complete.png",
+    "screenshots/11-paused-read-native-complete.png",
+    "screenshots/12-stopped-workbench.png"
+  ],
+  "reviewed_contact_sheets": 7,
+  "reviewed_sampled_frames": 78,
+  "all_26_full_decoded": true,
+  "limits": "Sampled visual review is not every-frame OCR or exact provider-key scanning."
+}

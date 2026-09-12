@@ -1,0 +1,223 @@
+{
+  "final_actions": [
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "199a796372c345549041a848e4116845",
+        "kind": "form",
+        "target_id": "intake",
+        "digest": "744d334b72db74c350166a275cf092e2370db940de4c8e472ab9a7a6405be052",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "c5f45925e92e4d719dd3fdfb28ba1cd2",
+        "created_at": "2026-09-12T11:18:07.613271+00:00",
+        "updated_at": "2026-09-12T11:18:07.618697+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T11:18:07.614612+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "9329436e654eee364b35fea340aa64eefb6c4524c3030175d23ffd8fe366a6bf",
+        "finished_at": "2026-09-12T11:18:07.618697+00:00",
+        "target_label": "合成报价表",
+        "proposal": {
+          "kind": "form",
+          "payload": {
+            "fields": {
+              "project": "HERMES-AUTO18",
+              "public_quote": "218000 元"
+            }
+          },
+          "target_id": "intake"
+        },
+        "target": {
+          "binding_digest": "6720cec0aeeb2a51375334bc5fd510c3f0d12024a0baa8b250367f73e7fc72c1",
+          "destination": "http://127.0.0.1:18966",
+          "form_fields": [
+            "project",
+            "public_quote"
+          ],
+          "kind": "form",
+          "label": "合成报价表",
+          "provider": "standard",
+          "target_id": "intake"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "f734b0f53b6b47088ac4739f355aedf1",
+        "kind": "upload",
+        "target_id": "archive",
+        "digest": "7c8a60dd10fe92c02e9cafdf1ebdc66ac148c0906cccb44947c1fcb32b1bd3fd",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "ed0955819a214298ac00914bdb512e20",
+        "created_at": "2026-09-12T11:18:06.262155+00:00",
+        "updated_at": "2026-09-12T11:18:06.269089+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T11:18:06.264028+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "9329436e654eee364b35fea340aa64eefb6c4524c3030175d23ffd8fe366a6bf",
+        "finished_at": "2026-09-12T11:18:06.269089+00:00",
+        "target_label": "合成资料库",
+        "proposal": {
+          "kind": "upload",
+          "payload": {
+            "content": "项目名称：HERMES-AUTO18\n对外报价：218000 元",
+            "filename": "HERMES-AUTO18_public_summary.txt"
+          },
+          "target_id": "archive"
+        },
+        "target": {
+          "binding_digest": "b0087d79a8548c6629b40160cc8ae34c830c37efd69a6eeeb16af298f12c3e1c",
+          "destination": "http://127.0.0.1:18966",
+          "form_fields": [],
+          "kind": "upload",
+          "label": "合成资料库",
+          "provider": "standard",
+          "target_id": "archive"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "e7e89ea3f3eb4ebbb93a4784980408e7",
+        "kind": "message",
+        "target_id": "team",
+        "digest": "963b853065927abb3c89799a47c6f05dbe3365ee9cfb73484b308ec88b166c46",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "d15ec2ae6c474c4db281810bacf02da4",
+        "created_at": "2026-09-12T11:18:04.260247+00:00",
+        "updated_at": "2026-09-12T11:18:04.266202+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T11:18:04.261864+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "9329436e654eee364b35fea340aa64eefb6c4524c3030175d23ffd8fe366a6bf",
+        "finished_at": "2026-09-12T11:18:04.266202+00:00",
+        "target_label": "合成项目群",
+        "proposal": {
+          "kind": "message",
+          "payload": {
+            "body": "项目名称：HERMES-AUTO18\n对外报价：218000 元"
+          },
+          "target_id": "team"
+        },
+        "target": {
+          "binding_digest": "a9b99be13d1c05182d91971994a7cc7643c04a87aabd35d6a4e6574aa29dacb9",
+          "destination": "http://127.0.0.1:18966",
+          "form_fields": [],
+          "kind": "message",
+          "label": "合成项目群",
+          "provider": "standard",
+          "target_id": "team"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    }
+  ],
+  "actual_receiver_records": [
+    {
+      "sequence": 1,
+      "recorded_at": "2026-09-12T11:18:04.264441+00:00",
+      "path": "/receive/team",
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 66,
+      "body_sha256": "b78aa2cc0be02106a871fcc94d95cb3079b3a382c5bafc2b485692fa827f6452",
+      "body_base64": "eyJib2R5Ijoi6aG555uu5ZCN56ew77yaSEVSTUVTLUFVVE8xOFxu5a+55aSW5oql5Lu377yaMjE4MDAwIOWFgyJ9",
+      "body_text": "{\"body\":\"项目名称：HERMES-AUTO18\\n对外报价：218000 元\"}",
+      "attempt_id": "d15ec2ae6c474c4db281810bacf02da4",
+      "target_id": "team",
+      "action_kind": "message"
+    },
+    {
+      "sequence": 2,
+      "recorded_at": "2026-09-12T11:18:06.267559+00:00",
+      "path": "/receive/archive",
+      "content_type": "multipart/form-data; boundary=Yuanxingmu_ed0955819a214298ac00914bdb512e20",
+      "body_bytes": 285,
+      "body_sha256": "8b52be32a11425946566b1cfb2393a6b806f053e0477e2dc0508904192bace6f",
+      "body_base64": "LS1ZdWFueGluZ211X2VkMDk1NTgxOWEyMTQyOThhYzAwOTE0YmRiNTEyZTIwDQpDb250ZW50LURpc3Bvc2l0aW9uOiBmb3JtLWRhdGE7IG5hbWU9ImZpbGUiOyBmaWxlbmFtZT0iSEVSTUVTLUFVVE8xOF9wdWJsaWNfc3VtbWFyeS50eHQiDQpDb250ZW50LVR5cGU6IHRleHQvcGxhaW47IGNoYXJzZXQ9dXRmLTgNCg0K6aG555uu5ZCN56ew77yaSEVSTUVTLUFVVE8xOArlr7nlpJbmiqXku7fvvJoyMTgwMDAg5YWDDQotLVl1YW54aW5nbXVfZWQwOTU1ODE5YTIxNDI5OGFjMDA5MTRiZGI1MTJlMjAtLQ0K",
+      "body_text": "--Yuanxingmu_ed0955819a214298ac00914bdb512e20\r\nContent-Disposition: form-data; name=\"file\"; filename=\"HERMES-AUTO18_public_summary.txt\"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n项目名称：HERMES-AUTO18\n对外报价：218000 元\r\n--Yuanxingmu_ed0955819a214298ac00914bdb512e20--\r\n",
+      "attempt_id": "ed0955819a214298ac00914bdb512e20",
+      "target_id": "archive",
+      "action_kind": "upload"
+    },
+    {
+      "sequence": 3,
+      "recorded_at": "2026-09-12T11:18:07.617188+00:00",
+      "path": "/receive/intake",
+      "content_type": "application/x-www-form-urlencoded; charset=utf-8",
+      "body_bytes": 51,
+      "body_sha256": "6073a341702b4acb955f44724eefee6fb133741f4f204b3786a763d1356986cc",
+      "body_base64": "cHJvamVjdD1IRVJNRVMtQVVUTzE4JnB1YmxpY19xdW90ZT0yMTgwMDArJUU1JTg1JTgz",
+      "body_text": "project=HERMES-AUTO18&public_quote=218000+%E5%85%83",
+      "attempt_id": "c5f45925e92e4d719dd3fdfb28ba1cd2",
+      "target_id": "intake",
+      "action_kind": "form"
+    }
+  ],
+  "expected_counts": {
+    "team": 1,
+    "archive": 1,
+    "intake": 1
+  },
+  "observed_counts": {
+    "team": 1,
+    "archive": 1,
+    "intake": 1
+  },
+  "wire_checks": [
+    {
+      "target_id": "team",
+      "kind": "message",
+      "bytes": 66,
+      "sha256": "b78aa2cc0be02106a871fcc94d95cb3079b3a382c5bafc2b485692fa827f6452",
+      "exact_wire_body_matches": true,
+      "attempt_id_matches": true,
+      "internal_floor_absent": true
+    },
+    {
+      "target_id": "archive",
+      "kind": "upload",
+      "bytes": 285,
+      "sha256": "8b52be32a11425946566b1cfb2393a6b806f053e0477e2dc0508904192bace6f",
+      "exact_wire_body_matches": true,
+      "attempt_id_matches": true,
+      "internal_floor_absent": true
+    },
+    {
+      "target_id": "intake",
+      "kind": "form",
+      "bytes": 51,
+      "sha256": "6073a341702b4acb955f44724eefee6fb133741f4f204b3786a763d1356986cc",
+      "exact_wire_body_matches": true,
+      "attempt_id_matches": true,
+      "internal_floor_absent": true
+    }
+  ]
+}

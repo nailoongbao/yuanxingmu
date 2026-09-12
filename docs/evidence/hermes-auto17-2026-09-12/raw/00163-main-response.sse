@@ -1,0 +1,8 @@
+data: {"id":"2026091218551450ac8bdbb27249b3","created":1789210514,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":"","tool_calls":[{"id":"call_39d5a43bd9624854b30f6769","index":0,"type":"function","function":{"name":"yuanxingmu_request_action","arguments":"{\"kind\": \"message\", \"target_id\": \"team\", \"payload\": {\"body\": \"项目 HERMES-AUTO15 的对外报价是186000元。\"}}"}}]}}]}
+
+data: {"id":"2026091218551450ac8bdbb27249b3","created":1789210514,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"2026091218551450ac8bdbb27249b3","created":1789210514,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"finish_reason":"tool_calls","delta":{"role":"assistant","content":""}}],"usage":{"prompt_tokens":6629,"completion_tokens":45,"total_tokens":6674,"prompt_tokens_details":{"cached_tokens":6400}}}
+
+data: [DONE]
+

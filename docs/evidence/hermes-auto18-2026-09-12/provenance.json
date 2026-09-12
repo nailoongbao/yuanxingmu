@@ -1,0 +1,54 @@
+{
+  "source_commit": "e886607d8f5b81d4674af3d5ed38f486b20c2aee",
+  "product_version": "0.6.0a1",
+  "official_hermes": "0.21.2 (2026.9.11)",
+  "git_blob_files_verified": 639,
+  "source_archive_sha256": "14d79c19247e13f26c536e3b75aa33b82c3639a0ee7159dea302c29bb5c9e186",
+  "profile_id": "00bf3fa7da974e448b940cb6ac2f1a0a",
+  "models": {
+    "url": "http://127.0.0.1:18112/main/v1",
+    "id": "glm-5.2",
+    "thinking": "disabled by disclosed relay"
+  },
+  "judge": {
+    "url": "http://127.0.0.1:18112/judge/v1",
+    "id": "glm-5.2",
+    "timeout_seconds": 45
+  },
+  "same_model_separate_requests": true,
+  "fixed_relay_sequence": {
+    "first": 187,
+    "last": 199
+  },
+  "windows_and_wsl_clocks_differ": true,
+  "linkage": "Fixed sequences and exact content hashes",
+  "source_sha256": {
+    "yuanxingmu/__init__.py": "360bb6288890fdd79ac4b956284f1e2602de4fcef4d1611ed69d3472507237d8",
+    "yuanxingmu/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
+    "yuanxingmu/action_automation.py": "5337a2fcec6fb2cc89f7903603618a7c51881e7f1ee30bd07cd3582345494a91",
+    "yuanxingmu/actions.py": "32d60e75b5141003936e55bd604689553b911acd4fa8736520494c0b39a4c770",
+    "yuanxingmu/authority.py": "33efe46adac1d3730ee80d00d15191c8425627d840c5c2cddb9c302ec3ccafd1",
+    "yuanxingmu/broker.py": "26656817796438cba39016df8513c63d76b2df944617e1ca19ad68b3d9a497ef",
+    "yuanxingmu/cli.py": "0b09478a9907b3f954e0bdefde205f6fa266a21e2eb8a0fd02d576647a581a65",
+    "yuanxingmu/client.py": "a3368da99492fd83ad84f0f15081ff3a89749245f1c81a7509d86386c8dbe421",
+    "yuanxingmu/demo.py": "6d13f20cdc9a493aff33988b3750e38aa33cf52fd790431b15b6175f9276eb46",
+    "yuanxingmu/gateway_network.py": "56a2f466926ae87e035f811a556d3ded3d35eeadf03c20e2fdc6b86f1dcbab6a",
+    "yuanxingmu/guards.py": "8422c646e75ca0478ce1dde98b95aa8d6cb85b939f8dc0a2aa5358584f2aebe4",
+    "yuanxingmu/hermes.py": "3fdfc082d65d18d4620dec221b87f63581dd56e97d41079a1eccbed9371994e0",
+    "yuanxingmu/hermes_backend.py": "4d0cf632a7e565d636eccb4e46584a17f76ef07665398be04ea370f9cf29384e",
+    "yuanxingmu/judge_profile.py": "3f5c3ab7356112cf2164d841d2c0abd3254cf1c1e91b35816afd4a0a47ccf3a7",
+    "yuanxingmu/mail_drafts.py": "5079e9f1c6498080982ebab6195eb60d7aa1a8820c938fcc94653ddf73f9691b",
+    "yuanxingmu/mail_transport.py": "91fc9d3611ba0b6206e766fb6a903daaf32ed5355c245533490fd2057ad8f7e1",
+    "yuanxingmu/model_output.py": "efc267af5e46c1bf9c07c044b024b2bc3411d4d47cf25beef526e608047d7979",
+    "yuanxingmu/notifications.py": "1245b9616479dd90182b3fe18031a47794b9c43df2b60b5965dfe6303434f6a9",
+    "yuanxingmu/openclaw.py": "0bb039ba527bcf89e12c164a390de9369116bf44a03fa7c04df57f74f8dccd8c",
+    "yuanxingmu/protection.py": "77107cf0bb97708a6a5c3651388f16886b0a96a4de57f2a5ff94654aec77d8cb",
+    "yuanxingmu/quarantine.py": "a06c7524423fd1395996c062abca83defcef93140b2d00cc6f655e1ebaed2cbd",
+    "yuanxingmu/receipts.py": "a69ebeebd499526418fa23797168ee9b83c686e232c315f52db71e634c694882",
+    "yuanxingmu/run.py": "42662b7ae71dabfbf069ebd58a1b89e2a90929895ea427921bc3c1a0082d381a",
+    "yuanxingmu/sandbox.py": "dd693c87fe532150b55cce2e3ced72fd6dae7c04520dd595434cfb2306305d23",
+    "yuanxingmu/skills.py": "6d025da49ecae1a61c99f01bb7b566e47fe050823290d680901f502cccb5cb36",
+    "yuanxingmu/tool_reviews.py": "3ac948c28947c3eb76b2ebc93aea0d475a0b28b92a7b5f0984cd8d607ed50dfe",
+    "yuanxingmu/worker.py": "3aa6977d8dd049f178135783d7f925915b855cea251952dda670a67469618f53"
+  }
+}

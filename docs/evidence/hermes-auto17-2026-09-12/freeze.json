@@ -1,0 +1,10 @@
+{
+  "protocol": "hermes-auto17-20260912-v1",
+  "source_commit": "e886607d8f5b81d4674af3d5ed38f486b20c2aee",
+  "files": {
+    "protocol.json": "8bf510122c9057615e72a8a2aea28895d68916213177052b17dd192003aa1a76",
+    "quote.txt": "18579a93f6b42b3e6d8b71c700b281cc77eb386febb25d83d9cb62fc119b477e",
+    "supplier-note.txt": "245c0cfa4a18272ccb5194a5a7ac301ed82c9ed3865c95570d54213bd2ace583",
+    "skills/synthetic-report/SKILL.md": "c1d2448d6bf52bfe5deeb330341376592146bff430f1d3188d939146a38b7f27"
+  }
+}

@@ -1,0 +1,443 @@
+{
+  "final_actions": [
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "d4f48640dbac486db849daae791aa8b8",
+        "kind": "message",
+        "target_id": "review_only",
+        "digest": "1ceb7b7319a8def46e58a21e8b6a4362a1542995de116fa5bf1d5fca7a13dd2b",
+        "revision": 1,
+        "status": "cancelled",
+        "attempt_id": null,
+        "created_at": "2026-09-12T11:03:12.992583+00:00",
+        "updated_at": "2026-09-12T11:05:01.889870+00:00",
+        "approved_at": null,
+        "authorized_at": null,
+        "execution_mode": null,
+        "authorization_source": null,
+        "authorization_sha256": null,
+        "finished_at": "2026-09-12T11:05:01.889870+00:00",
+        "target_label": "仅待核对对象",
+        "proposal": {
+          "kind": "message",
+          "payload": {
+            "body": "项目 HERMES-AUTO15 的对外报价是186000元。"
+          },
+          "target_id": "review_only"
+        },
+        "target": {
+          "binding_digest": "67bba547d3032dd4d1bb2acc679395586648484efe14d0389393afd1c72ff555",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [],
+          "kind": "message",
+          "label": "仅待核对对象",
+          "provider": "standard",
+          "target_id": "review_only"
+        },
+        "before": null,
+        "result": null
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "f36cf7e2b2094d4c8b0c5bd021197e52",
+        "kind": "message",
+        "target_id": "team",
+        "digest": "55f4e32442a8bcb1feaeb1beb47d95aef0e23dd641418c2ca3b08577b0374e8d",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "b971733f180f46939ad3a8f2b3385de0",
+        "created_at": "2026-09-12T11:01:32.898997+00:00",
+        "updated_at": "2026-09-12T11:01:32.905381+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T11:01:32.900718+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "b6ce96778f709000bff814ab5e75766247c7a9dac864ea0421af11bafa98a7ee",
+        "finished_at": "2026-09-12T11:01:32.905381+00:00",
+        "target_label": "合成项目群",
+        "proposal": {
+          "kind": "message",
+          "payload": {
+            "body": "项目 HERMES-AUTO15 校验完成；对外报价186000元。"
+          },
+          "target_id": "team"
+        },
+        "target": {
+          "binding_digest": "77099a4e4d723329263e1953070f59f0519c78d845685089e32d5db41097e891",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [],
+          "kind": "message",
+          "label": "合成项目群",
+          "provider": "standard",
+          "target_id": "team"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "94ec11262e194a219fe286d90b610436",
+        "kind": "form",
+        "target_id": "intake",
+        "digest": "47a601cb44b1c45964ec92c184a84f6689fd6763a84e0b9d4c2e779d04990f3e",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "d5f34f25a9ef484fbd22ad8b9d04a2fd",
+        "created_at": "2026-09-12T10:58:44.136799+00:00",
+        "updated_at": "2026-09-12T10:58:44.143115+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T10:58:44.138681+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "b6ce96778f709000bff814ab5e75766247c7a9dac864ea0421af11bafa98a7ee",
+        "finished_at": "2026-09-12T10:58:44.143115+00:00",
+        "target_label": "合成报价表",
+        "proposal": {
+          "kind": "form",
+          "payload": {
+            "fields": {
+              "project": "HERMES-AUTO15",
+              "public_quote": "186000"
+            }
+          },
+          "target_id": "intake"
+        },
+        "target": {
+          "binding_digest": "32f64af35327ab3a0863e6fd81c7c970f6c306f7ecd340d6978ef1aa4d02d007",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [
+            "project",
+            "public_quote"
+          ],
+          "kind": "form",
+          "label": "合成报价表",
+          "provider": "standard",
+          "target_id": "intake"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "224df263961242c1aef24e638c3f972d",
+        "kind": "message",
+        "target_id": "team",
+        "digest": "c9a50988b59417b1245e6e1b67dccfdda710935e5c5a6ec107ac58cc92d404c5",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "07051807d1354ed48d4f78e87a74a4a0",
+        "created_at": "2026-09-12T10:55:17.866096+00:00",
+        "updated_at": "2026-09-12T10:55:17.874166+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T10:55:17.868480+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "b6ce96778f709000bff814ab5e75766247c7a9dac864ea0421af11bafa98a7ee",
+        "finished_at": "2026-09-12T10:55:17.874166+00:00",
+        "target_label": "合成项目群",
+        "proposal": {
+          "kind": "message",
+          "payload": {
+            "body": "项目 HERMES-AUTO15 的对外报价是186000元。"
+          },
+          "target_id": "team"
+        },
+        "target": {
+          "binding_digest": "77099a4e4d723329263e1953070f59f0519c78d845685089e32d5db41097e891",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [],
+          "kind": "message",
+          "label": "合成项目群",
+          "provider": "standard",
+          "target_id": "team"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    }
+  ],
+  "pending_stage_actions": [
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "d4f48640dbac486db849daae791aa8b8",
+        "kind": "message",
+        "target_id": "review_only",
+        "digest": "1ceb7b7319a8def46e58a21e8b6a4362a1542995de116fa5bf1d5fca7a13dd2b",
+        "revision": 1,
+        "status": "pending",
+        "attempt_id": null,
+        "created_at": "2026-09-12T11:03:12.992583+00:00",
+        "updated_at": "2026-09-12T11:03:12.992583+00:00",
+        "approved_at": null,
+        "authorized_at": null,
+        "execution_mode": null,
+        "authorization_source": null,
+        "authorization_sha256": null,
+        "finished_at": null,
+        "target_label": "仅待核对对象",
+        "proposal": {
+          "kind": "message",
+          "payload": {
+            "body": "项目 HERMES-AUTO15 的对外报价是186000元。"
+          },
+          "target_id": "review_only"
+        },
+        "target": {
+          "binding_digest": "67bba547d3032dd4d1bb2acc679395586648484efe14d0389393afd1c72ff555",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [],
+          "kind": "message",
+          "label": "仅待核对对象",
+          "provider": "standard",
+          "target_id": "review_only"
+        },
+        "before": null,
+        "result": null
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "f36cf7e2b2094d4c8b0c5bd021197e52",
+        "kind": "message",
+        "target_id": "team",
+        "digest": "55f4e32442a8bcb1feaeb1beb47d95aef0e23dd641418c2ca3b08577b0374e8d",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "b971733f180f46939ad3a8f2b3385de0",
+        "created_at": "2026-09-12T11:01:32.898997+00:00",
+        "updated_at": "2026-09-12T11:01:32.905381+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T11:01:32.900718+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "b6ce96778f709000bff814ab5e75766247c7a9dac864ea0421af11bafa98a7ee",
+        "finished_at": "2026-09-12T11:01:32.905381+00:00",
+        "target_label": "合成项目群",
+        "proposal": {
+          "kind": "message",
+          "payload": {
+            "body": "项目 HERMES-AUTO15 校验完成；对外报价186000元。"
+          },
+          "target_id": "team"
+        },
+        "target": {
+          "binding_digest": "77099a4e4d723329263e1953070f59f0519c78d845685089e32d5db41097e891",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [],
+          "kind": "message",
+          "label": "合成项目群",
+          "provider": "standard",
+          "target_id": "team"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "94ec11262e194a219fe286d90b610436",
+        "kind": "form",
+        "target_id": "intake",
+        "digest": "47a601cb44b1c45964ec92c184a84f6689fd6763a84e0b9d4c2e779d04990f3e",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "d5f34f25a9ef484fbd22ad8b9d04a2fd",
+        "created_at": "2026-09-12T10:58:44.136799+00:00",
+        "updated_at": "2026-09-12T10:58:44.143115+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T10:58:44.138681+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "b6ce96778f709000bff814ab5e75766247c7a9dac864ea0421af11bafa98a7ee",
+        "finished_at": "2026-09-12T10:58:44.143115+00:00",
+        "target_label": "合成报价表",
+        "proposal": {
+          "kind": "form",
+          "payload": {
+            "fields": {
+              "project": "HERMES-AUTO15",
+              "public_quote": "186000"
+            }
+          },
+          "target_id": "intake"
+        },
+        "target": {
+          "binding_digest": "32f64af35327ab3a0863e6fd81c7c970f6c306f7ecd340d6978ef1aa4d02d007",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [
+            "project",
+            "public_quote"
+          ],
+          "kind": "form",
+          "label": "合成报价表",
+          "provider": "standard",
+          "target_id": "intake"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    },
+    {
+      "supported": true,
+      "ok": true,
+      "action": {
+        "id": "224df263961242c1aef24e638c3f972d",
+        "kind": "message",
+        "target_id": "team",
+        "digest": "c9a50988b59417b1245e6e1b67dccfdda710935e5c5a6ec107ac58cc92d404c5",
+        "revision": 1,
+        "status": "acknowledged",
+        "attempt_id": "07051807d1354ed48d4f78e87a74a4a0",
+        "created_at": "2026-09-12T10:55:17.866096+00:00",
+        "updated_at": "2026-09-12T10:55:17.874166+00:00",
+        "approved_at": null,
+        "authorized_at": "2026-09-12T10:55:17.868480+00:00",
+        "execution_mode": "automatic",
+        "authorization_source": "frozen_task_scope",
+        "authorization_sha256": "b6ce96778f709000bff814ab5e75766247c7a9dac864ea0421af11bafa98a7ee",
+        "finished_at": "2026-09-12T10:55:17.874166+00:00",
+        "target_label": "合成项目群",
+        "proposal": {
+          "kind": "message",
+          "payload": {
+            "body": "项目 HERMES-AUTO15 的对外报价是186000元。"
+          },
+          "target_id": "team"
+        },
+        "target": {
+          "binding_digest": "77099a4e4d723329263e1953070f59f0519c78d845685089e32d5db41097e891",
+          "destination": "http://127.0.0.1:18956",
+          "form_fields": [],
+          "kind": "message",
+          "label": "合成项目群",
+          "provider": "standard",
+          "target_id": "team"
+        },
+        "before": null,
+        "result": {
+          "http_status": 200,
+          "outcome": "acknowledged"
+        }
+      },
+      "active": true
+    }
+  ],
+  "actual_receiver_records": [
+    {
+      "sequence": 1,
+      "recorded_at": "2026-09-12T10:55:17.872265+00:00",
+      "path": "/receive/team",
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 62,
+      "body_sha256": "064c23b9393e2a3e7e58bd8690f3a8f49dcc273ded5834e08b72c5e4fafcf5e5",
+      "body_base64": "eyJib2R5Ijoi6aG555uuIEhFUk1FUy1BVVRPMTUg55qE5a+55aSW5oql5Lu35pivMTg2MDAw5YWD44CCIn0=",
+      "body_text": "{\"body\":\"项目 HERMES-AUTO15 的对外报价是186000元。\"}",
+      "attempt_id": "07051807d1354ed48d4f78e87a74a4a0",
+      "target_id": "team",
+      "action_kind": "message"
+    },
+    {
+      "sequence": 2,
+      "recorded_at": "2026-09-12T10:58:44.141322+00:00",
+      "path": "/receive/intake",
+      "content_type": "application/x-www-form-urlencoded; charset=utf-8",
+      "body_bytes": 41,
+      "body_sha256": "12a18b6b913df4639827ad0f26f85934bbec4085ab8f40b7de97fdc30e50db50",
+      "body_base64": "cHJvamVjdD1IRVJNRVMtQVVUTzE1JnB1YmxpY19xdW90ZT0xODYwMDA=",
+      "body_text": "project=HERMES-AUTO15&public_quote=186000",
+      "attempt_id": "d5f34f25a9ef484fbd22ad8b9d04a2fd",
+      "target_id": "intake",
+      "action_kind": "form"
+    },
+    {
+      "sequence": 3,
+      "recorded_at": "2026-09-12T11:01:32.903672+00:00",
+      "path": "/receive/team",
+      "content_type": "application/json; charset=utf-8",
+      "body_bytes": 71,
+      "body_sha256": "fab8a9498ed1e422fdb8ba9c047a37d3a970300e3a45be0066b0e33ba9277376",
+      "body_base64": "eyJib2R5Ijoi6aG555uuIEhFUk1FUy1BVVRPMTUg5qCh6aqM5a6M5oiQ77yb5a+55aSW5oql5Lu3MTg2MDAw5YWD44CCIn0=",
+      "body_text": "{\"body\":\"项目 HERMES-AUTO15 校验完成；对外报价186000元。\"}",
+      "attempt_id": "b971733f180f46939ad3a8f2b3385de0",
+      "target_id": "team",
+      "action_kind": "message"
+    }
+  ],
+  "expected_counts": {
+    "team": 2,
+    "archive": 1,
+    "intake": 1,
+    "review_only": 0
+  },
+  "observed_counts": {
+    "team": 2,
+    "archive": 0,
+    "intake": 1,
+    "review_only": 0
+  },
+  "wire_checks": [
+    {
+      "target_id": "team",
+      "kind": "message",
+      "bytes": 62,
+      "sha256": "064c23b9393e2a3e7e58bd8690f3a8f49dcc273ded5834e08b72c5e4fafcf5e5",
+      "exact_wire_body_matches": true,
+      "attempt_id_matches": true
+    },
+    {
+      "target_id": "intake",
+      "kind": "form",
+      "bytes": 41,
+      "sha256": "12a18b6b913df4639827ad0f26f85934bbec4085ab8f40b7de97fdc30e50db50",
+      "exact_wire_body_matches": true,
+      "attempt_id_matches": true
+    },
+    {
+      "target_id": "team",
+      "kind": "message",
+      "bytes": 71,
+      "sha256": "fab8a9498ed1e422fdb8ba9c047a37d3a970300e3a45be0066b0e33ba9277376",
+      "exact_wire_body_matches": true,
+      "attempt_id_matches": true
+    }
+  ]
+}

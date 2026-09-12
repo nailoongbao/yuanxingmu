@@ -1,0 +1,118 @@
+{
+  "original_recordings": [
+    {
+      "file": "00-register-and-consent-workbench.webm",
+      "bytes": 4132101,
+      "sha256": "06d74cbfe5fe1d7402e868c2c89ccfd72c9c3f2afb2b3085af25215f6013853d",
+      "duration_seconds": 74.96000000000001,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "00-register-and-consent-workbench-00001.00.png"
+        },
+        {
+          "second": 37.48,
+          "file": "00-register-and-consent-workbench-00037.48.png"
+        },
+        {
+          "second": 73.96,
+          "file": "00-register-and-consent-workbench-00073.96.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-native.webm",
+      "bytes": 11799563,
+      "sha256": "1ffe631b6b4e6dcee8f972201096d17c57f80fbca2de1bc449aa114a2908c894",
+      "duration_seconds": 182.6,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-native-00001.00.png"
+        },
+        {
+          "second": 91.3,
+          "file": "01-natural-task-native-00091.30.png"
+        },
+        {
+          "second": 181.6,
+          "file": "01-natural-task-native-00181.60.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-receiver.webm",
+      "bytes": 11116699,
+      "sha256": "abc524337ecd7469b87f03fe3201a12121fc7321b1d5680db8d569d2693bcdc0",
+      "duration_seconds": 183.24,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-receiver-00001.00.png"
+        },
+        {
+          "second": 91.62,
+          "file": "01-natural-task-receiver-00091.62.png"
+        },
+        {
+          "second": 182.24,
+          "file": "01-natural-task-receiver-00182.24.png"
+        }
+      ]
+    },
+    {
+      "file": "01-natural-task-workbench.webm",
+      "bytes": 10120616,
+      "sha256": "a69f8a4ee6d143c590f830604c5559c944c2fa10f0e47792d4644b0d94c13bf0",
+      "duration_seconds": 197.84,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-natural-task-workbench-00001.00.png"
+        },
+        {
+          "second": 98.92,
+          "file": "01-natural-task-workbench-00098.92.png"
+        },
+        {
+          "second": 196.84,
+          "file": "01-natural-task-workbench-00196.84.png"
+        }
+      ]
+    }
+  ],
+  "original_location": "output/playwright/hermes-auto18",
+  "videos_in_public_export": false,
+  "screenshots": [
+    "screenshots/00-once-consent-before-create.png",
+    "screenshots/01-natural-task-native-complete.png",
+    "screenshots/01-natural-task-receiver-complete.png",
+    "screenshots/01-natural-task-workbench-complete.png",
+    "screenshots/01-protection-complete.png",
+    "screenshots/12-stopped-workbench.png"
+  ],
+  "reviewed_contact_sheets": 1,
+  "reviewed_sampled_frames": 12,
+  "all_full_decoded": true,
+  "limits": "No every-frame OCR or exact provider-key scan is claimed."
+}

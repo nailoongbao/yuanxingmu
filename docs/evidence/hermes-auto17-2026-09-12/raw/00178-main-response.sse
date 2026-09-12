@@ -1,0 +1,8 @@
+data: {"id":"202609121901297235b1b1fdba4930","created":1789210889,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"tool_calls":[{"id":"01a095478ef290b87e42014ae92d6d83","index":0,"type":"function","function":{"name":"yuanxingmu_request_action","arguments":"{\"kind\": \"message\", \"payload\": {\"body\": \"项目 HERMES-AUTO15 校验完成；对外报价186000元。\"}, \"target_id\": \"team\"}"}}]}}]}
+
+data: {"id":"202609121901297235b1b1fdba4930","created":1789210889,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"202609121901297235b1b1fdba4930","created":1789210889,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"finish_reason":"tool_calls","delta":{"role":"assistant","content":""}}],"usage":{"prompt_tokens":8361,"completion_tokens":47,"total_tokens":8408,"prompt_tokens_details":{"cached_tokens":7488},"completion_tokens_details":{"reasoning_tokens":0}}}
+
+data: [DONE]
+

@@ -1,0 +1,8 @@
+data: {"id":"20260912190007ab82f9fa04c444a8","created":1789210808,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"tool_calls":[{"id":"01a0954653a600b704059aaca7a9cf17","index":0,"type":"function","function":{"name":"yuanxingmu_read","arguments":"{\"resource\": \"supplier_note\"}"}}]}}]}
+
+data: {"id":"20260912190007ab82f9fa04c444a8","created":1789210808,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"20260912190007ab82f9fa04c444a8","created":1789210808,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"finish_reason":"tool_calls","delta":{"role":"assistant","content":""}}],"usage":{"prompt_tokens":8152,"completion_tokens":14,"total_tokens":8166,"prompt_tokens_details":{"cached_tokens":7488},"completion_tokens_details":{"reasoning_tokens":0}}}
+
+data: [DONE]
+

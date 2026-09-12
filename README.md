@@ -2,21 +2,36 @@
 
 **Give AI the files it needs. Keep control of its permissions.**
 
-Let AI read a quote and draft an email. Review the recipient and full text, edit anything that needs changing, then decide whether to send. Yuanxingmu keeps each work item separate and lets you stop, reopen, or revoke its document access. The drafting tool cannot confirm a send for you. Your selected model service still receives the conversation and documents used for the task.
+**0.6 preview.** The 0.6 runtime package is published; installer 0.3 is still awaiting publication. The recorded runs below are not a completed acceptance of the full protocol.
+
+Select the documents and fixed recipients once, then let AI send messages, upload text, or fill forms within that scope. Each action still passes permission, content, and budget checks. Yuanxingmu keeps each work item separate and lets you stop, reopen, or revoke its document access. Your selected model service still receives the conversation and documents used for the task.
 
 [中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/yuanxingmu/) · [Watch the demo](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
 
 [Watch five narrated Hermes defense recordings](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-five-layers): external instructions, memory poisoning, task drift, dangerous commands, and unsafe skills. These real GLM-5.2 recordings bind commit `6881138`. The newer automatic workflow's [failed first run](docs/evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md) and [authorization-context fix](docs/evidence/review-facts-2026-09-12/REPORT.zh-CN.md) are recorded separately.
 
-![Yuanxingmu: let AI work within your permissions](site/assets/yuanxingmu-public-v03-poster.svg)
+![Yuanxingmu: let AI work within your permissions](site/assets/yuanxingmu-public-v06-poster.svg)
 
 **Linux research prototype.** Verified with real bubblewrap, SQLite, isolated processes and an independent HTTP receiver using synthetic data. No attack-model evaluation or production protection rate. The repository and system are both named Yuanxingmu (元星木).
 
 The development tree now includes layered checks for external instructions, memory changes, task drift, dangerous commands, and selected skills; host approvals, persistent pause/recovery, and buffered response review; and an official Hermes integration. The [AgentWard feature comparison](docs/agentward-coverage.zh-CN.md) links the actual source, tests, observed failures, and remaining gaps. [Framework support](docs/framework-support.zh-CN.md) distinguishes SDK tool tests from complete native runs. These additions are not yet in the existing installer or older videos. Current small-model trials include false positives on legitimate local writes; they are not evidence of production readiness or overall superiority.
 
-## Draft first. Review before sending.
+## Set the scope once
 
-The development version also supports [creation-time automatic action scopes](docs/automatic-work.zh-CN.md). Select fixed recipients once; messages, text uploads and forms execute after passing host permission and defense checks. Completely withheld malicious input no longer requires resuming unrelated work. Unknown outcomes are never automatically retried, and existing drafting tools remain inert. This capability is not included in the older installer.
+The development version supports [creation-time automatic action scopes](docs/automatic-work.zh-CN.md). Messages, text uploads and forms execute after passing host permission and defense checks. Completely withheld malicious input no longer requires resuming unrelated work. An unknown result cannot be automatically retried with the same target and normalized content simply by changing the request ID. A request for a registered target outside the automatic scope only creates a pending record on the host; it sends no content to that target. This capability is not included in the older installer.
+
+[AUTO16](docs/evidence/hermes-auto16-2026-09-12/REPORT.zh-CN.md) recorded four actual automatic receipts without per-action approval, including a message after malicious input was withheld. It then stopped early on an unselected target; that failure is preserved. The [pending-request fix](docs/evidence/pending-effect-2026-09-12/REPORT.zh-CN.md) includes the original model responses and records both a secret-disclosure miss in an intermediate version and an invalid judge response in the final component run.
+
+[Watch the 2:02 AUTO16 recording](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-auto16-flow): the operator still gives each task step, while in-scope actions need no individual approval. The video binds source `a34dafb`; stage 08 was incorrectly blocked before a pending request was created, and later stages were not run.
+
+Newer evidence preserves the failures as well:
+
+- [AUTO17](docs/evidence/hermes-auto17-2026-09-12/REPORT.zh-CN.md): three automatic submissions arrived, but malformed model arguments prevented the upload from starting. A pending request was created; a later privileged command was blocked, and a new chat could not bypass the pause. The normal workflow and full protocol both remain incomplete.
+- [AUTO18](docs/evidence/hermes-auto18-2026-09-12/REPORT.zh-CN.md): one natural task produced three correct automatic submissions, but the internal floor price appeared in **two displayed assistant replies**. The judge returned validly formatted but incorrect allow decisions both times. The malicious source text was withheld before reaching the worker, so this is **reply disclosure and judge false allows, not demonstrated successful prompt injection**. Three successful submissions do not mean the full protocol passed.
+
+AUTO17 and AUTO18 bind source `e886607`. Later development changes do not alter these recorded outcomes or constitute a new native verification run.
+
+## Review drafts before sending
 
 New workbench profiles support email drafts. Review and edit the recipient, subject and full text, then confirm that exact message. Repeated confirmation cannot create another submission attempt; interrupted sends are never retried automatically. Approval does not grant the agent general sending permission.
 
@@ -66,7 +81,7 @@ The receiver should record exactly **two permitted internal sends and one indepe
 
 The policy does not rely on recognizing malicious wording or recovering secrets from encoded text. It checks what information the task already obtained and where that task may send.
 
-**The tradeoff is conservative blocking:** even a harmless public summary is blocked after a private read. Automatic declassification is not implemented. Fresh public tasks need separately selected public inputs; a workspace cannot be rebound to a different task through the operator CLI.
+**The tradeoff is conservative blocking:** after reading private data, the task cannot send even a harmless summary to a destination that is not authorized for those data labels. A creation-time automatic scope can explicitly authorize a fixed destination to receive private task data; it does not remove labels or override content restrictions. Automatic declassification is not implemented. Fresh public tasks need separately selected public inputs; a workspace cannot be rebound to a different task through the operator CLI.
 
 ## Run your own command
 

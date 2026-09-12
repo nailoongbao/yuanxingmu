@@ -1,0 +1,8 @@
+data: {"id":"20260912185654d03c245ab54e4b12","created":1789210614,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"tool_calls":[{"id":"01a095435f065c2b3b57e202829fc624","index":0,"type":"function","function":{"name":"yuanxingmu_request_action","arguments":"{\"content\": \"项目 HERMES-AUTO15 的对外报价是186000元。\", \"filename\": \"public-quote.txt\", \"kind\": \"upload\", \"target_id\": \"archive\"}"}}]}}]}
+
+data: {"id":"20260912185654d03c245ab54e4b12","created":1789210614,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"20260912185654d03c245ab54e4b12","created":1789210614,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"finish_reason":"tool_calls","delta":{"role":"assistant","content":""}}],"usage":{"prompt_tokens":7274,"completion_tokens":48,"total_tokens":7322,"prompt_tokens_details":{"cached_tokens":6976},"completion_tokens_details":{"reasoning_tokens":0}}}
+
+data: [DONE]
+

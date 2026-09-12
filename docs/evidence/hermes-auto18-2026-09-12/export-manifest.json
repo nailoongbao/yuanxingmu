@@ -1,0 +1,125 @@
+{
+  "exported_at": "2026-09-12T11:27:34.900666+00:00",
+  "source_bundle": ".research/hermes-auto18-20260912",
+  "source_commit": "e886607d8f5b81d4674af3d5ed38f486b20c2aee",
+  "git_blob_files_verified": 639,
+  "network_or_model_calls": 0,
+  "original_byte_copies": {
+    "protocol.json": {
+      "bytes": 6101,
+      "sha256": "b290b5e42f2b20c0777838da5c1191d9afee5e2ca30a6afb6f29a4d50f8eb79d"
+    },
+    "PLAN.zh-CN.md": {
+      "bytes": 3206,
+      "sha256": "9eba56c1cafc17769425aaa03ab6afa56cfc21c5a24244014d6be19acccfd665"
+    },
+    "freeze.json": {
+      "bytes": 598,
+      "sha256": "1b53f83cf435a3d46502b08a0b754de9f7ce9e795978caf6a8c15825b6d15939"
+    },
+    "verification.json": {
+      "bytes": 6554,
+      "sha256": "4236db8049abca6a15359486ca5475235a84ff89c2268ab0cbf60670fa358fe8"
+    },
+    "operator-audit.json": {
+      "bytes": 4920,
+      "sha256": "a8469868a90af6b6d21bae903873abddf86534075769cd727dade4827a2d3bd7"
+    },
+    "quote.txt": {
+      "bytes": 184,
+      "sha256": "9725ffbffeb2decaab06eecbc2ddc4b2bb92f7e8aff2b6e989caef95ed5f961b"
+    },
+    "supplier-note.txt": {
+      "bytes": 194,
+      "sha256": "c972cc82c498477c5ed0d63ee27c0561bdd697a22e8523a6e28fa4eda39fe844"
+    },
+    "selected-SKILL.md": {
+      "bytes": 357,
+      "sha256": "c1d2448d6bf52bfe5deeb330341376592146bff430f1d3188d939146a38b7f27"
+    },
+    "cleanup.json": {
+      "bytes": 1488,
+      "sha256": "78f9eb6e6bd9acdaa25e8891ffc685232c150d9936c999707277d34f04da7780"
+    },
+    "defense-events.jsonl": {
+      "bytes": 23122,
+      "sha256": "c3bee364f2b80d3dd11f86414ca3cd38745c094932b442d131a01b10be12f8f5"
+    },
+    "raw/00187-judge.json": {
+      "bytes": 6263,
+      "sha256": "109b73a254dc642f7a85a7757109b7e5ccab105267695a5d63f1082eecfd6645"
+    },
+    "raw/00188-judge.json": {
+      "bytes": 8547,
+      "sha256": "91b7200bccb3809c2b95ef8b161a2092e8900af3feb23b64d40b4902c83c2ad8"
+    },
+    "raw/00190-judge.json": {
+      "bytes": 6733,
+      "sha256": "c8ce55b37a128f8bde2c66d9fddcb62887d08fa316bd0428cf8c2249b8ea0ba0"
+    },
+    "raw/00191-judge.json": {
+      "bytes": 5864,
+      "sha256": "bf5766ae91aa23d92c573080c051670cd0514b79e034965463caad07403f8252"
+    },
+    "raw/00192-judge.json": {
+      "bytes": 5806,
+      "sha256": "717e398796bce94c729b2f34da5ef8ec493b4bc7ce47322571b4886cf4347108"
+    },
+    "raw/00194-judge.json": {
+      "bytes": 7361,
+      "sha256": "aff2ba46e38c180fddb15d2fb56032789c37f5e13f98e7a4bcb2d85515d62e67"
+    },
+    "raw/00195-judge.json": {
+      "bytes": 7066,
+      "sha256": "4aa4b868419f5b1dc2c819aaa8eee259ea04d7cb482c885a56a48fc5b5f3c804"
+    },
+    "raw/00196-judge.json": {
+      "bytes": 7295,
+      "sha256": "bd1315f5466b975679680e406381a8e1221f5da2baa31bcfbd43d541327738b0"
+    },
+    "raw/00197-judge.json": {
+      "bytes": 7433,
+      "sha256": "96649584d8cccafc8190a327d857ced83852655cd5b2fd006017726b5e9c7723"
+    },
+    "raw/00199-judge.json": {
+      "bytes": 8673,
+      "sha256": "223e1924ea49772ee873f36965ffae24196501f34b98bb6e50f1bb30104c7013"
+    },
+    "raw/00189-main-response.sse": {
+      "bytes": 3426,
+      "sha256": "50eedd2b97c03343b8d0c8ecc1261072ca0ee32eda761c62810e64d6a7bc75e9"
+    },
+    "raw/00193-main-response.sse": {
+      "bytes": 16001,
+      "sha256": "e5593d1b88a1d39edf74c1d1a423de19a8c516dc00f2e32eb1a6c367f4344bb1"
+    },
+    "raw/00198-main-response.sse": {
+      "bytes": 32974,
+      "sha256": "9e1c46063ed13ed5b06b6cb3f6b54515356175362fa621f6335e75a84d3a85cb"
+    },
+    "screenshots/00-once-consent-before-create.png": {
+      "bytes": 63556,
+      "sha256": "be9851b241225c863afb5d8f64ed51e85e91939eb45f4aee1b0dbf8120e1d592"
+    },
+    "screenshots/01-natural-task-native-complete.png": {
+      "bytes": 107343,
+      "sha256": "52266c8797ef3e4e1d434e1a9bf5294e5c8a3b3bfef1b3c57b80be922e8aacb0"
+    },
+    "screenshots/01-natural-task-receiver-complete.png": {
+      "bytes": 67958,
+      "sha256": "a35a6f4842ebf3d51c18ce743fe89df3b3c7303ebf6e7108ab6ea493862a5000"
+    },
+    "screenshots/01-natural-task-workbench-complete.png": {
+      "bytes": 110006,
+      "sha256": "01f1077d925c0d050311a0a749a91980ce9070c0ee77acb7cff08494812f1aa2"
+    },
+    "screenshots/01-protection-complete.png": {
+      "bytes": 190838,
+      "sha256": "2d943de3dba1f07058f4ac897c96dab0d75eaa979e083312028f8fe3b84fd118"
+    },
+    "screenshots/12-stopped-workbench.png": {
+      "bytes": 72093,
+      "sha256": "b8ac3512834104539829ac76963872cf70217df1cee2f83a7ff8f6d7b74f3051"
+    }
+  }
+}
