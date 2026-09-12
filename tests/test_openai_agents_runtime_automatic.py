@@ -1,18 +1,17 @@
-"""Automatic action scopes and fail-stop behavior in the native LangGraph loop."""
+"""Automatic action scopes and fail-stop behavior in the native OpenAI Agents loop."""
 from copy import deepcopy
 import json
 from pathlib import Path
 import unittest
-from unittest.mock import patch
 from urllib.parse import parse_qs
 
 from yuanxingmu.guards import JudgeConfig
-import test_langgraph_runtime as fixtures
+import test_openai_agents_runtime as fixtures
 from test_yuanxingmu_guards import _JudgeFixture, _answer
 
 
 @fixtures.REQUIRES_SDK
-class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCase):
+class OpenaiAgentsAutomaticRuntimeTests(fixtures.OpenaiAgentsFixture, unittest.TestCase):
     enable_automation = True
 
     def test_automatic_tool_is_absent_when_omitted_or_explicitly_disabled(self):
@@ -24,8 +23,9 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
                     config["automatic_actions"] = False
                 else:
                     del config["automatic_actions"]
-                self.responses.append(fixtures.completion(fixtures.tool_call(
-                    "host-disabled", "yuanxingmu_request_action", self.proposal())))
+                self.responses.extend([fixtures.handoff_response(f"host-disabled-handoff-{explicit}"),
+                                       fixtures.completion(fixtures.tool_call(
+                                           "host-disabled", "yuanxingmu_request_action", self.proposal()))])
                 before = self.events()
                 with self.assertRaises((ValueError, RuntimeError)):
                     self.runtime.run_session(config)
@@ -37,7 +37,7 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
         self.assertEqual(self.judge.requests, [])
         self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 0)
 
-    def test_three_native_singleton_calls_use_real_receipts_and_frozen_scope(self):
+    def test_three_native_approved_calls_use_real_receipts_and_frozen_scope(self):
         upload = {"proposal": {"kind": "upload", "target_id": "upload",
                                "payload": {"filename": "progress.txt", "content": "LOCAL-UPLOAD-CONTENT"}}}
         form = {"proposal": {"kind": "form", "target_id": "form",
@@ -46,11 +46,11 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
                        fixtures.tool_call("host-auto-upload", "yuanxingmu_request_action", upload),
                        fixtures.tool_call("host-auto-form", "yuanxingmu_request_action", form))
         self.assertEqual([row["path"] for row in self.receipts], ["/message", "/upload", "/form"])
-        self.assertIn("LOCAL-LANGGRAPH-PROGRESS", self.receipts[0]["body"])
+        self.assertIn("LOCAL-OPENAI-AGENTS-PROGRESS", self.receipts[0]["body"])
         self.assertIn("LOCAL-UPLOAD-CONTENT", self.receipts[1]["body"])
         self.assertEqual(parse_qs(self.receipts[2]["body"]), {"note": ["LOCAL-FORM-CONTENT"]})
         self.assertEqual(len(self.judge.requests), 3)
-        self.assertEqual(len(self.upstream_requests), 2)
+        self.assertEqual(len(self.upstream_requests), 3)
         self.assertEqual(len(self.actions()), 3)
         for action in self.actions():
             self.assertEqual(action["status"], "acknowledged")
@@ -67,6 +67,25 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
         self.assertIn("automatic_target_not_granted", json.dumps(self.upstream_requests[-1]["body"]["messages"]))
         self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 0)
 
+    def test_three_budget_denials_return_to_model_and_allow_final_answer(self):
+        self.responses.extend([
+            fixtures.handoff_response(),
+            fixtures.completion(*(fixtures.tool_call(f"host-budget-used-{index}", "yuanxingmu_request_action",
+                                                    self.proposal(f"allowed-{index}")) for index in range(3))),
+            *(fixtures.completion(fixtures.tool_call(f"host-budget-denied-{index}", "yuanxingmu_request_action",
+                                                    self.proposal(f"denied-{index}"))) for index in range(3)),
+            fixtures.final_response()])
+        result = self.runtime.run_session(deepcopy(self.config))
+        self.assertEqual(result["answer"], fixtures.COMPLETE)
+        self.assertEqual(len(self.receipts), 3)
+        # Guards inspect all six requests before the automatic budget decision.
+        self.assertEqual(len(self.judge.requests), 6)
+        self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 3)
+        denials = [json.loads(item["content"]) for item in self.upstream_requests[-1]["body"]["messages"]
+                   if item.get("role") == "tool" and item.get("tool_call_id", "").startswith("host-budget-denied-")]
+        self.assertEqual(len(denials), 3)
+        self.assertTrue(all(item["reason"] == "automatic_attempt_budget_exhausted" for item in denials))
+
     def test_files_and_forged_host_arguments_are_rejected_before_broker(self):
         overwrite = {"proposal": {"kind": "overwrite", "target_id": "replace", "payload": {"content": "changed"}}}
         delete = {"proposal": {"kind": "delete", "target_id": "remove", "payload": {}}}
@@ -76,8 +95,9 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
         nested["proposal"]["payload"]["url"] = "http://127.0.0.1:1/unregistered"
         for index, arguments in enumerate((overwrite, delete, forged, nested)):
             with self.subTest(case=index):
-                self.responses.append(fixtures.completion(fixtures.tool_call(
-                    f"host-invalid-{index}", "yuanxingmu_request_action", arguments)))
+                self.responses.extend([fixtures.handoff_response(f"host-invalid-handoff-{index}"),
+                                       fixtures.completion(fixtures.tool_call(
+                                           f"host-invalid-{index}", "yuanxingmu_request_action", arguments))])
                 before = self.events()
                 with self.assertRaises((ValueError, RuntimeError)):
                     self.runtime.run_session({**self.config, "prompt": f"Invalid automatic request {index}.",
@@ -98,8 +118,13 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
         self.assertEqual(len(blocked_judge.requests), 1)
         self.assertEqual(self.receipts, [])
         self.broker.revoke(self.task)
-        self.run_calls(fixtures.tool_call("host-after-revoke", "yuanxingmu_request_action", self.proposal()),
-                       prompt="Try after task revocation.", checkpoint=str(self.root / "revoked.json"))
+        self.responses.extend([fixtures.handoff_response("host-revoked-handoff"), fixtures.completion(
+            fixtures.tool_call("host-after-revoke", "yuanxingmu_request_action", self.proposal())),
+            fixtures.final_response()])
+        with self.assertRaisesRegex(RuntimeError, "host_stopped"):
+            self.runtime.run_session({**self.config, "prompt": "Try after task revocation.",
+                                      "checkpoint": str(self.root / "revoked.json")})
+        self.assertEqual(len(self.responses), 1)
         self.assertEqual(len(blocked_judge.requests), 1)
         self.assertEqual(self.receipts, [])
         self.assertEqual(self.actions(), [])
@@ -126,7 +151,7 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
         response = fixtures.completion(
             fixtures.tool_call("host-unconfirmed-first", "yuanxingmu_request_action", self.proposal()),
             fixtures.tool_call("host-unconfirmed-later", "yuanxingmu_request_action", later))
-        self.responses.extend([response, fixtures.final_response()])
+        self.responses.extend([fixtures.handoff_response(), response, fixtures.final_response()])
         first_id = None
         for phase, resume in (("initial", False), ("resume", True), ("worker-state-loss", False)):
             with self.subTest(phase=phase):
@@ -135,11 +160,11 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
                     Path(self.config["checkpoint"]).unlink()
                 with self.assertRaisesRegex(RuntimeError, "unconfirmed"):
                     self.runtime.run_session({**self.config, "resume": resume})
-                self.assertEqual(len(self.upstream_requests), 1)
+                self.assertEqual(len(self.upstream_requests), 2)
                 self.assertEqual(len(self.responses), 1)
                 self.assertEqual(len(self.receipts), 1)
                 self.assertEqual(self.receipts[0]["path"], "/message")
-                self.assertIn("LOCAL-LANGGRAPH-PROGRESS", self.receipts[0]["body"])
+                self.assertIn("LOCAL-OPENAI-AGENTS-PROGRESS", self.receipts[0]["body"])
                 self.assertEqual(len(self.actions()), 1)
                 self.assertEqual(self.actions()[0]["status"], "unconfirmed")
                 first_id = first_id or self.actions()[0]["id"]
@@ -147,38 +172,9 @@ class LanggraphAutomaticRuntimeTests(fixtures.LanggraphFixture, unittest.TestCas
                 self.assertEqual(len(self.judge.requests), 1)
                 self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 1)
                 self.assertIsInstance(json.loads(Path(self.config["checkpoint"]).read_bytes()), dict)
-        self.assertTrue(all(row["raw"] == self.requests[0]["raw"] for row in self.requests))
-
-    def test_prior_unknown_with_new_nonce_stops_remaining_batch_on_each_resume(self):
-        self.drop_receipts = True
-        initial = self.runtime.request("request_action", socket_path=self.config["broker_socket"],
-            request_key="earlier-unknown-effect", proposal=self.proposal()["proposal"])
-        self.assertEqual(initial["status"], "unconfirmed")
-        later = {"proposal": {"kind": "upload", "target_id": "upload",
-                              "payload": {"filename": "later.txt", "content": "MUST-NOT-SEND"}}}
-        self.responses.append(fixtures.completion(
-            fixtures.tool_call("host-new-nonce", "yuanxingmu_request_action", self.proposal()),
-            fixtures.tool_call("host-must-not-run", "yuanxingmu_request_action", later)))
-        results, original_request = [], self.runtime.request
-
-        def record_request(operation, **kwargs):
-            result = original_request(operation, **kwargs)
-            if operation == "request_action":
-                results.append(result)
-            return result
-
-        for resume in (False, True, True):
-            with patch.object(self.runtime, "request", record_request):
-                with self.assertRaisesRegex(RuntimeError, "sdk_action_unconfirmed"):
-                    self.runtime.run_session({**self.config, "resume": resume})
-            self.assertEqual(results[-1]["reason"], "automatic_prior_outcome_unconfirmed")
-            self.assertEqual(results[-1]["status"], "pending")
-            self.assertEqual(len(self.upstream_requests), 1)
-            self.assertEqual(len(self.actions()), 2)
-            self.assertEqual(len(self.receipts), 1)
-            self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 1)
-            self.assertEqual(len(self.judge.requests), 2)
-        self.assertEqual(len(results), 3)
+        originals = {row["raw"] for row in self.upstream_requests}
+        self.assertEqual(len(originals), 2)
+        self.assertTrue(all(row["raw"] in originals for row in self.requests))
 
 
 if __name__ == "__main__":

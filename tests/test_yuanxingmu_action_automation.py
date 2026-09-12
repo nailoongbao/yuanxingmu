@@ -356,7 +356,30 @@ class AutomaticActionsTests(unittest.TestCase):
             self.assertTrue(self.store._begin(self.task, row["id"], row["revision"], row["digest"])["started"])
         result = self.request("new-key", proposal)
         self.assertEqual("automatic_prior_outcome_unconfirmed", result["reason"])
+        self.assertEqual("automatic_prior_outcome_unconfirmed", self.request("new-key", proposal)["reason"])
         self.assertEqual(0, self.automation.describe(self.task)["attempts_used"])
+        self.assertEqual([], self.receiver.received)
+
+    def test_pending_lookup_checks_current_edited_proposal_and_descendant_family(self):
+        original = self.proposal(payload={"body": "original not attempted"})
+        uncertain = self.proposal(payload={"body": "manually attempted content"})
+        manual = self.store.submit(self.task, "manual-started", uncertain)
+        with self.authority._lock:
+            self.assertTrue(self.store._begin(self.task, manual["id"], manual["revision"], manual["digest"])["started"])
+        child = self.authority.delegate(self.task)
+        pending = self.store.submit(child, "edited-pending", original)
+        self.assertNotIn("reason", self.store.prior(child, "edited-pending", original))
+        pending = self.store.edit(child, pending["id"], pending["revision"], pending["digest"], uncertain)
+        # The stable key retains the initial request digest, but stop/replay
+        # decisions must compare the current reviewed proposal and target.
+        result = self.request("edited-pending", original, task=child)
+        self.assertEqual(result["reason"], "automatic_prior_outcome_unconfirmed")
+        self.assertEqual(result["action"]["id"], pending["id"])
+        self.assertFalse(result["started"])
+        pending = self.store.edit(child, pending["id"], pending["revision"], pending["digest"], original)
+        result = self.request("edited-pending", original, task=child)
+        self.assertEqual(result["reason"], "action_already_recorded")
+        self.assertEqual(0, self.automation.describe(child)["attempts_used"])
         self.assertEqual([], self.receiver.received)
 
     def test_acknowledged_equal_content_with_new_key_remains_a_new_authorized_action(self):

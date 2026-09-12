@@ -53,6 +53,15 @@ _SDK_RUNTIMES = {
                       "from yuanxingmu.adapters.langgraph_runtime import main; raise SystemExit(main())"),
         "answer_tools": (),
     },
+    "openai_agents": {
+        "version": "0.22.2",
+        "packages": (("openai_agents", "0.22.2"), ("openai", "3.13.0"),
+                     ("pydantic", "2.13.5")),
+        "bootstrap": ("import sys; sys.path.insert(0, sys.argv.pop(1)); "
+                      "from yuanxingmu.adapters.openai_agents_runtime import main; raise SystemExit(main())"),
+        "answer_tools": (),
+        "handoff_tools": ("yuanxingmu_handoff_to_executor",),
+    },
 }
 
 
@@ -157,7 +166,7 @@ class _SdkOutputGuard:
         definition = _sdk(framework)
         self.guard = ModelOutputGuard(broker, task_id)
         self.model_id, self.max_tokens = model_id, max_tokens
-        self.tool_names = {*SDK_TOOLS, *definition["answer_tools"]}
+        self.tool_names = {*SDK_TOOLS, *definition["answer_tools"], *definition.get("handoff_tools", ())}
         if automatic_actions:
             self.tool_names.add("yuanxingmu_request_action")
 
@@ -350,7 +359,7 @@ def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
                 # Derive the configuration of THIS execution, not a statement
                 # copied from the otherwise inactive native gateway.
                 foundation = {"framework": framework, "bind": "loopback", "auth_enabled": True,
-                              "tool_names": [*SDK_TOOLS, *definition["answer_tools"], *(["yuanxingmu_request_action"] if automatic_actions else [])], "allow_elevated": False,
+                              "tool_names": [*SDK_TOOLS, *definition["answer_tools"], *definition.get("handoff_tools", ()), *(["yuanxingmu_request_action"] if automatic_actions else [])], "allow_elevated": False,
                               "allow_direct_network": False, "isolated_execution": True,
                               "per_user_sessions": True, "credentials_host_only": True, "skills_pinned": True}
                 report = broker.guards.scan_foundation(foundation, ())

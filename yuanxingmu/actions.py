@@ -64,6 +64,20 @@ def _digest(value):
     return hashlib.sha256(_json(value).encode("utf-8")).hexdigest()
 
 
+def _has_prior_unconfirmed_action(db, family_id, row, binding_digest):
+    """Read only: match the current proposal against uncertain family effects.
+
+    Prior effects include manual attempts and descendant tasks. Request digests
+    describe the initial input, which may differ from a human-edited proposal.
+    """
+    prior = db.execute("""SELECT actions.target_json FROM reviewed_actions AS actions
+        JOIN authority_tasks AS tasks ON tasks.id=actions.task_id
+        WHERE tasks.family_id=? AND actions.status IN ('executing','unconfirmed')
+          AND actions.kind=? AND actions.target_id=? AND actions.proposal_json=?""",
+        (family_id, row["kind"], row["target_id"], row["proposal_json"])).fetchall()
+    return any(json.loads(previous["target_json"]).get("binding_digest") == binding_digest for previous in prior)
+
+
 def _text(value, reason, *, maximum=MAX_CONTENT_BYTES, normalize=True):
     if type(value) is not str:
         raise ValueError(reason)
@@ -565,13 +579,13 @@ class Actions:
     def prior(self, task_id, request_key, proposal):
         """Read-only idempotency lookup before a host reviews a new candidate.
 
-        An existing edited/pending/finished record is returned as-is. This does
-        not authorize execution or reset an attempt. The broker performs its
-        current admission check before calling this on an agent-facing path.
+        Pending records also retain a stop signal when the same effect has an
+        uncertain prior attempt. This does not authorize execution or reset an
+        attempt. The broker performs its current admission check first.
         """
         task_id = _identifier(task_id, "task_id")
         with self.authority._transaction() as db:
-            self.authority._task(db, task_id, require_active=False)
+            task = self.authority._task(db, task_id, require_active=False)
             key = _key(request_key, "invalid_action_request_key")
             request_digest = _digest(self._canonical(proposal))
             previous = db.execute("SELECT * FROM reviewed_actions WHERE task_id=? AND request_key=?", (task_id, key)).fetchone()
@@ -579,7 +593,11 @@ class Actions:
                 return None
             if not hmac.compare_digest(previous["request_digest"], request_digest):
                 raise AuthorizationError("action_request_conflict")
-            return self._public(previous)
+            result = self._public(previous)
+            if previous["status"] == "pending" and _has_prior_unconfirmed_action(db, task["family_id"], previous,
+                    json.loads(previous["target_json"])["binding_digest"]):
+                result["reason"] = "automatic_prior_outcome_unconfirmed"
+            return result
 
     def submit(self, task_id, request_key, proposal):
         """Agent proposal only. Return no previous file content or host configuration."""
@@ -765,7 +783,7 @@ class Actions:
         with self.authority._lock:
             previous = self.prior(task_id, request_key, proposal)
             if previous is not None:
-                return {"started": False, "reason": "action_already_recorded", "action": previous}
+                return {"started": False, "reason": previous.get("reason", "action_already_recorded"), "action": previous}
             row = self.submit(task_id, request_key, proposal)
             return self.commit_automatic(task_id, row["id"], row["revision"], row["digest"], automation,
                                          checked_proposal=checked_proposal)

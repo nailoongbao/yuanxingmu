@@ -59,7 +59,8 @@ def _check_action_outcome(result):
     value = load_json(result.encode())
     if type(value) is not dict:
         raise RuntimeError("sdk_tool_result_not_object")
-    if any(value.get(field) in ("unconfirmed", "executing") for field in ("status", "outcome")):
+    if (any(value.get(field) in ("unconfirmed", "executing") for field in ("status", "outcome"))
+            or value.get("reason") == "automatic_prior_outcome_unconfirmed"):
         raise RuntimeError("sdk_action_unconfirmed")
 
 

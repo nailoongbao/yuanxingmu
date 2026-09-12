@@ -79,6 +79,20 @@ class SdkConfigurationTests(unittest.TestCase):
             with self.subTest(name=name), self.assertRaisesRegex(ValueError, "sdk_remote_tools_not_allowed"):
                 guard.preflight(json.dumps({**good, "tools": [{"type": "function", "function": {"name": name}}]}).encode())
 
+    def test_openai_agents_allows_only_the_fixed_handoff_inventory(self):
+        class Guard:
+            def preflight(self, raw):
+                return None
+        with patch.object(runtime, "ModelOutputGuard", return_value=Guard()):
+            guard = runtime._SdkOutputGuard(object(), "task", "model", 2048, framework="openai_agents")
+        good = {"model": "model", "messages": [{"role": "user", "content": "normal"}], "max_tokens": 512}
+        for name in ("yuanxingmu_read", "yuanxingmu_handoff_to_executor"):
+            value = {**good, "tools": [{"type": "function", "function": {"name": name}}]}
+            self.assertIsNone(guard.preflight(json.dumps(value).encode()))
+        for name in ("final_answer", "yuanxingmu_send", "yuanxingmu_request_action", "handoff_to_other_agent"):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, "sdk_remote_tools_not_allowed"):
+                guard.preflight(json.dumps({**good, "tools": [{"type": "function", "function": {"name": name}}]}).encode())
+
 
 @unittest.skipUnless(sys.platform.startswith("linux"), "Linux SDK process boundary")
 class SdkHostTests(unittest.TestCase):
@@ -146,6 +160,38 @@ class SdkHostTests(unittest.TestCase):
             core.unlink()
             with self.assertRaisesRegex(ValueError, "sdk_langgraph_version_not_verified"):
                 runtime._python_runtime(python, self.root / "profile", framework="langgraph")
+
+    def test_openai_agents_binding_and_runtime_cannot_replace_existing_authority(self):
+        profile = self.root / "profile"
+        profile.mkdir(mode=0o700)
+        manifest = {"task_id": "original-task", "family_id": "original-family"}
+        venv = self.root / "sdk"
+        (venv / "bin").mkdir(parents=True)
+        python = venv / "bin/python"
+        python.symlink_to("/usr/bin/python3")
+        (venv / "pyvenv.cfg").write_text("home = /usr/bin\n", encoding="utf-8")
+        paths = {}
+        for name, version in runtime._sdk("openai_agents")["packages"]:
+            path = venv / "lib/python3.12/site-packages" / (name + "-" + version + ".dist-info/METADATA")
+            path.parent.mkdir(parents=True)
+            path.write_text("Name: " + name + "\nVersion: " + version + "\n\n", encoding="utf-8")
+            paths[name] = path
+        with patch.object(runtime.subprocess, "run", side_effect=AssertionError("SDK executed on host")):
+            self.assertEqual(runtime._python_runtime(python, profile, framework="openai_agents"), (python, venv))
+            for path in paths.values():
+                original = path.read_bytes()
+                path.write_text("Version: 0.0.0\n", encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "sdk_requires_pinned_openai_agents_packages"):
+                    runtime._python_runtime(python, profile, framework="openai_agents")
+                path.write_bytes(original)
+        folder, first = runtime._session(profile, manifest, "agents", python, resume=False, framework="openai_agents")
+        self.assertEqual((first["task_id"], first["family_id"]), (manifest["task_id"], manifest["family_id"]))
+        original = (folder / "session.json").read_bytes()
+        for changed in ("smolagents", "langgraph"):
+            with self.assertRaisesRegex(ValueError, "sdk_session_binding_changed"):
+                runtime._session(profile, manifest, "agents", python, resume=True, framework=changed)
+            self.assertEqual((folder / "session.json").read_bytes(), original)
+        self.assertEqual(runtime._session(profile, manifest, "agents", python, resume=True, framework="openai_agents")[1], first)
 
     def test_raw_rpc_cannot_bypass_the_sdk_operation_subset(self):
         secret = self.root / "secret.txt"
@@ -311,6 +357,18 @@ class SdkModelBridgeTests(unittest.TestCase):
 class SdkFullLoopTests(unittest.TestCase):
     framework = "smolagents"
     sdk_python_environment = "YUANXINGMU_SMOLAGENTS_PYTHON"
+    automatic_model_requests = 3
+
+    def model_message(self, value):
+        if len(self.model_requests) == 1:
+            return {"role": "assistant", "content": None, "tool_calls": [{"id": "provider-call",
+                "type": "function", "function": {"name": "yuanxingmu_read", "arguments": '{"resource":"quote"}'}}]}
+        if len(self.model_requests) == 2 and self.automatic_calls:
+            return {"role": "assistant", "content": None, "tool_calls": self.automatic_calls}
+        if self.framework != "smolagents":
+            return {"role": "assistant", "content": "PUBLIC SDK DONE"}
+        return {"role": "assistant", "content": None, "tool_calls": [{"id": "provider-final",
+            "type": "function", "function": {"name": "final_answer", "arguments": '{"answer":"PUBLIC SDK DONE"}'}}]}
 
     def setUp(self):
         if not sandbox_available(bwrap=bwrap())["available"]:
@@ -334,16 +392,7 @@ class SdkFullLoopTests(unittest.TestCase):
                     message = {"role": "assistant", "content": json.dumps({"verdict": "allow", "reason": "controlled fixture"})}
                 else:
                     owner.model_requests.append(value)
-                    if len(owner.model_requests) == 1:
-                        message = {"role": "assistant", "content": None, "tool_calls": [{"id": "provider-call",
-                            "type": "function", "function": {"name": "yuanxingmu_read", "arguments": '{"resource":"quote"}'}}]}
-                    elif len(owner.model_requests) == 2 and owner.automatic_calls:
-                        message = {"role": "assistant", "content": None, "tool_calls": owner.automatic_calls}
-                    elif owner.framework == "langgraph":
-                        message = {"role": "assistant", "content": "PUBLIC SDK DONE"}
-                    else:
-                        message = {"role": "assistant", "content": None, "tool_calls": [{"id": "provider-final",
-                            "type": "function", "function": {"name": "final_answer", "arguments": '{"answer":"PUBLIC SDK DONE"}'}}]}
+                    message = owner.model_message(value)
                 raw = json.dumps({"choices": [{"index": 0, "message": message,
                     "finish_reason": "tool_calls" if message.get("tool_calls") else "stop"}]}).encode()
                 self.send_response(200)
@@ -446,13 +495,13 @@ class SdkFullLoopTests(unittest.TestCase):
         result = self.run_sdk()
         self.automatic_result = result
         self.assertEqual(result["status"], "completed")
-        self.assertEqual(len(self.model_requests), 3)
+        self.assertEqual(len(self.model_requests), self.automatic_model_requests)
         self.assertEqual(len(receipts), 3)
         self.assertEqual({item["path"] for item in receipts}, {"/sdk-message", "/sdk-upload", "/sdk-form"})
         self.assertTrue("162000" not in json.dumps(self.model_requests + receipts))
         self.assertEqual(self.run_sdk(resume=True)["session_id"], result["session_id"])
         self.assertEqual(len(receipts), 3)
-        self.assertEqual(len(self.model_requests), 3)
+        self.assertEqual(len(self.model_requests), self.automatic_model_requests)
 
 
 class LangGraphFullLoopTests(SdkFullLoopTests):
@@ -483,6 +532,52 @@ class LangGraphFullLoopTests(SdkFullLoopTests):
         observed = json.dumps(self.model_requests[-1]["messages"])
         self.assertEqual(observed.count("automatic_attempt_budget_exhausted"), 3)
         self.assertNotIn("162000", observed)
+
+
+class OpenAIAgentsFullLoopTests(LangGraphFullLoopTests):
+    __unittest_skip__ = not (sys.platform.startswith("linux") and os.environ.get("YUANXINGMU_OPENAI_AGENTS_PYTHON"))
+    __unittest_skip_why__ = "Set YUANXINGMU_OPENAI_AGENTS_PYTHON to the pinned OpenAI Agents Linux venv"
+    framework = "openai_agents"
+    sdk_python_environment = "YUANXINGMU_OPENAI_AGENTS_PYTHON"
+    automatic_model_requests = 4
+
+    def model_message(self, value):
+        if self.framework != "openai_agents" or not self.automatic_calls:
+            return super().model_message(value)
+        number = len(self.model_requests)
+        if number == 1:
+            return super().model_message(value)
+        if number == 2:
+            return {"role": "assistant", "content": None, "tool_calls": [{"id": "provider-handoff",
+                "type": "function", "function": {"name": "yuanxingmu_handoff_to_executor", "arguments": '{}'}}]}
+        if number == 3:
+            return {"role": "assistant", "content": None, "tool_calls": self.automatic_calls}
+        return {"role": "assistant", "content": "PUBLIC SDK DONE"}
+
+    def test_automatic_message_upload_and_form_once_then_resume_without_duplicates(self):
+        super().test_automatic_message_upload_and_form_once_then_resume_without_duplicates()
+        before = {row["function"]["name"] for row in self.model_requests[0]["tools"]}
+        after = {row["function"]["name"] for row in self.model_requests[2]["tools"]}
+        self.assertEqual(before, {"yuanxingmu_read", "yuanxingmu_describe", "yuanxingmu_action_targets",
+                                  "yuanxingmu_handoff_to_executor"})
+        self.assertEqual(after, {"yuanxingmu_describe", "yuanxingmu_action_targets", "yuanxingmu_propose_action",
+                                 "yuanxingmu_draft_email", "yuanxingmu_request_action"})
+        self.assertEqual(self.automatic_result["task_id"], runtime.host.validate_profile(self.fixture.profile)["task_id"])
+
+    def test_new_openai_agents_session_reports_exhausted_budget_without_more_effects(self):
+        self.test_automatic_message_upload_and_form_once_then_resume_without_duplicates()
+        original = self.automatic_result
+        self.model_requests.clear()
+        result = self.run_sdk(session="same-framework-after-budget")
+        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["answer"], "PUBLIC SDK DONE")
+        self.assertEqual(result["task_id"], original["task_id"])
+        self.assertNotEqual(result["session_id"], original["session_id"])
+        self.assertEqual(len(self.automatic_receipts), 3)
+        self.assertEqual(len(self.model_requests), 4)
+        messages = json.dumps(self.model_requests[-1]["messages"])
+        self.assertEqual(messages.count("automatic_attempt_budget_exhausted"), 3)
+        self.assertNotIn("162000", messages)
 
 
 if __name__ == "__main__":

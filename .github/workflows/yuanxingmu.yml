@@ -8,8 +8,10 @@ on:
       - 'tests/test_yuanxingmu*'
       - 'tests/test_smolagents*'
       - 'tests/test_langgraph*'
+      - 'tests/test_openai_agents_runtime*'
       - 'docs/sdk-runtime-requirements.txt'
       - 'docs/langgraph-runtime-requirements.txt'
+      - 'docs/openai-agents-runtime-requirements.txt'
       - 'pyproject.toml'
       - '.github/workflows/yuanxingmu.yml'
   pull_request:
@@ -18,8 +20,10 @@ on:
       - 'tests/test_yuanxingmu*'
       - 'tests/test_smolagents*'
       - 'tests/test_langgraph*'
+      - 'tests/test_openai_agents_runtime*'
       - 'docs/sdk-runtime-requirements.txt'
       - 'docs/langgraph-runtime-requirements.txt'
+      - 'docs/openai-agents-runtime-requirements.txt'
       - 'pyproject.toml'
       - '.github/workflows/yuanxingmu.yml'
 
@@ -74,13 +78,17 @@ jobs:
           /usr/bin/python3 -m venv "$RUNNER_TEMP/yxm-langgraph"
           "$RUNNER_TEMP/yxm-langgraph/bin/python" -m pip install -r docs/langgraph-runtime-requirements.txt
           "$RUNNER_TEMP/yxm-langgraph/bin/python" -m pip check
+          /usr/bin/python3 -m venv "$RUNNER_TEMP/yxm-openai-agents"
+          "$RUNNER_TEMP/yxm-openai-agents/bin/python" -m pip install -r docs/openai-agents-runtime-requirements.txt
+          "$RUNNER_TEMP/yxm-openai-agents/bin/python" -m pip check
       - name: Verify complete SDK loops and recovery using local deterministic providers
         env:
           PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/tests
         run: |
           "$RUNNER_TEMP/yxm-smolagents/bin/python" -m unittest tests.test_smolagents_runtime tests.test_smolagents_automatic_runtime tests.test_smolagents_runtime_timeouts -v
           "$RUNNER_TEMP/yxm-langgraph/bin/python" -m unittest tests.test_langgraph_runtime tests.test_langgraph_automatic_runtime tests.test_langgraph_runtime_faults -v
-          YUANXINGMU_SMOLAGENTS_PYTHON="$RUNNER_TEMP/yxm-smolagents/bin/python" YUANXINGMU_LANGGRAPH_PYTHON="$RUNNER_TEMP/yxm-langgraph/bin/python" python -m unittest tests.test_yuanxingmu_sdk_runtime tests.test_yuanxingmu_sdk_model_store tests.test_yuanxingmu_sdk_boundary_failures -v
+          "$RUNNER_TEMP/yxm-openai-agents/bin/python" -m unittest tests.test_openai_agents_runtime tests.test_openai_agents_runtime_automatic tests.test_openai_agents_runtime_faults -v
+          YUANXINGMU_SMOLAGENTS_PYTHON="$RUNNER_TEMP/yxm-smolagents/bin/python" YUANXINGMU_LANGGRAPH_PYTHON="$RUNNER_TEMP/yxm-langgraph/bin/python" YUANXINGMU_OPENAI_AGENTS_PYTHON="$RUNNER_TEMP/yxm-openai-agents/bin/python" python -m unittest tests.test_yuanxingmu_sdk_runtime tests.test_yuanxingmu_sdk_model_store tests.test_yuanxingmu_sdk_boundary_failures -v
       - name: Verify authority, broker, command and process boundaries
         env:
           YUANXINGMU_SANDBOX_EVIDENCE_DIR: ${{ runner.temp }}/yuanxingmu-sandbox-evidence

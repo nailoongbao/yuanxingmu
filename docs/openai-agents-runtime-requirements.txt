@@ -1,0 +1,4 @@
+# Versions used by the isolated OpenAI Agents runtime and its native loop tests.
+openai-agents==0.22.2
+openai==3.13.0
+pydantic==2.13.5

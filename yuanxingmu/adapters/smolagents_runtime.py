@@ -74,7 +74,8 @@ def _text(value, maximum=MAX_JSON):
 
 def _check_action_outcome(result):
     value = _json(result.encode())
-    if type(value) is dict and any(value.get(field) in ("unconfirmed", "executing") for field in ("status", "outcome")):
+    if type(value) is dict and (any(value.get(field) in ("unconfirmed", "executing") for field in ("status", "outcome"))
+                               or value.get("reason") == "automatic_prior_outcome_unconfirmed"):
         # The receiver may already have acted. A model continuation could use
         # another nonce and repeat that effect; only host review can resolve it.
         raise RuntimeError("sdk_action_unconfirmed")

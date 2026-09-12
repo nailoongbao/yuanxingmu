@@ -14,7 +14,7 @@ import hmac
 import json
 from types import MappingProxyType
 
-from .actions import ActionTarget, MAX_ACTIONS, _digest, _json, _KEY
+from .actions import ActionTarget, MAX_ACTIONS, _digest, _has_prior_unconfirmed_action, _json, _KEY
 from .authority import Authority, AuthorizationError, _identifier, _identifiers
 
 
@@ -202,15 +202,8 @@ class ActionAutomation:
         # A new model call/key is not permission to repeat an uncertain effect.
         # Include manual attempts and descendants, and compare the actual
         # current proposal (which a human may have edited), not request_digest.
-        prior = db.execute("""SELECT actions.target_json FROM reviewed_actions AS actions
-            JOIN authority_tasks AS tasks ON tasks.id=actions.task_id
-            WHERE tasks.family_id=? AND actions.status IN ('executing','unconfirmed')
-              AND actions.kind=? AND actions.target_id=? AND actions.proposal_json=?""",
-            (task["family_id"], row["kind"], row["target_id"], row["proposal_json"])).fetchall()
-        for previous in prior:
-            binding = json.loads(previous["target_json"]).get("binding_digest")
-            if binding == grant.binding_digest:
-                raise AuthorizationError("automatic_prior_outcome_unconfirmed")
+        if _has_prior_unconfirmed_action(db, task["family_id"], row, grant.binding_digest):
+            raise AuthorizationError("automatic_prior_outcome_unconfirmed")
         if type(body_bytes) is not int or body_bytes < 0:
             raise AuthorizationError("invalid_automatic_body_size")
         if body_bytes > grant.max_body_bytes:

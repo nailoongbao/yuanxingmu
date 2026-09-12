@@ -297,6 +297,33 @@ class SmolagentsAutomaticRuntimeTests(unittest.TestCase):
         self.assertEqual(self.requests[0]["raw"], self.requests[1]["raw"])
         self.assertEqual(self.assert_one_unconfirmed_effect(), first_id)
 
+    def test_prior_unknown_with_new_nonce_stops_remaining_batch_on_each_resume(self):
+        self.drop_receipt_after_body()
+        initial = self.runtime.request("request_action", socket_path=self.config["broker_socket"],
+            request_key="earlier-unknown-effect", proposal=self.proposal()["proposal"])
+        self.assertEqual(initial["status"], "unconfirmed")
+        response = fixtures.completion(*self.unconfirmed_calls())
+        results, original_request = [], self.runtime.request
+
+        def record_request(operation, **kwargs):
+            result = original_request(operation, **kwargs)
+            if operation == "request_action":
+                results.append(result)
+            return result
+
+        for resume in (False, True, True):
+            self.responses.append(response)
+            with patch.object(self.runtime, "request", record_request):
+                with self.assertRaisesRegex(RuntimeError, "sdk_action_unconfirmed"):
+                    self.runtime.run_session({**self.config, "resume": resume})
+            self.assertEqual(results[-1]["reason"], "automatic_prior_outcome_unconfirmed")
+            self.assertEqual(results[-1]["status"], "pending")
+            self.assertEqual(len(self.actions()), 2)
+            self.assertEqual(len(self.receipts), 1)
+            self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 1)
+            self.assertEqual(len(self.judge.requests), 2)
+        self.assertEqual(len(results), 3)
+
     def test_unconfirmed_action_stops_after_worker_checkpoint_loss(self):
         self.drop_receipt_after_body()
         response = fixtures.completion(*self.unconfirmed_calls())
