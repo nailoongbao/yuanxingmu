@@ -1,15 +1,15 @@
 {
-  "installer_version": "0.4.0a1",
-  "runtime_version": "0.7.0a1",
-  "runtime_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+  "installer_version": "0.4.0a2",
+  "runtime_version": "0.7.0a2",
+  "runtime_commit": "7d95cfddd32a6c5c41ed15b9b3b2abe87c99381a",
   "runtime_features": [
     "hermes"
   ],
   "wheel": {
-    "name": "agent_defense_check-0.7.0a1-py3-none-any.whl",
-    "bytes": 378909,
-    "sha256": "d9f362dab337300ed70c20a8d4c915fdb3e8fd4a55711c84d162ed52b950253c",
-    "url": "https://github.com/yh-l20/yuanxingmu/releases/download/v0.7.0a1/agent_defense_check-0.7.0a1-py3-none-any.whl"
+    "name": "agent_defense_check-0.7.0a2-py3-none-any.whl",
+    "bytes": 384854,
+    "sha256": "cff7d1bbb4345025e43cabecea6d17f877915a690270eb59025ea9f50c8f0578",
+    "url": "https://github.com/yh-l20/yuanxingmu/releases/download/v0.7.0a2/agent_defense_check-0.7.0a2-py3-none-any.whl"
   },
   "node": {
     "version": "24.16.0",
