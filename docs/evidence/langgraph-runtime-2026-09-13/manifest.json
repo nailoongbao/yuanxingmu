@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source_commit": "ce355a8ddfe4245df9e7fac747509e605ab1882a",
+  "exported_at": "2026-09-12T21:03:56.074944+00:00",
+  "files": {
+    "protocol.json": "3cd19455c974d5a9458a77944565355533a24610f05530cafafc2704614e33c8",
+    "result.json": "19fd0b17d79e9c67d2aac2bae09782ae1727256b351f760b33b16049e39b1d35",
+    "receipts.json": "6f32b2b140edc3ec6528bce8bc666b49618ad00aab707da2d119a41f128cfd41",
+    "model-responses.json": "47b3a2591b0b43d95263d7495ab2fc32d5f673a3c0433cc49adcbd37d52e01ac",
+    "regressions.json": "2a476ee172796778876cf62282dbae5b15534355c50bf1154b42bfc7c3a7aa9b"
+  },
+  "limits": [
+    "One explicitly guided synthetic normal task; not an attack rate or comparison with another defense.",
+    "Actual LangGraph 1.2.11 StateGraph and ToolNode with GLM-5.2; no Hermes/OpenClaw WebUI.",
+    "Real-model recovery covers completed-session reopening; interrupted recovery uses deterministic-provider tests.",
+    "Protected-value scan checks a finite list of floor-price spellings; no universal semantic secrecy claim.",
+    "The first model-count interval covers profile creation and the first SDK run; no separate profile-creation model request was observed.",
+    "Main-source only; frozen a2 runtime and installer downloads are unchanged.",
+    "No arbitrary user graph, subgraph, custom tools or plugins; no process-group CPU/memory/disk quotas."
+  ]
+}

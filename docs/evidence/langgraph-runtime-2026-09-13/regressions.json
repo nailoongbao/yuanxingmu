@@ -1,0 +1,173 @@
+{
+  "windows": {
+    "head": "ce355a8ddfe4245df9e7fac747509e605ab1882a",
+    "tests_run": 1123,
+    "passed_count": 374,
+    "skipped_count": 749,
+    "successful": true,
+    "valid": true,
+    "sources_unchanged": true,
+    "source_file_count": 462,
+    "duration_seconds": 18.343,
+    "started_at": "2026-09-12T21:01:03.626286+00:00",
+    "finished_at": "2026-09-12T21:01:21.972434+00:00",
+    "original_result_sha256": "b01fb99bae45053d6c7cfb3d834185edda2e3f7dd9c44812e1d60841dee74c97",
+    "configuration_snapshot_hashes": {
+      ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+      ".github/workflows/yuanxingmu.yml": "d45f2772ae3b912412aff2528c69d0aea07f5ccdfe7eaa6cefb151d1afda7a88"
+    },
+    "skip_reasons": {
+      "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 97,
+      "Windows symlink privilege unavailable (WinError 1314); local temporary paths omitted.": 1,
+      "Requires Linux and the pinned LangGraph SDK environment": 26,
+      "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+      "Real Broker native adapter checks require Linux": 32,
+      "Requires Linux and the pinned smolagents SDK environment": 30,
+      "Safe file targets require POSIX": 1,
+      "Safe file actions require POSIX no-follow directory descriptors": 6,
+      "Host scanner requires Linux private profiles": 15,
+      "Linux broker integration": 11,
+      "Linux broker only": 9,
+      "Linux workbench storage and authority only": 46,
+      "Linux Unix socket bridges only": 10,
+      "Linux broker sockets and persistent authority": 17,
+      "Optional native Hermes installation required": 3,
+      "Real Broker sockets require Linux": 5,
+      "Linux no-follow directory descriptor checks": 11,
+      "Linux Hermes profile only": 13,
+      "requires the optional real Hermes installation": 40,
+      "Safe skill file descriptors require Linux": 2,
+      "Linux Broker sockets and authority": 11,
+      "Linux installer filesystem and process boundaries": 48,
+      "Real protected profile management requires Linux": 11,
+      "Protected profile storage uses Linux descriptor-relative I/O": 21,
+      "Live host settings require Linux": 15,
+      "Linux broker and Unix socket boundaries": 14,
+      "Real Linux broker and Unix model socket": 17,
+      "Durable host queue uses Linux private directories": 26,
+      "Linux OpenClaw profile only": 28,
+      "Linux plugin and Unix socket contract": 1,
+      "OpenClaw live status requires Linux": 5,
+      "Linux broker and durable admission boundaries": 12,
+      "Real Linux Broker and durable pause": 2,
+      "real Linux profiles only": 14,
+      "Quarantine Broker integration requires Linux": 8,
+      "Real Workbench HTTP quarantine tests require Linux": 2,
+      "Real Linux Broker": 7,
+      "Linux execution only": 2,
+      "Linux bubblewrap only": 6,
+      "Linux subprocess collection": 1,
+      "Linux checked HTTP and durable journal": 2,
+      "Linux SDK host boundary": 4,
+      "requires POSIX secure directory-relative storage": 23,
+      "Set YUANXINGMU_LANGGRAPH_PYTHON to the pinned LangGraph Linux venv": 3,
+      "Set YUANXINGMU_SMOLAGENTS_PYTHON to an installed smolagents 1.26.0 Linux venv": 2,
+      "Linux SDK process boundary": 7,
+      "Linux checked model bridge": 3,
+      "Real Linux safe reads and fixed snapshots": 12,
+      "secure snapshots require Linux file descriptors": 26,
+      "Real Broker Unix sockets require Linux": 11
+    },
+    "sdk_modules": {
+      "test_smolagents_runtime": {
+        "passed": 0,
+        "skipped": 15
+      },
+      "test_smolagents_automatic_runtime": {
+        "passed": 0,
+        "skipped": 11
+      },
+      "test_smolagents_runtime_timeouts": {
+        "passed": 0,
+        "skipped": 4
+      },
+      "test_langgraph_runtime": {
+        "passed": 0,
+        "skipped": 10
+      },
+      "test_langgraph_automatic_runtime": {
+        "passed": 0,
+        "skipped": 7
+      },
+      "test_langgraph_runtime_faults": {
+        "passed": 0,
+        "skipped": 9
+      },
+      "test_yuanxingmu_sdk_runtime": {
+        "passed": 4,
+        "skipped": 15
+      },
+      "test_yuanxingmu_sdk_model_store": {
+        "passed": 8,
+        "skipped": 23
+      },
+      "test_yuanxingmu_sdk_boundary_failures": {
+        "passed": 0,
+        "skipped": 7
+      }
+    }
+  },
+  "linux": {
+    "head": "ce355a8ddfe4245df9e7fac747509e605ab1882a",
+    "tests_run": 1123,
+    "passed_count": 947,
+    "skipped_count": 176,
+    "successful": true,
+    "valid": true,
+    "sources_unchanged": true,
+    "source_file_count": 462,
+    "duration_seconds": 135.78,
+    "started_at": "2026-09-12T21:00:54.525183+00:00",
+    "finished_at": "2026-09-12T21:02:57.823636+00:00",
+    "original_result_sha256": "ba5f672d58cea34a7febefa26622a467bf055ccc4cb0251f5ca8cbde41c6ec72",
+    "configuration_snapshot_hashes": {
+      ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+      ".github/workflows/yuanxingmu.yml": "d45f2772ae3b912412aff2528c69d0aea07f5ccdfe7eaa6cefb151d1afda7a88"
+    },
+    "skip_reasons": {
+      "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 82,
+      "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+      "Install docs/native-adapters-requirements.txt for actual SDK checks": 21,
+      "Optional native Hermes installation required": 3,
+      "requires the optional real Hermes installation": 40
+    },
+    "sdk_modules": {
+      "test_smolagents_runtime": {
+        "passed": 15,
+        "skipped": 0
+      },
+      "test_smolagents_automatic_runtime": {
+        "passed": 11,
+        "skipped": 0
+      },
+      "test_smolagents_runtime_timeouts": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test_langgraph_runtime": {
+        "passed": 10,
+        "skipped": 0
+      },
+      "test_langgraph_automatic_runtime": {
+        "passed": 7,
+        "skipped": 0
+      },
+      "test_langgraph_runtime_faults": {
+        "passed": 9,
+        "skipped": 0
+      },
+      "test_yuanxingmu_sdk_runtime": {
+        "passed": 19,
+        "skipped": 0
+      },
+      "test_yuanxingmu_sdk_model_store": {
+        "passed": 31,
+        "skipped": 0
+      },
+      "test_yuanxingmu_sdk_boundary_failures": {
+        "passed": 7,
+        "skipped": 0
+      }
+    }
+  }
+}

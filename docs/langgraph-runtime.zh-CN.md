@@ -68,6 +68,8 @@ yuanxingmu sdk-run \
 
 ## 验证与限制
 
+**2026-09-13 GLM‑5.2 实测：** 冻结源码 `ce355a8` 上，真实图一次完成消息、文本上传和表单，各产生一份正确接收记录；已完成会话重开没有再次调用工作模型或发送，撤销后拒绝继续。[实测报告](evidence/langgraph-runtime-2026-09-13/REPORT.zh-CN.md)保留模型回复、接收正文、源码哈希和限制。这是明确指导的合成正常任务，未启动 Hermes/OpenClaw WebUI。
+
 本入口的测试由三部分组成：固定 SDK 下的真实图与工具循环、带本机接收端的自动操作、故障与恢复。宿主测试还单独运行完整隔离子进程，并检查框架切换、原任务权限和撤销。
 
 ```bash
@@ -76,5 +78,7 @@ PYTHONPATH=.:tests ~/yuanxingmu-langgraph/bin/python -m unittest \
   tests.test_langgraph_automatic_runtime \
   tests.test_langgraph_runtime_faults -v
 ```
+
+上述三个 LangGraph 模块在固定环境中 26/26 通过、零跳过；连同 smolagents 和共享宿主模块，九个 SDK 模块在 Linux 上共 113/113 通过、零跳过。完整发现的 1123 项在 Linux 上 947 项通过、176 项跳过，在 Windows 上 374 项通过、749 项跳过；均无失败或错误。
 
 这些本机定程模型测试证明实际调用路径与故障处理，不代表真实模型攻击阻断率；跳过的用例不算通过。模型请求有宿主容量上限，任务有时间和输出上限，但尚未提供整个进程组的 CPU、内存和工作目录磁盘配额。

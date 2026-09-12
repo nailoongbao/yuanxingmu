@@ -4,7 +4,7 @@
 
 **[Runtime 0.7.0a2](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a2) and [installer 0.4.0a2](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a2) are released as a preview.** The installer prepares Hermes and OpenClaw. Follow the [installation guide](https://yh-l20.github.io/yuanxingmu/start.html) to use a separate `~/yuanxingmu-v07a2` directory; existing installs and work items do not automatically upgrade.
 
-**New on main:** [run a complete smolagents session](docs/sdk-runtime.zh-CN.md) inside the same host defenses, with persistent recovery and optional automatic messages, uploads and forms. This developer entry is not included in the frozen a2 downloads; it does not cover CodeAgent or arbitrary custom agents.
+**New on main:** run complete [smolagents](docs/sdk-runtime.zh-CN.md) or [LangGraph](docs/langgraph-runtime.zh-CN.md) sessions inside the same host defenses, with persistent recovery and optional automatic messages, uploads and forms. These fixed developer entries are not included in the frozen a2 downloads; they do not cover CodeAgent or arbitrary custom agents and graphs.
 
 Select the documents and fixed recipients once, then let AI send messages, upload text, or fill forms within that scope. Each action still passes permission, content, and budget checks. Yuanxingmu keeps each work item separate and lets you stop, reopen, or revoke its document access. Your selected model service still receives the conversation and documents used for the task.
 

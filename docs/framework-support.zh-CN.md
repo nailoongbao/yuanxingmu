@@ -4,9 +4,11 @@
 
 元星木目前有 **OpenClaw 和 Hermes 的专用运行入口**，另有 **十一组已验证的原生 SDK 工具适配**：LangChain/LangGraph、OpenAI Agents、PydanticAI、Google ADK、CrewAI、Agno、AutoGen、LlamaIndex、Microsoft Agent Framework、smolagents、Mastra。下表的十一组适配记录验证了工具注册和实际调用，没有运行完整模型循环，也没有完成这些框架的进程隔离或五层防御整体验收。允许填写某个框架名，不等于支持了该框架。
 
-**2026-09-13 新增：** [`sdk-run` 完整运行入口](sdk-runtime.zh-CN.md)把 smolagents 1.26.0 的 `ToolCallingAgent` 接到已有且已停止的受保护工作实例，运行模型循环、五项基础 Broker 工具及会话恢复。原实例有既定自动范围时，可额外启用消息、上传、表单的 `request_action`，由宿主复核和去重。非幂等即时 `send`、`CodeAgent`、自定义工具和多 Agent 不在范围内。新增验证与下列历史工具记录分开列示；不会因此把其他十组框架标成完整接入。
+**2026-09-13 新增：** `sdk-run` 提供 [smolagents 1.26.0 `ToolCallingAgent`](sdk-runtime.zh-CN.md) 与 [LangGraph 1.2.11 固定 `StateGraph`](langgraph-runtime.zh-CN.md) 两条完整运行入口，接到已有且已停止的受保护工作实例，运行模型循环、五项基础 Broker 工具及会话恢复。原实例有既定自动范围时，可额外启用消息、上传、表单的 `request_action`，由宿主复核和去重。非幂等即时 `send`、`CodeAgent`、自定义工具、任意已有图和多 Agent 不在范围内。新增验证与下列历史工具记录分开列示；其他框架仍保持原来的工具适配状态。
 
-这条源码入口的 [GLM‑5.2 实测](evidence/smolagents-runtime-2026-09-13/REPORT.zh-CN.md)已完成三种自动操作、已完成会话重开和撤销检查；六个相关模块在 Linux 上 80/80 通过。它仍未包含在已发布的 a2 下载包中，也未做 SDK WebUI 视频或攻击阻断率评估。
+smolagents 源码入口的 [GLM‑5.2 实测](evidence/smolagents-runtime-2026-09-13/REPORT.zh-CN.md)已完成三种自动操作、已完成会话重开和撤销检查；当时六个相关模块在 Linux 上 80/80 通过。它仍未包含在已发布的 a2 下载包中，也未做 SDK WebUI 视频或攻击阻断率评估。
+
+LangGraph 的独立 [GLM‑5.2 实测](evidence/langgraph-runtime-2026-09-13/REPORT.zh-CN.md)同样完成三种自动操作、已完成会话重开和撤销检查。原生图通过同步 JSON 检查点恢复，每次只派发一个 `ToolNode` 调用；另开 smolagents 会话不能重置原任务的自动额度。它也属于 main 源码入口，未进入 a2 下载包，尚未做任意图应用或五层攻击整体验收。
 
 ## 最新版本与实际证据
 
@@ -16,13 +18,13 @@
 |---|---:|---|---|
 | [OpenClaw](https://github.com/openclaw/openclaw) | 389,463 | `v2026.9.4` | 专用插件、外层 Gateway 隔离和工具执行边界。已有真实模型原生运行、撤销/重启和邮件证据；新增五层仍需逐项原生验收。 |
 | [Hermes Agent](https://github.com/NousResearch/hermes-agent) | 244,644 | `v2026.9.11`，当前固定 distribution `0.21.2` | 专用 terminal provider、官方执行中间件、插件与 dashboard 已接入。[GLM14 五层固定案例](evidence/hermes-glm14-2026-09-12/REPORT.zh-CN.md)已验证五类危险候选、正常读写/草稿/命令、三次真实工作台恢复及暂停后新聊天；同源码的 [native13 本地模型对照](evidence/hermes-five-layers-2026-09-12/REPORT.zh-CN.md)保留两次正常语义误拦。另一次较新 [AUTO15](evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md)自动发送一条消息后，回答误拦导致连续流程失败。已有五层视频；更多来源、设置变化和连续自动工作仍未全面验收。 |
-| [LangChain](https://github.com/langchain-ai/langchain) / [LangGraph](https://github.com/langchain-ai/langgraph) | 146,150 / 41,490 | Python `langchain 1.4.0` / `langgraph 1.2.11` | 新 SDK 工具适配已验证：实际使用 `langchain-core 1.6.2`、`langgraph 1.2.11`，通过原生工具及编译图中的 `ToolNode` 调用 Broker；没有 LLM。完整进程、checkpoint 恢复和五层防御仍未验收。 |
+| [LangChain](https://github.com/langchain-ai/langchain) / [LangGraph](https://github.com/langchain-ai/langgraph) | 146,150 / 41,490 | Python `langchain 1.4.0` / `langgraph 1.2.11` | 原工具记录使用 `langchain-core 1.6.2`、`langgraph 1.2.11`，无 LLM。新增 [LangGraph 固定完整入口](langgraph-runtime.zh-CN.md)已验证隔离进程、原生 checkpoint 恢复和 GLM‑5.2 正常自动任务；任意 LangChain 应用、自定义图、子图与五层攻击整体验收仍未覆盖。 |
 | [AutoGen](https://github.com/microsoft/autogen) | 60,941 | `autogen-core 0.7.5` / `autogen-agentchat 0.7.5` | 新 `BaseTool` 适配已验证，使用实际 `AssistantAgent` 单次工具派发和 `ToolAgent` runtime，绑定原生 `call_id`。没有 Team 或完整模型循环、代码执行器隔离验收；旧 MCP 实验单独保留。 |
 | [CrewAI](https://github.com/crewAIInc/crewAI) | 58,383 | `1.15.21` | 新 SDK 工具适配已验证，覆盖 `BaseTool` / `CrewStructuredTool` 同步和异步派发。每次派发的稳定编号由主机保存和绑定；不是框架自动提供的调用 ID。没有 Crew/Flow 模型循环或进程隔离验收。 |
 | [LlamaIndex](https://github.com/run-llama/llama_index) | 52,127 | `llama-index-core 0.14.24` | 新原生 `FunctionTool.call/acall` 适配已验证，保留封闭的工具参数声明。主机须为每次派发保存和绑定独立编号；没有 AgentWorkflow、完整模型循环或恢复验收。 |
 | [Agno](https://github.com/agno-agi/agno) | 42,141 | `3.0.9` | 新 SDK 工具适配已验证，实际调用 `FunctionCall.execute/aexecute`，使用框架隐藏注入的调用身份；工具结果缓存关闭。没有 Agent/Team 模型循环或进程隔离验收。 |
 | [OpenAI Agents SDK](https://github.com/openai/openai-agents-python) | 29,375 | `openai-agents 0.22.2` | 新原生 `FunctionTool` 适配已验证，使用真实 `ToolContext` 调用 Broker，已不依赖旧 MCP 失败路径。注册了 Agent，但没有运行 Runner、handoff 或模型。 |
-| [smolagents](https://github.com/huggingface/smolagents) | 29,286 | `1.26.0` | 新原生 `Tool` 接入已验证，经过 `ToolCallingAgent.execute_tool_call`；逐次主机编号必需，原生消息 ID 不会注入工具。原生声明缺少顶层禁止额外字段标记，执行期完整严格验证。仅保护六个注册工具；没有模型循环，`CodeAgent` 任意 Python 执行和进程隔离未覆盖。[说明与证据](microsoft-smolagents-adapters.md)。 |
+| [smolagents](https://github.com/huggingface/smolagents) | 29,286 | `1.26.0` | 原 [Tool 适配记录](microsoft-smolagents-adapters.md)仅验证六个工具。新增 [固定完整入口](sdk-runtime.zh-CN.md)已验证 `ToolCallingAgent` 模型循环、隔离进程、持久化恢复及 GLM‑5.2 三种自动操作；`CodeAgent`、自定义工具和多 Agent 仍未覆盖。 |
 | [Mastra](https://github.com/mastra-ai/mastra) | 27,956 | `@mastra/core 1.66.0`，Node `24.16.0` | 新 Node 原生工具适配已通过实际 Agent 注册、执行包装器、真实 Unix Broker 和本机效果检查；恢复分支再次严格验参。没有完整模型或 workflow 循环、进程隔离验证。 |
 | [Google ADK](https://github.com/google/adk-python) | 21,504 | `google-adk 2.9.0` | 新 `BaseTool` 适配已验证：注册于 `LlmAgent`，使用实际 `ToolContext` 和 `run_async` 调用 Broker。没有 Runner、子 Agent 或模型循环验收。 |
 | [PydanticAI](https://github.com/pydantic/pydantic-ai) | 19,870 | 最新参考 `2.43.0`；本次实际验证 `pydantic-ai-slim 2.42.0` | 新原生工具适配已在完整依赖环境验证，通过 `FunctionToolset.get_tools/call_tool` 和真实 `RunContext` 调用 Broker；旧缺依赖记录不再代表这条适配路径。`TestModel` 只提供接口上下文，没有运行模型。 |
@@ -64,7 +66,7 @@ LangGraph 最新 GitHub release 名为 `sdk==0.4.4`，不是上表 Python 图运
 |---|---|---|
 | OpenClaw | 插件消息/工具钩子、sandbox provider、会话与 supervisor 生命周期；现有 [`integrations/openclaw`](../yuanxingmu/integrations/openclaw/plugin/CONTRACT.md)。 | 官方 WebUI 每层候选调用；用户审批恢复；工具返回不同结构；所有启用插件的副作用入口；重启与撤销。 |
 | Hermes | 官方 terminal environment provider、执行中间件、原生工具 dispatcher、插件与 dashboard 生命周期；[`hermes_backend.py`](../yuanxingmu/hermes_backend.py)、[`hermes.py`](../yuanxingmu/hermes.py)。 | native13/GLM14 已补齐同源码五层固定样本和真实工作台恢复。继续验证正常记忆写入、更多文件/终端/CLI/子任务来源、运行中设置及后来新增规则。AUTO15 的连续自动流程失败，仍需重新冻结后独立验收；不能由单次自动消息推断上传、表单或全部入口受控。 |
-| LangChain / LangGraph | 工具 wrapper / `ToolNode` 前后；`StateGraph`、checkpoint/thread 身份；子图与并行节点。 | 真正运行图和模型；从 checkpoint 恢复、重连、分叉后权限保持；检查点不能由 Agent 改写授权状态；非 MCP 工具同样受控。 |
+| LangChain / LangGraph | 固定 `StateGraph` 模型循环、单项 `ToolNode`、同步 checkpoint 和主机任务身份已接入。 | 任意既有应用、自定义节点、子图、并行节点与分叉；不能把固定图的隔离和恢复结果扩展到全部应用。 |
 | OpenAI Agents | Function tool guardrails 和 `needs_approval`，`Runner` 的暂停状态、恢复、handoff、session；真实执行仍在主机边界。 | input guardrail 只覆盖首个 Agent，output guardrail 只覆盖最终输出；不能据此覆盖全部中间工具。用真实 Runner 验证审批中断、同一 state 恢复和 handoff 后权限。 |
 | PydanticAI | 已有原生 toolset 与 `RunContext` 适配；继续接准备/审批入口和持久化运行身份。 | 已建立固定版本工具环境；还需验证模型循环、延迟审批及整个运行的恢复。 |
 | AutoGen | `BaseTool` / `Workbench` / `McpWorkbench`；单 Agent 与 team 会话身份。 | 兼容 MCP 版本；不同成员、重连和恢复不能创建全新授权身份；非 MCP 工具及代码执行器也受控。 |
@@ -73,7 +75,7 @@ LangGraph 最新 GitHub release 名为 `sdk==0.4.4`，不是上表 Python 图运
 | Google ADK | `before_tool_callback` / `after_tool_callback`、`BaseTool.run_async`、SessionService。 | 真正 Runner/Agent 循环；工具结果进入上下文前检查；子 Agent 和持久化会话；原生工具与 MCP 同时覆盖。 |
 | Mastra | 已有 `createTool` / `Tool.execute` 原生适配；Agent 使用原生 toolCallId，workflow 由主机逐次绑定编号；恢复分支再次验参。 | 完整模型、workflow 挂起/恢复、并发与不同工具后端仍需验收；原生工具适配绕开旧 MCP 探针的发现路径。 |
 | LlamaIndex | 已有 `FunctionTool.call/acall` 原生适配，主机逐次派发编号；另接 workflow/AgentWorkflow 的 Context 和工具结果流。 | 同步/异步组件已验证；继续验证事件恢复、子 Agent、模型循环与整个工作流的派发身份。 |
-| smolagents | 已有 `ToolCallingAgent.execute_tool_call` / `Tool.__call__` 适配；应用须在每次派发绑定已保存编号。原生声明顶层限制由执行期严格验证补足。 | 真实模型循环和持久化恢复；`CodeAgent` 生成 Python 可直接操作文件/网络，其执行器必须单独隔离验证；六个注册工具的保护不覆盖其他执行路径。 |
+| smolagents | 固定 `ToolCallingAgent` 模型循环、主机编号和持久化恢复已接入；执行期严格验证工具参数。 | `CodeAgent` 生成 Python 的执行器、自定义工具与多 Agent；固定工具循环不覆盖这些路径。 |
 | Agno | `Function` / Toolkit hooks，Agent/Team 的 session 和 storage。 | 模型循环、Team 委派、持久化恢复、工具 hook 旁路与直接代码执行；所有调用绑定同一宿主任务。 |
 
 OpenAI 接入判断同时核对了官方[Agents SDK](https://developers.openai.com/api/docs/guides/agents/sdk)与[guardrails / approvals](https://developers.openai.com/api/docs/guides/agents/guardrails-approvals)说明。这里没有把输入/输出 guardrail 当作文件系统、网络和凭证权限的替代。
@@ -81,9 +83,9 @@ OpenAI 接入判断同时核对了官方[Agents SDK](https://developers.openai.c
 ## 对 2–4 人团队的实际顺序
 
 1. **第一批：OpenClaw、Hermes。** 两者用户量最高，也有现成原生接入代码；先把官方 WebUI、五层检查、消息/上传/表单/文件操作做成真实可复现的完整例子。补齐每层正常对照、用户批准后执行、拒绝后无副作用和重启撤销。
-2. **第二批：LangChain/LangGraph、OpenAI Agents、PydanticAI。** 原生工具组件已通过，下一步沿现有适配完成模型循环、主机隔离、审批中断和恢复；旧工具测试不能替代这些工作。
+2. **第二批：LangChain/LangGraph、OpenAI Agents、PydanticAI。** LangGraph 固定图入口已补模型循环、隔离和恢复，继续验证更广的图应用；OpenAI Agents、PydanticAI 仍需沿工具适配补完整运行。
 3. **第三批：CrewAI、Google ADK、Agno。** 原生工具组件已通过，下一步完成团队/工作流、持久化恢复和真实模型；CrewAI 先落实主机派发编号，不把适配工厂当成自动接入。
-4. **第四批：Microsoft Agent Framework、AutoGen、LlamaIndex、smolagents。** 原生工具组件已有上述记录，继续补全模型循环与应用级接线；Microsoft 新旧框架分别验收，smolagents 的生成代码执行器需要独立隔离。**Mastra** 原生工具和 Unix 传输已完成第五批验证，继续补完整 workflow 与模型运行。
+4. **第四批：Microsoft Agent Framework、AutoGen、LlamaIndex、smolagents。** smolagents 固定工具调用入口已有完整运行记录，生成代码执行器仍需独立隔离；其余框架继续补全模型循环与应用接入，Microsoft 新旧框架分别验收。**Mastra** 原生工具和 Unix 传输已完成第五批验证，继续补完整 workflow 与模型运行。
 
 顺序综合用户量、现有代码、近期活动和接入成本，并非星数排名。与其一次列出十几个绿色勾，先交付两个可直接安装、官方 WebUI 真正能演示的支持对象更有价值。
 

@@ -4,7 +4,7 @@
 
 **[0.7.0a2 预览运行包](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a2)与[配套 0.4.0a2 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a2)已发布。** 安装器同时准备 Hermes 和 OpenClaw。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html)使用新的 `~/yuanxingmu-v07a2` 目录；旧安装和旧工作不会自动升级。
 
-**main 新增：** [smolagents 完整会话入口](docs/sdk-runtime.zh-CN.md)，复用已有工作的隔离、防护和恢复记录；有既定自动范围时，可自动发送消息、上传文本和提交表单。它尚未进入上面的 a2 下载包，也不覆盖 CodeAgent 或任意自定义 Agent。
+**main 新增：** [smolagents](docs/sdk-runtime.zh-CN.md) 和 [LangGraph](docs/langgraph-runtime.zh-CN.md) 的完整会话入口，复用已有工作的隔离、防护和恢复记录；有既定自动范围时，可自动发送消息、上传文本和提交表单。这两个固定入口尚未进入上面的 a2 下载包，也不覆盖 CodeAgent、任意自定义 Agent 或图。
 
 先选好资料和可接收的固定对象，再让 AI 读报价、发消息、上传文本或填表。范围内且通过检查的操作可自动执行；你可以随时关闭工作或收回资料权限。你选用的模型服务仍会收到聊天和使用的资料。
 
