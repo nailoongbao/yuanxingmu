@@ -1,4 +1,4 @@
-"""Issues #7/#8 regressions: inspect strings; never execute the commands.
+"""Issues #7/#8/#9 regressions: inspect strings; never execute the commands.
 
 These cases check rule decisions, not sandbox escape resistance or detection
 rates. No model or external service is contacted. Linux skill checks use only
@@ -141,6 +141,16 @@ class IndirectCommandTests(unittest.TestCase):
                 with self.subTest(prefix=prefix, target=target):
                     self.assertEqual((wrapped.verdict, wrapped.code), (direct.verdict, direct.code))
                     self.assertFalse(wrapped.allowed)
+
+    def test_issue9_real_credential_redirects_are_not_printed_path_arguments(self):
+        for command in ("echo synthetic > /workspace/.secret", "printf 'TOKEN=synthetic' > /workspace/.env",
+                        "echo synthetic >> ~/.ssh/authorized_keys"):
+            with self.subTest(command=command):
+                self.assert_blocked(command, "sensitive_credentials")
+        for command in ("echo /workspace/.secret", "printf '%s' '/workspace/.env'", "echo '~/.ssh/authorized_keys'",
+                        "printf '%s' 'TOKEN=synthetic > /workspace/.env'"):
+            with self.subTest(command=command):
+                self.assertTrue(self.guard.check_command(command).allowed, command)
 
     def test_env_chdir_cannot_clear_unresolved_relative_file_access(self):
         for command in ("env -C /etc cat shadow", "env --chdir=/ cat etc/shadow",
