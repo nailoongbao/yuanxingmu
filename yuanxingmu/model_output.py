@@ -203,10 +203,14 @@ class ModelOutputGuard:
             else:
                 try:
                     text = inspect_text(raw, content_type)
-                    result = self.broker.guards.check_response(text)
+                    result = self.broker.guards.check_response(text, **self.broker._review_context(self.task_id))
                 except InvalidModelOutput as exc:
                     result = self.broker.guards._rule("alignment", "block", str(exc),
                         "模型返回不完整或包含尚不支持的格式，已暂不展示。", raw)
+                except AuthorizationError as exc:
+                    return withheld_response(content_type, reason=exc.reason)
+                except (OSError, sqlite3.Error):
+                    return withheld_response(content_type, reason="defense_storage_fault")
             try:
                 self.broker._guard_result(self.task_id, result)
             except AuthorizationError as exc:

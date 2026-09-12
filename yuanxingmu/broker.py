@@ -288,7 +288,12 @@ class Broker:
         self._guard_result(task_id, self.guards.check_memory(tool, arguments))
         if tool in {"exec", "terminal"}:
             self._guard_result(task_id, self.guards.check_command(arguments.get("command", "")))
-        self._guard_result(task_id, self.guards.check_alignment({"tool": tool, "arguments": arguments}))
+        self._guard_result(task_id, self.guards.check_alignment(
+            {"tool": tool, "arguments": arguments}, **self._review_context(task_id)))
+
+    def _review_context(self, task_id):
+        # There is deliberately no worker RPC field or operation for this.
+        return {"host_facts": self.automation.review_facts(task_id)} if self.automation is not None else {}
 
     def _guard_native_tool(self, task_id, tool, arguments, *, alignment=True):
         """Return review to the native human approval hook; never execute here."""
@@ -302,7 +307,7 @@ class Broker:
             value = check.to_dict()
             self._event(task_id, "defense_check", {k: v for k, v in value.items() if k != "cleaned_text"})
         if alignment and not any(check.verdict == "block" for check in checks):
-            check = self.guards.check_alignment({"tool": tool, "arguments": arguments})
+            check = self.guards.check_alignment({"tool": tool, "arguments": arguments}, **self._review_context(task_id))
             checks.append(check)
             self._event(task_id, "defense_check", {k: v for k, v in check.to_dict().items() if k != "cleaned_text"})
         outcome = next((check for check in checks if check.verdict == "block"), None)

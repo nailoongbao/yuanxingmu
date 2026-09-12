@@ -243,3 +243,37 @@ class ActionAutomation:
             return {"policy_digest": self.policy.digest, "scope": self.policy.binding(), "attempts_used": usage[0],
                     "body_bytes_used": usage[1], "attempts_remaining": self.policy.max_attempts - usage[0],
                     "body_bytes_remaining": self.policy.max_total_body_bytes - usage[1]}
+
+    def review_facts(self, task_id):
+        """Host-only review context, not a reusable permission to execute.
+
+        Read scope, child grants, family labels and usage in one transaction.
+        Do not include destinations, credentials, proposal text or sibling IDs.
+        Actions._begin still checks the current authority immediately before I/O.
+        """
+        task_id = _identifier(task_id, "task_id")
+        with self.authority._transaction() as db:
+            task = self.authority._task(db, task_id)
+            self._policy(db, task["family_id"])
+            destinations = set(self.authority._grants(db, task_id, "destination"))
+            labels = set(self.authority._labels(db, task["family_id"]))
+            targets = []
+            for key, grant in sorted(self.policy.grants.items()):
+                if not hmac.compare_digest(_digest(self.targets[key].binding()), grant.binding_digest):
+                    raise AuthorizationError("automatic_action_target_binding_changed")
+                self._destination_binding(db, task["family_id"], grant)
+                targets.append({"target_id": key, "kind": grant.kind,
+                                "task_granted": grant.destination_id in destinations,
+                                "current_labels_allowed": labels <= set(grant.accepted_labels),
+                                "max_body_bytes": grant.max_body_bytes})
+            usage = db.execute("SELECT COUNT(*),COALESCE(SUM(body_bytes),0) FROM action_auto_attempts WHERE family_id=?",
+                               (task["family_id"],)).fetchone()
+            # These are bounded, host-recorded outcomes, not model assertions.
+            # Never include a proposal or a target's human-readable label here.
+            rows = db.execute("""SELECT id,kind,target_id,status,execution_mode,authorization_source
+                FROM reviewed_actions WHERE task_id=? ORDER BY rowid DESC LIMIT 8""", (task_id,)).fetchall()
+            return {"version": 1, "source": "host_ledger", "automatic_scope_sha256": self.policy.digest,
+                    "automatic_targets": targets,
+                    "attempts_remaining": self.policy.max_attempts - usage[0],
+                    "body_bytes_remaining": self.policy.max_total_body_bytes - usage[1],
+                    "recent_action_results": [dict(row) for row in rows]}
