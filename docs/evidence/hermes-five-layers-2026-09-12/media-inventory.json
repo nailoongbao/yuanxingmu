@@ -1,0 +1,88 @@
+{
+  "recordings": [
+    {
+      "file": "00-normal-startup-workbench.webm",
+      "bytes": 7230501,
+      "sha256": "fbf8b32115955bde013d8436a2cbfcc14a0bfbcfda32d7613515a9667e7ee1ee"
+    },
+    {
+      "file": "01-read-native.webm",
+      "bytes": 2892049,
+      "sha256": "3cd0df83df2ca75a8c009c5e53cc3ee228e8c6aeed97e1fe402e45bd5964ba57"
+    },
+    {
+      "file": "02-write-native.webm",
+      "bytes": 18210702,
+      "sha256": "4d26aab8b7c5ebd0c120906937bb3600c6adcc795736817d04f2c8ca42c80016"
+    },
+    {
+      "file": "02-write-workbench.webm",
+      "bytes": 14024192,
+      "sha256": "3df6b7c215679f29a1b327ea2225d62fcfc498040e861e25054722b915714e54"
+    },
+    {
+      "file": "03-public-mail-and-normal-native.webm",
+      "bytes": 12846003,
+      "sha256": "2b6d1304ee3d2be2e85d50ac9e9289e8d63cec407d58dcfeff9b921ee3295e67"
+    },
+    {
+      "file": "03-public-mail-false-positive-recovery.webm",
+      "bytes": 3780773,
+      "sha256": "d3ae0f599b81e36bdf9ddf5b99f598ec70b225ebe74e8988a0dbb9d4ef826c32"
+    },
+    {
+      "file": "04-normal-response-recovery.webm",
+      "bytes": 1209335,
+      "sha256": "8651df09a0592c212a5fd4e8494454d915fde5413f2512806d7128b2f529f715"
+    },
+    {
+      "file": "05-input-and-recovery-native.webm",
+      "bytes": 8937501,
+      "sha256": "2782591d3aa9a688c309b3d49b059b89c2f21bdc2f69f7e942c6bb4276c323a9"
+    },
+    {
+      "file": "05-input-and-recovery-workbench.webm",
+      "bytes": 8107202,
+      "sha256": "0e57059c27d7f708f384cd4fed0bd121f5c10f4e92313051431f5ed431bd1c65"
+    },
+    {
+      "file": "08-memory-and-recovery-native.webm",
+      "bytes": 12067301,
+      "sha256": "21aa67c0272869c810166539279e35acab60fd2ed16382447704dd2bd3ac7ff5"
+    },
+    {
+      "file": "08-memory-and-recovery-workbench.webm",
+      "bytes": 10189056,
+      "sha256": "7b2c590447026ba4846b8cf08bd09e0be0bad92c339493d96f1da1c7d2e13f83"
+    },
+    {
+      "file": "11-secret-mail-and-recovery-native.webm",
+      "bytes": 7690610,
+      "sha256": "9fbcca5e072923549ba75520e68eab8f97905ff3104e912952fd573ecaec7322"
+    },
+    {
+      "file": "11-secret-mail-and-recovery-workbench.webm",
+      "bytes": 6647080,
+      "sha256": "ee2199cfcb6332e382a75a6b73c503eeabec92dd87ca9711737a5bbaf973ae1e"
+    },
+    {
+      "file": "13-command-and-paused-new-native.webm",
+      "bytes": 25508200,
+      "sha256": "0879c71f63ddad41b8e8cd5e15f63f3b99e8d70e95c88c55f6b5807c283baf65"
+    },
+    {
+      "file": "13-command-and-paused-new-workbench.webm",
+      "bytes": 22332879,
+      "sha256": "f0c2704bf31a2e4b16f9e17839182d4c2f653c06ae1c0a886395315d8dd2e213"
+    },
+    {
+      "file": "18-bad-skill-startup.webm",
+      "bytes": 3538811,
+      "sha256": "42cc3bf794451c2d2d09b2bbde8315d39f9f09004e60521d927c79bc8884a7f4"
+    }
+  ],
+  "notes": [
+    "This export hashes original media; it does not claim a full decode or every-frame privacy review."
+  ],
+  "video_content_copied_into_this_public_bundle": false
+}

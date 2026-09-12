@@ -5,6 +5,11 @@ site/assets/videos/real-v03/** -text whitespace=trailing-space,space-before-tab,
 site/assets/videos/workbench-v04/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 site/assets/videos/hermes-approval/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 site/assets/videos/openclaw-alignment/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/hermes-glm14-input/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/hermes-glm14-memory/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/hermes-glm14-alignment/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/hermes-glm14-tools/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/hermes-glm14-skills/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 # Evidence manifests bind exact bytes, including recorded line endings.
 docs/evidence/hermes-native12-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/integration-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
@@ -20,6 +25,12 @@ docs/evidence/glm-judge-review-2026-09-12/** -text whitespace=trailing-space,spa
 docs/evidence/rule-parity-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/action-automation-ui-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/automatic-work-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/hermes-auto15-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/review-facts-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+# Frozen external runners retain their recorded whitespace; SSE needs final blank events.
+docs/evidence/automatic-work-2026-09-12/verification-runner.py -whitespace
+docs/evidence/review-facts-2026-09-12/verification-runner.py -whitespace
+docs/evidence/hermes-auto15-2026-09-12/raw/*.sse -whitespace
 examples/yuanxingmu/workbench/evidence/** -text
 # Preserve the model's Markdown line breaks and frozen patch context bytes.
 examples/yuanxingmu/workbench/evidence/REPORT.zh-CN.md -whitespace

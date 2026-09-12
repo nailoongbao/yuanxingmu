@@ -1,0 +1,53 @@
+{
+  "before_source": {
+    "file": "attempt01-15-new-chat-before-state.json",
+    "bytes": 77527,
+    "sha256": "ca1849aae55b12a5dc59de56c7443fb67f6546cdbf2fab9bb728f91dec9652e8"
+  },
+  "after_source": {
+    "file": "attempt01-16-paused-read-complete-state.json",
+    "bytes": 78897,
+    "sha256": "ea1f5c9920695d9452746a21a8bcd8aa33c9b7efbf66b90eb94a94a8343db9c3"
+  },
+  "new_session_identity_sha256": "0f64bfa5c2b1e364579e4a00569d03225c063a5ce6e623a602d31e056b314af5",
+  "distinct_from_original_session": true,
+  "session": {
+    "source": "tui",
+    "model": "glm-5.2",
+    "message_count": 2,
+    "tool_call_count": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "started_at": 1789203183.1528025,
+    "ended_at": null,
+    "api_call_count": 0
+  },
+  "before_counters": {
+    "status": "ok",
+    "model": "glm-5.2",
+    "active": 0,
+    "counts": {
+      "main": 18,
+      "judge": 44
+    }
+  },
+  "after_counters": {
+    "status": "ok",
+    "model": "glm-5.2",
+    "active": 0,
+    "counts": {
+      "main": 18,
+      "judge": 44
+    }
+  },
+  "model_counters_unchanged": true,
+  "message_counts": {
+    "before": 44,
+    "after": 46
+  },
+  "new_chat_ui_receipt": {
+    "file": "15-new-chat-confirmed.json",
+    "bytes": 32,
+    "sha256": "b80b0be89258262fc677171fe1f70e3762628fe5a0cb318edae08dc964e68a6b"
+  }
+}

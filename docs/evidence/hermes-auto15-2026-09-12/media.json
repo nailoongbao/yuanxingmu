@@ -1,0 +1,193 @@
+{
+  "original_recordings": [
+    {
+      "file": "00-register-and-consent-workbench.webm",
+      "bytes": 40216913,
+      "sha256": "616ec45f690739b4c06aca5d3d6ad8c39a5c213803bdbdb57aa4f00ee55c7eaa",
+      "duration_seconds": 724.96,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "00-register-and-consent-workbench-00001.00.png"
+        },
+        {
+          "second": 362.48,
+          "file": "00-register-and-consent-workbench-00362.48.png"
+        },
+        {
+          "second": 723.96,
+          "file": "00-register-and-consent-workbench-00723.96.png"
+        }
+      ]
+    },
+    {
+      "file": "01-targets-native.webm",
+      "bytes": 2321721,
+      "sha256": "8b89b8874e0700be062968cda4cd69e851bea9a0c3c198aad0484833d2ca802d",
+      "duration_seconds": 40.44,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "01-targets-native-00001.00.png"
+        },
+        {
+          "second": 20.22,
+          "file": "01-targets-native-00020.22.png"
+        },
+        {
+          "second": 39.44,
+          "file": "01-targets-native-00039.44.png"
+        }
+      ]
+    },
+    {
+      "file": "02-read-native.webm",
+      "bytes": 5540430,
+      "sha256": "9e577bf28df1673abe40dac6d7a4d087e1347bd0b5226becb3b663a1e039dd0d",
+      "duration_seconds": 77.92,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "02-read-native-00001.00.png"
+        },
+        {
+          "second": 38.96,
+          "file": "02-read-native-00038.96.png"
+        },
+        {
+          "second": 76.92,
+          "file": "02-read-native-00076.92.png"
+        }
+      ]
+    },
+    {
+      "file": "03-message-native.webm",
+      "bytes": 6229441,
+      "sha256": "141603b2c237f883425ddde9bdb811ec09befc55d488847a4c6ea965ef190d86",
+      "duration_seconds": 112.6,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "03-message-native-00001.00.png"
+        },
+        {
+          "second": 56.3,
+          "file": "03-message-native-00056.30.png"
+        },
+        {
+          "second": 111.6,
+          "file": "03-message-native-00111.60.png"
+        }
+      ]
+    },
+    {
+      "file": "03-message-receiver.webm",
+      "bytes": 2284009,
+      "sha256": "82b78b9fef8e6428635c8435def0b42c7dd94f22337b4e07960de8511b132a75",
+      "duration_seconds": 112.6,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "03-message-receiver-00001.00.png"
+        },
+        {
+          "second": 56.3,
+          "file": "03-message-receiver-00056.30.png"
+        },
+        {
+          "second": 111.6,
+          "file": "03-message-receiver-00111.60.png"
+        }
+      ]
+    },
+    {
+      "file": "03-message-workbench.webm",
+      "bytes": 15936883,
+      "sha256": "0edabfd26986b98852bebaf108b721c72fb4e2d2d0af3c583be32be46b1dcfcf",
+      "duration_seconds": 300.08,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true,
+      "frames": [
+        {
+          "second": 1,
+          "file": "03-message-workbench-00001.00.png"
+        },
+        {
+          "second": 150.04,
+          "file": "03-message-workbench-00150.04.png"
+        },
+        {
+          "second": 299.08,
+          "file": "03-message-workbench-00299.08.png"
+        }
+      ]
+    }
+  ],
+  "original_recording_location_in_operator_workspace": "output/playwright/hermes-auto15",
+  "recordings_in_this_public_export": false,
+  "screenshots": [
+    {
+      "file": "screenshots/00-once-consent-before-create.png",
+      "sha256": "b82e42847a83611f3f5da6bd39aedceff03e0f7b0bbfd21a3c09e5fbfd7fc2cf"
+    },
+    {
+      "file": "screenshots/02-read-native-complete.png",
+      "sha256": "bb0a48ffa42097b735abe792e93bd1997d4aae88420afaa564b7661b42cb9adc"
+    },
+    {
+      "file": "screenshots/03-message-native-paused.png",
+      "sha256": "23f65cc64b87eb5856abdc70a85b2f1ffddcdc706d71a62114a90b56a6e21580"
+    },
+    {
+      "file": "screenshots/03-message-receiver-one-post.png",
+      "sha256": "9f9368156970d665bc36535dfa6aac5372904760b8e9c42b5f947c22c4768bdf"
+    },
+    {
+      "file": "screenshots/03-action-detail-automatic.png",
+      "sha256": "a768942800955242717042f0eaf3830c0cc8ada390e86fa77f679057c41b0061"
+    },
+    {
+      "file": "screenshots/03-protection-paused.png",
+      "sha256": "f054ee8afb6986cdc55c1f12386822a60c952c7a3445c73a7787edeac7f3276a"
+    },
+    {
+      "file": "screenshots/12-stopped-workbench.png",
+      "sha256": "d545c545cc8f30b70ea63de8c242cbb862a09975af3c3d46119d461b7e5e7ebc"
+    }
+  ],
+  "visual_review": {
+    "contact_sheets_reviewed": 2,
+    "sampled_frames": 18,
+    "all_six_videos_full_decoded": true,
+    "original_hashes_unchanged": true
+  },
+  "limits": "Contact sheets sample frames; they are not a claim of every-frame OCR or a complete secret scan."
+}

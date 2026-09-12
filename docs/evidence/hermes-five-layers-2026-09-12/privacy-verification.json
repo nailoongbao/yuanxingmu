@@ -1,0 +1,10 @@
+{
+  "run": "native13",
+  "known_local_access_values_absent": true,
+  "private_values_printed_or_published": false,
+  "source_value_count": 3,
+  "public_files_checked": 18,
+  "provider_credential_read_or_tested": false,
+  "network_requests": 0,
+  "limitation": "Exact-byte scan of available local access values and their URL encodings; no claim of provider-key matching or every-frame media review."
+}

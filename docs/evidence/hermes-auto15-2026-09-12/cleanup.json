@@ -1,0 +1,47 @@
+{
+  "lifecycle": {
+    "status": "stopped",
+    "supervisor_pid": 257827,
+    "supervisor_start": "4068222",
+    "task_id": "task_747e6197f4fc45f4951d539ba0c897b7",
+    "gateway_pid": 257849,
+    "gateway_start": "4068722",
+    "cleanup_confirmed": true
+  },
+  "service": {
+    "kind": "service",
+    "identity_checked": true,
+    "stopped": true
+  },
+  "receiver": {
+    "kind": "receiver",
+    "identity_checked": true,
+    "stopped": true
+  },
+  "browsers": [
+    {
+      "session": "hermes-auto15",
+      "status": "closed",
+      "closed_at": "2026-09-12T09:46:02.501264+00:00",
+      "cli_output": "Browser 'hermes-auto15' closed\n\n"
+    },
+    {
+      "session": "hermes-auto-receiver15",
+      "status": "closed",
+      "closed_at": "2026-09-12T09:46:04.288560+00:00",
+      "cli_output": "Browser 'hermes-auto-receiver15' closed\n\n"
+    },
+    {
+      "session": "hermes-auto-workbench15",
+      "status": "closed",
+      "closed_at": "2026-09-12T09:46:06.037804+00:00",
+      "cli_output": "Browser 'hermes-auto-workbench15' closed\n\n"
+    }
+  ],
+  "ports_closed": {
+    "18911": true,
+    "18955": true,
+    "18956": true
+  },
+  "relay": "Returned to the parent operator at recorded counters main 24 / judge 51; relay itself was left running."
+}

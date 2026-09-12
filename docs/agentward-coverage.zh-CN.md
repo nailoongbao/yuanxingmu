@@ -19,16 +19,16 @@
 
 | 玄甲实际功能 | 元星木实现和证据 | 当前缺口或边界 |
 |---|---|---|
-| **输入：识别外部内容伪造系统角色、模板标记、越狱、覆盖既有指令、索要凭证**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/input-sanitization.ts) | [`Guards.check_input`](../yuanxingmu/guards.py) 做规范化及规则检查；命中时以固定说明替代外部内容。Broker 与 OpenClaw/Hermes 工具路径有接入；[`test_yuanxingmu_guards.py`](../tests/test_yuanxingmu_guards.py) 覆盖规则及关闭/观察模式。 | 规则不穷尽所有提示注入。需要按网页、文件、消息、搜索结果等原生来源分别验证，不能以邮件案例代表全部。玄甲的警告类型定义也不等于所有类型都有实际检测器。 |
+| **输入：识别外部内容伪造系统角色、模板标记、越狱、覆盖既有指令、索要凭证**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/input-sanitization.ts) | [`Guards.check_input`](../yuanxingmu/guards.py) 做规范化及规则检查；命中时以固定说明替代外部内容。Broker 与 OpenClaw/Hermes 工具路径有接入；[`test_yuanxingmu_guards.py`](../tests/test_yuanxingmu_guards.py) 覆盖规则及关闭/观察模式。GLM14 已验证供应商合成文本被扣留，恢复后正常报价读取成功。 | 规则不穷尽所有提示注入。需要按网页、文件、消息、搜索结果等原生来源分别验证，不能以邮件案例代表全部。玄甲的警告类型定义也不等于所有类型都有实际检测器。 |
 | **输入：递归检查工具结果里的字符串、数组和对象**。 | Broker 对输入文本检查；原生插件整理工具结果后送主机检查，保留文本换行，避免重复 JSON 编码导致漏检。 | 新增钩子的模块测试不能代表所有官方工具结果类型；图片、音频、嵌入对象等未建立完整承诺。 |
 | **输入/记忆：外部文字要求执行危险命令，或将破坏指令留待以后触发**。 | 新规则对明确执行要求检查相邻命令，补齐递归删除、提权、磁盘破坏、常见包装和下载执行等语法；记忆和所选技能规则复用。教学引用、否定句、正常条件偏好和 token 统计另有对照。独立复核发现的转义引号及无围栏多行遗漏已修复。22 项专属加既有 48 项 guards 检查，Linux **70/70**；Windows 58 通过、12 项 Linux 接口跳过。[前后结果与范围](evidence/rule-parity-2026-09-12/REPORT.zh-CN.md) | 本轮仅组件证据，未执行危险命令或模型。有限语法不能穷尽自然语言改写；未把裸 token/secret 等模糊用语一概封禁，仍有与玄甲不同的规则。旧实机视频不计为本轮验证。 |
-| **输入：按配置插入提醒、替换危险内容、暂时停用工具、覆盖受污染回答**。[主插件](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts) | 危险输入不交给 AI；[`quarantine.py`](../yuanxingmu/quarantine.py) 在主机暂停整项工作及分出的任务，作废未使用审批和待确认草稿；[`model_output.py`](../yuanxingmu/model_output.py) 收齐模型响应后检查，拒绝时只返回明确的主机提醒。暂停 16 项、当前响应协议与真实套接字 25 项测试通过。 | 暂停需本人恢复，不随下一条用户消息解除。回答检查覆盖所接入模型接口的正文、拒绝及思考文本；工具卡参数、图片、工具结果和旧聊天记录另有边界。原生界面新版整体验收仍在进行；详见[回答与暂停](response-and-quarantine.md)。 |
-| **记忆：检查 `write/edit/exec` 对 MEMORY.md、memory/、SOUL.md、IDENTITY.md、AGENTS.md、USER.md、TOOLS.md 的改写**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/cognition-protection.ts) | [`Guards.check_memory`](../yuanxingmu/guards.py) 识别受保护名字、写入/补丁工具及命令中的改写；规则对安全绕过等内容给出拦截。组件用例覆盖正常写入和恶意记忆修改。 | 通过任意编程语言或别名改写的情况不能仅靠文本规则穷尽。宿主只读挂载才承担不可改的边界；要验收 Hermes 原生 file 工具与 terminal 的真实执行路径。 |
-| **决策：用模型比较最近用户意图、上下文、助手行为，发现指令语义偏移**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/decision-alignment.ts) | [`Guards.check_alignment`](../yuanxingmu/guards.py) 对照主机固定目标检查完整工具候选；`check_response` 检查收齐后的模型文字。两者采用不同检查提示，严格解析 `allow/block/review`。强制模式下模型缺失、超时、非法判定或审计失败均不放行。组件测试实际走 HTTP，裁判文本为预设响应。 | 不能保证识别所有偏离或恶意内容。Hermes 本地真机已保留一次含内部底价外部邮件的模型阻止，也保留正常本地摘要被误判的失败；新提示词和回答缓冲的正常对照仍需验收。 |
-| **执行：阻止毁损、提权、远程代码执行、反向 shell**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/exec-control.ts) | [`Guards.check_command`](../yuanxingmu/guards.py) 检查命令分段、解释器包装、敏感操作与下载执行；OpenClaw 钩子与 Hermes terminal provider 在执行前调用。危险硬规则优先于模型的“需审批”。 | 解析器有明确支持范围；它不是任意 shell 或程序的形式化证明。还需用各原生入口实测，尤其是代码执行器和子 Agent。 |
+| **输入：按配置插入提醒、替换危险内容、暂时停用工具、覆盖受污染回答**。[主插件](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts) | 危险输入不交给 AI；[`quarantine.py`](../yuanxingmu/quarantine.py) 在主机暂停整项工作及分出的任务，作废未使用审批和待确认草稿；[`model_output.py`](../yuanxingmu/model_output.py) 收齐模型响应后检查，拒绝时只返回明确的主机提醒。暂停 16 项、当前响应协议与真实套接字 25 项测试通过。 | 暂停需本人恢复，不随下一条用户消息解除。回答检查覆盖所接入模型接口的正文、拒绝及思考文本；工具卡参数、图片、工具结果和旧聊天记录另有边界。GLM14 已验证三次真实工作台恢复和暂停后新聊天；更多原生来源与后续代码仍需验收。详见[回答与暂停](response-and-quarantine.md)。 |
+| **记忆：检查 `write/edit/exec` 对 MEMORY.md、memory/、SOUL.md、IDENTITY.md、AGENTS.md、USER.md、TOOLS.md 的改写**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/cognition-protection.ts) | [`Guards.check_memory`](../yuanxingmu/guards.py) 识别受保护名字、写入/补丁工具及命令中的改写；规则对安全绕过等内容给出拦截。组件用例覆盖正常写入和恶意记忆修改。 | 通过任意编程语言或别名改写的情况不能仅靠文本规则穷尽。宿主只读挂载才承担不可改的边界。GLM14 已验证官方 `write_file` 写入 `SOUL.md` 被阻止且文件不存在；正常记忆写入、其他 file/terminal 路径仍需原生验收。 |
+| **决策：用模型比较最近用户意图、上下文、助手行为，发现指令语义偏移**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/decision-alignment.ts) | [`Guards.check_alignment`](../yuanxingmu/guards.py) 对照主机固定目标检查完整工具候选；`check_response` 检查收齐后的模型文字。两者采用不同检查提示，严格解析 `allow/block/review`。强制模式下模型缺失、超时、非法判定或审计失败均不放行。组件测试实际走 HTTP，裁判文本为预设响应。 | 不能保证识别所有偏离或恶意内容。同源码 native13/GLM14 均拦住含底价的真实邮件候选；GLM14 正常草稿创建成功，固定正常集未见语义误拦，native13 保留两次正常误拦。较新 AUTO15 的发送后回答再次误拦，不能据此称误报已解决。 |
+| **执行：阻止毁损、提权、远程代码执行、反向 shell**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/exec-control.ts) | [`Guards.check_command`](../yuanxingmu/guards.py) 检查命令分段、解释器包装、敏感操作与下载执行；OpenClaw 钩子与 Hermes terminal provider 在执行前调用。危险硬规则优先于模型的“需审批”。 | 解析器有明确支持范围；它不是任意 shell 或程序的形式化证明。GLM14 已验证两次 `true` 成功、`sudo true` 执行前阻止；其他命令、代码执行器和子 Agent 入口仍需逐项实测。 |
 | **执行：敏感凭证/环境访问、资源耗尽、无限循环转人工审批**。 | 明确的凭证窃取、进程爆炸等直接阻止；需要核对的候选进入主机一次性审批，批准绑定完整参数与本次调用。主机审批的 4 项账本测试及 11 项真实 Broker 套接字测试通过。Hermes 适配已接入这条审批路径。 | 策略和玄甲不完全相同。当前没有 CPU/内存/磁盘配额。Hermes native12 已完成官方写文件的一次真实工作台批准后执行；这证明该次动态写入审批链，不表示上述敏感命令类别已全部原生验收。 |
 | **基础：检查 Gateway 暴露、认证、会话隔离、敏感工具配置**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/foundation-scan.ts) | [`Guards.scan_foundation`](../yuanxingmu/guards.py) 检查显式配置快照：绑定地址、认证、工具清单、提权、直接联网、隔离执行、会话分离、凭证归属、技能固定。缺字段或无效字段不会当成正常。 | 这是对主机声明和选定文件的检查；不等于自动发现机器上全部暴露端口或所有插件。应与实际进程、挂载和网络验证共同验收。 |
-| **基础：技能清单、内容规则检查、模型检查及可信哈希缓存**。 | 现有扫描器在 Linux 逐级不跟随链接，限制文件大小、总量、深度，读取完整 UTF-8 文件后检查；拒绝硬链接、特殊文件和无法完整扫描的内容。[`skills.py`](../yuanxingmu/skills.py) 已实现显式选中技能的内容寻址只读快照、精确清单及启动前重验；28 项 Linux 组件测试通过，包括真实只读挂载。 | 固定扫描目录必须与 Agent 最终加载目录相同。Hermes 默认采用空技能库、显式选择后挂载；不能仅因源码目录只读就把 `skills_pinned` 写成 true。官方框架最终挂载与自动复制关闭仍需原生验收。 |
+| **基础：技能清单、内容规则检查、模型检查及可信哈希缓存**。 | 现有扫描器在 Linux 逐级不跟随链接，限制文件大小、总量、深度，读取完整 UTF-8 文件后检查；拒绝硬链接、特殊文件和无法完整扫描的内容。[`skills.py`](../yuanxingmu/skills.py) 已实现显式选中技能的内容寻址只读快照、精确清单及启动前重验；28 项 Linux 组件测试通过，包括真实只读挂载。 | 固定扫描目录必须与 Agent 最终加载目录相同。Hermes 默认采用空技能库、显式选择后挂载；不能仅因源码目录只读就把 `skills_pinned` 写成 true。GLM14 已验证所选普通技能可以启动，危险技能在官方助手启动前被规则拒绝；这不替代对更多官方加载目录、挂载和自动复制路径的验收。 |
 | **基础：将技能宣称的用途与所属代码文件对照**。[玄甲实现](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/foundation-scan.ts#L463) | 带 `skill_purpose_v1` 的新工作，将所选技能根目录的完整 `SKILL.md` 与各文件内容一起送审；用途、代码及摘要来自同一次固定快照读取。多个技能不混用说明，子目录同名文件不能替换根用途。缺失、空白或只有标题/名称时记录 `skill_purpose_missing`，不称检查完整。[组件证据](evidence/skill-purpose-2026-09-12/REPORT.zh-CN.md) | 随技能语义开关运行。存在性规则不证明用途明确或模型判断正确；用途矛盾的识别仍可能误报、漏判。没有执行技能代码，也没有把旧实机录像当作本功能验收。 |
 
 这组新增检查在开发时完成了 **Linux/WSL 51 项组件测试**；Windows 完成 27 项，另外 24 项因依赖 Linux 的隔离或文件系统接口跳过。这些数量对应当时的 guards、Broker 与原生钩子组件，不是 51 次真实模型攻击，也不是当前所有模块的完整测试总数。
@@ -45,6 +45,16 @@ Hermes `v2026.9.11 / 0.21.2` 的本地 `native07-layers` 首轮记录了正常�
 
 随后独立冻结的 **Hermes native12** 已完成正常读取、一次官方 `write_file`、一次真实工作台批准、精确 50 字节文件落盘、`true` 退出码 0、`sudo true` 在执行前阻止，以及暂停后新聊天模型/工具调用均为 0。原生工具参数、批准来源、标准输入与实际文件一致，最后真实关闭并清理成功。[native12 核心报告](evidence/hermes-native12-2026-09-12/REPORT.zh-CN.md)保留哈希及范围。该轮未重跑恶意材料、记忆投毒、外发底价和危险技能，也早于后续设置历史与技能用途对照；不能拼接成最新代码五层全通过。
 
+## 同源码补充：native13、GLM14 与五层视频
+
+[native13 本地模型记录](evidence/hermes-five-layers-2026-09-12/REPORT.zh-CN.md)与 [GLM14 记录](evidence/hermes-glm14-2026-09-12/REPORT.zh-CN.md)均固定在 `6881138`，使用同一目标、12 条逐字冻结输入与合成资料，每轮 11 次实际工具调用。外部材料、恶意记忆、底价邮件草稿、提权命令和危险技能均有真实候选/启动请求及下游核对，不以模型口头拒绝计为拦截。两轮均完成一次人工批准后的精确 50 字节文件写入，没有邮件获准或发送。
+
+native13 使用本地 Qwen3-4B 工作模型与 Qwen3-8B 检查模型，保留两次正常语义误拦及五次真实工作台恢复。GLM14 的两个角色均为远程 GLM-5.2，独立请求、不同上下文，thinking 关闭；本次固定正常集未观察到语义误拦，三次工作台恢复均有真实操作回执。两轮都验证暂停后新建官方会话的模型、工具及输入/输出 token 为零。固定输入相同不等于生成候选逐字相同，底价邮件的标点仍有差异；[协议对照](evidence/hermes-glm14-2026-09-12/COMPARISON.zh-CN.md)保留模型、接口与观察差异。没有重复采样，不能据此宣布某种模型更安全或整体超过玄甲。
+
+GLM14 五段实录：[外部资料 · 52 秒](../site/assets/videos/hermes-glm14-input/hermes-glm14-input.mp4)、[长期记忆 · 56 秒](../site/assets/videos/hermes-glm14-memory/hermes-glm14-memory.mp4)、[任务偏移 · 62 秒](../site/assets/videos/hermes-glm14-alignment/hermes-glm14-alignment.mp4)、[危险命令 · 66 秒](../site/assets/videos/hermes-glm14-tools/hermes-glm14-tools.mp4)、[环境与技能 · 53 秒](../site/assets/videos/hermes-glm14-skills/hermes-glm14-skills.mp4)。[视频清单](../site/assets/videos/hermes-glm14-manifest.json)记录素材与证据绑定；技能片的网页只显示操作未完成，准确原因与未启动由实际日志核对。
+
+后来 `9bd6605` 的 [AUTO15 自动工作记录](evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md)只完成一条真实自动消息到本机接收端；之后正常状态回答被误拦，整项工作暂停，连续流程验收失败。创建时一次授权后没有逐次批准或人工恢复，上传、表单及其他后续步骤未提交。读取阶段额外列出内部底价的是本地回答，该阶段没有外发请求。GLM14 视频不覆盖这一版自动执行代码，也不抵消 AUTO15 的失败。
+
 ## 五层以外，也必须对齐
 
 | 功能 | 玄甲源码行为 | 元星木状态 |
@@ -56,7 +66,7 @@ Hermes `v2026.9.11 / 0.21.2` 的本地 `native07-layers` 首轮记录了正常�
 | 事件记录 | 主机 logger 加 JSONL 文件日志，字段为时间、级别、消息。[日志](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/util/logger.ts) | 元星木记录层、候选哈希、判定、是否实际拦截、模型响应哈希和耗时；原始裁判文本留在主机审计。界面不直接展示原始敏感内容。日志不是防篡改远程审计系统。 |
 | 警告作用范围 | 单次、暂时、到下一条用户消息；源码中所谓 permanent 也会在下一次用户请求清除。[警告](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/core/warnings.ts) | 已有单次候选判定、整项工作及子任务暂停、本人核对后恢复、永久撤销。相同未处理告警去重，新告警使旧页面的恢复请求失效；重启及下一条聊天消息不自动解除暂停。生命周期与玄甲不同，尚未复刻其全部警告时长选项；恢复也不能撤销永久撤权。 |
 | 安装与平台 | README 标记 Linux 完整，macOS/Windows 进行中；OpenClaw 插件包，声明 peer 版本范围。 | 元星木执行隔离依赖 Linux/bubblewrap，Windows 通过 WSL；没有无隔离降级模式。支持特定 OpenClaw/Hermes 版本，不代表所有版本可装即用。 |
-| 演示与上手 | README 已有中文/英文五层视频。[README](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/README.md) | 已有 OpenClaw 原生运行和邮件案例。新五层须分别录制真实 WebUI 过程并附证据，不能用旧视频给新功能背书；完整五层视频尚未全部验收。 |
+| 演示与上手 | README 已有中文/英文五层视频。[README](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/README.md) | 已有 OpenClaw 原生运行与邮件案例，以及 Hermes GLM14 的五段中文解说实录；每段附字幕、原片来源及证据哈希，见下方五段链接。它们只对应 `6881138` 的固定案例，不给后续规则或自动执行代码背书。 |
 
 ## 五项配置与记录的对齐进度
 
@@ -81,7 +91,7 @@ Hermes `v2026.9.11 / 0.21.2` 的本地 `native07-layers` 首轮记录了正常�
 | AI 进程不持有真实服务凭证，不能直接访问主机私有目录或直接联网 | [`sandbox.py`](../yuanxingmu/sandbox.py)、[`gateway_network.py`](../yuanxingmu/gateway_network.py)、[`authority.py`](../yuanxingmu/authority.py)；已有[原生 OpenClaw 报告](../examples/yuanxingmu/real_openclaw/evidence/REPORT.zh-CN.md)。 | Linux 共享内核；模型网络桥仍是特定受控路径。不能概括为硬件隔离或任意服务支持。 |
 | 任务换连接、重启后仍保留权限与撤销状态 | 主机 Broker/authority 保存任务家族与状态；原生 OpenClaw 旧记录含撤销后重启。 | 子 Agent、不同框架和新工具都要逐个验证身份绑定，不能靠框架名配置自动获得保证。 |
 | 真正发送之前核对用户批准的内容 | [`mail_drafts.py`](../yuanxingmu/mail_drafts.py)、[`mail_transport.py`](../yuanxingmu/mail_transport.py)；[邮件验收报告](../examples/yuanxingmu/email/evidence/report.md)。 | 精确草稿版本、目标和发送结果有边界；一次接收端回执不是任意邮箱服务的送达保证。 |
-| 不仅邮件：消息、上传、表单、覆盖文件、删除文件 | [`actions.py`](../yuanxingmu/actions.py)、[`test_yuanxingmu_actions.py`](../tests/test_yuanxingmu_actions.py)；主机保存候选并要求确认、固定目标与凭证、记录发送尝试，结果不明时不自动重试。 | 消息/上传/表单目前以本地接收端组件证据为主；文件操作限明确授权的小型既有 UTF-8 文件。未验证的真实提供商不能列为已送达。 |
+| 不仅邮件：消息、上传、表单、覆盖文件、删除文件 | [`actions.py`](../yuanxingmu/actions.py)、[`test_yuanxingmu_actions.py`](../tests/test_yuanxingmu_actions.py)；主机保存候选并要求确认、固定目标与凭证、记录发送尝试，结果不明时不自动重试。 | OpenClaw native10 已有消息、表单和文件操作的真实确认与效果；Hermes AUTO15 只验证一条自动消息送达，连续流程因回答误拦失败，上传/表单未到达。文件操作限明确授权的小型既有 UTF-8 文件。未验证的真实提供商不能列为已送达。 |
 | 十一组常用 SDK 的原生工具接入 | LangChain/LangGraph、OpenAI Agents、PydanticAI、Google ADK、CrewAI、Agno、AutoGen、LlamaIndex、Microsoft Agent Framework、smolagents、Mastra 已通过真实 SDK 注册与调用，连接真实 Broker 套接字和本地接收端。[框架范围](framework-support.zh-CN.md)列出固定版本和五批证据。 | 这是原生工具适配，不是十一组完整 Agent 的隔离、模型循环或五层验收。smolagents 的 CodeAgent 执行边界未覆盖。旧 MCP 研究结果没有充作新适配证据。 |
 
 ## 关于“超过玄甲”的证据
@@ -95,9 +105,9 @@ Hermes `v2026.9.11 / 0.21.2` 的本地 `native07-layers` 首轮记录了正常�
 ## 发布前尚需关闭的缺口
 
 1. 对已实现的默认空集、显式技能选择和只读快照，继续核对每个官方运行入口的实际加载目录；避免扫 A 用 B。
-2. 在 OpenClaw/Hermes 官方 WebUI 分别验证输入、记忆、语义偏移、危险命令和基础配置；每层保留一个正常对照及真实下游结果。
-3. Hermes native12 已完成官方写文件人工批准后的正常执行对照；继续用新实例验收运行中设置、创建基线恢复、技能规则开关与用途对照。Hermes 工作台恢复按钮仍需验证。后台通用 JSON 提醒已有本机接收端证据，第三方服务仍未验收；聊天配置写入和当前聊天通道告警仍未实现。
-4. 对消息、上传、表单与文件操作重复原生验收；产品界面只展示已验收的来源与动作。
-5. 录制每层实机视频并绑定版本、配置、事件及回执；展示实际生效层，不把关闭、观察或不可用状态标为“已保护”。
+2. Hermes native13/GLM14 已补齐同源码五层固定案例；继续在 OpenClaw 及更多原生来源复验正常/危险配对，补正常记忆写入、不同工具结果和更多技能，不能把固定案例当成整层穷尽覆盖。
+3. Hermes 已完成官方写文件的真实人工批准，GLM14/native13 分别完成三次/五次真实工作台恢复。继续用新实例验收运行中设置、创建基线恢复、技能规则开关与用途对照。后台通用 JSON 提醒已有本机接收端证据，第三方服务仍未验收；聊天配置写入和当前聊天通道告警仍未实现。
+4. 对消息、上传、表单与文件操作重复原生验收。AUTO15 虽自动送达一条消息，但回答误拦使连续流程失败；后续未提交步骤不能计通过。产品界面只展示已验收的来源与动作。
+5. Hermes GLM14 五层视频已完成并绑定版本、配置和事件；继续补其他官方入口及新功能实录，不把关闭、观察、未触发或不可用状态标为“已保护”。
 
 框架逐个接入的进度与版本见[框架支持矩阵](framework-support.zh-CN.md)。

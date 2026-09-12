@@ -1,0 +1,270 @@
+{
+  "original_manifest": {
+    "file": "media-audit/manifest.json",
+    "bytes": 16212,
+    "sha256": "71f502c394877e245904a376004f052d5075e202106b3bbb046c75e4ecfc4863"
+  },
+  "recordings": [
+    {
+      "file": "00-normal-startup-workbench.webm",
+      "bytes": 10271745,
+      "sha256": "e1fc90345c3dbc96271d26ac3749a4be3aa7b114a72703da41533a2d6f231ddc",
+      "duration_seconds": 159.64,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "01-read-native.webm",
+      "bytes": 6734903,
+      "sha256": "22f6dde0a3238d895d08534155ec9d6de624c83711a62426688f7b25b74ea97c",
+      "duration_seconds": 81.84,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "02-write-native.webm",
+      "bytes": 44046703,
+      "sha256": "c275665af4c4a3c833ff9aafaa6f91dd0772a604a94db5e5e15d7977b09c94bd",
+      "duration_seconds": 535.08,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "02-write-workbench.webm",
+      "bytes": 36318922,
+      "sha256": "14362be7410801e5578da3806c63c3815184861738e3cea0e46971fe8f505d46",
+      "duration_seconds": 541.0,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "03-public-mail-native.webm",
+      "bytes": 5359783,
+      "sha256": "152621475ab1d9b0a64f74801164ad92b19554a85d8c9e59d335257385c9a477",
+      "duration_seconds": 62.2,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "03-public-mail-workbench.webm",
+      "bytes": 4189595,
+      "sha256": "8a8858a0a57368b65a3e439685da31080f3632b3efd2d41bd2230d03d1892ca4",
+      "duration_seconds": 61.04,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "04-terminal-native.webm",
+      "bytes": 4290824,
+      "sha256": "2e5701c63d35120beb8d7741ec6b343ccc456741fc86a17946ed217087573c8b",
+      "duration_seconds": 52.28,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "04-terminal-workbench.webm",
+      "bytes": 3695163,
+      "sha256": "882bdb0776f0dfa287584fd515ee5b3a4b4e5aa4bc5a0125e21e94db0b8e070a",
+      "duration_seconds": 51.96,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "05-input-native.webm",
+      "bytes": 8235643,
+      "sha256": "3f763094cf43a1bf150b7e6c829be582bf16105d1a545420c0584a5af972ee29",
+      "duration_seconds": 110.44,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "05-input-workbench.webm",
+      "bytes": 8565800,
+      "sha256": "e06bf53a22fb3928246d6533b0f3d668d01c4f2d99688a9ccf2af623bb4abe71",
+      "duration_seconds": 113.2,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "07-read-restored-native.webm",
+      "bytes": 3313099,
+      "sha256": "5a199af89ba2748d9327e979b2b513253913f8a4ea37f8a2845539c35d749850",
+      "duration_seconds": 50.4,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "08-memory-native.webm",
+      "bytes": 5796959,
+      "sha256": "82c6ec9bb73dbcc1d44da3ae7d8a2ee95195c1c53f9d274e942a443164c03a55",
+      "duration_seconds": 71.36,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "08-memory-workbench.webm",
+      "bytes": 5624946,
+      "sha256": "6b445795f9cbada478092be367dc8e8b6eba19342e61b441ab9cb3d30849edaa",
+      "duration_seconds": 72.32,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "10-read-restored-native.webm",
+      "bytes": 3502858,
+      "sha256": "c5fe8359504c26b2f4cbc82af5a5b29e25322ecf814f7a004a6a5fa97b43a91f",
+      "duration_seconds": 43.8,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "11-secret-mail-native.webm",
+      "bytes": 10065420,
+      "sha256": "f36882360858a34c60bcc24ed3d8cbe47c1c0581b2abbfde99547585cbb2f4b8",
+      "duration_seconds": 125.96,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "11-secret-mail-workbench.webm",
+      "bytes": 9489866,
+      "sha256": "c44f4a5e90d05401dd62d6c7e7b19821dbe98d4b85e9109b0e62e12e52276636",
+      "duration_seconds": 128.52,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "13-terminal-again-native.webm",
+      "bytes": 3785992,
+      "sha256": "a094f6cf0cf0b1b5e7e73580b45c89ceda6324d96dc72eb50ad56d8164888ba0",
+      "duration_seconds": 42.0,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "13-terminal-again-workbench.webm",
+      "bytes": 2932910,
+      "sha256": "d90af73a3b2e8bc0015938c062e736ef8da7c27a2b3aa8368c309233d15341c3",
+      "duration_seconds": 40.96,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "14-sudo-native.webm",
+      "bytes": 4326503,
+      "sha256": "88160be9127b822bff2f9533329aba3874a709009b8f915e505338cfe4139e90",
+      "duration_seconds": 48.08,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "14-sudo-workbench.webm",
+      "bytes": 4062044,
+      "sha256": "909204dc4e073fcfe692f0006012cd5a0136e6048e8aca525d7eb844acc58330",
+      "duration_seconds": 52.24,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "15-new-paused-native.webm",
+      "bytes": 5948760,
+      "sha256": "e5bd37c6e64fb2bc3f6e28c02ea89d8a9b485d7c42679ce6a27766cd91a0ba70",
+      "duration_seconds": 129.04,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "15-new-paused-workbench.webm",
+      "bytes": 9108223,
+      "sha256": "7d4dc328807f18935cf7f904e67816b1af367d5388c6c822554fbd9cbc3f21d2",
+      "duration_seconds": 131.24,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "18-bad-skill-workbench.webm",
+      "bytes": 4416098,
+      "sha256": "b26216b050c3cd1ffc71c4818d3dd01ed28d2c72a918f98e0c74305035263242",
+      "duration_seconds": 58.36,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    }
+  ],
+  "sampled_frames": 69,
+  "contact_sheet_count": 6,
+  "notes": [
+    "All source videos are original browser screencasts. Contact sheets are separately labelled samples.",
+    "Full decode and stable hashes check integrity, not every pixel for sensitive content.",
+    "Provider credential was held only by the pre-existing host relay, never entered in browser or profile."
+  ],
+  "video_content_copied_into_this_public_bundle": false
+}

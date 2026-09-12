@@ -1,0 +1,78 @@
+{
+  "schema": "hermes-glm14-narrated-features-v1",
+  "created_at_utc": "2026-09-12T09:38:06.552357+00:00",
+  "source_commit": "688113863c0db422a0ad041a06828690c8ce83da",
+  "model": "glm-5.2",
+  "source_summary_sha256": "6fcb94d5af66aff458287fcc77313c1a593983d0e5d4ae343867c1b5c03f427e",
+  "videos": [
+    {
+      "id": "hermes-glm14-input",
+      "key": "input",
+      "title": "外部资料夹带指令，先拦住",
+      "duration_seconds": 52.0,
+      "video": "assets/videos/hermes-glm14-input/hermes-glm14-input.mp4",
+      "captions": "assets/videos/hermes-glm14-input/hermes-glm14-input.vtt",
+      "srt": "assets/videos/hermes-glm14-input/hermes-glm14-input.srt",
+      "poster": "assets/videos/hermes-glm14-input/poster.jpg",
+      "manifest": "assets/videos/hermes-glm14-input/manifest.json",
+      "manifest_sha256": "cdac9beca5809d0afcffcaea3ec5cf198dcedcbd29a1a8b35efa26e21239177c",
+      "video_sha256": "98b0dc9c225d4ab2303cb577c94b439550e2ec3eb8f36b254ab7db42af635405"
+    },
+    {
+      "id": "hermes-glm14-memory",
+      "key": "memory",
+      "title": "不让坏指令变成长期记忆",
+      "duration_seconds": 56.0,
+      "video": "assets/videos/hermes-glm14-memory/hermes-glm14-memory.mp4",
+      "captions": "assets/videos/hermes-glm14-memory/hermes-glm14-memory.vtt",
+      "srt": "assets/videos/hermes-glm14-memory/hermes-glm14-memory.srt",
+      "poster": "assets/videos/hermes-glm14-memory/poster.jpg",
+      "manifest": "assets/videos/hermes-glm14-memory/manifest.json",
+      "manifest_sha256": "62e6b07574d4ed272944f58415af45e7e35de3da07dd2f27f1115b5fb8502385",
+      "video_sha256": "66b6765f5cca02812ba6be68673e04917f07c31bd78a02be4739f351cf0caed7"
+    },
+    {
+      "id": "hermes-glm14-alignment",
+      "key": "alignment",
+      "title": "公开报价能起草，内部底价被拦下",
+      "duration_seconds": 62.0,
+      "video": "assets/videos/hermes-glm14-alignment/hermes-glm14-alignment.mp4",
+      "captions": "assets/videos/hermes-glm14-alignment/hermes-glm14-alignment.vtt",
+      "srt": "assets/videos/hermes-glm14-alignment/hermes-glm14-alignment.srt",
+      "poster": "assets/videos/hermes-glm14-alignment/poster.jpg",
+      "manifest": "assets/videos/hermes-glm14-alignment/manifest.json",
+      "manifest_sha256": "4bcf85b1813afe91646f73a86cca0c19082d651dc8b19bdd96b8f3de473718ae",
+      "video_sha256": "2b8978ccb90fbb1e82450e33a1be50bf58ae69a50b9b1e1c8a5b2b7d1799239b"
+    },
+    {
+      "id": "hermes-glm14-tools",
+      "key": "tools",
+      "title": "普通命令能用，提权命令被拦下",
+      "duration_seconds": 66.0,
+      "video": "assets/videos/hermes-glm14-tools/hermes-glm14-tools.mp4",
+      "captions": "assets/videos/hermes-glm14-tools/hermes-glm14-tools.vtt",
+      "srt": "assets/videos/hermes-glm14-tools/hermes-glm14-tools.srt",
+      "poster": "assets/videos/hermes-glm14-tools/poster.jpg",
+      "manifest": "assets/videos/hermes-glm14-tools/manifest.json",
+      "manifest_sha256": "32fe33b37c82ab7218fbf34d8d259f0d47e0de59f260c0fd728618138c350670",
+      "video_sha256": "82088153aad6f898e0d18978c463b34c1cde769b924c416525dd2b3503b08b01"
+    },
+    {
+      "id": "hermes-glm14-skills",
+      "key": "skills",
+      "title": "危险技能，在启动前拦住",
+      "duration_seconds": 53.0,
+      "video": "assets/videos/hermes-glm14-skills/hermes-glm14-skills.mp4",
+      "captions": "assets/videos/hermes-glm14-skills/hermes-glm14-skills.vtt",
+      "srt": "assets/videos/hermes-glm14-skills/hermes-glm14-skills.srt",
+      "poster": "assets/videos/hermes-glm14-skills/poster.jpg",
+      "manifest": "assets/videos/hermes-glm14-skills/manifest.json",
+      "manifest_sha256": "b3e1cf2693318f9753bf3a6ea9386db8b5659d23c70adb9babd2b09de26e1b48",
+      "video_sha256": "08e0590df91b32be0ff30c4bad022daf18e82bd905b205790a23701ffe90a281"
+    }
+  ],
+  "total_duration_seconds": 289.0,
+  "scope": "Five selected narrated excerpts from one real official Hermes synthetic integration round. Not an acceptance run of later automatic-actions code.",
+  "status": "verified_for_selected_recordings",
+  "frozen_at_utc": "2026-09-12T09:51:16.582008+00:00"
+}

@@ -1,0 +1,103 @@
+{
+  "artifacts": {
+    "agent_defense_check-0.6.0a1-py3-none-any.whl": {
+      "bytes": 357041,
+      "sha256": "d520eec6a4ca91f5d1d3329ef4736817ea4779f40fbea2156204d71dc2ab86cf"
+    },
+    "yuanxingmu-0.6.0a1-source.zip": {
+      "bytes": 50121813,
+      "sha256": "690b6a0d6482deaf2e37f35d7bb1f3f0412c653eb361c0538e328aad926d2ee7"
+    }
+  },
+  "commit": "a34dafb57f62d7b55c78554301fbf72a2869d801",
+  "historical_commit_supported": true,
+  "installed_smoke": {
+    "commands": [
+      {
+        "command": [
+          "python.exe",
+          "-I",
+          "-B",
+          "-m",
+          "defensecheck",
+          "--help"
+        ],
+        "passed": true,
+        "stdout_sha256": "feba01df7fc08aca1f8a182a1cd7ddb9e36a6239b952e32140d7faa8c24233ca"
+      },
+      {
+        "command": [
+          "python.exe",
+          "-I",
+          "-B",
+          "-m",
+          "yuanxingmu",
+          "desk",
+          "--help"
+        ],
+        "passed": true,
+        "stdout_sha256": "070cf0b9663e93f78bae4362d7d0bdef8911667e80d4517c577af4a37da0b6d8"
+      },
+      {
+        "command": [
+          "python.exe",
+          "-I",
+          "-B",
+          "-m",
+          "yuanxingmu",
+          "hermes",
+          "init",
+          "--help"
+        ],
+        "passed": true,
+        "stdout_sha256": "cb3080e28f5a41fdc7ef441b5737142090968322f010f96c099a964e65b6f433"
+      },
+      {
+        "command": [
+          "python.exe",
+          "-I",
+          "-B",
+          "-m",
+          "yuanxingmu",
+          "openclaw",
+          "init",
+          "--help"
+        ],
+        "passed": true,
+        "stdout_sha256": "69264596c39cec5e612d788c4d6fe97ef810e9f4f3b53c1b409775574a61bacc"
+      },
+      {
+        "command": [
+          "defensecheck.exe",
+          "--help"
+        ],
+        "passed": true,
+        "stdout_sha256": "9bcf9ef220a953a717bb3a158d606c3f8acf26ef9d6966d89fb0d32de77f861a"
+      },
+      {
+        "command": [
+          "yuanxingmu.exe",
+          "--help"
+        ],
+        "passed": true,
+        "stdout_sha256": "9de712b7aeeef9344c6751fe99d9da41e6f4073494a6706b02f94975925c6312"
+      }
+    ],
+    "distribution_version": "0.6.0a1",
+    "imports_within_fresh_environment": true,
+    "module_version": "0.6.0a1",
+    "scope": "Fresh offline installation, isolated imports, packaged resources and CLI help only; no native Agent or model validation.",
+    "verified_installed_files": 94,
+    "verified_resources": 87
+  },
+  "package_files": 87,
+  "passed": true,
+  "published": false,
+  "verification_tool": {
+    "build-yuanxingmu-v06.py": {
+      "bytes": 29080,
+      "sha256": "7baf7005fd54ef37006a2b6a7d68c30b76aa1654a8309a9b7572b648c70feb45"
+    }
+  },
+  "wheel_members": 95
+}

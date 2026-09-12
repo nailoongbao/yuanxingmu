@@ -1,12 +1,14 @@
 # 元星木 · Yuanxingmu
 
-当前源码正在补齐输入、记忆、任务偏移、危险命令、技能与配置五层检查，以及本人审批、暂停恢复、回答显示前检查和 Hermes 官方界面接入。[玄甲逐项对照](docs/agentward-coverage.zh-CN.md)列出源码、证据与缺口；[框架支持表](docs/framework-support.zh-CN.md)区分工具适配与完整实机验证。这批功能尚未进入旧安装包和旧视频。小模型实测仍会误拦正常本地写入，不能据此宣称已全面超过玄甲。
+当前源码包含输入、记忆、任务偏移、危险命令、技能与配置五层检查，以及本人审批、暂停恢复、回答显示前检查和 Hermes 官方界面接入。[玄甲逐项对照](docs/agentward-coverage.zh-CN.md)列出源码、证据与缺口；[框架支持表](docs/framework-support.zh-CN.md)区分工具适配与完整实机验证。这批功能尚未进入旧安装包。实测仍记录了正常操作误拦，不能据此宣称已全面超过玄甲。
+
+[五层各看一段真实中文讲解](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-five-layers)：Hermes 与 GLM-5.2 的网页录屏，分别展示外部指令、记忆投毒、任务偏移、危险命令和危险技能。视频绑定 `6881138`；新版自动流程的[首次失败](docs/evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md)和[授权事实修复](docs/evidence/review-facts-2026-09-12/REPORT.zh-CN.md)另行公开。
 
 开发版新增[一次授权、范围内自动完成](docs/automatic-work.zh-CN.md)：创建时选择固定对象，通过防护检查的消息、上传和表单直接执行；已扣留的恶意外部输入不再要求手动恢复。目标、资料权限和额度由宿主检查，结果未知时不自动重发。旧邮件起草工具继续等待本人确认。
 
 **把资料交给 AI，权限留在自己手里。**
 
-让 AI 读报价、写邮件，你来核对收件人和全文，再决定是否发送。元星木把每项工作单独保存，让你随时关闭、继续，或收回资料权限。AI 不能用起草工具替你确认发送；你选用的模型服务仍会收到聊天和使用的资料。
+先选好资料和可接收的固定对象，再让 AI 读报价、发消息、上传文本或填表。范围内且通过检查的操作可自动执行；邮件起草仍单独等待确认。元星木把每项工作单独保存，让你随时关闭、继续或收回资料权限；你选用的模型服务仍会收到聊天和使用的资料。
 
 [English](README.md) · [官网](https://yh-l20.github.io/yuanxingmu/) · [五层功能介绍](https://yh-l20.github.io/yuanxingmu/layers.html) · [看实机演示](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 

@@ -1,0 +1,71 @@
+{
+  "before_source": {
+    "file": "attempt01-15-before-paused-read-state.json",
+    "bytes": 77807,
+    "sha256": "237483db3377dfc78be2ebdb7a2a0e72a48222fd06ab4b4b0b75237adaf99946"
+  },
+  "after_source": {
+    "file": "attempt01-16-paused-new-result-state.json",
+    "bytes": 79182,
+    "sha256": "0d641303a3136b62452c8d0f140abf2ca8ca9ee622cba015310386962c047895"
+  },
+  "new_session_identity_sha256": "12f41d95a3c0bf4a10a4d31cb034744ced0132c095c2d2291628b4b551d8d4f4",
+  "distinct_from_original_session": true,
+  "session": {
+    "source": "tui",
+    "model": "yuanxingmu-qwen3-4b",
+    "message_count": 2,
+    "tool_call_count": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "started_at": 1789200853.9149265,
+    "ended_at": null,
+    "api_call_count": 0
+  },
+  "before_counters": {
+    "working": [
+      {
+        "id": 0,
+        "id_task": 2543,
+        "is_processing": false,
+        "n_prompt_tokens": 7807
+      }
+    ],
+    "judge": [
+      {
+        "id": 0,
+        "id_task": 4963,
+        "is_processing": false,
+        "n_prompt_tokens": 719
+      }
+    ]
+  },
+  "after_counters": {
+    "working": [
+      {
+        "id": 0,
+        "id_task": 2543,
+        "is_processing": false,
+        "n_prompt_tokens": 7807
+      }
+    ],
+    "judge": [
+      {
+        "id": 0,
+        "id_task": 4963,
+        "is_processing": false,
+        "n_prompt_tokens": 719
+      }
+    ]
+  },
+  "model_counters_unchanged": true,
+  "message_counts": {
+    "before": 44,
+    "after": 46
+  },
+  "new_chat_ui_receipt": {
+    "file": "15-new-chat-confirmed.json",
+    "bytes": 32,
+    "sha256": "901c5a0748fc629dccb270e154b3ec5d3e950466d5fb1d011ea69bb406481d72"
+  }
+}

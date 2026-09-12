@@ -11,7 +11,7 @@
 | 官方仓库 | 星数 | 参考版本 | 现有证据；新元星木状态 |
 |---|---:|---|---|
 | [OpenClaw](https://github.com/openclaw/openclaw) | 389,463 | `v2026.9.4` | 专用插件、外层 Gateway 隔离和工具执行边界。已有真实模型原生运行、撤销/重启和邮件证据；新增五层仍需逐项原生验收。 |
-| [Hermes Agent](https://github.com/NousResearch/hermes-agent) | 244,644 | `v2026.9.11`，当前固定 distribution `0.21.2` | 专用 terminal provider、官方执行中间件、插件与 dashboard 已接入。[native12 原生核心链](evidence/hermes-native12-2026-09-12/REPORT.zh-CN.md)使用真实网页和 Agent、4B 工作模型及独立 8B 检查模型，完成正常读取、真实工作台批准后精确写入一次、`true`/`sudo true` 配对和暂停后新聊天。它与下列十一组无模型 SDK 测试是不同证据。旧 native07/08 的恶意样本和误报分别保留；新版五层恶意样本、恢复按钮及后续设置变化仍未全量验收。 |
+| [Hermes Agent](https://github.com/NousResearch/hermes-agent) | 244,644 | `v2026.9.11`，当前固定 distribution `0.21.2` | 专用 terminal provider、官方执行中间件、插件与 dashboard 已接入。[GLM14 五层固定案例](evidence/hermes-glm14-2026-09-12/REPORT.zh-CN.md)已验证五类危险候选、正常读写/草稿/命令、三次真实工作台恢复及暂停后新聊天；同源码的 [native13 本地模型对照](evidence/hermes-five-layers-2026-09-12/REPORT.zh-CN.md)保留两次正常语义误拦。另一次较新 [AUTO15](evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md)自动发送一条消息后，回答误拦导致连续流程失败。已有五层视频；更多来源、设置变化和连续自动工作仍未全面验收。 |
 | [LangChain](https://github.com/langchain-ai/langchain) / [LangGraph](https://github.com/langchain-ai/langgraph) | 146,150 / 41,490 | Python `langchain 1.4.0` / `langgraph 1.2.11` | 新 SDK 工具适配已验证：实际使用 `langchain-core 1.6.2`、`langgraph 1.2.11`，通过原生工具及编译图中的 `ToolNode` 调用 Broker；没有 LLM。完整进程、checkpoint 恢复和五层防御仍未验收。 |
 | [AutoGen](https://github.com/microsoft/autogen) | 60,941 | `autogen-core 0.7.5` / `autogen-agentchat 0.7.5` | 新 `BaseTool` 适配已验证，使用实际 `AssistantAgent` 单次工具派发和 `ToolAgent` runtime，绑定原生 `call_id`。没有 Team 或完整模型循环、代码执行器隔离验收；旧 MCP 实验单独保留。 |
 | [CrewAI](https://github.com/crewAIInc/crewAI) | 58,383 | `1.15.21` | 新 SDK 工具适配已验证，覆盖 `BaseTool` / `CrewStructuredTool` 同步和异步派发。每次派发的稳定编号由主机保存和绑定；不是框架自动提供的调用 ID。没有 Crew/Flow 模型循环或进程隔离验收。 |
@@ -25,6 +25,16 @@
 | [Microsoft Agent Framework](https://github.com/microsoft/agent-framework) | 13,483 | Python `agent-framework-core 1.18.0` | 新原生 `FunctionTool` 接入已验证：`Agent` 注册、实际单次派发及 function middleware，使用原生 `tool_call_id`。仅保护六个注册工具；没有 `Agent.run`、模型循环、FIDES 联合策略或进程隔离验收。旧 MCP/FIDES 实验不能替代本批证据。[说明与证据](microsoft-smolagents-adapters.md)。 |
 
 LangGraph 最新 GitHub release 名为 `sdk==0.4.4`，不是上表 Python 图运行包的版本；Microsoft Agent Framework 最新 GitHub release 是 `dotnet-1.21.0`，不是 Python core 版本。LangChain 最新 release 为 `langchain-core==1.6.3`，也不应替换成 `langchain` 包版本。各仓库截至核查时均未归档；AutoGen 最近 push 为 2026-04-15，smolagents 为 2026-08-25，其余上述仓库为 2026-09-11/12。这只是活动快照。
+
+### Hermes 五层原生记录与视频
+
+`native13` 与 `GLM14` 固定在元星木源码 `6881138`，使用同一任务、12 条逐字冻结输入和合成材料；每轮都有 11 次真实工具调用。native13 使用本地 Qwen3-4B 工作模型与 Qwen3-8B 检查模型，出现两次正常语义误拦、共五次真实工作台恢复。GLM14 的工作与检查均为远程 GLM-5.2，使用独立请求与不同上下文，thinking 关闭；这一组正常场景未观察到语义误拦，共三次真实恢复。两轮都完成一次人工批准后的精确 50 字节写入，均没有邮件获准或发送。
+
+五段中文解说视频对应 GLM14：[外部资料](../site/assets/videos/hermes-glm14-input/hermes-glm14-input.mp4)、[长期记忆](../site/assets/videos/hermes-glm14-memory/hermes-glm14-memory.mp4)、[任务偏移](../site/assets/videos/hermes-glm14-alignment/hermes-glm14-alignment.mp4)、[危险命令](../site/assets/videos/hermes-glm14-tools/hermes-glm14-tools.mp4)、[环境与技能](../site/assets/videos/hermes-glm14-skills/hermes-glm14-skills.mp4)。[视频清单](../site/assets/videos/hermes-glm14-manifest.json)绑定源码、原片与证据摘要。技能片的准确拦截原因来自实际日志核对，网页只显示通用未完成提示。
+
+它们是固定案例证据，没有重复采样；模型实际生成参数也有标点差异，不能据此排名模型或推算攻击阻断率。[协议对照](evidence/hermes-glm14-2026-09-12/COMPARISON.zh-CN.md)保留这些限制。GLM14 视频不覆盖后来新增的自动执行代码。
+
+较新 `9bd6605` 的 [AUTO15 连续自动工作](evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md)只运行到第三个步骤：创建时一次授权后，真实自动发送 1 条公开消息到本机接收端，没有逐次批准或人工恢复；发送后的正常回答被误拦，工作暂停。上传、表单、可疑内容后继续等后续步骤未提交，整轮验收未通过。读取阶段还保留了本地回答额外列出内部底价的问题，不能把它写成已经外发给客户。
 
 ## 十一组 SDK 工具接入的已完成范围
 
@@ -49,7 +59,7 @@ LangGraph 最新 GitHub release 名为 `sdk==0.4.4`，不是上表 Python 图运
 | 框架 | 要接入的实际位置 | 必须补做的原生验收 |
 |---|---|---|
 | OpenClaw | 插件消息/工具钩子、sandbox provider、会话与 supervisor 生命周期；现有 [`integrations/openclaw`](../yuanxingmu/integrations/openclaw/plugin/CONTRACT.md)。 | 官方 WebUI 每层候选调用；用户审批恢复；工具返回不同结构；所有启用插件的副作用入口；重启与撤销。 |
-| Hermes | 官方 terminal environment provider、执行中间件、原生工具 dispatcher、插件与 dashboard 生命周期；[`hermes_backend.py`](../yuanxingmu/hermes_backend.py)、[`hermes.py`](../yuanxingmu/hermes.py)。 | native12 已验证官方网页/Agent 中一次真实 file 写入经同一执行边界并由工作台批准。仍须在同一新快照补齐五层恶意样本、工作台恢复、持久记忆和额外工具/CLI/代码副作用入口，不能由核心样本推断全部入口受控。 |
+| Hermes | 官方 terminal environment provider、执行中间件、原生工具 dispatcher、插件与 dashboard 生命周期；[`hermes_backend.py`](../yuanxingmu/hermes_backend.py)、[`hermes.py`](../yuanxingmu/hermes.py)。 | native13/GLM14 已补齐同源码五层固定样本和真实工作台恢复。继续验证正常记忆写入、更多文件/终端/CLI/子任务来源、运行中设置及后来新增规则。AUTO15 的连续自动流程失败，仍需重新冻结后独立验收；不能由单次自动消息推断上传、表单或全部入口受控。 |
 | LangChain / LangGraph | 工具 wrapper / `ToolNode` 前后；`StateGraph`、checkpoint/thread 身份；子图与并行节点。 | 真正运行图和模型；从 checkpoint 恢复、重连、分叉后权限保持；检查点不能由 Agent 改写授权状态；非 MCP 工具同样受控。 |
 | OpenAI Agents | Function tool guardrails 和 `needs_approval`，`Runner` 的暂停状态、恢复、handoff、session；真实执行仍在主机边界。 | input guardrail 只覆盖首个 Agent，output guardrail 只覆盖最终输出；不能据此覆盖全部中间工具。用真实 Runner 验证审批中断、同一 state 恢复和 handoff 后权限。 |
 | PydanticAI | 已有原生 toolset 与 `RunContext` 适配；继续接准备/审批入口和持久化运行身份。 | 已建立固定版本工具环境；还需验证模型循环、延迟审批及整个运行的恢复。 |
@@ -81,6 +91,6 @@ OpenAI 接入判断同时核对了官方[Agents SDK](https://developers.openai.c
 
 可公开复核的既有记录包括[原生 OpenClaw](../examples/yuanxingmu/real_openclaw/evidence/REPORT.zh-CN.md)、[邮件](../examples/yuanxingmu/email/evidence/report.md)、[Hermes 旧工具探针](../examples/yuanxingmu/hermes/observed-results.json)与[旧运行验证的范围](verification.md)。其余旧框架研究结果保留在本地研究记录中；未纳入仓库的日志不作为读者可复现的发布证据。
 
-主机能力的独立组件证据包括暂停/恢复 16 项、一次性审批账本与主机套接字合计 15 项、运行中设置管理接口 4 项。回答协议及真实 Unix HTTP 最初为 17 项；加入暂停前置提示与已发送响应被扣留的区分后，当前套件为 24 项。这些数字不是新的框架端到端通过次数。回答缓冲只检查正文、拒绝和思考文本；带 `live_settings_v1` 的新实例支持主机运行中改设置，旧实例仍须确认停止，新入口待官方框架验收。浏览器桌面提醒需要页面开启；另有[主机后台提醒](background-notifications.zh-CN.md)，关闭浏览器后仍可由运行中的 Workbench 向固定 JSON 接收端投递。通用协议已通过本机接收端验证，没有宣称第三方 IM 或邮件提供商已验收。详见[回答显示前检查与暂停恢复](response-and-quarantine.md)。
+主机能力的独立组件证据包括暂停/恢复 16 项、一次性审批账本与主机套接字合计 15 项、早期运行中设置管理接口 4 项。回答协议及真实 Unix HTTP 最初为 17 项；当前套件为 25 项，包括逐层观察不能绕过撤权的检查。这些数字不是新的框架端到端通过次数。回答缓冲只检查正文、拒绝和思考文本；带 `live_settings_v1` 的新实例支持主机运行中改设置，旧实例仍须确认停止，新入口待官方框架验收。浏览器桌面提醒需要页面开启；另有[主机后台提醒](background-notifications.zh-CN.md)，关闭浏览器后仍可由运行中的 Workbench 向固定 JSON 接收端投递。通用协议已通过本机接收端验证，没有宣称第三方 IM 或邮件提供商已验收。详见[回答显示前检查与暂停恢复](response-and-quarantine.md)。
 
 玄甲逐功能对照见[功能覆盖与缺口](agentward-coverage.zh-CN.md)。

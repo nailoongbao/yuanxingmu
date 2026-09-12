@@ -1,0 +1,9 @@
+{
+  "exported_at": "2026-09-12T09:56:49.716456+00:00",
+  "source_bundle": ".research/hermes-auto15-20260912",
+  "not_a_replay": true,
+  "raw_main_requests_excluded": true,
+  "raw_judge_requests_included": true,
+  "model_requests_from_export": 0,
+  "projection_notice": "Public JSON selects necessary facts from original records. Raw judge files, main response streams and screenshots retain original bytes."
+}

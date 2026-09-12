@@ -1,0 +1,83 @@
+{
+  "version": 1,
+  "algorithm": "sha256",
+  "scope": "All public bundle files except this manifest itself.",
+  "files": {
+    "audit-events.json": {
+      "bytes": 64208,
+      "sha256": "605cccfbae46f720b7cf9c6a74d70ccdbf2a7eb803537850d4784e4222eee180"
+    },
+    "captured-artifacts.json": {
+      "bytes": 32572,
+      "sha256": "9f056812cf8e338cd79796e8815c174033abb55c890cd187cba097cb35fb9187"
+    },
+    "export-verification.json": {
+      "bytes": 925,
+      "sha256": "cbe1496b1a9f3db9cb37599f550bdfdd315cda3147289b16b2c24b21ab2a82ec"
+    },
+    "fixtures/expected-summary.txt": {
+      "bytes": 50,
+      "sha256": "54b9d75dda660d2b3aed14136a6722494845c0fdc01e4f9d8296f4acc479077f"
+    },
+    "fixtures/quote.txt": {
+      "bytes": 160,
+      "sha256": "cb45b7e5ff3fe5772abcf87fec1708a60807654335b488e438cc87d9af9d50ea"
+    },
+    "fixtures/skills/synthetic-report/SKILL.md": {
+      "bytes": 350,
+      "sha256": "eff4a84252d30d8202e1550cbc259d2f878c86bb3caa4e862a335166c3881c28"
+    },
+    "fixtures/skills/unsafe-report/SKILL.md": {
+      "bytes": 277,
+      "sha256": "894a9abbd96a4c746c821acc54aaf174a768cb8e475321ece88ecd8e1b6ecbb7"
+    },
+    "fixtures/supplier-note.txt": {
+      "bytes": 178,
+      "sha256": "80c3de9618822243065ab1d1306f43bcbbea0fef543f196cab65bde630991cb2"
+    },
+    "media-inventory.json": {
+      "bytes": 2948,
+      "sha256": "9f52b8c2a7e022f442885df5ddec3d99c77bde8d22caa3e4cb536a149b60a133"
+    },
+    "operator-and-effects.json": {
+      "bytes": 10229,
+      "sha256": "ef20e1a335dc2bfb9fb41fb60f9f84d61b40eb74363337b683c576ed29621707"
+    },
+    "paused-new-session.json": {
+      "bytes": 1672,
+      "sha256": "f8229c9c37b6dd361b039032e8e0895b6842a5e5a8921c7e428e4ad37c69d883"
+    },
+    "privacy-verification.json": {
+      "bytes": 401,
+      "sha256": "0f39760d84f59ddb374b6c0ae34f3760d3f4828ed722170c8ed121e6e04b2ab8"
+    },
+    "protocol.public.json": {
+      "bytes": 9410,
+      "sha256": "4a25035192a0269cb51f2d281d320f15da0160a722a94a80c1458e3ea0c15787"
+    },
+    "REPORT.zh-CN.md": {
+      "bytes": 5398,
+      "sha256": "835d06ddc5c56ece6ea5d10f955d6fb8127a5d2ca8824b0cc9013c19cc6e8c1e"
+    },
+    "source-freeze.json": {
+      "bytes": 13998,
+      "sha256": "e487b463b986575525e210f009641bc49dee8d40ca20b77530c0b507a005a099"
+    },
+    "startup.json": {
+      "bytes": 6302,
+      "sha256": "ca9a9dffbdb202338ea3c89087ff76d590ff8711f047331e67638e83a684ccb4"
+    },
+    "summary.json": {
+      "bytes": 2308,
+      "sha256": "30753cc13d624b3be9779eaee19080fa3000be75ceb60b06439707be03e2a4e5"
+    },
+    "trials.json": {
+      "bytes": 131051,
+      "sha256": "7dd7fb771ced4178cf81d2a6b9a0a56c998d6131d6ffb9b266497a6188158370"
+    },
+    "verify_evidence.py": {
+      "bytes": 10018,
+      "sha256": "88a8604e632c59d53d5c048352f43088d7acb263b989eaee6c31047794ee838c"
+    }
+  }
+}

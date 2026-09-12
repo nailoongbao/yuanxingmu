@@ -1,0 +1,8 @@
+{
+  "event": "read_only_final_capture_detail_http409",
+  "stage": "12-stopped",
+  "after_genuine_ui_stop": true,
+  "before_any_final_capture_files_written": true,
+  "mutation_retried": false,
+  "detail": "The stopped profile's action-detail GET first returned HTTP 409 while stop was completing; a later read-only attempt returned 409 for the action list as the runtime was fully stopped. The capture helper now retains exact HTTP 409 read errors for stage 12 runtime endpoints, with full pre-stop detail preserved at stage 03. Final unavailable action counts are null, not zero. No product code or frozen protocol was changed."
+}

@@ -6,6 +6,8 @@ Let AI read a quote and draft an email. Review the recipient and full text, edit
 
 [中文](README.zh-CN.md) · [Website](https://yh-l20.github.io/yuanxingmu/) · [Watch the demo](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [Run it and understand the boundary](docs/yuanxingmu.md) · [Execution evidence](examples/yuanxingmu/verified-core-report.json)
 
+[Watch five narrated Hermes defense recordings](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-five-layers): external instructions, memory poisoning, task drift, dangerous commands, and unsafe skills. These real GLM-5.2 recordings bind commit `6881138`. The newer automatic workflow's [failed first run](docs/evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md) and [authorization-context fix](docs/evidence/review-facts-2026-09-12/REPORT.zh-CN.md) are recorded separately.
+
 ![Yuanxingmu: let AI work within your permissions](site/assets/yuanxingmu-public-v03-poster.svg)
 
 **Linux research prototype.** Verified with real bubblewrap, SQLite, isolated processes and an independent HTTP receiver using synthetic data. No attack-model evaluation or production protection rate. The repository and system are both named Yuanxingmu (元星木).

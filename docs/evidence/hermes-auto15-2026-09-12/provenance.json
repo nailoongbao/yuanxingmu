@@ -1,0 +1,34 @@
+{
+  "protocol_id": "hermes-auto15-20260912-v1",
+  "source_commit": "9bd66054007fe662392ad680b03c2dd077a2ef42",
+  "product_version": "0.6.0a1",
+  "official_framework": "Hermes Agent v0.21.2 (2026.9.11)",
+  "source_archive_sha256": "1eb42ac286224f532ad541ee935903a6fe6c3b189cc8bcc9b70b8aac169feed9",
+  "archived_source_file_count": 501,
+  "protocol_sha256": "30d7bd2622fded5500f8cb0b36023a72b715665f9379d4ca36a162ff0aff9888",
+  "source_scope": "Independent archive of 9bd6605; no later source changes were loaded in this attempt.",
+  "source_sha256": {
+    "yuanxingmu/guards.py": "8d5ed793ae5d8de55f1615387fa287c6703abde2ee7d9e2b4f63a2553f3c21d6",
+    "yuanxingmu/model_output.py": "5e6c467b6f62c5b77e744478aef6d55d95a53d6323a050287f80a656af0cd03f",
+    "yuanxingmu/actions.py": "32d60e75b5141003936e55bd604689553b911acd4fa8736520494c0b39a4c770",
+    "yuanxingmu/action_automation.py": "3379501a0d2c7922a6f454dd0c30af284f41455b72b6104ff76ee5c5ee57ca84",
+    "yuanxingmu/broker.py": "40fa0b457b51375975bee7f3de980767042753e0ff5f18d4e14277242721f97e"
+  },
+  "native_session_id": "20260912_093728_03a584",
+  "profile_id": "7d70a21d19a641388fbe825cc82618c1",
+  "relay_sequence_first": 63,
+  "relay_sequence_last": 75,
+  "models": {
+    "worker": "glm-5.2",
+    "judge": "glm-5.2",
+    "separate_requests": true,
+    "different_models": false,
+    "thinking": "disabled by disclosed relay"
+  },
+  "disclosure": [
+    "All source documents and receiver destinations are synthetic and local.",
+    "Public raw judge exchanges include relay-recorded request bodies and responses; HTTP headers and credentials were never recorded.",
+    "Raw main responses are preserved; full main request histories remain private and are not in this export.",
+    "Relay Windows timestamps and WSL event timestamps are not clock-synchronized. Hashes and fixed sequence bind the records."
+  ]
+}
