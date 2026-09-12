@@ -218,13 +218,15 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                  model_url: str, model_id: str, api_key: str = "local-unused",
                  documents: dict[str, Path] | None = None, destinations: dict | None = None, reviewed_mail=False,
                  defense_policy: dict | None = None, reviewed_actions=False, action_targets: dict | None = None,
-                 judge_config: dict | None = None,
+                 judge_config: dict | None = None, action_automation: dict | None = None,
                  selected_skills: dict[str, Path] | None = None,
                  port: int = 18911, context_window: int = 32768, max_tokens: int = 2048) -> dict:
     """Create once. Inputs and policy are snapshots; init never overwrites a profile."""
     _linux()
     if judge_config is not None and defense_policy is None:
         raise ValueError("judge_requires_layered_defense")
+    if action_automation is not None and (defense_policy is None or reviewed_actions is not True):
+        raise ValueError("automatic_actions_require_defense_and_reviewed_actions")
     model_url = _model_url(model_url)
     if not isinstance(model_id, str) or not model_id.strip() or any(c in model_id for c in "\x00\r\n"):
         raise ValueError("需要有效的模型名称。")
@@ -303,8 +305,13 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
         _save(profile / "action-targets.json", action_targets or {})
         from .protection import load_action_targets
         targets = load_action_targets(profile)
+    if action_automation is not None:
+        from .action_automation import AutomaticActionPolicy
+        action_automation = AutomaticActionPolicy.from_config(action_automation, targets).to_config()
+        _save(profile / "action-automation.json", action_automation)
     with Broker(profile / "broker-state", loaded_resources, loaded_destinations,
-                reviewed_mail=reviewed_mail, guards=guards, action_targets=targets) as broker:
+                reviewed_mail=reviewed_mail, guards=guards, action_targets=targets,
+                input_containment=guards is not None, action_automation=action_automation) as broker:
         task = broker.create_task(initial_labels=["private"])
         broker.bind_workspace(task, profile / "workspace")
         family = broker.authority._db.execute("SELECT family_id FROM authority_tasks WHERE id=?", (task,)).fetchone()[0]
@@ -337,8 +344,8 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                     "maxTokens": max_tokens,
                     "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}}]}}},
         "skills": {"allowBundled": [], "load": {"extraDirs": [], "watch": False}},
-        "tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []) + (["yuanxingmu_action_targets", "yuanxingmu_prepare_action"] if reviewed_actions else []),
-                  "sandbox": {"tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []) + (["yuanxingmu_action_targets", "yuanxingmu_prepare_action"] if reviewed_actions else [])}}, "fs": {"workspaceOnly": True},
+        "tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []) + (["yuanxingmu_action_targets", "yuanxingmu_prepare_action"] if reviewed_actions else []) + (["yuanxingmu_request_action"] if action_automation is not None else []),
+                  "sandbox": {"tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []) + (["yuanxingmu_action_targets", "yuanxingmu_prepare_action"] if reviewed_actions else []) + (["yuanxingmu_request_action"] if action_automation is not None else [])}}, "fs": {"workspaceOnly": True},
                   "elevated": {"enabled": False}, "codeMode": {"enabled": False},
                   "exec": {"host": "sandbox", "timeoutSeconds": 25}},
         "plugins": {"allow": ["yuanxingmu"], "slots": {"memory": "none"},
@@ -350,6 +357,7 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                             "resourceIds": sorted(resources), "destinationIds": sorted(destinations),
                             "defenseEnabled": defense_policy is not None,
                             "reviewedActions": reviewed_actions is True,
+                            "automaticActions": action_automation is not None,
                             "reviewedMail": reviewed_mail is True}}}},
     }
     _save(profile / "openclaw.json", config)
@@ -361,13 +369,15 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
     immutable.extend(judge_files)
     if reviewed_actions:
         immutable.append(profile / "action-targets.json")
+    if action_automation is not None:
+        immutable.append(profile / "action-automation.json")
     for directory in ("documents", "trusted-core", "plugin", "runtime-etc"):
         immutable.extend(p for p in (profile / directory).rglob("*") if p.is_file())
     identities = {name: _identity(profile / name) for name in (
         ".", "workspace", "documents", "trusted-core", "plugin", "host-home", "openclaw-state",
         "broker-state", "broker-state/authority.sqlite3", "gateway-audit", "runtime-etc")}
     manifest = {"version": 2, "framework": "openclaw", "profile": str(profile), "profile_id": profile_id, "task_id": task, "family_id": family,
-                "features": (["reviewed_email_v1"] if reviewed_mail else []) + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1", "per_layer_settings_v1", "settings_history_v1", "defense_baseline_v1", "skill_rules_v1", "skill_purpose_v1"] if defense_policy is not None else []) + (["reviewed_actions_v1"] if reviewed_actions else []),
+                "features": (["reviewed_email_v1"] if reviewed_mail else []) + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1", "per_layer_settings_v1", "settings_history_v1", "defense_baseline_v1", "skill_rules_v1", "skill_purpose_v1", "input_containment_v1"] if defense_policy is not None else []) + (["reviewed_actions_v1"] if reviewed_actions else []),
                 "node": str(node), "openclaw_package": str(openclaw_package), "bwrap": str(bwrap), "python": str(Path(sys.executable).resolve()),
                 "runtime": str(sockets), "port": port, "model": {"url": model_url, "id": model_id},
                 "documents": sorted(resources), "destinations": sorted(destinations),
@@ -376,6 +386,8 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                 "runtime_files": {str(p): _hash(p) for p in (node, bwrap, openclaw_package / "package.json", openclaw_package / "openclaw.mjs")}}
     if judge_config is not None:
         manifest["features"].append("independent_judge_v1")
+    if action_automation is not None:
+        manifest["features"].append("automatic_actions_v1")
     _save(profile / "profile.json", manifest)
     return {"status": "created", **_public(profile, manifest)}
 

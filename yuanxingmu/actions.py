@@ -439,16 +439,52 @@ _SCHEMA = (
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         approved_at TEXT,
+        authorized_at TEXT,
+        execution_mode TEXT CHECK(execution_mode IN ('manual','automatic')),
+        authorization_source TEXT,
+        authorization_sha256 TEXT,
         finished_at TEXT,
         result_json TEXT,
         UNIQUE(task_id,request_key),
-        CHECK ((status IN ('pending','cancelled') AND attempt_id IS NULL AND approved_at IS NULL)
+        CHECK ((status IN ('pending','cancelled') AND attempt_id IS NULL AND approved_at IS NULL
+            AND authorized_at IS NULL AND execution_mode IS NULL AND authorization_source IS NULL
+            AND authorization_sha256 IS NULL)
           OR (status IN ('executing','acknowledged','unconfirmed','not_started')
-            AND attempt_id IS NOT NULL AND approved_at IS NOT NULL)))""",
+            AND attempt_id IS NOT NULL AND authorized_at IS NOT NULL
+            AND execution_mode IS NOT NULL AND authorization_source IS NOT NULL
+            AND ((execution_mode='manual' AND approved_at IS NOT NULL
+              AND authorization_source='host_confirmation' AND authorization_sha256 IS NULL)
+            OR (execution_mode='automatic' AND approved_at IS NULL
+              AND authorization_source='frozen_task_scope' AND authorization_sha256 IS NOT NULL)))))""",
     "CREATE INDEX IF NOT EXISTS reviewed_actions_task_created ON reviewed_actions(task_id,created_at DESC)",
 )
 _PUBLIC = ("id", "kind", "target_id", "digest", "revision", "status", "attempt_id",
-           "created_at", "updated_at", "approved_at", "finished_at")
+           "created_at", "updated_at", "approved_at", "authorized_at", "execution_mode",
+           "authorization_source", "authorization_sha256", "finished_at")
+
+
+def _migrate_approval_ledger(db):
+    """Preserve manual records while permitting automatic attempts without approval.
+
+    The old CHECK constraint required approved_at for every attempt. Rebuild it
+    transactionally instead of inventing a human approval for automatic sends.
+    This runs on host startup, before automatic attempt tables are introduced.
+    """
+    columns = {row[1] for row in db.execute("PRAGMA table_info(reviewed_actions)")}
+    if not columns or "execution_mode" in columns:
+        return
+    old = ("id", "task_id", "request_key", "request_digest", "kind", "target_id", "proposal_json",
+           "target_json", "before_json", "digest", "revision", "status", "attempt_id", "created_at",
+           "updated_at", "approved_at", "finished_at", "result_json")
+    if columns != set(old):
+        raise ValueError("unsupported_action_ledger_schema")
+    db.execute(_SCHEMA[0].replace("reviewed_actions (", "reviewed_actions_v2 ("))
+    names = ",".join(old)
+    db.execute("INSERT INTO reviewed_actions_v2 (" + names + ",authorized_at,execution_mode,authorization_source) "
+               "SELECT " + names + ",approved_at,CASE WHEN attempt_id IS NOT NULL THEN 'manual' END,"
+               "CASE WHEN attempt_id IS NOT NULL THEN 'host_confirmation' END FROM reviewed_actions ORDER BY rowid")
+    db.execute("DROP TABLE reviewed_actions")
+    db.execute("ALTER TABLE reviewed_actions_v2 RENAME TO reviewed_actions")
 
 
 class Actions:
@@ -465,6 +501,7 @@ class Actions:
         self.authority = authority
         self.targets = MappingProxyType(configured)
         with authority._transaction() as db:
+            _migrate_approval_ledger(db)
             for statement in _SCHEMA:
                 db.execute(statement)
 
@@ -508,7 +545,8 @@ class Actions:
 
     def _event(self, db, task_id, operation, row):
         self.authority._event(db, task_id, operation, True, operation,
-            {key: row[key] for key in ("id", "kind", "digest", "revision", "status")})
+            {key: row[key] for key in ("id", "kind", "digest", "revision", "status", "execution_mode",
+                                      "authorization_source", "authorization_sha256")})
 
     def _canonical(self, proposal):
         try:
@@ -522,6 +560,25 @@ class Actions:
         before = _snapshot(target) if target.kind not in _NETWORK else None
         digest = _digest({"proposal": canonical, "target": described, "before": before})
         return described, before, digest
+
+    def prior(self, task_id, request_key, proposal):
+        """Read-only idempotency lookup before a host reviews a new candidate.
+
+        An existing edited/pending/finished record is returned as-is. This does
+        not authorize execution or reset an attempt. The broker performs its
+        current admission check before calling this on an agent-facing path.
+        """
+        task_id = _identifier(task_id, "task_id")
+        with self.authority._transaction() as db:
+            self.authority._task(db, task_id, require_active=False)
+            key = _key(request_key, "invalid_action_request_key")
+            request_digest = _digest(self._canonical(proposal))
+            previous = db.execute("SELECT * FROM reviewed_actions WHERE task_id=? AND request_key=?", (task_id, key)).fetchone()
+            if previous is None:
+                return None
+            if not hmac.compare_digest(previous["request_digest"], request_digest):
+                raise AuthorizationError("action_request_conflict")
+            return self._public(previous)
 
     def submit(self, task_id, request_key, proposal):
         """Agent proposal only. Return no previous file content or host configuration."""
@@ -595,7 +652,7 @@ class Actions:
             return self._public(current, content=True)
         return self.authority._request(task_id, "action_cancel", cancel)
 
-    def _begin(self, task_id, action_id, revision, digest):
+    def _begin(self, task_id, action_id, revision, digest, *, automation=None, checked_proposal=None):
         def begin(db):
             self.authority._task(db, task_id, require_active=False)
             row = self._row(db, task_id, action_id)
@@ -611,9 +668,23 @@ class Actions:
                 raise AuthorizationError("action_target_changed")
             if row["before_json"] is not None and _snapshot(target) != json.loads(row["before_json"]):
                 raise AuthorizationError("action_file_changed")
-            now = _now()
-            db.execute("UPDATE reviewed_actions SET status='executing',attempt_id=?,approved_at=?,updated_at=? WHERE id=?",
-                       (uuid.uuid4().hex, now, now, action_id))
+            now, attempt_id = _now(), uuid.uuid4().hex
+            mode, source, scope = "manual", "host_confirmation", None
+            if automation is not None:
+                if row["revision"] != 1:
+                    raise AuthorizationError("automatic_edited_action_requires_review")
+                if checked_proposal is None or self._canonical(checked_proposal) != json.loads(row["proposal_json"]):
+                    raise AuthorizationError("automatic_checked_candidate_changed")
+                if row["kind"] not in _NETWORK:
+                    raise AuthorizationError("automatic_kind_requires_review")
+                candidate = self._public(row, content=True)
+                candidate["attempt_id"] = attempt_id
+                body_bytes = len(_network_body(target, candidate)[1])
+                permission = automation._authorize_attempt(db, task_id, row, target, attempt_id, body_bytes)
+                mode, source, scope = "automatic", permission["source"], permission["policy_digest"]
+            db.execute("""UPDATE reviewed_actions SET status='executing',attempt_id=?,approved_at=?,authorized_at=?,
+                execution_mode=?,authorization_source=?,authorization_sha256=?,updated_at=? WHERE id=?""",
+                (attempt_id, now if mode == "manual" else None, now, mode, source, scope, now, action_id))
             current = self._row(db, task_id, action_id)
             self._event(db, task_id, "action_commit_started", current)
             return {"started": True, "action": self._public(current, content=True)}
@@ -643,16 +714,56 @@ class Actions:
         """
         with self.authority._lock:
             decision = self._begin(task_id, action_id, revision, digest)
-            action = decision["action"]
-            if not decision["started"]:
-                return {"started": False, "action": action}
-            target = self.targets[action["target_id"]]
+            return self._perform_started(task_id, decision)
+
+    def _perform_started(self, task_id, decision):
+        """Caller holds Authority's lock across the complete effect interval."""
+        action = decision["action"]
+        if not decision["started"]:
+            return {"started": False, "action": action}
+        target = self.targets[action["target_id"]]
+        try:
+            result = _perform_network(target, action) if action["kind"] in _NETWORK else _perform_file(target, action)
+        except BaseException:
+            self._finish(task_id, action["id"], action["attempt_id"], {"outcome": "unconfirmed", "reason": "action_interrupted"})
+            raise
+        return {"started": True, "action": self._finish(task_id, action["id"], action["attempt_id"], result)}
+
+    def commit_automatic(self, task_id, action_id, revision, digest, automation, *, checked_proposal):
+        """Host-only automatic entry after reviewing this exact normalized candidate.
+
+        The caller holds its broker lock and runs content checks first. No
+        model verdict or worker field can create the host's frozen scope.
+        Missing scope/remaining budget keeps a proposal pending; incompatible
+        labels, revocation, pause, changed bindings or failed storage reject.
+        """
+        from .action_automation import ActionAutomation, PENDING_REASONS
+        if type(automation) is not ActionAutomation or automation.authority is not self.authority:
+            raise ValueError("automatic_action_authority_mismatch")
+        with self.authority._lock:
             try:
-                result = _perform_network(target, action) if action["kind"] in _NETWORK else _perform_file(target, action)
-            except BaseException:
-                self._finish(task_id, action_id, action["attempt_id"], {"outcome": "unconfirmed", "reason": "action_interrupted"})
-                raise
-            return {"started": True, "action": self._finish(task_id, action_id, action["attempt_id"], result)}
+                decision = self._begin(task_id, action_id, revision, digest,
+                                       automation=automation, checked_proposal=checked_proposal)
+            except AuthorizationError as exc:
+                if exc.reason not in PENDING_REASONS:
+                    raise
+                return {"started": False, "reason": exc.reason, "action": self.get(task_id, action_id)["action"]}
+            return self._perform_started(task_id, decision)
+
+    def request_automatic(self, task_id, request_key, proposal, automation, *, checked_proposal):
+        """Host convenience entry; prior requests never trigger another attempt.
+
+        A broker should use prior before its model check, then submit and
+        commit_automatic under its own management lock. This helper is useful
+        for trusted callers that already completed the candidate review.
+        """
+        with self.authority._lock:
+            previous = self.prior(task_id, request_key, proposal)
+            if previous is not None:
+                return {"started": False, "reason": "action_already_recorded", "action": previous}
+            row = self.submit(task_id, request_key, proposal)
+            return self.commit_automatic(task_id, row["id"], row["revision"], row["digest"], automation,
+                                         checked_proposal=checked_proposal)
 
     def recover(self):
         """Host startup only, after exclusive state ownership; never resumes I/O."""

@@ -15,6 +15,11 @@ docs/evidence/response-review-2026-09-12/** -text whitespace=trailing-space,spac
 docs/evidence/settings-history-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/skill-purpose-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/hermes-five-layers-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/hermes-glm14-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/glm-judge-review-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/rule-parity-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/action-automation-ui-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/automatic-work-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 examples/yuanxingmu/workbench/evidence/** -text
 # Preserve the model's Markdown line breaks and frozen patch context bytes.
 examples/yuanxingmu/workbench/evidence/REPORT.zh-CN.md -whitespace

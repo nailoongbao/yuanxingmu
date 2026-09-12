@@ -75,6 +75,7 @@ def main():
     hermes_init.add_argument("--context-window", type=int, default=65536)
     hermes_init.add_argument("--max-tokens", type=int, default=2048)
     for native_init in (init, hermes_init):
+        native_init.add_argument("--action-automation", type=Path, help="创建时固定的自动执行范围 JSON；需同时启用防护和操作对象")
         native_init.add_argument("--judge-url", help="可选：独立检查模型的地址")
         native_init.add_argument("--judge-model-id", help="独立检查模型的名称")
         native_init.add_argument("--judge-api-key-env", help="从这个环境变量读取检查模型密钥")
@@ -165,6 +166,7 @@ def main():
                 if args.objective:
                     policy = {**(policy or {}), "objective": args.objective}
                 targets = json.loads(args.action_targets.read_text(encoding="utf-8")) if args.action_targets else None
+                automation = json.loads(args.action_automation.read_text(encoding="utf-8")) if args.action_automation else None
                 extra = {"openclaw_package": Path(package)} if args.command == "openclaw" else {"hermes_python": args.hermes_python, "hermes_source": args.hermes_source}
                 if args.command == "hermes":
                     from .hermes import init_profile
@@ -183,7 +185,7 @@ def main():
                     model_url=args.model_url, model_id=args.model_id, api_key=key, documents=documents,
                     destinations=destinations, port=args.port, context_window=args.context_window, max_tokens=args.max_tokens,
                     defense_policy=policy, judge_config=judge_config, selected_skills=selected_skills(), reviewed_mail=args.reviewed_mail,
-                    reviewed_actions=targets is not None, action_targets=targets)
+                    reviewed_actions=targets is not None, action_targets=targets, action_automation=automation)
             elif args.action == "start":
                 result = start_profile(args.profile.expanduser())
             else:

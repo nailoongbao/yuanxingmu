@@ -77,6 +77,19 @@ class HermesProfileTests(unittest.TestCase):
         command = openclaw.gateway_command(self.profile, manifest)
         self.assertNotIn(str(path), command)
 
+    def test_new_defense_profile_pins_input_containment_on_reopen(self):
+        from yuanxingmu.protection import profile_services
+        self.initialize(defense_policy={"objective": "Summarize the supplied records", "alignment_enabled": False})
+        manifest = openclaw.validate_profile(self.profile)
+        self.assertIn("input_containment_v1", manifest["features"])
+        resources, destinations = load_policy(self.profile / "policy.json")
+        with Broker(self.profile / "broker-state", resources, destinations, **profile_services(self.profile, manifest)) as broker:
+            self.assertTrue(broker.input_containment)
+            self.assertEqual(broker._binding()["input_containment"], 1)
+        changed = {**manifest, "features": [name for name in manifest["features"] if name != "input_containment_v1"]}
+        with self.assertRaisesRegex(RuntimeError, "state_policy_or_resource_changed"):
+            Broker(self.profile / "broker-state", resources, destinations, **profile_services(self.profile, changed))
+
     def test_credentials_and_inherited_overrides_do_not_enter_hermes(self):
         self.initialize()
         manifest = openclaw.validate_profile(self.profile)
@@ -94,6 +107,31 @@ class HermesProfileTests(unittest.TestCase):
         self.assertEqual(config["fallback_providers"], [])
         self.assertNotIn(self.secret, json.dumps(config))
         self.assertEqual(config["terminal"]["backend"], "yuanxingmu")
+
+    def test_automatic_scope_is_host_only_pinned_and_requires_both_features(self):
+        from yuanxingmu.protection import profile_services
+        scope = {"version": 1, "max_attempts": 8, "max_total_body_bytes": 65536,
+                 "targets": {"team": {"accepted_labels": ["private"], "max_body_bytes": 8192}}}
+        targets = {"team": {"kind": "message", "label": "内部团队", "url": "http://127.0.0.1:18337/team"}}
+        with self.assertRaisesRegex(ValueError, "automatic_actions_require_defense"):
+            self.initialize(action_automation=scope, reviewed_actions=True, action_targets=targets)
+        self.assertFalse(self.profile.exists())
+        self.initialize(action_automation=scope, reviewed_actions=True, action_targets=targets,
+                        defense_policy={"objective": "Send progress to the authorized internal team."})
+        manifest = openclaw.validate_profile(self.profile)
+        self.assertIn("automatic_actions_v1", manifest["features"])
+        self.assertIn("trusted-core/yuanxingmu/action_automation.py", manifest["files"])
+        self.assertIn("action-automation.json", manifest["files"])
+        binding = json.loads((self.profile / "hermes-binding.json").read_text())
+        self.assertTrue(binding["automatic_actions"])
+        self.assertEqual((self.profile / "action-automation.json").stat().st_mode & 0o077, 0)
+        self.assertNotIn(str(self.profile / "action-automation.json"), hermes.gateway_command(self.profile, manifest))
+        resources, destinations = load_policy(self.profile / "policy.json")
+        with Broker(self.profile / "broker-state", resources, destinations, **profile_services(self.profile, manifest)) as broker:
+            self.assertEqual(broker.automation.describe(manifest["task_id"])["attempts_remaining"], 8)
+        (self.profile / "action-automation.json").write_text(json.dumps({**scope, "max_attempts": 100}))
+        with self.assertRaisesRegex(RuntimeError, "changed"):
+            profile_services(self.profile, manifest)
 
     def test_independent_judge_requires_defense_and_keeps_credential_host_only(self):
         judge = {"url": "http://127.0.0.1:18333/v1", "id": "fixture-judge", "api_key": "synthetic-judge-host-only-key"}

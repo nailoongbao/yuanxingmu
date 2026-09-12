@@ -77,7 +77,18 @@ class Broker:
     """Host-only management API; a worker receives only its mounted Unix socket."""
 
     def __init__(self, state_dir: Path, resources: dict[str, Resource], destinations: dict[str, Destination], *,
-                 reviewed_mail=False, guards=None, action_targets=None):
+                 reviewed_mail=False, guards=None, action_targets=None, input_containment=False,
+                 action_automation=None):
+        if type(input_containment) is not bool or (input_containment and guards is None):
+            raise ValueError("input_containment_requires_guards")
+        if action_automation is not None and (guards is None or action_targets is None):
+            raise ValueError("automatic_actions_require_guards_and_targets")
+        automatic_policy = None
+        if action_automation is not None:
+            from .action_automation import AutomaticActionPolicy
+            automatic_policy = AutomaticActionPolicy.from_config(action_automation, action_targets)
+            if set(destinations) & set(automatic_policy.destination_labels()):
+                raise ValueError("automatic_action_destination_collision")
         if not sys.platform.startswith("linux") or not hasattr(socket, "AF_UNIX"):
             raise RuntimeError("broker_requires_linux")
         import fcntl
@@ -100,7 +111,10 @@ class Broker:
         self.destinations = dict(destinations)
         self.reviewed_mail = reviewed_mail is True
         self.guards = guards
+        self.input_containment = input_containment
         self.action_targets = None if action_targets is None else dict(action_targets)
+        self.automatic_policy = automatic_policy
+        self.automation = None
         self.actions = None
         self.tool_reviews = None
         self.quarantine = None
@@ -128,6 +142,9 @@ class Broker:
                 from .actions import Actions
                 self.actions = Actions(self.authority, self.action_targets)
                 self.actions.recover()
+                if self.automatic_policy is not None:
+                    from .action_automation import ActionAutomation
+                    self.automation = ActionAutomation(self.authority, self.action_targets, self.automatic_policy)
             if self.reviewed_mail:
                 self.mail = MailDrafts(self.authority)
                 # The exclusive broker lock proves no earlier sender is live.
@@ -191,8 +208,12 @@ class Broker:
             judge = asdict(self.guards.judge) if self.guards.judge is not None else None
             binding["guards"] = {"policy": self.guards.policy.to_dict(),
                                  "judge_sha256": _digest(json.dumps(judge, sort_keys=True).encode())}
+            if self.input_containment:
+                binding["input_containment"] = 1
         if self.action_targets is not None:
             binding["reviewed_actions"] = {name: target.binding() for name, target in sorted(self.action_targets.items())}
+            if self.automatic_policy is not None:
+                binding["automatic_actions"] = self.automatic_policy.binding()
             existing = self.state_dir / "workspaces.json"
             workspaces = [Path(name) for name in json.loads(existing.read_text())] if existing.exists() else []
             for target in self.action_targets.values():
@@ -205,6 +226,9 @@ class Broker:
 
     def _guard_result(self, task_id, result):
         value = result.to_dict()
+        if self._contained_input(value):
+            value["intervention"] = "withhold_input_continue_task"
+            value["reason"] += " 这一段资料已被扣留，其他已授权工作可以继续，无需恢复工作。"
         try:
             self._event(task_id, "defense_check", {k: v for k, v in value.items() if k != "cleaned_text"})
         except Exception:
@@ -215,9 +239,20 @@ class Broker:
             raise AuthorizationError(value["code"], value["reason"])
         return value
 
+    def _contained_input(self, value):
+        # Only an entire external input that has not reached the Agent can be
+        # discarded locally. Tool, memory, response and preflight failures do
+        # not inherit this exception. This host option is pinned per profile.
+        return (self.input_containment and value.get("layer") == "input"
+                and value.get("verdict") == "block" and value.get("enforced") is True
+                and value.get("assessed") is True and value.get("withheld") is True
+                and value.get("evidence", {}).get("method") == "rule")
+
     def _pause_for_check(self, task_id, value):
         """Pause subsequent admissions, not effects already admitted to an executor."""
         if self.quarantine is None or value.get("verdict") != "block" or value.get("enforced") is False:
+            return
+        if self._contained_input(value):
             return
         evidence = value.get("evidence", {})
         try:
@@ -284,9 +319,18 @@ class Broker:
     def create_task(self, *, task_id: str | None = None, initial_labels: list[str] | None = None) -> str:
         with self._lock:
             self._require_healthy()
-            return self.authority.create_root({k: list(v.labels) for k, v in self.resources.items()},
-                {k: list(v.labels) for k, v in self.destinations.items()}, task_id=task_id,
+            destinations = {k: list(v.labels) for k, v in self.destinations.items()}
+            if self.automatic_policy is not None:
+                automatic = self.automatic_policy.destination_labels()
+                if set(destinations) & set(automatic):
+                    raise ValueError("automatic_action_destination_collision")
+                destinations.update(automatic)
+            task = self.authority.create_root({k: list(v.labels) for k, v in self.resources.items()},
+                destinations, task_id=task_id,
                 initial_labels=initial_labels)
+            if self.automation is not None:
+                self.automation.bind_task(task)
+            return task
 
     def delegate(self, task_id: str, *, resources=None, destinations=None) -> str:
         with self._lock:
@@ -348,6 +392,7 @@ class Broker:
                 fields = {"read": {"op", "resource"}, "send": {"op", "destination", "body"}, "describe": {"op"},
                           "draft_email": {"op", "request_key", "draft"},
                           "action_targets": {"op"}, "propose_action": {"op", "request_key", "proposal"},
+                          "request_action": {"op", "request_key", "proposal"},
                           "guard_tool": {"op", "tool", "arguments"}, "guard_rules": {"op", "tool", "arguments"}, "inspect_input": {"op", "text"},
                           "request_tool_review": {"op", "request_key", "tool", "arguments"},
                           "consume_tool_review": {"op", "review_id", "digest", "tool", "arguments"}}
@@ -376,13 +421,36 @@ class Broker:
                                 self._pause_for_check(task_id, check)
                     else:
                         result = self.tool_reviews.consume(task_id, request["review_id"], request["digest"], request["tool"], request["arguments"])
-                elif operation in {"action_targets", "propose_action"}:
+                elif operation in {"action_targets", "propose_action", "request_action"}:
                     if self.actions is None:
                         raise AuthorizationError("reviewed_actions_not_enabled")
                     if not self.authority.describe(task_id)["active"]:
                         raise AuthorizationError("task_revoked")
                     if operation == "action_targets":
                         result = {"allowed": True, "targets": self.actions.describe_targets()}
+                        if self.automatic_policy is not None:
+                            result["automatic_scope"] = self.automatic_policy.to_config()
+                    elif operation == "request_action":
+                        if self.automation is None:
+                            raise AuthorizationError("automatic_actions_not_enabled")
+                        canonical = self.actions._canonical(request["proposal"])
+                        previous = self.actions.prior(task_id, request["request_key"], canonical)
+                        if previous is not None:
+                            result = {"allowed": True, "started": False, "reason": "action_already_recorded", **previous}
+                        else:
+                            self._guard_tool(task_id, "yuanxingmu_request_action", canonical)
+                            action = self.actions.submit(task_id, request["request_key"], canonical)
+                            if not self.guards.policy.alignment_enabled or self.guards.policy.effective_mode("alignment") != "enforce":
+                                result = {"allowed": True, "started": False, "reason": "automatic_defense_not_enforcing", **action}
+                            else:
+                                outcome = self.actions.commit_automatic(task_id, action["id"], action["revision"], action["digest"],
+                                                                        self.automation, checked_proposal=canonical)
+                                # Host commit records can include file snapshots
+                                # and target metadata. Workers receive only the
+                                # same public fields used for an inert proposal.
+                                public_action = self.actions.prior(task_id, request["request_key"], canonical)
+                                result = {"allowed": True, "reason": outcome.get("reason", "action_automatic_attempt_recorded"),
+                                          "started": outcome["started"], **public_action}
                     else:
                         self._guard_tool(task_id, "yuanxingmu_prepare_action", request["proposal"])
                         action = self.actions.submit(task_id, request["request_key"], request["proposal"])
@@ -458,7 +526,7 @@ class Broker:
                     result["message"] = str(exc)
             except (OSError, ValueError, TypeError):
                 result = {"allowed": False, "reason": "broker_operation_failed"}
-            audit_operation = operation if isinstance(operation, str) and operation in {"read", "send", "describe", "draft_email", "guard_tool", "guard_rules", "inspect_input", "action_targets", "propose_action", "request_tool_review", "consume_tool_review"} else "invalid"
+            audit_operation = operation if isinstance(operation, str) and operation in {"read", "send", "describe", "draft_email", "guard_tool", "guard_rules", "inspect_input", "action_targets", "propose_action", "request_action", "request_tool_review", "consume_tool_review"} else "invalid"
             self._event(task_id, audit_operation, result)
             return result
 

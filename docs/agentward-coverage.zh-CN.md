@@ -13,7 +13,7 @@
 
 这里的“语义偏移”是：用户请 AI 整理文件，AI 却准备向陌生人发资料；“危险指令阻断”是：在真正运行删文件、提权或下载执行代码之前停住。两者需要同时工作，不能只靠一个模型回答“安全”。
 
-新增核查记录：[输入、记忆与命令逐类别补漏](agentward-rule-audit-2026-09-12.md)、[OpenClaw 实机结果与误报](openclaw-layers-validation-2026-09-12.md)、[独立检查模型及其漏判](judge-configuration.zh-CN.md)。
+新增核查记录：[输入、记忆与命令逐类别补漏](agentward-rule-audit-2026-09-12.md)、[外部危险命令指令与记忆条件破坏](evidence/rule-parity-2026-09-12/REPORT.zh-CN.md)、[OpenClaw 实机结果与误报](openclaw-layers-validation-2026-09-12.md)、[独立检查模型及其漏判](judge-configuration.zh-CN.md)。
 
 ## 五层逐项对应
 
@@ -21,6 +21,7 @@
 |---|---|---|
 | **输入：识别外部内容伪造系统角色、模板标记、越狱、覆盖既有指令、索要凭证**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/input-sanitization.ts) | [`Guards.check_input`](../yuanxingmu/guards.py) 做规范化及规则检查；命中时以固定说明替代外部内容。Broker 与 OpenClaw/Hermes 工具路径有接入；[`test_yuanxingmu_guards.py`](../tests/test_yuanxingmu_guards.py) 覆盖规则及关闭/观察模式。 | 规则不穷尽所有提示注入。需要按网页、文件、消息、搜索结果等原生来源分别验证，不能以邮件案例代表全部。玄甲的警告类型定义也不等于所有类型都有实际检测器。 |
 | **输入：递归检查工具结果里的字符串、数组和对象**。 | Broker 对输入文本检查；原生插件整理工具结果后送主机检查，保留文本换行，避免重复 JSON 编码导致漏检。 | 新增钩子的模块测试不能代表所有官方工具结果类型；图片、音频、嵌入对象等未建立完整承诺。 |
+| **输入/记忆：外部文字要求执行危险命令，或将破坏指令留待以后触发**。 | 新规则对明确执行要求检查相邻命令，补齐递归删除、提权、磁盘破坏、常见包装和下载执行等语法；记忆和所选技能规则复用。教学引用、否定句、正常条件偏好和 token 统计另有对照。独立复核发现的转义引号及无围栏多行遗漏已修复。22 项专属加既有 48 项 guards 检查，Linux **70/70**；Windows 58 通过、12 项 Linux 接口跳过。[前后结果与范围](evidence/rule-parity-2026-09-12/REPORT.zh-CN.md) | 本轮仅组件证据，未执行危险命令或模型。有限语法不能穷尽自然语言改写；未把裸 token/secret 等模糊用语一概封禁，仍有与玄甲不同的规则。旧实机视频不计为本轮验证。 |
 | **输入：按配置插入提醒、替换危险内容、暂时停用工具、覆盖受污染回答**。[主插件](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts) | 危险输入不交给 AI；[`quarantine.py`](../yuanxingmu/quarantine.py) 在主机暂停整项工作及分出的任务，作废未使用审批和待确认草稿；[`model_output.py`](../yuanxingmu/model_output.py) 收齐模型响应后检查，拒绝时只返回明确的主机提醒。暂停 16 项、当前响应协议与真实套接字 25 项测试通过。 | 暂停需本人恢复，不随下一条用户消息解除。回答检查覆盖所接入模型接口的正文、拒绝及思考文本；工具卡参数、图片、工具结果和旧聊天记录另有边界。原生界面新版整体验收仍在进行；详见[回答与暂停](response-and-quarantine.md)。 |
 | **记忆：检查 `write/edit/exec` 对 MEMORY.md、memory/、SOUL.md、IDENTITY.md、AGENTS.md、USER.md、TOOLS.md 的改写**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/cognition-protection.ts) | [`Guards.check_memory`](../yuanxingmu/guards.py) 识别受保护名字、写入/补丁工具及命令中的改写；规则对安全绕过等内容给出拦截。组件用例覆盖正常写入和恶意记忆修改。 | 通过任意编程语言或别名改写的情况不能仅靠文本规则穷尽。宿主只读挂载才承担不可改的边界；要验收 Hermes 原生 file 工具与 terminal 的真实执行路径。 |
 | **决策：用模型比较最近用户意图、上下文、助手行为，发现指令语义偏移**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/decision-alignment.ts) | [`Guards.check_alignment`](../yuanxingmu/guards.py) 对照主机固定目标检查完整工具候选；`check_response` 检查收齐后的模型文字。两者采用不同检查提示，严格解析 `allow/block/review`。强制模式下模型缺失、超时、非法判定或审计失败均不放行。组件测试实际走 HTTP，裁判文本为预设响应。 | 不能保证识别所有偏离或恶意内容。Hermes 本地真机已保留一次含内部底价外部邮件的模型阻止，也保留正常本地摘要被误判的失败；新提示词和回答缓冲的正常对照仍需验收。 |

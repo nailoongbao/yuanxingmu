@@ -278,28 +278,33 @@ class Authority:
 
         return self._request(task_id, "record_read", record)
 
+    def _authorize_send(self, db, task_id: str, destination_id: str) -> dict:
+        """Trusted transaction helper; the caller owns both transaction and I/O lock.
+
+        Never cache its result as a reusable capability. Automatic actions use
+        this inside the same transaction that consumes their durable attempt.
+        """
+        task = self._task(db, task_id)
+        _identifier(destination_id, "destination_id")
+        destination = db.execute(
+            "SELECT labels FROM authority_destinations WHERE family_id=? AND destination_id=?",
+            (task["family_id"], destination_id)).fetchone()
+        if destination is None:
+            raise AuthorizationError("unknown_destination")
+        if destination_id not in self._grants(db, task_id, "destination"):
+            raise AuthorizationError("destination_not_granted")
+        labels = self._labels(db, task["family_id"])
+        blocked = sorted(set(labels) - set(json.loads(destination["labels"])))
+        result = {"allowed": not blocked,
+                  "reason": "destination_cannot_receive_labels" if blocked else "send_authorized",
+                  "task_id": task_id, "destination_id": destination_id, "labels": labels,
+                  "blocked_labels": blocked, "revision": self._revision(db, task["family_id"])}
+        result["event_id"] = self._event(db, task_id, "authorize_send", result["allowed"], result["reason"], result)
+        return result
+
     def authorize_send(self, task_id: str, destination_id: str) -> dict:
         """Check current family labels against a granted destination's accepted labels."""
-        def authorize(db):
-            task = self._task(db, task_id)
-            _identifier(destination_id, "destination_id")
-            destination = db.execute(
-                "SELECT labels FROM authority_destinations WHERE family_id=? AND destination_id=?",
-                (task["family_id"], destination_id)).fetchone()
-            if destination is None:
-                raise AuthorizationError("unknown_destination")
-            if destination_id not in self._grants(db, task_id, "destination"):
-                raise AuthorizationError("destination_not_granted")
-            labels = self._labels(db, task["family_id"])
-            blocked = sorted(set(labels) - set(json.loads(destination["labels"])))
-            result = {"allowed": not blocked,
-                      "reason": "destination_cannot_receive_labels" if blocked else "send_authorized",
-                      "task_id": task_id, "destination_id": destination_id, "labels": labels,
-                      "blocked_labels": blocked, "revision": self._revision(db, task["family_id"])}
-            result["event_id"] = self._event(db, task_id, "authorize_send", result["allowed"], result["reason"], result)
-            return result
-
-        return self._request(task_id, "authorize_send", authorize)
+        return self._request(task_id, "authorize_send", lambda db: self._authorize_send(db, task_id, destination_id))
 
     def describe(self, task_id: str) -> dict:
         """Inspect a task, including revoked tasks; no ancestor callable IDs are exposed."""

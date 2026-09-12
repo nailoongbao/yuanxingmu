@@ -154,7 +154,7 @@ class Runtime:
 
 def validate_create(value):
     required = {"name", "model_url", "model_id", "api_key", "documents"}
-    if not isinstance(value, dict) or not required <= set(value) or set(value) - required - {"framework", "objective", "defense", "skills", "judge"}:
+    if not isinstance(value, dict) or not required <= set(value) or set(value) - required - {"framework", "objective", "defense", "skills", "judge", "action_automation", "action_automation_bindings"}:
         raise APIError(400, "invalid_fields", "请填写工作名称、模型连接信息和资料。")
     if not isinstance(value.get("framework", "openclaw"), str) or value.get("framework", "openclaw") not in {"openclaw", "hermes"}:
         raise APIError(400, "invalid_framework", "请选择 OpenClaw 或 Hermes。")
@@ -177,6 +177,16 @@ def validate_create(value):
             normalize_judge_config(value["judge"])
         except (ValueError, TypeError):
             raise APIError(400, "invalid_judge_config", "请填写独立检查模型的地址、名称及有效密钥；检查等待最多45秒。") from None
+    automatic_fields = {"action_automation", "action_automation_bindings"}
+    if automatic_fields & set(value):
+        scope, bindings = value.get("action_automation"), value.get("action_automation_bindings")
+        if (not automatic_fields <= set(value) or not value.get("objective")
+                or type(scope) is not dict or type(scope.get("targets")) is not dict
+                or type(bindings) is not dict or not 1 <= len(bindings) <= 32
+                or set(bindings) != set(scope["targets"])
+                or any(type(key) is not str or type(digest) is not str or not re.fullmatch(r"[0-9a-f]{64}", digest)
+                       for key, digest in bindings.items())):
+            raise APIError(400, "invalid_automatic_action_scope", "请重新选择本次工作可自动执行的对象，并填写工作目的。")
     if "skills" in value and (type(value["skills"]) is not list or len(value["skills"]) > 32
             or any(type(item) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", item) for item in value["skills"])
             or len(set(value["skills"])) != len(value["skills"])):
@@ -232,7 +242,7 @@ def validate_create(value):
         total += size
         if size > LIMITS["document_bytes"] or total > LIMITS["total_document_bytes"]:
             raise APIError(413, "documents_too_large", "每份文本最多 256 KiB，合计最多 1 MiB。")
-    return {**value, "name": value["name"].strip(), "model_url": model_url,
+    return {**copy.deepcopy(value), "name": value["name"].strip(), "model_url": model_url,
             "api_key": value["api_key"] or "local-unused"}
 
 
@@ -626,6 +636,7 @@ class Workbench:
                 "foundation_scans": {"configuration": policy.foundation_config_enabled, "skill_semantic": policy.skill_semantic_enabled,
                                      **({"skill_rules": policy.skill_rules_enabled} if "skill_rules_v1" in manifest.get("features", []) else {})},
                 "buffered_response": "buffered_response_v1" in manifest.get("features", []),
+                "input_containment": "input_containment_v1" in manifest.get("features", []),
                 "quarantine": quarantine, "foundation": foundation, "events": list(reversed(events))}
 
     def _core_lock(self, identifier):
@@ -828,6 +839,8 @@ class Workbench:
             if len(self.jobs) >= MAX_JOBS:
                 raise APIError(409, "job_limit", "此预览版的操作记录已达到上限，请保留原目录。")
             if action == "create":
+                self._automatic_scope(payload, self.action_targets)
+                payload["_action_targets_snapshot"] = copy.deepcopy(self.action_targets)
                 runtime_status = self.hermes_status if payload.get("framework") == "hermes" else self.runtime_status
                 if not runtime_status["available"]:
                     raise APIError(409, "runtime_unavailable", runtime_status["reason"])
@@ -883,9 +896,30 @@ class Workbench:
                 raise error from None
             return {"job": copy.deepcopy(job)}
 
+    def _automatic_scope(self, payload, targets):
+        """Validate fresh user consent against host targets while holding mutex."""
+        if "action_automation" not in payload:
+            return None
+        from ..action_automation import AutomaticActionPolicy
+        from ..actions import ActionTarget
+        try:
+            registered = {key: ActionTarget(**item) for key, item in targets.items()}
+            for key, expected in payload["action_automation_bindings"].items():
+                if key not in registered or not hmac.compare_digest(
+                        expected, registered[key].describe(key, host=True)["binding_digest"]):
+                    raise APIError(409, "automatic_action_target_changed", "所选对象已改变，请刷新对象列表后重新设置授权范围。")
+            return AutomaticActionPolicy.from_config(payload["action_automation"], registered).to_config()
+        except (ValueError, TypeError, KeyError):
+            raise APIError(400, "invalid_automatic_action_scope", "自动执行范围无效；请选择已登记的消息、上传或表单对象。") from None
+
     def _create(self, entry, payload):
         with self.mutex:
             self._check_storage()
+            # Compare consent again at execution time; never read new target
+            # addresses after this snapshot has been approved and captured.
+            automatic = self._automatic_scope(payload, self.action_targets)
+            targets = copy.deepcopy(payload.get("_action_targets_snapshot", self.action_targets))
+            self._automatic_scope(payload, targets)
         path = self.root / "profiles" / entry["id"]
         temporary = self.root / "imports" / uuid.uuid4().hex
         temporary.mkdir(mode=0o700)
@@ -908,7 +942,9 @@ class Workbench:
             framework_args["selected_skills"] = {name: self.skill_sources[name] for name in payload.get("skills", [])}
             if "judge" in payload:
                 framework_args["judge_config"] = payload["judge"]
-            framework_args.update(reviewed_actions=True, action_targets=copy.deepcopy(self.action_targets))
+            framework_args.update(reviewed_actions=True, action_targets=targets)
+            if automatic is not None:
+                framework_args["action_automation"] = automatic
             init_profile(path, node=self.runtime.node, **framework_args,
                 bwrap=self.runtime.bwrap, model_url=payload["model_url"], model_id=payload["model_id"], api_key=payload["api_key"],
                 documents=imported, destinations={}, port=entry["port"], reviewed_mail=True)
@@ -1092,6 +1128,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.command != "POST" and length not in (None, "0"):
             raise APIError(400, "unexpected_body", "此操作不接收请求内容。")
         static = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript; charset=utf-8"),
+                  "/automation.js": ("automation.js", "text/javascript; charset=utf-8"),
                   "/actions.js": ("actions.js", "text/javascript; charset=utf-8"),
                   "/protection.js": ("protection.js", "text/javascript; charset=utf-8"),
                   "/mail.js": ("mail.js", "text/javascript; charset=utf-8"),

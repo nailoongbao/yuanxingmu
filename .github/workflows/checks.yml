@@ -23,7 +23,7 @@ jobs:
       - name: Check installed CLI outside source import paths
         run: python -I -m defensecheck --help
       - name: Check packaged OpenClaw integration
-        run: python -I -c "from importlib.resources import files; assert files('yuanxingmu').joinpath('integrations/openclaw/plugin/index.mjs').is_file()"
+        run: python -I -c "from importlib.resources import files; root = files('yuanxingmu'); assert root.joinpath('integrations/openclaw/plugin/index.mjs').is_file(); assert root.joinpath('action_automation.py').is_file()"
       - name: Check packaged Hermes and Mastra integrations
         run: python -I -c "from importlib.resources import files; root = files('yuanxingmu'); required = ('integrations/hermes/plugin/__init__.py', 'integrations/hermes/plugin/plugin.yaml', 'adapters/mastra/index.mjs', 'adapters/mastra/client.mjs', 'adapters/mastra/package.json', 'adapters/mastra/package-lock.json'); assert all(root.joinpath(name).is_file() and root.joinpath(name).read_bytes() for name in required), 'Packaged integrations missing or empty'"
       - name: Check packaged workbench CLI and browser assets
@@ -31,7 +31,7 @@ jobs:
         run: |
           python -I -m yuanxingmu desk --help
           python -I -m yuanxingmu hermes init --help
-          python -I -c "from importlib.resources import files; root = files('yuanxingmu.dashboard').joinpath('web'); required = ('index.html', 'app.js', 'mail.js', 'actions.js', 'targets.js', 'protection.js', 'alerts.js', 'styles.css', 'mark.svg'); assert all(root.joinpath(name).is_file() and root.joinpath(name).read_bytes() for name in required), 'Packaged dashboard assets missing or empty'"
+          python -I -c "from importlib.resources import files; root = files('yuanxingmu.dashboard').joinpath('web'); required = ('index.html', 'app.js', 'mail.js', 'actions.js', 'automation.js', 'targets.js', 'protection.js', 'alerts.js', 'styles.css', 'mark.svg'); assert all(root.joinpath(name).is_file() and root.joinpath(name).read_bytes() for name in required), 'Packaged dashboard assets missing or empty'"
 
   python-native-tools:
     name: Native tools / ${{ matrix.batch }}

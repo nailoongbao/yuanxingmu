@@ -107,12 +107,51 @@ class OpenClawProfileTests(unittest.TestCase):
         resources, destinations = load_policy(profile / "policy.json")
         return Broker(profile / "broker-state", resources, destinations)
 
+    def test_new_defense_profile_pins_input_containment_on_reopen(self):
+        from yuanxingmu.protection import profile_services
+        self.initialize(defense_policy={"objective": "Summarize the supplied records", "alignment_enabled": False})
+        manifest = self.api.validate_profile(self.profile)
+        self.assertIn("input_containment_v1", manifest["features"])
+        resources, destinations = load_policy(self.profile / "policy.json")
+        with Broker(self.profile / "broker-state", resources, destinations, **profile_services(self.profile, manifest)) as broker:
+            self.assertTrue(broker.input_containment)
+            self.assertEqual(broker._binding()["input_containment"], 1)
+        changed = {**manifest, "features": [name for name in manifest["features"] if name != "input_containment_v1"]}
+        with self.assertRaisesRegex(RuntimeError, "state_policy_or_resource_changed"):
+            Broker(self.profile / "broker-state", resources, destinations, **profile_services(self.profile, changed))
+
     @staticmethod
     def task_ids(profile):
         # mode=ro prevents this test helper from repairing a deleted ledger.
         database = profile / "broker-state" / "authority.sqlite3"
         with sqlite3.connect(database.as_uri() + "?mode=ro", uri=True) as connection:
             return [row[0] for row in connection.execute("SELECT id FROM authority_tasks ORDER BY id")]
+
+    def test_automatic_scope_is_host_only_pinned_and_requires_both_features(self):
+        from yuanxingmu.protection import profile_services
+        scope = {"version": 1, "max_attempts": 8, "max_total_body_bytes": 65536,
+                 "targets": {"team": {"accepted_labels": ["private"], "max_body_bytes": 8192}}}
+        targets = {"team": {"kind": "message", "label": "内部团队", "url": self.destinations["internal"]["url"]}}
+        with self.assertRaisesRegex(ValueError, "automatic_actions_require_defense"):
+            self.initialize(action_automation=scope, reviewed_actions=True, action_targets=targets)
+        self.assertFalse(self.profile.exists())
+        self.initialize(action_automation=scope, reviewed_actions=True, action_targets=targets,
+                        defense_policy={"objective": "Send progress to the authorized internal team."})
+        manifest = self.api.validate_profile(self.profile)
+        self.assertIn("automatic_actions_v1", manifest["features"])
+        self.assertIn("trusted-core/yuanxingmu/action_automation.py", manifest["files"])
+        self.assertIn("action-automation.json", manifest["files"])
+        self.assertEqual((self.profile / "action-automation.json").stat().st_mode & 0o077, 0)
+        config = json.loads((self.profile / "openclaw.json").read_text())
+        self.assertIn("yuanxingmu_request_action", config["tools"]["allow"])
+        self.assertIn("yuanxingmu_request_action", config["tools"]["sandbox"]["tools"]["allow"])
+        self.assertTrue(config["plugins"]["entries"]["yuanxingmu"]["config"]["automaticActions"])
+        resources, destinations = load_policy(self.profile / "policy.json")
+        with Broker(self.profile / "broker-state", resources, destinations, **profile_services(self.profile, manifest)) as broker:
+            self.assertEqual(broker.automation.describe(manifest["task_id"])["attempts_remaining"], 8)
+        (self.profile / "action-automation.json").write_text(json.dumps({**scope, "max_attempts": 100}))
+        with self.assertRaisesRegex(RuntimeError, "changed"):
+            profile_services(self.profile, manifest)
 
     def assert_invalid_without_starting_gateway(self, profile):
         with self.assertRaises((RuntimeError, ValueError, OSError)):

@@ -257,6 +257,7 @@
         if(value.judge) content.append(node("p","field-note",(value.judge.independent ? "独立检查模型：" : "检查与工作使用同一模型：")+value.judge.id+"；每次最多等待 "+value.judge.timeout_seconds+" 秒。"));
         content.append(node("p","field-note","默认处理方式："+(modeNames[value.mode] || value.mode)+(value.per_layer_settings ? "。每层实际采用的方式见下方。" : "。")));
         if(value.buffered_response && value.layers?.alignment) content.append(node("p","field-note","回答会收齐后检查，再显示到聊天页，因此不会逐字实时出现。"));
+        if(value.input_containment) content.append(node("p","field-note","可疑外部资料会被整段扣留，其他已授权工作继续，不需要你反复恢复。危险操作、记忆投毒与回答越界仍会暂停工作。"));
         const layers = node("div","mail-drafts");
         for (const [name,label] of Object.entries(names)) {
           const effective=value.effective_modes?.[name] || (value.layers?.[name] ? value.mode : "disabled");

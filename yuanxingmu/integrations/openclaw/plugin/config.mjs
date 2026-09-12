@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const PATH_KEYS = ["python", "corePath", "workspace", "brokerSocket", "bwrap", "auditPath", "operatorSocket"];
 const ALL_KEYS = [...PATH_KEYS, "resourceIds", "destinationIds"];
-const FLAGS = ["reviewedMail", "defenseEnabled", "reviewedActions"];
+const FLAGS = ["reviewedMail", "defenseEnabled", "reviewedActions", "automaticActions"];
 
 function inside(candidate, root) {
   const relative = path.relative(root, candidate);
@@ -28,6 +28,10 @@ export function readTrustedConfig(value) {
   result.reviewedMail = value.reviewedMail === true;
   result.defenseEnabled = value.defenseEnabled === true;
   result.reviewedActions = value.reviewedActions === true;
+  result.automaticActions = value.automaticActions === true;
+  if (result.automaticActions && (!result.reviewedActions || !result.defenseEnabled)) {
+    throw new Error("Automatic actions require reviewed actions and defense");
+  }
   for (const key of PATH_KEYS) {
     if (typeof value[key] !== "string" || !path.isAbsolute(value[key]) || value[key].includes("\0")) {
       throw new Error("Invalid trusted plugin path: " + key);

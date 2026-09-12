@@ -78,7 +78,8 @@ def _invocation_scope(binding: dict, tool_name: str, arguments: dict, context: d
     if (not isinstance(arguments, dict) or not isinstance(session, str) or not session
             or not isinstance(call, str) or not call):
         raise ValueError("yuanxingmu_invocation_identity_unavailable")
-    tool = ("file_write" if tool_name in {"write_file", "patch"} else
+    tool = ("request_action" if tool_name == "yuanxingmu_request_action" else
+            "file_write" if tool_name in {"write_file", "patch"} else
             "terminal" if tool_name in {"terminal", "process_manage"} else "file_read")
     # Copy before waiting: no mutable model/plugin argument can change the
     # exact source displayed for a final executable candidate.
@@ -294,6 +295,38 @@ def _invalid() -> str:
     return json.dumps({"allowed": False, "reason": "invalid_tool_arguments"})
 
 
+def _automatic_action_arguments(args) -> bool:
+    """Only bounded inline network proposals; permissions remain in the host."""
+    if type(args) is not dict or set(args) != {"kind", "target_id", "payload"}:
+        return False
+    kind, target, payload = args["kind"], args["target_id"], args["payload"]
+    if (type(kind) is not str or kind not in {"message", "upload", "form"}
+            or type(target) is not str or re.fullmatch(r"[A-Za-z0-9_-]{1,128}", target) is None
+            or type(payload) is not dict):
+        return False
+    expected = {"message": {"body"}, "upload": {"filename", "content"}, "form": {"fields"}}[kind]
+    if set(payload) != expected:
+        return False
+    try:
+        if kind == "form":
+            fields = payload["fields"]
+            if (type(fields) is not dict or not 1 <= len(fields) <= 16
+                    or any(type(key) is not str or re.fullmatch(r"[A-Za-z][A-Za-z0-9_-]{0,63}", key) is None
+                           or key in {"constructor", "prototype"} or type(value) is not str
+                           or len(value.encode("utf-8")) > 8192 for key, value in fields.items())):
+                return False
+        elif kind == "upload":
+            if (type(payload["filename"]) is not str
+                    or re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.-]{0,127}", payload["filename"]) is None
+                    or type(payload["content"]) is not str or len(payload["content"].encode("utf-8")) > 65536):
+                return False
+        elif type(payload["body"]) is not str or len(payload["body"].encode("utf-8")) > 65536:
+            return False
+        return len(_canonical(payload).encode("utf-8")) <= 65536 + 2048
+    except (TypeError, ValueError, UnicodeError, RecursionError):
+        return False
+
+
 def _tool_handler(binding: dict, operation: str):
     def handler(args, **context):
         if not isinstance(args, dict):
@@ -311,7 +344,7 @@ def _tool_handler(binding: dict, operation: str):
                     or not isinstance(args["body"], str) or len(args["body"].encode("utf-8")) > 256 * 1024):
                 return _invalid()
             fields = dict(args)
-        elif operation in {"draft_email", "propose_action"}:
+        elif operation in {"draft_email", "propose_action", "request_action"}:
             if operation == "draft_email" and (not binding.get("reviewed_mail") or set(args) != {"recipient", "subject", "body"}
                     or not all(isinstance(value, str) for value in args.values())
                     or len(args["recipient"]) > 254 or len(args["subject"]) > 200
@@ -321,23 +354,41 @@ def _tool_handler(binding: dict, operation: str):
                     or args["kind"] not in {"message", "upload", "form", "overwrite", "delete"}
                     or not isinstance(args["target_id"], str) or not isinstance(args["payload"], dict)):
                 return _invalid()
+            if operation == "request_action" and (binding.get("automatic_actions") is not True
+                    or binding.get("reviewed_actions") is not True or not _automatic_action_arguments(args)):
+                return _invalid()
             # Hermes pins these contextvars around registry handler execution.
             # Lack of correlation blocks drafting; it cannot produce a fresh
             # request key on retry and accidentally duplicate a reviewed send.
             from tools.approval_context import _approval_tool_call_id, _approval_session_id
-            call_id, session_id = _approval_tool_call_id.get(), _approval_session_id.get() or context.get("session_id")
+            call_id, session_id = _approval_tool_call_id.get(), _approval_session_id.get()
+            if operation != "request_action":
+                session_id = session_id or context.get("session_id")
             if not isinstance(call_id, str) or not call_id or not isinstance(session_id, str) or not session_id:
                 return json.dumps({"allowed": False, "reason": "tool_correlation_unavailable"})
+            if operation == "request_action":
+                invocation = _current_invocation(binding)
+                if (invocation is None or invocation.source_tool["name"] != "yuanxingmu_request_action"
+                        or _canonical(invocation.source_tool["arguments"]) != _canonical(args)):
+                    return json.dumps({"allowed": False, "reason": "tool_correlation_unavailable"})
             key = hashlib.sha256((session_id + "\0" + call_id).encode()).hexdigest()
-            fields = {"request_key": key, "draft" if operation == "draft_email" else "proposal": dict(args)}
+            fields = {"request_key": key, "draft" if operation == "draft_email" else "proposal":
+                      json.loads(_canonical(args)) if operation == "request_action" else dict(args)}
         else:
             return _invalid()
         try:
-            result = request(operation, socket_path=binding["broker_socket"], **fields)
+            if operation == "request_action":
+                if not invocation.active():
+                    return json.dumps({"allowed": False, "reason": "tool_invocation_cancelled"})
+                result = request(operation, socket_path=binding["broker_socket"], timeout_seconds=60, **fields)
+            else:
+                result = request(operation, socket_path=binding["broker_socket"], **fields)
         except (OSError, ValueError, RuntimeError):
             return json.dumps({"allowed": None, "reason": "broker_response_unavailable", "outcome": "unknown"})
         if operation == "draft_email" and result.get("status") == "pending":
             result = {**result, "message": "草稿已交给元星木工作台，尚未发送。请用户核对收件人、主题和全文后亲自确认。"}
+        if operation == "request_action" and result.get("reason") == "automatic_prior_outcome_unconfirmed":
+            result = {**result, "message": "相同操作已有未确认的执行结果，本次没有自动重发。请先核对实际接收位置；其他已授权工作可以继续。"}
         return json.dumps(result, ensure_ascii=False)
     return handler
 
@@ -349,6 +400,8 @@ def register(ctx):
     binding = json.loads(path.read_text(encoding="utf-8"))
     if binding.get("version") != 1 or not binding.get("task_id"):
         raise ValueError("yuanxingmu_invalid_profile_binding")
+    if binding.get("automatic_actions") is True and binding.get("reviewed_actions") is not True:
+        raise ValueError("yuanxingmu_automatic_actions_require_action_targets")
     ctx.register_terminal_environment_provider(YuanxingmuProvider(binding))
     if binding.get("skill_dir"):
         selected = ", ".join(binding.get("skill_names", [])) or "未选择技能"
@@ -382,6 +435,21 @@ def register(ctx):
                       "fields": {"type": "object", "additionalProperties": {"type": "string"}},
                   }, "additionalProperties": False}}, ["kind", "target_id", "payload"]),
         ])
+    if binding.get("automatic_actions") is True:
+        declarations.append((
+            "yuanxingmu_request_action", "request_action",
+            "请求向登记目标发送消息、上传文本或提交表单。创建工作时已授权的目标、资料范围与额度内，通过防护检查后会立即执行；"
+            "超出自动范围会留下待核对申请，权限冲突会拒绝。请依据真实status报告结果，不要重复提交结果未知的操作。"
+            "目标必须来自yuanxingmu_action_targets；此工具不能删除或覆盖文件，不能修改授权。",
+            {"kind": {"type": "string", "enum": ["message", "upload", "form"]},
+             "target_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,128}$", "maxLength": 128},
+             "payload": {"type": "object", "description": "message仅body；upload仅filename和content；form仅fields。",
+                 "properties": {"body": {"type": "string", "maxLength": 65536},
+                                "filename": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.-]{0,127}$", "maxLength": 128},
+                                "content": {"type": "string", "maxLength": 65536},
+                                "fields": {"type": "object", "minProperties": 1, "maxProperties": 16,
+                                           "additionalProperties": {"type": "string", "maxLength": 8192}}},
+                 "additionalProperties": False}}, ["kind", "target_id", "payload"]))
     for name, operation, description, properties, required in declarations:
         ctx.register_tool(name=name, toolset="yuanxingmu", schema=_schema(name, description, properties, required),
                           handler=_tool_handler(binding, operation), description=description)
@@ -395,7 +463,8 @@ def register(ctx):
         blocked = json.dumps({"error": _BLOCKED_COMMAND, "allowed": False}, ensure_ascii=False)
         if tool_name not in allowed or not isinstance(args, dict):
             return blocked
-        if tool_name not in _LOCAL_TOOLS or not binding.get("defense_enabled"):
+        automatic_request = tool_name == "yuanxingmu_request_action"
+        if not automatic_request and (tool_name not in _LOCAL_TOOLS or not binding.get("defense_enabled")):
             return next_call(args)
         entered = False
         try:

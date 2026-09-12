@@ -1,4 +1,4 @@
-/* Proposals are inert. Only the host API can commit the reviewed version. */
+/* Host action records distinguish fixed-scope automation from individual confirmation. */
 (() => {
   "use strict";
 
@@ -13,6 +13,8 @@
       not_started: ["未开始执行", "uncertain"], cancelled: ["已弃用", ""]};
     const idOK = value => typeof value === "string" && /^[0-9a-f]{32}$/.test(value);
     const digestOK = value => typeof value === "string" && /^[0-9a-f]{64}$/.test(value);
+    const timeOK = value => typeof value === "string" && value.length <= 128 && Number.isFinite(Date.parse(value));
+    const executionFields = ["attempt_id", "approved_at", "authorized_at", "execution_mode", "authorization_source", "authorization_sha256"];
     const record = value => value !== null && typeof value === "object" && !Array.isArray(value);
     const exactKeys = (value, keys) => record(value) && Object.keys(value).length === keys.length && keys.every(key => Object.hasOwn(value, key));
     const keyFor = (profile, action) => profile + "/" + action;
@@ -29,6 +31,18 @@
       e.feedback.textContent = text;
       e.feedback.hidden = !text;
       e.feedback.classList.toggle("error", error);
+    }
+
+    function executionInfo(action) {
+      if (action?.execution_mode === "automatic" && action.authorization_source === "frozen_task_scope"
+          && action.approved_at === null && timeOK(action.authorized_at) && digestOK(action.authorization_sha256)) {
+        return {label: "本次授权范围内自动执行", timeLabel: "授权时间", time: action.authorized_at};
+      }
+      if ((action?.execution_mode === "manual" && action.authorization_source === "host_confirmation"
+          || action?.execution_mode == null && action?.authorization_source == null) && timeOK(action?.approved_at)) {
+        return {label: "本人确认后执行", timeLabel: "确认时间", time: action.approved_at};
+      }
+      return null;
     }
 
     function validateAction(action, id) {
@@ -49,7 +63,18 @@
           !Object.values(p.fields).every(value => typeof value === "string"))) fail();
       if (["overwrite", "delete"].includes(action.kind) &&
           (!record(action.before) || typeof action.before.content !== "string" || !digestOK(action.before.sha256))) fail();
-      return action;
+      if (action.execution_mode === "automatic" && (!executionInfo(action) || !idOK(action.attempt_id)
+          || ["pending", "cancelled"].includes(action.status) || ["overwrite", "delete"].includes(action.kind))) fail();
+      let destination = action.target.destination;
+      if (!["overwrite", "delete"].includes(action.kind)) {
+        try {
+          const url = new URL(destination);
+          if (!["http:", "https:"].includes(url.protocol) || url.username || url.password) fail();
+          destination = url.origin;
+        } catch { fail(); }
+      }
+      return {...action, target: {target_id: action.target_id, kind: action.kind, label: action.target.label,
+        destination, form_fields: action.target.form_fields ? [...action.target.form_fields] : []}};
     }
 
     function canChange() {
@@ -123,10 +148,14 @@
       e.editForm.hidden = !action || !state.editing;
       e.cancelBox.hidden = !state.cancelling;
       e.note.textContent = stateNote(action);
+      e.title.textContent = action && action.status !== "pending" ? "操作记录" : "核对操作";
       e.badge.textContent = action ? statuses[action.status][0] : "正在读取";
       e.badge.className = "status-badge " + (action ? statuses[action.status][1] : "");
       e.version.textContent = action ? "第 " + action.revision + " 版" : "";
       if (action) {
+        const execution = executionInfo(action);
+        if (execution) e.read.append(field("执行方式", execution.label),
+          field(execution.timeLabel, new Date(execution.time).toLocaleString("zh-CN", {hour12: false})));
         e.read.append(field("操作", names[action.kind]), field("对象", action.target.label),
           field(["overwrite", "delete"].includes(action.kind) ? "文件位置" : "接收服务", action.target.destination));
         const p = action.proposal.payload;
@@ -146,7 +175,7 @@
         empty.append(node("h3", "", state.listLoading ? "正在读取操作" : !state.supported ? "这份工作尚未启用操作核对"
           : !state.targets.length ? "尚未登记操作对象" : "还没有待核对的操作"),
           node("p", "field-note", !state.targets.length ? "请先在宿主设置中登记接收位置或可修改的文件，再让 AI 提出操作。"
-            : "AI 提出操作后，会在这里列出。核对对象和完整内容后，才能执行。"));
+            : "已授权范围内的自动操作和需要本人核对的操作，都会在这里列出。"));
         fragment.append(empty);
       }
       for (const action of state.actions) {
@@ -156,7 +185,10 @@
         const open = button("查看完整内容", "button-secondary", () => { void select(action.id); });
         open.dataset.actionId = action.id;
         open.disabled = !authorized();
-        row.append(heading, node("p", "mail-draft-recipient", action.target_label || "已登记对象"), open);
+        row.append(heading, node("p", "mail-draft-recipient", action.target_label || "已登记对象"));
+        const execution = executionInfo(action);
+        if (execution) row.append(node("p", "field-note", execution.label));
+        row.append(open);
         fragment.append(row);
       }
       e.list.replaceChildren(fragment);
@@ -180,8 +212,9 @@
           if (!latest || latest.digest !== state.action.digest || latest.revision !== state.action.revision) {
             state.stale = true; state.verified = false; clearReview();
             message("操作内容已更新，请重新读取最新版并核对。", true);
-          } else if (latest.status !== state.action.status) {
-            state.action = {...state.action, status: latest.status};
+          } else if (latest.status !== state.action.status || executionFields.some(key => latest[key] !== state.action[key])) {
+            state.action = validateAction({...state.action, status: latest.status,
+              ...Object.fromEntries(executionFields.filter(key => Object.hasOwn(latest, key)).map(key => [key, latest[key]]))}, state.actionId);
             clearReview(); renderDetail();
           }
         }
@@ -228,7 +261,7 @@
       state.profileId = profile.id; state.actionId = null; state.action = null; state.actions = []; state.targets = [];
       state.active = false; state.supported = true; state.verified = false; state.listLoading = false;
       state.editing = false; state.cancelling = false;
-      e.workName.textContent = profile.name || "当前工作"; e.title.textContent = "待核对的操作";
+      e.workName.textContent = profile.name || "当前工作"; e.title.textContent = "操作与记录";
       e.listPanel.hidden = false; e.detailPanel.hidden = true; clearReview(); message(""); renderList();
       if (!e.dialog.open) e.dialog.showModal();
       e.close.focus(); await refreshList();
@@ -393,7 +426,7 @@
       const nav = node("div", "mail-detail-toolbar"), meta = node("div", "mail-detail-meta");
       e.back = button("返回操作列表", "button-quiet", () => {
         state.selection += 1; state.actionId = null; state.action = null; state.verified = false; state.editing = false;
-        clearReview(); message(""); e.title.textContent = "待核对的操作"; e.listPanel.hidden = false; e.detailPanel.hidden = true; void refreshList();
+        clearReview(); message(""); e.title.textContent = "操作与记录"; e.listPanel.hidden = false; e.detailPanel.hidden = true; void refreshList();
       });
       e.reload = button("重新读取完整内容", "button-quiet", () => { if (state.actionId) void select(state.actionId); }); nav.append(e.back, e.reload);
       e.badge = node("span", "status-badge"); e.version = node("span", "field-note"); meta.append(e.badge, e.version);

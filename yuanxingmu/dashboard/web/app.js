@@ -52,6 +52,7 @@
   let protection = null;
   let targets = null;
   let alerts = null;
+  let automation = null;
   let lastProfileRender = "";
   const profileID = /^[a-f0-9]{32}$/;
   const resourceName = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
@@ -142,6 +143,7 @@
     protection?.reset();
     targets?.reset();
     alerts?.reset();
+    automation?.reset();
     try { window.sessionStorage.removeItem(SESSION_KEY); } catch { /* Storage may be unavailable. */ }
     if (elements.apiKey) {
       elements.apiKey.value = "";
@@ -225,6 +227,7 @@
     actionReview?.updateControls();
     targets?.updateControls();
     alerts?.updateControls();
+    automation?.updateControls();
   }
 
   function setCreateMessage(message, isError = false) {
@@ -290,7 +293,7 @@
     if (state.refreshing || !accessToken) return;
     state.refreshing = true;
     updateControls();
-    const results = await Promise.allSettled([api("/api/info"), refreshProfiles(), mail?.refreshAccount()]);
+    const results = await Promise.allSettled([api("/api/info"), refreshProfiles(), mail?.refreshAccount(), automation?.refresh()]);
     if (results[0].status === "fulfilled") {
       const info = results[0].value;
       if (info.runtime && info.limits) {
@@ -431,9 +434,13 @@
     if (state.createSending || state.createJob || state.importing || !accessToken) return;
     if (!state.createAttempt) {
       if (!validateCreate()) return;
+      let automaticScope;
+      try { automaticScope = automation?.collect() || {}; }
+      catch (error) { setCreateMessage(errorText(error), true); return; }
       state.createAttempt = {
         key: newKey(),
         body: {
+          ...automaticScope,
           framework: elements.framework.value,
           objective: elements.objective.value.trim(),
           defense: {mode:document.getElementById("create-defense-mode").value,
@@ -536,6 +543,8 @@
               state.documents = [];
               elements.fileError.hidden = true;
               renderDocuments();
+              automation?.reset();
+              void automation?.refresh();
             } else {
               setCreateMessage("创建未完成。" + (job.error?.message || "请查看工作卡片中的结果。") + " 已留下的工作记录会继续显示。", true);
             }
@@ -799,6 +808,12 @@
       alerts = window.createYuanxingmuAlerts({api,node,authorized:()=>Boolean(accessToken)&&!state.authRejected});
       alerts.boot();
     }
+    if (typeof window.createYuanxingmuAutomation === "function") {
+      automation = window.createYuanxingmuAutomation({api, node,
+        authorized: () => Boolean(accessToken) && !state.authRejected,
+        busy: () => Boolean(state.createAttempt || state.createJob || state.importing || state.createSending)});
+      automation.boot();
+    }
     elements.documentFiles.addEventListener("change", () => { void importDocuments(); });
     elements.framework.addEventListener("change", updateControls);
     elements.createForm.addEventListener("submit", event => { void submitCreate(event); });
@@ -835,6 +850,7 @@
   window.addEventListener("hashchange", () => {
     const incoming = new URLSearchParams(window.location.hash.slice(1));
     if (!incoming.has("access")) return;
+    automation?.reset();
     if(elements.apiKey) elements.apiKey.value="";
     if(elements.judgeKey) elements.judgeKey.value="";
     window.history.replaceState(null, "", window.location.pathname + window.location.search);

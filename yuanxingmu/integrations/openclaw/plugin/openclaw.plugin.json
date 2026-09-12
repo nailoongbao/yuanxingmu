@@ -5,14 +5,14 @@
   "categories": ["security", "runtime"],
   "activation": {"onStartup": true},
   "contracts": {
-    "tools": ["yuanxingmu_read", "yuanxingmu_send", "yuanxingmu_status", "yuanxingmu_prepare_email", "yuanxingmu_action_targets", "yuanxingmu_prepare_action"]
+    "tools": ["yuanxingmu_read", "yuanxingmu_send", "yuanxingmu_status", "yuanxingmu_prepare_email", "yuanxingmu_action_targets", "yuanxingmu_prepare_action", "yuanxingmu_request_action"]
   },
   "toolMetadata": {
     "yuanxingmu_read": {"optional": true},
     "yuanxingmu_send": {"optional": true},
     "yuanxingmu_status": {"optional": true},
     "yuanxingmu_prepare_email": {"optional": true}
-    ,"yuanxingmu_action_targets": {"optional": true}, "yuanxingmu_prepare_action": {"optional": true}
+    ,"yuanxingmu_action_targets": {"optional": true}, "yuanxingmu_prepare_action": {"optional": true}, "yuanxingmu_request_action": {"optional": true}
   },
   "configSchema": {
     "type": "object",
@@ -22,6 +22,7 @@
       "reviewedMail": {"type": "boolean"},
       "defenseEnabled": {"type": "boolean"},
       "reviewedActions": {"type": "boolean"},
+      "automaticActions": {"type": "boolean"},
       "python": {"type": "string", "pattern": "^/"},
       "corePath": {"type": "string", "pattern": "^/"},
       "workspace": {"type": "string", "pattern": "^/"},

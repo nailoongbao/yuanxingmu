@@ -18,7 +18,7 @@ async (page) => {
     if (pathname === "/") return route.fulfill({path:"yuanxingmu/dashboard/web/index.html",contentType:"text/html"});
     if (["/app.js","/styles.css","/mark.svg"].includes(pathname)) return route.fulfill({path:"yuanxingmu/dashboard/web"+pathname});
     // Optional management widgets are outside this create-form contract.
-    if (["/mail.js","/actions.js","/protection.js","/targets.js","/alerts.js"].includes(pathname)) return route.fulfill({contentType:"text/javascript",body:"/* unrelated widget omitted by UI fixture */"});
+    if (["/mail.js","/actions.js","/protection.js","/targets.js","/alerts.js","/automation.js"].includes(pathname)) return route.fulfill({contentType:"text/javascript",body:"/* unrelated widget omitted by UI fixture */"});
     if (pathname === "/api/info") return json(publicInfo);
     if (pathname === "/api/profiles" && request.method() === "GET") return json({profiles:[]});
     if (pathname.startsWith("/api/jobs/")) return json({job:jobs.get(pathname.split("/").at(-1))});

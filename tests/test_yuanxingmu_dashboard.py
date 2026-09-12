@@ -171,6 +171,64 @@ class DashboardTests(unittest.TestCase):
         for forbidden in (self.secret, self.content, *additional):
             self.assertNotIn(forbidden, text)
 
+    def automatic_payload(self):
+        self.manager.set_target({"id": "team", "target": {"kind": "message", "label": "内部团队",
+                                "url": "http://127.0.0.1:18338/original"}}, uuid.uuid4().hex)
+        digest = self.manager.targets_view()["targets"][0]["binding_digest"]
+        return {**copy.deepcopy(self.payload), "objective": "把进度发到用户预先授权的内部团队。",
+                "action_automation": {"version": 1, "max_attempts": 8, "max_total_body_bytes": 65536,
+                    "targets": {"team": {"accepted_labels": ["private"], "max_body_bytes": 8192}}},
+                "action_automation_bindings": {"team": digest}}
+
+    def test_create_freezes_automatic_scope_without_exposing_target_or_credentials(self):
+        payload = self.automatic_payload()
+        _, profile, job = self.create(payload)
+        manifest = core.validate_profile(profile)
+        self.assertIn("automatic_actions_v1", manifest["features"])
+        self.assertEqual(json.loads((profile / "action-automation.json").read_text()), payload["action_automation"])
+        self.assertNotIn("original", json.dumps(job))
+        self.assert_private_response(job)
+        self.manager.set_target({"id": "team", "target": {"kind": "message", "label": "changed",
+                                "url": "http://127.0.0.1:18338/changed"}}, uuid.uuid4().hex)
+        self.assertTrue(json.loads((profile / "action-targets.json").read_text())["team"]["url"].endswith("/original"))
+        core.validate_profile(profile)
+
+    def test_automatic_creation_requires_complete_matching_fresh_scope(self):
+        payload = self.automatic_payload()
+        bad = [dict(payload), copy.deepcopy(payload), copy.deepcopy(payload), copy.deepcopy(payload)]
+        bad[0].pop("action_automation_bindings")
+        bad[1]["action_automation_bindings"]["team"] = "0" * 64
+        bad[2]["action_automation"]["max_attempts"] = True
+        bad[3].pop("objective")
+        before = len(self.manager.catalog["profiles"])
+        with mock.patch.object(core, "init_profile") as initialize:
+            for value in bad:
+                status, _, _ = self.request("POST", "/api/profiles", value)
+                self.assertIn(status, (400, 409))
+            initialize.assert_not_called()
+        self.assertEqual(len(self.manager.catalog["profiles"]), before)
+
+    def test_target_changed_while_creation_is_queued_cannot_reuse_consent(self):
+        payload = self.automatic_payload()
+        entered, release = threading.Event(), threading.Event()
+        execute = self.manager._execute
+        def delayed(*args):
+            entered.set()
+            release.wait(5)
+            execute(*args)
+        with mock.patch.object(self.manager, "_execute", side_effect=delayed), mock.patch.object(core, "init_profile") as initialize:
+            accepted = self.manager.submit("create", None, payload, uuid.uuid4().hex)
+            try:
+                self.assertTrue(entered.wait(2))
+                self.manager.set_target({"id": "team", "target": {"kind": "message", "label": "内部团队",
+                                        "url": "http://127.0.0.1:18338/replaced"}}, uuid.uuid4().hex)
+            finally:
+                release.set()
+            job = self.wait_job(accepted, expected="failed")
+            initialize.assert_not_called()
+        self.assertEqual(job["error"]["code"], "automatic_action_target_changed")
+        self.assertFalse((self.root / "profiles" / job["profile_id"]).exists())
+
     def test_target_settings_do_not_send_expose_secrets_or_rebind_old_profiles(self):
         key = uuid.uuid4().hex
         target = {"id": "team", "target": {"kind": "message", "label": "团队通知", "url": "https://example.test/private-hook/WEBHOOK-SECRET"}}

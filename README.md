@@ -14,6 +14,8 @@ The development tree now includes layered checks for external instructions, memo
 
 ## Draft first. Review before sending.
 
+The development version also supports [creation-time automatic action scopes](docs/automatic-work.zh-CN.md). Select fixed recipients once; messages, text uploads and forms execute after passing host permission and defense checks. Completely withheld malicious input no longer requires resuming unrelated work. Unknown outcomes are never automatically retried, and existing drafting tools remain inert. This capability is not included in the older installer.
+
 New workbench profiles support email drafts. Review and edit the recipient, subject and full text, then confirm that exact message. Repeated confirmation cannot create another submission attempt; interrupted sends are never retried automatically. Approval does not grant the agent general sending permission.
 
 [Watch the email walkthrough](https://yh-l20.github.io/yuanxingmu/email-demo.html) · [User guide in Chinese](docs/email.zh-CN.md) · [Developer boundaries and tests](docs/REVIEWED-EMAIL.md). One recipient, plain text, and certificate-checked SMTP over TLS. Server acceptance is not a delivery guarantee. Existing profiles retain their original capabilities.

@@ -1,5 +1,6 @@
 """Host-only construction and evidence for opt-in layered profile defenses."""
 from datetime import datetime, timezone
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -266,8 +267,21 @@ def profile_services(profile: Path, manifest: dict):
     options = {"reviewed_mail": "reviewed_email_v1" in features}
     if "layered_defense_v1" in features:
         options["guards"] = load_guards(profile, manifest["model"], pins=manifest["files"], features=features)
+        options["input_containment"] = "input_containment_v1" in features
     if "reviewed_actions_v1" in features:
         options["action_targets"] = load_action_targets(profile)
+    if "automatic_actions_v1" in features:
+        if "layered_defense_v1" not in features or "reviewed_actions_v1" not in features:
+            raise ValueError("automatic_actions_require_defense_and_reviewed_actions")
+        from .action_automation import AutomaticActionPolicy
+        path = profile / "action-automation.json"
+        if path.is_symlink():
+            raise RuntimeError("profile_automatic_action_scope_changed")
+        raw = path.read_bytes()
+        if hashlib.sha256(raw).hexdigest() != manifest["files"].get("action-automation.json"):
+            raise RuntimeError("profile_automatic_action_scope_changed")
+        options["action_automation"] = AutomaticActionPolicy.from_config(
+            json.loads(raw), options["action_targets"]).to_config()
     return options
 
 

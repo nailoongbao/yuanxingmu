@@ -16,7 +16,7 @@ const saved = (status = "pending") => ({ allowed: true, reason: "mail_draft_save
   digest: "b".repeat(64), revision: 1, status });
 const linuxTest = (name, action) => test(name, { skip: process.platform !== "linux" }, action);
 
-async function setup(t, { reviewedMail = true, reply = () => saved() } = {}) {
+async function setup(t, { reviewedMail = true, automaticActions = false, reply = () => saved() } = {}) {
   const directory = mkdtempSync(path.join(os.tmpdir(), "yxm-mail-plugin-"));
   const workspace = path.join(directory, "workspace");
   const corePath = path.join(directory, "core");
@@ -26,6 +26,7 @@ async function setup(t, { reviewedMail = true, reply = () => saved() } = {}) {
     brokerSocket: path.join(directory, "broker.sock"), operatorSocket: path.join(directory, "operator.sock"),
     bwrap: "/usr/bin/true", auditPath: path.join(directory, "events.jsonl"), resourceIds: [], destinationIds: [] };
   if (reviewedMail !== undefined) rawConfig.reviewedMail = reviewedMail;
+  if (automaticActions) Object.assign(rawConfig, {automaticActions:true, reviewedActions:true, defenseEnabled:true});
   const received = [], servers = [], sockets = new Set();
   const hostReview = path.join(directory, "review.sock");
   t.after(async () => {
@@ -90,6 +91,39 @@ linuxTest("reviewed mail is optional and registers only the three draft fields",
   const oldNames = [];
   registerBrokerTools({ registerTool(_factory, registration) { oldNames.push(registration.name); } }, oldConfig);
   assert.ok(!oldNames.includes("yuanxingmu_prepare_email"));
+});
+
+linuxTest("automatic actions are distinct from inert proposals and bind exact tool identities", async t => {
+  const f = await setup(t, {automaticActions:true, reply:()=>({allowed:true,status:"acknowledged",started:true,execution_mode:"automatic"})});
+  const tool = f.factories.get("yuanxingmu_request_action").factory(f.context);
+  const prepare = f.factories.get("yuanxingmu_prepare_action").factory(f.context);
+  assert.match(prepare.description, /不会实际执行/u);
+  assert.match(tool.description, /立即执行/u);
+  assert.deepEqual(tool.parameters.properties.kind.enum, ["message","upload","form"]);
+  const proposal = {kind:"message",target_id:"team",payload:{body:"进度"}};
+  const result = await tool.execute("auto-one", proposal);
+  assert.equal(f.received.length,1);
+  assert.deepEqual(f.received[0].request, {op:"request_action",request_key:createHash("sha256").update(f.context.sessionKey+"\0auto-one").digest("hex"),proposal});
+  assert.match(result.content[0].text, /自动执行/u);
+  assert.doesNotMatch(result.content[0].text, /本人.*确认|亲自确认/u);
+  assert.equal((await tool.execute("forged", {...proposal, approved:true})).details.allowed,false);
+  assert.equal((await tool.execute("", proposal)).details.reason,"invalid_tool_call_id");
+  assert.equal((await tool.execute("cancelled",proposal,{aborted:true})).details.reason,"cancelled_before_request");
+  assert.equal(f.received.length,1);
+  const legacy = await setup(t);
+  assert.equal(legacy.factories.has("yuanxingmu_request_action"),false);
+  assert.throws(()=>readTrustedConfig({...f.rawConfig,defenseEnabled:false}));
+  assert.throws(()=>readTrustedConfig({...f.rawConfig,reviewedActions:false}));
+});
+
+linuxTest("automatic transport loss remains unknown and does not retry", async t => {
+  const f = await setup(t,{automaticActions:true,reply:()=>null});
+  const tool = f.factories.get("yuanxingmu_request_action").factory(f.context);
+  const result = await tool.execute("once",{kind:"message",target_id:"team",payload:{body:"progress"}});
+  assert.equal(result.details.allowed,null);
+  assert.equal(result.details.outcome,"unknown");
+  assert.equal(f.received.length,1);
+  assert.doesNotMatch(result.content[0].text,/自动执行|尚未提交/u);
 });
 
 linuxTest("a real prepare_email execution contacts only the fixed draft broker", async t => {

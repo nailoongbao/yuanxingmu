@@ -45,6 +45,16 @@ function resultMessage(operation, result) {
     if (result.status === "cancelled") return "这项操作已经取消，此次没有重新创建或执行。";
     return "这项操作已有处理记录，此次没有重新创建或执行。请用户在工作台核对实际状态。";
   }
+  if (operation === "request_action") {
+    if (result.reason === "automatic_prior_outcome_unconfirmed") return "相同操作已有未确认的执行结果，本次没有自动重发。请先核对实际接收位置；其他已授权工作可以继续。";
+    if (result.status === "acknowledged") return result.started
+      ? "操作已按本次工作预先授权的范围自动执行，接收位置返回成功确认，无需再次确认。"
+      : "这项操作已有成功执行记录，此次没有重复执行。";
+    if (result.status === "pending") return "这项操作未自动执行，已保留在工作台等待核对。其他已授权工作可以继续。";
+    if (result.status === "unconfirmed" || result.status === "executing") return "已有执行尝试，但未确认结果。不会自动重发，请先核对实际接收位置。";
+    if (result.status === "cancelled") return "这项操作已取消，没有重新创建或执行。";
+    return "请根据以下实际操作记录说明结果，不要自行重新提交。";
+  }
   if (operation === "action_targets") return "以下是用户登记的可选操作对象。只能使用这些名称；不能自己添加地址或路径。";
   return operation === "read" ? "权限服务已返回资料。" : "以下为当前任务的实际权限状态。";
 }
@@ -55,9 +65,11 @@ function toolResult(operation, result) {
 
 function payloadFor(operation, args, config, requestKey) {
   if (operation === "action_targets") return config.reviewedActions && exactKeys(args, []) ? {op:"action_targets"} : null;
-  if (operation === "propose_action") return config.reviewedActions && exactKeys(args, ["kind", "target_id", "payload"])
+  if (operation === "propose_action" || operation === "request_action") return config.reviewedActions
+    && (operation !== "request_action" || config.automaticActions) && exactKeys(args, ["kind", "target_id", "payload"])
+    && (operation !== "request_action" || ["message", "upload", "form"].includes(args.kind))
     && typeof args.kind === "string" && typeof args.target_id === "string" && args.payload !== null && typeof args.payload === "object" && !Array.isArray(args.payload)
-    ? {op:"propose_action", request_key:requestKey, proposal:args} : null;
+    ? {op:operation, request_key:requestKey, proposal:args} : null;
   if (operation === "describe") return exactKeys(args, []) ? { op: "describe" } : null;
   if (operation === "read") {
     return exactKeys(args, ["resource"]) && typeof args.resource === "string" && config.resourceIds.includes(args.resource)
@@ -109,6 +121,14 @@ export function registerBrokerTools(api, config) {
         payload:{type:"object",properties:{body:{type:"string"},filename:{type:"string"},content:{type:"string"},
           fields:{type:"object",additionalProperties:{type:"string"}}},additionalProperties:false}}}}
   );
+  if (config.automaticActions) declarations.push(
+    {name:"yuanxingmu_request_action", operation:"request_action", label:"执行已授权操作",
+      description:"先用 yuanxingmu_action_targets 查看可用对象和本次自动执行范围。请求提交消息、文本上传或表单；在预先授权范围内通过检查后会立即执行，无需再请用户批准。超范围则保留待确认，不会执行。message payload为{body}，upload为{filename,content}，form为{fields:{已登记字段:文本}}。结果未知时不要换请求重复提交。",
+      parameters:{type:"object",additionalProperties:false,required:["kind","target_id","payload"],properties:{
+        kind:{type:"string",enum:["message","upload","form"]},target_id:{type:"string",minLength:1,maxLength:128},
+        payload:{type:"object",properties:{body:{type:"string"},filename:{type:"string"},content:{type:"string"},
+          fields:{type:"object",additionalProperties:{type:"string"}}},additionalProperties:false}}}}
+  );
   for (const declaration of declarations) {
     const { operation, ...descriptor } = declaration;
     api.registerTool((context) => {
@@ -118,7 +138,7 @@ export function registerBrokerTools(api, config) {
           if (!isBoundContext(context, config)) {
             return toolResult(operation, { allowed: false, reason: "unbound_tool_context" });
           }
-          const proposal = operation === "draft_email" || operation === "propose_action";
+          const proposal = operation === "draft_email" || operation === "propose_action" || operation === "request_action";
           if (proposal && (typeof _toolCallId !== "string" || !_toolCallId || _toolCallId.length > 1024)) {
             return toolResult(operation, {allowed:false, reason:"invalid_tool_call_id"});
           }

@@ -1,0 +1,11 @@
+{
+  "manifest.json": "26f33449a5658f94afbadd5dbe2e446c42fdfa318dac907efd4e62d94891d540",
+  "supplemental-manifest.json": "170efd265adf72ccf48c32fe9f27a2adaa44579e6357d711a7612cfefc5c413e",
+  "results.jsonl": "190ef0d83607f3cb75c096f018bcaf207543865dc06270f969f9719808e0b956",
+  "supplemental-results.jsonl": "7f7ea84e7174b7fbe1e1b93db194e759a7ccf4dc6d31e142b35c3b52bceb0086",
+  "qwen8b-fixed-cases-baseline.json": "f11743536e79fb9acdbd9cbd06cb42073507bb24bfc8b1eff7bdf7d1c8b41c02",
+  "comparison.json": "75767284934d4aff65f17b1792e9a543e9cb103b999b7c58de429afde51636df",
+  "frozen-guards.py": "de1561eeaa88368e9fe8011cb38b90fb2ec3e72340db35fe4e34466e29af7ad4",
+  "REPORT.zh-CN.md": "4f7a4ac1de2bc88acedb152d2852c92bc6f02a5f7c74449daa617cbd3336e8f1",
+  "independent-cases.json": "eb512a683866da2b82a07fe48e206e6af37227f01fba22679cad852b8d619c66"
+}

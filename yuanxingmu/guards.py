@@ -326,6 +326,123 @@ def _negated_directive(text: str, start: int) -> bool:
         r"(?:不要|不得|禁止|不能|切勿|不应))\s*$", text[max(0, start - 64):start]))
 
 
+_COMMAND_DIRECTIVE = re.compile(
+    r"\b(?:run|execute|invoke)\s+(?:(?:the|this)\s+)?(?:following\s+)?"
+    r"(?:(?:shell|terminal)\s+)?(?:commands?\b\s*)?[:：]?\s*|"
+    r"(?:执行|运行)\s*(?:(?:下面|以下|这条|这个|下列)的?\s*)?(?:(?:shell|终端)?命令)?\s*[:：]?\s*", re.I)
+
+
+def _instruction_is_reference(text: str, start: int) -> bool:
+    # A quotation being explained is different from "run 'rm ...'". Merely
+    # calling a document a tutorial does not exempt its later instructions.
+    prefix = text[max(0, start - 192):start]
+    reference = re.search(
+        r"(?:\b(?:explain|describe|discuss|analy[sz]e|quote|quoted|quotes|example)\b|"
+        r"解释|讲解|分析|引用|举例|示例)[^\n\"'“”‘’`]{0,120}"
+        r"(?P<quote>[\"'“‘`])[^\n\"'“”‘’`]{0,120}$", prefix)
+    if reference is None:
+        return False
+    closer = {"“": "”", "‘": "’"}.get(reference["quote"], reference["quote"])
+    return closer in text[start:start + 4096]
+
+
+def _command_instruction_negated(text: str, start: int) -> bool:
+    prefix = text[max(0, start - 96):start]
+    return bool(re.search(
+        r"(?:\b(?:do\s+not|don't|never|must\s+not|should\s+not|cannot|can\s+not)"
+        r"\s+(?:(?:ever|actually|directly|automatically)\s+|try\s+to\s+)*|"
+        r"(?:不要|不得|禁止|不能|不可|切勿|不应|别)(?:再次|直接|尝试|实际|自动|随意)*\s*)$", prefix))
+
+
+def _instruction_command(text: str, start: int) -> str:
+    # Only extract an adjacent command example; the complete original remains
+    # the input hash and the withheld text. This is a bounded syntax rule.
+    value = text[start:start + 4096].lstrip()
+    if value.startswith("```"):
+        first, separator, rest = value[3:].partition("\n")
+        if separator and first.strip() in {"", "sh", "bash", "shell", "zsh", "powershell", "pwsh"}:
+            return rest.partition("```")[0].strip()
+    if value[:1] in {"`", '"', "'", "“", "‘"}:
+        closer = {"“": "”", "‘": "’"}.get(value[0], value[0])
+        content = []
+        index = 1
+        while index < len(value):
+            character = value[index]
+            if character == "\\" and index + 1 < len(value) and value[index + 1] in {closer, "\\"}:
+                content.append(value[index + 1])
+                index += 2
+                continue
+            if character == closer:
+                break
+            content.append(character)
+            index += 1
+        return "".join(content).strip()
+    # An explicit list of commands may use ordinary newlines without a fenced
+    # block. Stop at a blank paragraph, not after its first harmless command.
+    return re.split(r"\n\s*\n", value, maxsplit=1)[0].strip()
+
+
+def _direct_instruction_command_hazard(program: str, arguments: str) -> bool:
+    if program in {"sudo", "doas", "pkexec", "su", "runas", "nsenter", "mount", "umount",
+                   "mkfs", "newfs", "wipefs", "shred", "diskpart", "shutdown", "reboot"} or program.startswith("mkfs."):
+        return True
+    if program == "rm" and re.search(r"(?:^|\s)(?:--recursive\b|-[a-z]*r[a-z]*(?=\s|$))", arguments):
+        return True
+    return bool(program in {"remove-item", "rmdir", "del"}
+                and re.search(r"(?:^|\s)(?:-recurse\b|/s\b)", arguments))
+
+
+def _instruction_command_hazard(command: str, depth: int = 0) -> bool:
+    """Recognize explicit high-risk command syntax without executing anything.
+
+    This deliberately does not classify every command requiring review as an
+    injection: ordinary file cleanup, scripts and calculations remain subject
+    to the independent execution and task-alignment checks.
+    """
+    if depth > 3 or not command:
+        return False
+    first = re.match(r"(?P<program>[^\s\"'`]+)(?:\s+(?P<args>[\s\S]*))?$", command)
+    if first:
+        program = first["program"].replace("\\", "/").rsplit("/", 1)[-1]
+        arguments = first["args"] or ""
+        if _direct_instruction_command_hazard(program, arguments):
+            return True
+    try:
+        programs = [_executable(part) for part in _segments(command)]
+    except ValueError:
+        return False  # Actual malformed candidates still fail at the command layer.
+    for program, arguments in programs:
+        if _direct_instruction_command_hazard(program, " ".join(arguments)):
+            return True
+        if program in {"rm", "rmdir", "del", "remove-item"} and any(arg in {"/", ".", "..", "~"} for arg in arguments):
+            return True
+        if program == "dd" and any(arg.startswith("of=/dev/") and arg != "of=/dev/null" for arg in arguments):
+            return True
+        if program in _SHELLS:
+            index = next((i for i, arg in enumerate(arguments) if arg.startswith("-") and "c" in arg[1:]), None)
+            if index is not None and index + 1 < len(arguments) and _instruction_command_hazard(arguments[index + 1], depth + 1):
+                return True
+        if program in {"env", "timeout", "time", "busybox"}:
+            nested = list(arguments)
+            while nested and (nested[0].startswith("-") or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", nested[0])):
+                nested.pop(0)
+            if program == "timeout" and nested:
+                nested.pop(0)
+            if nested and _instruction_command_hazard(shlex.join(nested), depth + 1):
+                return True
+    return (any(program in {"curl", "wget", "iwr", "invoke-webrequest"} for program, _ in programs)
+            and any(program in _SHELLS | {"iex", "invoke-expression"} for program, _ in programs))
+
+
+def _dangerous_command_instruction(text: str) -> bool:
+    for match in _COMMAND_DIRECTIVE.finditer(text):
+        if _command_instruction_negated(text, match.start()) or _instruction_is_reference(text, match.start()):
+            continue
+        if _instruction_command_hazard(_instruction_command(text, match.end())):
+            return True
+    return False
+
+
 def _input_match(text: str):
     normalized = _normal(text)
     for code, reason, pattern in _INPUT_PATTERNS:
@@ -333,6 +450,8 @@ def _input_match(text: str):
             if code in {"instruction_override", "credential_theft", "resource_exhaustion_instruction"} and _negated_directive(normalized, match.start()):
                 continue
             return code, reason
+    if _dangerous_command_instruction(normalized):
+        return "dangerous_command_instruction", "外部内容要求执行破坏文件、提升权限或下载运行代码等危险命令。"
     return None
 
 

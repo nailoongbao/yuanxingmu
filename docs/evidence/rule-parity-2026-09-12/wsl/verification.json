@@ -1,0 +1,27 @@
+{
+  "scope": "Component tests only, command strings are not executed; judge protocol fixtures are local preset responses.",
+  "python": "3.12.3",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "modules": {
+    "test_yuanxingmu_rule_parity": 20,
+    "test_yuanxingmu_guards": 48
+  },
+  "run": 68,
+  "passed": 68,
+  "failed": 0,
+  "errors": 0,
+  "skipped": 0,
+  "duration_seconds": 0.833,
+  "source_before": {
+    "yuanxingmu/guards.py": "001950de039cb011e4338a6a9221e6188c721174c24132b9d8649a97b210062f",
+    "tests/test_yuanxingmu_rule_parity.py": "4d16dfbf43d27363b8dc12db0fd9e941eb08dc446c2c094a2abd9079707b7325",
+    "tests/test_yuanxingmu_guards.py": "8f30d7cc40fda0fccc5197165d1c948cd367d2271134581510c3aacaad23d315"
+  },
+  "source_after": {
+    "yuanxingmu/guards.py": "001950de039cb011e4338a6a9221e6188c721174c24132b9d8649a97b210062f",
+    "tests/test_yuanxingmu_rule_parity.py": "4d16dfbf43d27363b8dc12db0fd9e941eb08dc446c2c094a2abd9079707b7325",
+    "tests/test_yuanxingmu_guards.py": "8f30d7cc40fda0fccc5197165d1c948cd367d2271134581510c3aacaad23d315"
+  },
+  "source_stable": true,
+  "log_sha256": "cf5259a820863749115bbb3f6414db66badf665e6dc2545b5a852d1761e38a36"
+}

@@ -73,6 +73,7 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
                  model_url: str, model_id: str, api_key: str = "local-unused",
                  documents: dict[str, Path] | None = None, destinations: dict | None = None,
                  reviewed_mail=False, reviewed_actions=False, action_targets: dict | None = None,
+                 action_automation: dict | None = None,
                  selected_skills: dict[str, Path] | None = None,
                  defense_policy: dict | None = None, judge_config: dict | None = None, port: int = 18921,
                  context_window: int = 65536, max_tokens: int = 2048) -> dict:
@@ -88,6 +89,8 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
         raise ValueError("selected_skills_must_be_an_object")
     if judge_config is not None and defense_policy is None:
         raise ValueError("independent_judge_requires_layered_defense")
+    if action_automation is not None and (defense_policy is None or reviewed_actions is not True):
+        raise ValueError("automatic_actions_require_defense_and_reviewed_actions")
     if (type(port) is not int or not 1024 <= port <= 65535 or port == 18701
             or type(context_window) is not int or context_window < 64000
             or type(max_tokens) is not int or not 128 <= max_tokens < context_window):
@@ -159,10 +162,16 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
     broker_options = {"reviewed_mail": reviewed_mail}
     if guards is not None:
         broker_options["guards"] = guards
+        broker_options["input_containment"] = True
     if reviewed_actions:
         from .protection import load_action_targets
         host._save(profile / "action-targets.json", action_targets if action_targets is not None else {})
         broker_options["action_targets"] = load_action_targets(profile)
+    if action_automation is not None:
+        from .action_automation import AutomaticActionPolicy
+        action_automation = AutomaticActionPolicy.from_config(action_automation, broker_options["action_targets"]).to_config()
+        host._save(profile / "action-automation.json", action_automation)
+        broker_options["action_automation"] = action_automation
     with Broker(profile / "broker-state", loaded_resources, loaded_destinations, **broker_options) as broker:
         task = broker.create_task(initial_labels=["private"])
         broker.bind_workspace(task, profile / "workspace")
@@ -181,6 +190,7 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
                "core_root": str(profile / "trusted-core"), "resource_ids": sorted(resources),
                "destination_ids": sorted(destinations), "reviewed_mail": reviewed_mail is True,
                "reviewed_actions": reviewed_actions is True, "defense_enabled": defense_policy is not None,
+               "automatic_actions": action_automation is not None,
                "skill_dir": str(profile / "hermes-home" / "skills"), "skill_names": sorted(chosen_skills.source_paths)}
     host._save(profile / "hermes-binding.json", binding)
     model = {"provider": "custom", "default": model_id, "base_url": "http://127.0.0.1:18701/v1",
@@ -212,6 +222,8 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
     immutable.extend(judge_paths)
     if reviewed_actions:
         immutable.append(profile / "action-targets.json")
+    if action_automation is not None:
+        immutable.append(profile / "action-automation.json")
     for directory in ("documents", "trusted-core", "plugin", "runtime-etc", "skill-store"):
         immutable.extend(p for p in (profile / directory).rglob("*") if p.is_file())
     source = Path(runtime["hermes_source"])
@@ -220,8 +232,9 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
     runtime_files += [source / name for name in ("hermes_cli/__init__.py", "hermes_cli/main.py", "hermes_cli/web_server.py", "ui-tui/dist/entry.js")]
     runtime_files += [p for p in (source / "hermes_cli" / "web_dist").rglob("*") if p.is_file()]
     features = ((["reviewed_email_v1"] if reviewed_mail else []) + (["reviewed_actions_v1"] if reviewed_actions else [])
-                + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1", "per_layer_settings_v1", "settings_history_v1", "defense_baseline_v1", "skill_rules_v1", "skill_purpose_v1"] if defense_policy is not None else [])
-                + (["independent_judge_v1"] if judge_config is not None else []))
+                + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1", "per_layer_settings_v1", "settings_history_v1", "defense_baseline_v1", "skill_rules_v1", "skill_purpose_v1", "input_containment_v1"] if defense_policy is not None else [])
+                + (["independent_judge_v1"] if judge_config is not None else [])
+                + (["automatic_actions_v1"] if action_automation is not None else []))
     manifest = {"version": 2, "framework": "hermes", "profile": str(profile), "profile_id": profile_id,
                 "task_id": task, "family_id": family, "features": features, **runtime,
                 "python": str(bootstrap_python), "runtime": str(sockets), "port": port,
@@ -345,6 +358,8 @@ def foundation_config(profile: Path, manifest: dict) -> dict:
         names.append("yuanxingmu_prepare_email")
     if "reviewed_actions_v1" in manifest.get("features", []):
         names += ["yuanxingmu_action_targets", "yuanxingmu_prepare_action"]
+    if "automatic_actions_v1" in manifest.get("features", []):
+        names += ["yuanxingmu_request_action"]
     return {"framework": "hermes", "bind": "127.0.0.1", "auth_enabled": True, "tool_names": names,
             "allow_elevated": False, "allow_direct_network": False, "isolated_execution": True,
             "per_user_sessions": True, "credentials_host_only": True,

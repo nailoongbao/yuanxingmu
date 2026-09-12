@@ -11,6 +11,7 @@
   <script src="/protection.js"></script>
   <script src="/targets.js"></script>
   <script src="/alerts.js"></script>
+  <script src="/automation.js"></script>
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" href="/mark.svg" type="image/svg+xml">
 </head>
@@ -78,6 +79,7 @@
               <p id="file-error" class="field-error" role="alert" hidden></p>
               <p class="field-note">资料会复制到这份工作中。创建后，本版不能再添加资料。需要发邮件时，由 AI 提交草稿，再由你核对并确认发送。</p>
             </div>
+            <div id="create-action-automation" class="field-group"></div>
             <button id="create-submit" class="button button-primary button-wide" type="submit">创建独立工作<span aria-hidden="true">↗</span></button>
           </fieldset>
           <div id="create-message" class="form-message" role="status" aria-live="polite" hidden></div>
