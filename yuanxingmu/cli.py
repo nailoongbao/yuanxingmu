@@ -35,6 +35,15 @@ def main():
     run.add_argument("--workspace", required=True, type=Path)
     run.add_argument("--bwrap", type=Path)
     run.add_argument("worker_command", nargs=argparse.REMAINDER)
+    sdk = commands.add_parser("sdk-run", help="在已有工作的防护内运行 smolagents 完整会话；原生网页需先停止")
+    sdk.add_argument("--profile", required=True, type=Path)
+    sdk.add_argument("--sdk-python", required=True, type=Path, help="smolagents 1.26.0 独立 venv 的 bin/python")
+    sdk.add_argument("--session", required=True, help="本工作内的会话名称；新会话沿用原权限")
+    sdk.add_argument("--prompt-file", required=True, type=Path, help="本次任务的 UTF-8 文本文件")
+    sdk.add_argument("--resume", action="store_true", help="恢复同名会话，保留工具编号及权限")
+    sdk.add_argument("--max-steps", type=int, default=12)
+    sdk.add_argument("--max-tokens", type=int, default=2048)
+    sdk.add_argument("--timeout", type=int, default=600)
     openclaw = commands.add_parser("openclaw", help="创建和使用受保护的 OpenClaw")
     actions = openclaw.add_subparsers(dest="action", required=True)
     init = actions.add_parser("init", help="连接自己的模型，建立独立实例")
@@ -199,6 +208,11 @@ def main():
                 parser.error("run requires a worker command after --")
             return run_command(policy=args.policy, state=args.state, task=args.task, new_task=args.new_task,
                                workspace=args.workspace, command=command, bwrap=args.bwrap)
+        if args.command == "sdk-run":
+            from .sdk_runtime import cli
+            result = cli(args)
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0 if result["status"] == "completed" else 2
         if args.command == "doctor":
             from .sandbox import sandbox_available
             result = sandbox_available(bwrap=args.bwrap)

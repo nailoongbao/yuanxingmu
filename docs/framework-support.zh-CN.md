@@ -2,7 +2,9 @@
 
 核查日期：**2026-09-12**。GitHub 星数和最近 push 取自官方仓库 API，时间为 **03:33:48 UTC**；星数只帮助选择优先级，不代表安全效果。版本取官方 release 或对应包注册表，表内特意区分仓库 release 与 Python 包版本。
 
-元星木目前有 **OpenClaw 和 Hermes 的专用运行入口**，另有 **十一组已验证的原生 SDK 工具适配**：LangChain/LangGraph、OpenAI Agents、PydanticAI、Google ADK、CrewAI、Agno、AutoGen、LlamaIndex、Microsoft Agent Framework、smolagents、Mastra。十一组适配验证了工具注册和实际调用，没有运行完整模型循环，也没有完成这些框架的进程隔离或五层防御整体验收。允许填写某个框架名，不等于支持了该框架。
+元星木目前有 **OpenClaw 和 Hermes 的专用运行入口**，另有 **十一组已验证的原生 SDK 工具适配**：LangChain/LangGraph、OpenAI Agents、PydanticAI、Google ADK、CrewAI、Agno、AutoGen、LlamaIndex、Microsoft Agent Framework、smolagents、Mastra。下表的十一组适配记录验证了工具注册和实际调用，没有运行完整模型循环，也没有完成这些框架的进程隔离或五层防御整体验收。允许填写某个框架名，不等于支持了该框架。
+
+**2026-09-13 新增：** [`sdk-run` 完整运行入口](sdk-runtime.zh-CN.md)把 smolagents 1.26.0 的 `ToolCallingAgent` 接到已有且已停止的受保护工作实例，运行模型循环、五项基础 Broker 工具及会话恢复。原实例有既定自动范围时，可额外启用消息、上传、表单的 `request_action`，由宿主复核和去重。非幂等即时 `send`、`CodeAgent`、自定义工具和多 Agent 不在范围内。新增验证与下列历史工具记录分开列示；不会因此把其他十组框架标成完整接入。
 
 ## 最新版本与实际证据
 

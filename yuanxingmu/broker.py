@@ -758,8 +758,17 @@ class Broker:
             thread.start()
             return socket_path
 
-    def serve(self, task_id: str, socket_path: Path) -> Path:
-        """The trusted host binds identity once, before mounting this single socket."""
+    def serve(self, task_id: str, socket_path: Path, *, allowed_operations=None) -> Path:
+        """Bind identity and an optional host-selected operation subset.
+
+        A narrow SDK socket must reject raw RPC bypasses of its tool list too.
+        This filter only removes capabilities; dispatch still checks authority.
+        """
+        if allowed_operations is not None:
+            if (type(allowed_operations) not in {set, frozenset} or not allowed_operations
+                    or any(type(item) is not str for item in allowed_operations)):
+                raise ValueError("invalid_broker_operation_subset")
+            allowed_operations = frozenset(allowed_operations)
         with self._lock:
             if self._closed or not self.authority.describe(task_id)["active"]:
                 raise AuthorizationError("task_inactive")
@@ -781,7 +790,11 @@ class Broker:
                                 request = json.loads(raw)
                             except (ValueError, UnicodeError):
                                 request = None
-                            result = broker.dispatch(task_id, request)
+                            if (allowed_operations is not None and (type(request) is not dict
+                                    or type(request.get("op")) is not str or request["op"] not in allowed_operations)):
+                                result = {"allowed": False, "reason": "operation_not_available_in_session"}
+                            else:
+                                result = broker.dispatch(task_id, request)
                         self.wfile.write(json.dumps(result, ensure_ascii=True).encode() + b"\n")
                     except (OSError, ValueError):
                         return

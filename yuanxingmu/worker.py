@@ -12,9 +12,9 @@ from .sandbox import build_command
 
 
 def start(*, command: list[str], workspace: Path, broker_socket: Path, readonly_paths=None,
-          env=None, bwrap: Path | None = None, **popen_options):
+          env=None, bwrap: Path | None = None, model_socket: Path | None = None, **popen_options):
     argv = build_command(command=command, workspace=workspace, broker_socket=broker_socket,
-                         readonly_paths=readonly_paths, env=env, bwrap=bwrap)
+                         readonly_paths=readonly_paths, env=env, bwrap=bwrap, model_socket=model_socket)
     return subprocess.Popen(argv, env={"PATH": "/usr/bin:/bin"}, start_new_session=True,
                             close_fds=True, **popen_options)
 

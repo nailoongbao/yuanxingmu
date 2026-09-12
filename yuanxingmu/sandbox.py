@@ -25,6 +25,7 @@ import sys
 
 WORKSPACE_PATH = Path("/workspace")
 BROKER_SOCKET_PATH = Path("/run/yuanxingmu/broker.sock")
+MODEL_SOCKET_PATH = Path("/run/yuanxingmu/model.sock")
 
 
 class SandboxUnavailable(RuntimeError):
@@ -149,6 +150,7 @@ def build_command(
     readonly_paths: list[Path] | None = None,
     env: dict[str, str] | None = None,
     bwrap: Path | None = None,
+    model_socket: Path | None = None,
 ) -> list[str]:
     """Build a fail-closed bubblewrap argv for one task.
 
@@ -180,6 +182,11 @@ def build_command(
         raise ValueError("broker_socket must be an existing Unix domain socket")
     if _overlaps(work, broker):
         raise ValueError("broker_socket must be outside the writable workspace")
+    model = None
+    if model_socket is not None:
+        model = _source_path(model_socket, "model_socket")
+        if not stat.S_ISSOCK(model.stat().st_mode) or _overlaps(work, model) or model == broker:
+            raise ValueError("model_socket must be a separate socket outside the workspace")
 
     grants: list[Path] = []
     protected = (WORKSPACE_PATH, Path("/run"), Path("/proc"), Path("/dev"), Path("/sys"))
@@ -188,7 +195,7 @@ def build_command(
         _reject_broad_grant(source, "readonly_paths entry")
         if not source.is_dir() and not source.is_file():
             raise ValueError("readonly_paths entries must be regular files or directories")
-        if _overlaps(source, work) or _overlaps(source, broker):
+        if _overlaps(source, work) or _overlaps(source, broker) or (model and _overlaps(source, model)):
             raise ValueError("read-only grants must not expose the workspace or broker parent")
         if any(_overlaps(source, target) for target in protected):
             raise ValueError("read-only grants must not overlap sandbox control mounts")
@@ -201,6 +208,8 @@ def build_command(
         args += ["--ro-bind", str(source), str(source)]
     args += ["--bind", str(work), str(WORKSPACE_PATH)]
     args += ["--ro-bind", str(broker), str(BROKER_SOCKET_PATH)]
+    if model is not None:
+        args += ["--ro-bind", str(model), str(MODEL_SOCKET_PATH)]
     args += _environment_args(env)
     args += ["--chdir", str(WORKSPACE_PATH), "--remount-ro", "/", "--", *command]
     return args

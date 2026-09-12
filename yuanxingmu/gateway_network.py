@@ -224,6 +224,8 @@ class _ModelHandler(BaseHTTPRequestHandler):
         connection = None
         tracked = None
         response_started = False
+        model_store = None
+        ticket = None
         try:
             body = self.rfile.read(length)
             if len(body) != length:
@@ -236,6 +238,26 @@ class _ModelHandler(BaseHTTPRequestHandler):
                     kind, checked = notice
                     self.send_response_only(200)
                     self.send_header("Content-Type", kind)
+                    self.send_header("Content-Length", str(len(checked)))
+                    self.send_header("Cache-Control", "no-store")
+                    self.send_header("Connection", "close")
+                    self.end_headers()
+                    response_started = True
+                    self.wfile.write(checked)
+                    return
+            model_store = getattr(self.server, "model_store", None)
+            if model_store is not None:
+                try:
+                    ticket = model_store.begin(body)
+                except ValueError:
+                    self._error(409, "model_session_unavailable")
+                    return
+                if ticket.replay is not None:
+                    # Stored responses remain subject to CURRENT host checks.
+                    # A cache hit must not bypass a pause, revocation or policy.
+                    checked = output_guard(ticket.replay, ticket.content_type)
+                    self.send_response_only(200)
+                    self.send_header("Content-Type", ticket.content_type)
                     self.send_header("Content-Length", str(len(checked)))
                     self.send_header("Cache-Control", "no-store")
                     self.send_header("Connection", "close")
@@ -292,6 +314,12 @@ class _ModelHandler(BaseHTTPRequestHandler):
                 if self.server.stopping.is_set():
                     return
                 checked = output_guard(bytes(data), content_type)
+                if model_store is not None:
+                    try:
+                        checked = model_store.complete(ticket, checked, content_type)
+                    except ValueError:
+                        self._error(409, "model_session_unavailable")
+                        return
                 self.send_response_only(200)
                 self.send_header("Content-Type", "text/event-stream" if content_type.startswith("text/event-stream") else "application/json")
                 self.send_header("Content-Length", str(len(checked)))
@@ -320,11 +348,21 @@ class _ModelHandler(BaseHTTPRequestHandler):
             if not response_started and not self.server.stopping.is_set():
                 self._error(502, "model_upstream_unavailable")
         finally:
-            if connection is not None:
-                connection.close()
-            if tracked is not None:
-                self.server.untrack(tracked)
-                _close_socket(tracked)
+            try:
+                if connection is not None:
+                    connection.close()
+                if tracked is not None:
+                    self.server.untrack(tracked)
+                    _close_socket(tracked)
+            finally:
+                if model_store is not None and ticket is not None:
+                    try:
+                        model_store.finish(ticket)
+                    except ValueError:
+                        # Its persisted pending/unknown state refuses retries.
+                        # Never let a journal fault skip transport cleanup or
+                        # print request material in an exception traceback.
+                        pass
 
 
 def _pump(left: socket.socket, right: socket.socket, stopped: threading.Event) -> None:
@@ -429,6 +467,47 @@ class HostNetwork:
         if self._stack is not None:
             stack, self._stack = self._stack, None
             stack.close()
+
+    def __exit__(self, *exception):
+        self.close()
+
+
+class HostModel:
+    """A model-only Unix endpoint for an isolated SDK process; no TCP relay.
+
+    Output checks and durable request registration are required. Only this
+    socket's inode is granted to the worker; the private store stays outside.
+    """
+
+    def __init__(self, runtime: Path, *, model_url: str, api_key: str, output_guard, model_store):
+        self.runtime = Path(runtime).absolute()
+        self.upstream = _upstream(model_url)
+        if (type(api_key) is not str or not api_key
+                or any(ord(c) < 33 or ord(c) > 126 for c in api_key)):
+            raise ValueError("invalid_model_api_key")
+        if not callable(output_guard) or not callable(getattr(output_guard, "preflight", None)):
+            raise ValueError("sdk_model_guard_required")
+        if any(not callable(getattr(model_store, name, None)) for name in ("begin", "complete", "finish")):
+            raise ValueError("sdk_model_store_required")
+        self.api_key, self.output_guard, self.model_store = api_key, output_guard, model_store
+        self._serving = None
+
+    def __enter__(self):
+        if not sys.platform.startswith("linux"):
+            raise RuntimeError("gateway_network_namespace_requires_linux")
+        if self._serving is not None:
+            raise RuntimeError("network_bridge_already_running")
+        _private_directory(self.runtime)
+        server, path = _listen(socket.AF_UNIX, str(self.runtime / "model.sock"), _ModelHandler)
+        server.upstream, server.api_key = self.upstream, self.api_key
+        server.output_guard, server.model_store = self.output_guard, self.model_store
+        self._serving = _Serving(server, path)
+        return self
+
+    def close(self):
+        if self._serving is not None:
+            serving, self._serving = self._serving, None
+            serving.close()
 
     def __exit__(self, *exception):
         self.close()
