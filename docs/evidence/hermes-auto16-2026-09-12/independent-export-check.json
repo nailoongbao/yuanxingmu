@@ -1,0 +1,42 @@
+{
+  "source_commit": "a34dafb57f62d7b55c78554301fbf72a2869d801",
+  "git_blob_files_verified": 502,
+  "source_archive": {
+    "bytes": 58132480,
+    "sha256": "2d22a47731743044da3ee86c59a57675ab397ab1f8db9d3446f18bfd3b5e611e"
+  },
+  "exact_original_prompts": 8,
+  "actual_native_tool_calls": 8,
+  "wire_checks": [
+    {
+      "kind": "message",
+      "target_id": "team",
+      "bytes": 62,
+      "sha256": "064c23b9393e2a3e7e58bd8690f3a8f49dcc273ded5834e08b72c5e4fafcf5e5"
+    },
+    {
+      "kind": "upload",
+      "target_id": "archive",
+      "bytes": 266,
+      "sha256": "79fff270addee278f80d9a86c01753ff4924454e072b421cfcc82503f935e403"
+    },
+    {
+      "kind": "form",
+      "target_id": "intake",
+      "bytes": 41,
+      "sha256": "12a18b6b913df4639827ad0f26f85934bbec4085ab8f40b7de97fdc30e50db50"
+    },
+    {
+      "kind": "message",
+      "target_id": "team",
+      "bytes": 71,
+      "sha256": "fab8a9498ed1e422fdb8ba9c047a37d3a970300e3a45be0066b0e33ba9277376"
+    }
+  ],
+  "normal_automatic_workflow_passed": true,
+  "complete_protocol_passed": false,
+  "relay_original_exchanges_verified": 31,
+  "original_videos_hash_verified": 20,
+  "network_or_model_calls": 0,
+  "cleanup_evidence": "Original captured cleanup records; no probe of reused ports during export."
+}

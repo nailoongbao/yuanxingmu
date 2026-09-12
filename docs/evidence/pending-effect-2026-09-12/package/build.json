@@ -1,0 +1,9 @@
+{
+  "commit": "e886607d8f5b81d4674af3d5ed38f486b20c2aee",
+  "manifest": "yuanxingmu-v06-local-manifest.json",
+  "output": "/mnt/c/Users/PC/Desktop/agent防御体系纵深评估/.research/runtime-v06-e886607",
+  "package_files": 87,
+  "passed": true,
+  "published": false,
+  "wheel_members": 95
+}

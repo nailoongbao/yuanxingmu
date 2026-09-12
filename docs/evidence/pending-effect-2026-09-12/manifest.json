@@ -1,0 +1,89 @@
+{
+  "commit": "e886607d8f5b81d4674af3d5ed38f486b20c2aee",
+  "files": {
+    "before-scoping/frozen-guards.py": {
+      "bytes": 83417,
+      "sha256": "3f7d16f23e5b67d6cb1c24f2829b39ea2e6cdae7df71b8fbe3ea0780ae2fa7a5"
+    },
+    "before-scoping/manifest.json": {
+      "bytes": 40696,
+      "sha256": "9a816bf8237f196cab163d0ab0839370dd599eeb30853a4cb4110e6f9596d4f8"
+    },
+    "before-scoping/results.jsonl": {
+      "bytes": 161079,
+      "sha256": "bf2cb21ef06500bd98477aea083f99ea8f70e9ce3301b5fddf72e052882257fe"
+    },
+    "exact-commit/hermes/summary.json": {
+      "bytes": 16857,
+      "sha256": "a30c4b2cd94f8e5af07b6cec3734a4be20d64ddaeb36b0e02ce05fc76c45c3e2"
+    },
+    "exact-commit/hermes/unittest.log": {
+      "bytes": 7843,
+      "sha256": "5bf166dd38af440e9fa9fd81d74e60b58172a6b4ab654837d7901be09ad73328"
+    },
+    "exact-commit/linux/summary.json": {
+      "bytes": 21085,
+      "sha256": "638a3e981696603ace45d0a6761c78a19147973052476671bf1b6f4a88b8ea8e"
+    },
+    "exact-commit/linux/unittest.log": {
+      "bytes": 65923,
+      "sha256": "bc578f07bf2862a967b11378d03fb7d567f918c9ba17c5558af81526bac0c4a0"
+    },
+    "exact-commit/windows/summary.json": {
+      "bytes": 22205,
+      "sha256": "f3f07d1bbbb27ea2bd974aaa602f40fd6d070a98d60920fe9dd1ccc03a180828"
+    },
+    "exact-commit/windows/unittest.log": {
+      "bytes": 75642,
+      "sha256": "ae5cc6a31af0152e51e17750b34df77202a5ee791b42dbbeabc994b9b85d4133"
+    },
+    "package/build.json": {
+      "bytes": 296,
+      "sha256": "0a357932aeaaf63bf0584bef0f9ac35108e67f4cd45f3282a45d6d5c77f47e89"
+    },
+    "package/linux-verification.json": {
+      "bytes": 2692,
+      "sha256": "f449ec1b005c8202be78bf2b4dba4e1229816740d12e43cd2742aa95a927cc5c"
+    },
+    "package/windows-verification.json": {
+      "bytes": 2716,
+      "sha256": "52cd45d8216eaadadf10262d6499af4fc47053ce0198439629f00bfa988a400d"
+    },
+    "REPORT.zh-CN.md": {
+      "bytes": 3437,
+      "sha256": "1d836634a53dc1421526b82c6b66e0615b2d3eb7410a79f88a53e01e26e01948"
+    },
+    "runners/pending-effect-model-check.py": {
+      "bytes": 2896,
+      "sha256": "6c10471257a00309c7749d9b6e070b94f34e1c55826c060b675bbd11caf8c699"
+    },
+    "runners/review-facts-model-check.py": {
+      "bytes": 8239,
+      "sha256": "a9fa7046657af2c5e669672812026660bb830f08da279393ed0cd3cb88f52a62"
+    },
+    "runners/verify-review-facts.py": {
+      "bytes": 3454,
+      "sha256": "d1bf0e266cbe89b4d524ac568ddd01da0fc96449bde32a990c0c8bb33770d992"
+    },
+    "scoped/frozen-guards.py": {
+      "bytes": 83559,
+      "sha256": "8422c646e75ca0478ce1dde98b95aa8d6cb85b939f8dc0a2aa5358584f2aebe4"
+    },
+    "scoped/manifest.json": {
+      "bytes": 40696,
+      "sha256": "9b35ff4c212ca53538f0869db866009809fce8c34d9915b32476a79ea523f953"
+    },
+    "scoped/results.jsonl": {
+      "bytes": 147925,
+      "sha256": "971f6da4f66c081cbc54e6754be35a71ea461c7c81966c8ecf3e419e013f3492"
+    },
+    "verify.py": {
+      "bytes": 2217,
+      "sha256": "db769bf0bdcde1e1ac61a7d041d1a654b66abe7cb92f458a8bc631897d346bab"
+    },
+    "exact-commit/ci.json": {
+      "bytes": 1286,
+      "sha256": "81def0009649183ed6d0223e6ee11edde97b3cb4cd467136098702e826d3b100"
+    }
+  }
+}

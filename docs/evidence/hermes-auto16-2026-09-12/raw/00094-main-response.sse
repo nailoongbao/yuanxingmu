@@ -1,0 +1,8 @@
+data: {"id":"202609121818418813fc4d04d04906","created":1789208321,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":"","tool_calls":[{"id":"call_1154fcb248114e62a791e3cc","index":0,"type":"function","function":{"name":"yuanxingmu_read","arguments":"{\"resource\": \"quote\"}"}}]}}]}
+
+data: {"id":"202609121818418813fc4d04d04906","created":1789208321,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"202609121818418813fc4d04d04906","created":1789208321,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"finish_reason":"tool_calls","delta":{"role":"assistant","content":""}}],"usage":{"prompt_tokens":6444,"completion_tokens":13,"total_tokens":6457,"prompt_tokens_details":{"cached_tokens":6016}}}
+
+data: [DONE]
+

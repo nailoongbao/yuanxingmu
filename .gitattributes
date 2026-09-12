@@ -27,10 +27,16 @@ docs/evidence/action-automation-ui-2026-09-12/** -text whitespace=trailing-space
 docs/evidence/automatic-work-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/hermes-auto15-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/review-facts-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/pending-effect-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/hermes-auto16-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/hermes-auto17-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 # Frozen external runners retain their recorded whitespace; SSE needs final blank events.
 docs/evidence/automatic-work-2026-09-12/verification-runner.py -whitespace
 docs/evidence/review-facts-2026-09-12/verification-runner.py -whitespace
 docs/evidence/hermes-auto15-2026-09-12/raw/*.sse -whitespace
+docs/evidence/hermes-auto16-2026-09-12/raw/*.sse -whitespace
+docs/evidence/hermes-auto17-2026-09-12/raw/*.sse -whitespace
+docs/evidence/pending-effect-2026-09-12/runners/verify-review-facts.py -whitespace
 examples/yuanxingmu/workbench/evidence/** -text
 # Preserve the model's Markdown line breaks and frozen patch context bytes.
 examples/yuanxingmu/workbench/evidence/REPORT.zh-CN.md -whitespace

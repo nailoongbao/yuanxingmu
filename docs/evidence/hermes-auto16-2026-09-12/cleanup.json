@@ -1,0 +1,47 @@
+{
+  "captured_lifecycle": {
+    "status": "stopped",
+    "supervisor_pid": 266124,
+    "supervisor_start": "4368694",
+    "task_id": "task_3e8d6da215f8446ba6672d97c6e8e185",
+    "gateway_pid": 266150,
+    "gateway_start": "4369370",
+    "cleanup_confirmed": true
+  },
+  "service": {
+    "kind": "service",
+    "identity_checked": true,
+    "stopped": true
+  },
+  "receiver": {
+    "kind": "receiver",
+    "identity_checked": true,
+    "stopped": true
+  },
+  "browsers": [
+    {
+      "session": "hermes-auto16",
+      "status": "closed",
+      "closed_at": "2026-09-12T10:34:19.591986+00:00",
+      "cli_output": "Browser 'hermes-auto16' closed\n\n"
+    },
+    {
+      "session": "hermes-auto-receiver16",
+      "status": "closed",
+      "closed_at": "2026-09-12T10:34:21.524699+00:00",
+      "cli_output": "Browser 'hermes-auto-receiver16' closed\n\n"
+    },
+    {
+      "session": "hermes-auto-workbench16",
+      "status": "closed",
+      "closed_at": "2026-09-12T10:34:23.578828+00:00",
+      "cli_output": "Browser 'hermes-auto-workbench16' closed\n\n"
+    }
+  ],
+  "captured_ports_closed": {
+    "18911": true,
+    "18955": true,
+    "18956": true
+  },
+  "relay": "Original run ended at main 39 / judge 80, active 0. Relay was left running for its owner; later requests are outside this archive."
+}

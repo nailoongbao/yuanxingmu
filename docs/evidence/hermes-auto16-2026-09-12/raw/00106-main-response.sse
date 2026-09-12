@@ -1,0 +1,8 @@
+data: {"id":"2026091218260491a10437f68a45e7","created":1789208764,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":"","tool_calls":[{"id":"call_be2e2d715b9c48d486f37581","index":0,"type":"function","function":{"name":"yuanxingmu_request_action","arguments":"{\"kind\": \"form\", \"payload\": {\"fields\": {\"project\": \"HERMES-AUTO15\", \"public_quote\": \"186000\"}}, \"target_id\": \"intake\"}"}}]}}]}
+
+data: {"id":"2026091218260491a10437f68a45e7","created":1789208764,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"delta":{"role":"assistant","content":""}}]}
+
+data: {"id":"2026091218260491a10437f68a45e7","created":1789208764,"object":"chat.completion.chunk","model":"glm-5.2","choices":[{"index":0,"finish_reason":"tool_calls","delta":{"role":"assistant","content":""}}],"usage":{"prompt_tokens":7994,"completion_tokens":48,"total_tokens":8042,"prompt_tokens_details":{"cached_tokens":0}}}
+
+data: [DONE]
+
