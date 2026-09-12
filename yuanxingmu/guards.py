@@ -63,9 +63,13 @@ def _strict_json(value: str | bytes):
     return json.loads(value, object_pairs_hook=pairs, parse_constant=constant)
 
 
-def _normal(value: str) -> str:
+def _syntax_text(value: str) -> str:
     value = unicodedata.normalize("NFKC", value)
-    return "".join(c for c in value if unicodedata.category(c) != "Cf").casefold()
+    return "".join(c for c in value if unicodedata.category(c) != "Cf")
+
+
+def _normal(value: str) -> str:
+    return _syntax_text(value).casefold()
 
 
 def _text(value: object, maximum: int) -> bytes:
@@ -315,7 +319,217 @@ _WRITE_TOOLS = {"write", "edit", "write_file", "file_write", "file_edit", "patch
 _EXEC_TOOLS = {"exec", "terminal", "execute", "shell", "bash", "run_command"}
 _SHELLS = {"sh", "bash", "dash", "zsh", "ksh", "fish"}
 _INTERPRETERS = {"python", "python3", "node", "perl", "ruby", "php", "powershell", "pwsh"}
-_SEPARATORS = {";", "&&", "||", "|", "&", "\n"}
+_WRAPPER_FLAGS = {
+    "nice": set(),
+    "ionice": {"t", "--ignore"},
+    "xargs": {"0", "r", "t", "p", "x", "o", "--null", "--no-run-if-empty", "--verbose",
+              "--interactive", "--exit", "--open-tty", "--show-limits"},
+    "parallel": {"0", "k", "q", "r", "t", "v", "m", "X", "u", "--null", "--keep-order", "--quote",
+                 "--no-run-if-empty", "--verbose", "--ungroup", "--line-buffer", "--tag", "--pipe", "--pipe-part"},
+    "env": {"i", "0", "v", "--ignore-environment", "--null", "--debug"},
+    "timeout": {"v", "--verbose", "--foreground", "--preserve-status"},
+    "time": {"a", "p", "v", "q", "--append", "--portability", "--verbose", "--quiet"},
+    "busybox": set(),
+}
+_WRAPPER_VALUES = {
+    "nice": {"n", "--adjustment"},
+    "ionice": {"c", "n", "p", "P", "u", "--class", "--classdata", "--pid", "--pgid", "--uid"},
+    "xargs": {"a", "d", "E", "I", "L", "n", "P", "s", "--arg-file", "--delimiter", "--eof",
+              "--replace", "--max-lines", "--max-args", "--max-procs", "--max-chars", "--process-slot-var"},
+    "parallel": {"a", "d", "E", "I", "j", "L", "n", "N", "P", "S", "--arg-file", "--delimiter", "--eof",
+                 "--replace", "--jobs", "--max-lines", "--max-args", "--max-replace-args", "--sshlogin",
+                 "--sshloginfile", "--colsep", "--header", "--tagstring", "--halt", "--timeout", "--results",
+                 "--joblog", "--retries", "--load", "--memfree", "--block", "--tmpdir", "--workdir", "--env"},
+    "env": {"u", "C", "S", "a", "--unset", "--chdir", "--split-string", "--argv0"},
+    "timeout": {"s", "k", "--signal", "--kill-after"},
+    "time": {"f", "o", "--format", "--output"},
+    "busybox": set(),
+}
+_PARALLEL_INPUTS = {":::", "::::", ":::+", "::::+"}
+_WRAPPER_FILES = {
+    "xargs": {"a", "--arg-file"},
+    "parallel": {"a", "--arg-file", "--sshloginfile", "--joblog", "--results", "--workdir"},
+    "env": {"C", "--chdir"},
+    "time": {"o", "--output"},
+}
+_SENSITIVE_COMMAND_PATH = re.compile(
+    r"(?:/etc/(?:g?shadow|master\.passwd)|(?:^|[/~\s'\"])(?:\.ssh/|\.aws/|\.azure/|\.kube/|"
+    r"\.gcp/credentials(?:\b|/)|\.config/gcloud/|\.docker/config\.json|\.pgpass|\.my\.cnf|"
+    r"\.env(?:\b|/)|\.(?:bash|zsh|sh)_history\b|\.(?:token|apikey|secret|password|passwd)(?=$|[/\s'\"])))")
+_SENSITIVE_VARIABLE = re.compile(r"\$(?:env:|\{)?[A-Za-z_]*(?:TOKEN|SECRET|PASSWORD|API_KEY|PRIVATE_KEY)", re.I)
+
+
+def _wrapped_command(program: str, args: list[str]) -> tuple[str, bool, list[tuple[str, str]]] | None:
+    """Return an executable child and whether unresolved wrapper behavior remains.
+
+    This is a bounded option parser, not an implementation of the utilities.
+    In particular, xargs/parallel input and replacement expansion are never
+    evaluated. Unknown options stop extraction rather than guessing their arity.
+    """
+    if program not in _WRAPPER_FLAGS:
+        return None
+    if program == "env" and all(arg in {"-0", "--null", "--"} for arg in args):
+        return None  # Preserve the environment-disclosure rule.
+    uncertain = False
+    file_effects = []
+    replacement = None
+    quote_parallel = False
+    target_process = False
+    directory_changed = False
+    index = 0
+    while index < len(args):
+        token = args[index]
+        if token == "--":
+            index += 1
+            break
+        if program == "env" and token == "-":
+            index += 1
+            continue
+        if not token.startswith("-") or token == "-":
+            break
+        if token in {"--help", "--version"} or (program == "ionice" and token in {"-h", "-V"}):
+            return "", False, []
+        if program == "busybox" and token in {"--list", "--list-full"}:
+            return "", False, []
+        if program == "nice" and re.fullmatch(r"--?\d+", token):
+            index += 1
+            continue
+        long_name, has_equal, attached = token.partition("=")
+        options = [long_name] if token.startswith("--") else list(token[1:])
+        for offset, option in enumerate(options):
+            if option in _WRAPPER_FLAGS[program]:
+                if token.startswith("--") and has_equal:
+                    return "", True, file_effects
+                quote_parallel |= program == "parallel" and option in {"q", "--quote"}
+                continue
+            optional = program == "xargs" and option in {"e", "i", "l", "--eof", "--replace", "--max-lines"}
+            if option not in _WRAPPER_VALUES[program] and not optional:
+                return "", True, file_effects
+            value = attached if token.startswith("--") else token[offset + 2:]
+            if not value and not has_equal and not optional:
+                index += 1
+                if index >= len(args):
+                    return "", True, file_effects
+                value = args[index]
+            uncertain |= "$" in value or "`" in value
+            if _SENSITIVE_VARIABLE.search(value):
+                file_effects.append(("environment", value))
+            if option in _WRAPPER_FILES.get(program, set()):
+                mode = ("read" if program == "xargs" or option in {"a", "--arg-file", "--sshloginfile"}
+                        else "write" if program == "time" or option in {"--joblog", "--results"} else "access")
+                file_effects.append((mode, value))
+                uncertain |= any(char in value for char in "$`*?[")
+            directory_changed |= program == "env" and option in {"C", "--chdir"}
+            if program == "xargs":
+                if option in {"i", "I", "--replace"}:
+                    replacement = "{}" if optional and not value and not has_equal else value
+                    uncertain |= not replacement
+                if option in {"n", "l", "L", "P", "s", "--max-args", "--max-lines", "--max-procs", "--max-chars"}:
+                    number = value or ("1" if optional and not has_equal else "")
+                    uncertain |= (re.fullmatch(r"\d+", number) is None
+                                  or (int(number) == 0 and option not in {"P", "--max-procs"}))
+                if option in {"d", "--delimiter"}:
+                    uncertain |= not (len(value) == 1 or re.fullmatch(r"\\(?:[abfnrtv\\]|[0-7]{1,3}|x[0-9A-Fa-f]{1,2})", value))
+            if program == "nice":
+                uncertain |= re.fullmatch(r"[+-]?\d+", value) is None
+            if program == "ionice":
+                target_process |= option in {"p", "P", "u", "--pid", "--pgid", "--uid"}
+                valid = (value in {"0", "1", "2", "3", "none", "realtime", "best-effort", "idle"}
+                         if option in {"c", "--class"} else re.fullmatch(r"\d+(?:,\d+)*", value) is not None)
+                uncertain |= not valid
+                if option in {"n", "--classdata"}:
+                    uncertain |= not value.isdecimal() or int(value) > 7
+            if program == "env" and option in {"S", "--split-string"}:
+                return shlex.join(shlex.split(value) + args[index + 1:]), True, file_effects
+            break  # An option value consumes the remainder of a short cluster.
+        index += 1
+    nested = args[index:]
+    if program == "env":
+        while nested and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", nested[0], re.S):
+            file_effects.append(("environment", nested[0]))
+            nested = nested[1:]
+        # Relative paths in a child's arguments no longer refer to the fixed
+        # workspace after chdir. Only direct printing is independent of that
+        # unresolved path context; do not try to simulate a new filesystem.
+        printing = bool(nested) and nested[0].replace("\\", "/").rsplit("/", 1)[-1] in {"echo", "printf"}
+        uncertain |= directory_changed and not printing
+    if program == "timeout":
+        if not nested:
+            return "", True, file_effects
+        uncertain |= re.fullmatch(r"(?:\d+(?:\.\d*)?|\.\d+)[smhd]?", nested[0]) is None
+        nested = nested[1:]
+    if program == "parallel":
+        end = next((i for i, value in enumerate(nested) if value in _PARALLEL_INPUTS), len(nested))
+        nested = nested[:end]
+        # GNU parallel interprets its command template through a shell unless
+        # --quote is requested; source-list entries are data, not this template.
+        return (shlex.join(nested) if quote_parallel else " ".join(nested)), True, file_effects
+    if program == "xargs":
+        nested = nested or ["echo"]
+        executable = nested[0].replace("\\", "/").rsplit("/", 1)[-1]
+        printing = executable in {"echo", "printf"} and (replacement is None or replacement not in nested[0])
+        return shlex.join(nested), uncertain or not printing, file_effects
+    if target_process:
+        return "", True, file_effects
+    if not nested:
+        return "", uncertain or bool(args), file_effects
+    return shlex.join(nested), uncertain, file_effects
+
+
+def _command_programs(command: str, depth: int = 0) -> tuple[list[tuple[str, list[str]]], bool, list[tuple[str, str]]]:
+    """Flatten known wrappers so pipeline checks see the actual executables."""
+    if depth > 3:
+        return [], True, []
+    programs = []
+    uncertain = False
+    effects = []
+    parts = _segments(command)
+    for part in parts:
+        if len(part) == 1 and isinstance(part[0], _ShellExpansion):
+            children, _, child_effects = _command_programs(str(part[0]), depth + 1)
+            programs.extend(children)
+            effects.extend(child_effects)
+            uncertain = True
+            continue
+        argv = []
+        index = 0
+        while index < len(part):
+            token = part[index]
+            if isinstance(token, _Redirection):
+                if token in {"<<", "<<-", "<<<"}:
+                    uncertain = True  # Data expansion is not statically evaluated.
+                    index += 2 if index + 1 < len(part) and not isinstance(part[index + 1], _Redirection) else 1
+                    continue
+                if index + 1 == len(part) or isinstance(part[index + 1], _Redirection):
+                    uncertain = True
+                    index += 1
+                    continue
+                target = part[index + 1]
+                if not (token in {"<&", ">&"} and re.fullmatch(r"\d+|-", target)):
+                    effects.append(("read" if token.startswith("<") else "write", target))
+                    uncertain |= any(char in target for char in "$`*?[")
+                index += 2
+                continue
+            argv.append(token)
+            index += 1
+        for token in argv:
+            if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", token, re.S) is None:
+                break
+            effects.append(("environment", token))
+        program, args = _executable(argv)
+        wrapped = _wrapped_command(program, args)
+        if wrapped is None:
+            programs.append((program, args))
+            continue
+        child, unresolved, file_effects = wrapped
+        uncertain |= unresolved
+        effects.extend(file_effects)
+        if child:
+            children, unresolved, child_effects = _command_programs(child, depth + 1)
+            programs.extend(children)
+            uncertain |= unresolved
+            effects.extend(child_effects)
+    return programs, uncertain, effects
 
 
 def _negated_directive(text: str, start: int) -> bool:
@@ -339,7 +553,7 @@ def _instruction_is_reference(text: str, start: int) -> bool:
     reference = re.search(
         r"(?:\b(?:explain|describe|discuss|analy[sz]e|quote|quoted|quotes|example)\b|"
         r"解释|讲解|分析|引用|举例|示例)[^\n\"'“”‘’`]{0,120}"
-        r"(?P<quote>[\"'“‘`])[^\n\"'“”‘’`]{0,120}$", prefix)
+        r"(?P<quote>[\"'“‘`])[^\n\"'“”‘’`]{0,120}$", prefix, re.I)
     if reference is None:
         return False
     closer = {"“": "”", "‘": "’"}.get(reference["quote"], reference["quote"])
@@ -351,7 +565,7 @@ def _command_instruction_negated(text: str, start: int) -> bool:
     return bool(re.search(
         r"(?:\b(?:do\s+not|don't|never|must\s+not|should\s+not|cannot|can\s+not)"
         r"\s+(?:(?:ever|actually|directly|automatically)\s+|try\s+to\s+)*|"
-        r"(?:不要|不得|禁止|不能|不可|切勿|不应|别)(?:再次|直接|尝试|实际|自动|随意)*\s*)$", prefix))
+        r"(?:不要|不得|禁止|不能|不可|切勿|不应|别)(?:再次|直接|尝试|实际|自动|随意)*\s*)$", prefix, re.I))
 
 
 def _instruction_command(text: str, start: int) -> str:
@@ -403,16 +617,16 @@ def _instruction_command_hazard(command: str, depth: int = 0) -> bool:
         return False
     first = re.match(r"(?P<program>[^\s\"'`]+)(?:\s+(?P<args>[\s\S]*))?$", command)
     if first:
-        program = first["program"].replace("\\", "/").rsplit("/", 1)[-1]
+        program = first["program"].replace("\\", "/").rsplit("/", 1)[-1].casefold()
         arguments = first["args"] or ""
-        if _direct_instruction_command_hazard(program, arguments):
+        if _direct_instruction_command_hazard(program, _normal(arguments)):
             return True
     try:
-        programs = [_executable(part) for part in _segments(command)]
+        programs, _, _ = _command_programs(command, depth)
     except ValueError:
         return False  # Actual malformed candidates still fail at the command layer.
     for program, arguments in programs:
-        if _direct_instruction_command_hazard(program, " ".join(arguments)):
+        if _direct_instruction_command_hazard(program, _normal(" ".join(arguments))):
             return True
         if program in {"rm", "rmdir", "del", "remove-item"} and any(arg in {"/", ".", "..", "~"} for arg in arguments):
             return True
@@ -421,14 +635,6 @@ def _instruction_command_hazard(command: str, depth: int = 0) -> bool:
         if program in _SHELLS:
             index = next((i for i, arg in enumerate(arguments) if arg.startswith("-") and "c" in arg[1:]), None)
             if index is not None and index + 1 < len(arguments) and _instruction_command_hazard(arguments[index + 1], depth + 1):
-                return True
-        if program in {"env", "timeout", "time", "busybox"}:
-            nested = list(arguments)
-            while nested and (nested[0].startswith("-") or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", nested[0])):
-                nested.pop(0)
-            if program == "timeout" and nested:
-                nested.pop(0)
-            if nested and _instruction_command_hazard(shlex.join(nested), depth + 1):
                 return True
     return (any(program in {"curl", "wget", "iwr", "invoke-webrequest"} for program, _ in programs)
             and any(program in _SHELLS | {"iex", "invoke-expression"} for program, _ in programs))
@@ -450,7 +656,7 @@ def _input_match(text: str):
             if code in {"instruction_override", "credential_theft", "resource_exhaustion_instruction"} and _negated_directive(normalized, match.start()):
                 continue
             return code, reason
-    if _dangerous_command_instruction(normalized):
+    if _dangerous_command_instruction(_syntax_text(text)):
         return "dangerous_command_instruction", "外部内容要求执行破坏文件、提升权限或下载运行代码等危险命令。"
     return None
 
@@ -488,18 +694,160 @@ def _strings(value):
             yield from _strings(item)
 
 
+class _Redirection(str):
+    """A shell operator seen before unquoting, never a printed argument."""
+
+    def __new__(cls, value: str, *, heredoc_expands: bool = False):
+        token = super().__new__(cls, value)
+        token.heredoc_expands = heredoc_expands
+        return token
+
+
+class _ShellExpansion(str):
+    """Unevaluated code extracted from an expandable here-document body."""
+
+
+def _heredoc_expansions(body: str) -> list[str]:
+    """Extract bounded, explicit substitutions; never evaluate shell text.
+
+    Quotes in the body do not suppress expansion: quoting the delimiter does.
+    More complex or incomplete syntax remains subject to the heredoc review.
+    """
+    commands = []
+    index = 0
+    while index < len(body):
+        if body[index] == "\\":
+            index += 2
+            continue
+        if body.startswith("$(", index):
+            start = cursor = index + 2
+            depth = 1
+            quote = ""
+            while cursor < len(body):
+                char = body[cursor]
+                if char == "\\" and quote != "'":
+                    cursor += 2
+                    continue
+                if quote:
+                    if char == quote:
+                        quote = ""
+                elif char in {"'", '"'}:
+                    quote = char
+                elif char == "(":
+                    depth += 1
+                elif char == ")":
+                    depth -= 1
+                    if depth == 0:
+                        break
+                cursor += 1
+            if depth == 0:
+                if not body.startswith("$((", index):
+                    commands.append(body[start:cursor])
+                index = cursor + 1
+                continue
+            break  # One incomplete substitution must not cause quadratic rescans.
+        elif body[index] == "`":
+            cursor = index + 1
+            while cursor < len(body) and body[cursor] != "`":
+                cursor += 2 if body[cursor] == "\\" else 1
+            if cursor < len(body):
+                commands.append(body[index + 1:cursor])
+                index = cursor + 1
+                continue
+        index += 1
+    return commands
+
+
 def _segments(command: str) -> list[list[str]]:
-    lexer = shlex.shlex(command, posix=True, punctuation_chars=";&|<>()\n")
-    lexer.whitespace = " \t\r"
-    lexer.whitespace_split = True
-    lexer.commenters = ""
+    # Split before unquoting: shlex alone loses the distinction between a real
+    # operator and an argument such as printf '%s' ';' 'sudo true'. Splitting
+    # each active boundary also handles |&, ;\n and grouped punctuation.
     parts: list[list[str]] = [[]]
-    for token in lexer:
-        if token in _SEPARATORS or token in {"(", ")"}:
+    continued = []
+    line_start_part = 0
+    quote = ""
+    word_started = False
+    start = index = 0
+    while index < len(command):
+        char = command[index]
+        if char == "\\" and quote != "'":
+            if command[index + 1:index + 2] == "\n":
+                continued.append(command[start:index])
+                start = index + 2
+            else:
+                word_started = True
+            index += 2
+            continue
+        if quote:
+            if char == quote:
+                quote = ""
+        elif char in {"'", '"'}:
+            quote = char
+            word_started = True
+        elif char == "#" and not word_started:
+            parts[-1].extend(shlex.split("".join(continued) + command[start:index]))
+            continued.clear()
+            end = command.find("\n", index)
+            index = len(command) if end < 0 else end
+            start = index
+            continue
+        elif char in "<>" or command[index:index + 2] == "&>":
+            prefix = "".join(continued) + command[start:index]
+            continued.clear()
+            if char in "<>":
+                prefix = re.sub(r"(?<!\S)\d+$", "", prefix)  # e.g. 0<file, 2>&1
+            parts[-1].extend(shlex.split(prefix))
+            operator = next(value for value in ("&>>", "<<<", "<<-", ">>", "<<", "<>", "<&", ">&", "&>", ">|", "<", ">")
+                            if command.startswith(value, index))
+            expands = False
+            if operator in {"<<", "<<-"}:
+                delimiter_word = re.compile(r"[ \t]*([^ \t\r\n;&|()<>]*)").match(command, index + len(operator))[1]
+                expands = not any(c in delimiter_word for c in "'\"\\")
+            parts[-1].append(_Redirection(operator, heredoc_expands=expands))
+            index += len(operator)
+            start = index
+            word_started = False
+            continue
+        elif char in ";&|()\n":
+            parts[-1].extend(shlex.split("".join(continued) + command[start:index]))
+            continued.clear()
             if parts[-1]:
                 parts.append([])
+            word_started = False
+            if char == "\n":
+                # Here-document bodies start after the command's newline.
+                # Skip only their literal lines; retain real commands before
+                # and after them. Expansion inside bodies still requires review.
+                documents = []
+                for part in parts[line_start_part:]:
+                    for offset, token in enumerate(part[:-1]):
+                        if isinstance(token, _Redirection) and token in {"<<", "<<-"} and not isinstance(part[offset + 1], _Redirection):
+                            documents.append((part[offset + 1], token == "<<-", token.heredoc_expands))
+                index += 1
+                for delimiter, strip_tabs, expands in documents:
+                    body_start = body_end = index
+                    while index < len(command):
+                        end = command.find("\n", index)
+                        if end < 0:
+                            end = len(command)
+                        line = command[index:end]
+                        body_end = index
+                        index = min(end + 1, len(command))
+                        if (line.lstrip("\t") if strip_tabs else line) == delimiter:
+                            break
+                        body_end = index
+                    if expands:
+                        for code in _heredoc_expansions(command[body_start:body_end]):
+                            parts[-1].append(_ShellExpansion(code))
+                            parts.append([])
+                start = index
+                line_start_part = len(parts) - 1
+                continue
+            start = index + 1
         else:
-            parts[-1].append(token)
+            word_started = char not in " \t\r"
+        index += 1
+    parts[-1].extend(shlex.split("".join(continued) + command[start:]))
     return [part for part in parts if part]
 
 
@@ -519,9 +867,11 @@ def _executable(part: list[str]) -> tuple[str, list[str]]:
 def _memory_output_target(command: str) -> bool:
     """Recognize explicit output paths, without treating a fetched URL as a write."""
     try:
-        programs = [_executable(part) for part in _segments(command)]
+        programs, _, effects = _command_programs(command)
     except ValueError:
         return False  # The command layer rejects malformed shell syntax.
+    if any(mode == "write" and _MEMORY_NAME.search(_normal(path)) for mode, path in effects):
+        return True
     for program, args in programs:
         targets = []
         if program == "dd":
@@ -777,24 +1127,27 @@ class Guards:
         parts = _segments(command)
         if not parts:
             raise ValueError
-        programs = [_executable(part) for part in parts]
+        programs, unresolved, effects = _command_programs(command, depth)
         if _fork_bomb(command):
             return "block", "resource_exhaustion", "命令会不断创建进程，已阻止执行。"
-        pending: tuple[Verdict, str, str] | None = None
+        pending: tuple[Verdict, str, str] | None = (
+            ("review", "indirect_execution", "命令的批量输入、包装选项或实际执行内容尚未确定，需要您先核对。")
+            if unresolved else None)
+        for mode, path in effects:
+            if mode == "environment":
+                if _SENSITIVE_VARIABLE.search(path):
+                    return "block", "sensitive_credentials", "命令试图取出敏感环境变量，已阻止执行。"
+                continue
+            target = _normal(path).replace("\\", "/")
+            if "/dev/tcp/" in target or "/dev/udp/" in target:
+                return "block", "reverse_shell", "命令试图把终端交给远端连接控制，已阻止执行。"
+            if mode == "write" and target.startswith("/dev/") and target != "/dev/null":
+                return "block", "system_destruction", "命令试图直接写入系统设备，已阻止执行。"
+            if _SENSITIVE_COMMAND_PATH.search(target):
+                return "block", "sensitive_credentials", "命令试图读取或改动密码、密钥或登录资料，已阻止执行。"
         for program, args in programs:
             joined = " ".join(args)
             lower = _normal(joined)
-            if program in {"env", "timeout", "time", "busybox"} and args:
-                nested = list(args)
-                while nested and (nested[0].startswith("-") or re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", nested[0])):
-                    nested.pop(0)
-                if program == "timeout" and nested:
-                    nested.pop(0)
-                if nested:
-                    inner = self._command(shlex.join(nested), depth + 1)
-                    if inner[0] == "block":
-                        return inner
-                    pending = inner if inner[0] == "review" else pending
             if program in {"sudo", "doas", "pkexec", "su", "runas", "nsenter", "unshare", "mount", "umount"}:
                 return "block", "privilege_escalation", "命令试图提升权限或改变隔离环境，已阻止执行。"
             if program in _SHELLS:
@@ -830,8 +1183,7 @@ class Guards:
                            or (program == "socat" and re.search(r"\b(?:exec|system):", lower))
                            or ("socket" in lower and ("dup2" in lower or "subprocess" in lower or "exec" in lower))):
                 return "block", "reverse_shell", "命令试图把终端交给远端连接控制，已阻止执行。"
-            sensitive = r"(?:/etc/(?:g?shadow|master\.passwd)|(?:^|[/~\s'\"])(?:\.ssh/|\.aws/|\.azure/|\.kube/|\.gcp/credentials(?:\b|/)|\.config/gcloud/|\.docker/config\.json|\.pgpass|\.my\.cnf|\.env(?:\b|/)|\.(?:bash|zsh|sh)_history\b|\.(?:token|apikey|secret|password|passwd)(?=$|[/\s'\"])))"
-            if active and re.search(sensitive, lower.replace("\\", "/")):
+            if active and _SENSITIVE_COMMAND_PATH.search(lower.replace("\\", "/")):
                 return "block", "sensitive_credentials", "命令试图读取或改动密码、密钥或登录资料，已阻止执行。"
             if ((program in {"env", "printenv", "set", "export"} and not args)
                     or (program in {"env", "printenv"} and args and all(a in {"-0", "--null", "--"} for a in args))
@@ -840,13 +1192,13 @@ class Guards:
                 pending = ("review", "environment_disclosure", "列出全部环境变量可能包含密钥，需要您先核对。")
             if program == "printenv" and re.search(r"(?:TOKEN|SECRET|PASSWORD|API_KEY|PRIVATE_KEY)", joined, re.I):
                 return "block", "sensitive_credentials", "命令试图取出敏感环境变量，已阻止执行。"
-            if re.search(r"\$(?:env:|\{)?[A-Za-z_]*(?:TOKEN|SECRET|PASSWORD|API_KEY|PRIVATE_KEY)", joined, re.I):
+            if _SENSITIVE_VARIABLE.search(joined):
                 return "block", "sensitive_credentials", "命令试图取出敏感环境变量，已阻止执行。"
             if program in {"kill", "killall", "pkill"}:
                 if program == "kill" and any(a in {"-1", "1"} for a in args):
                     return "block", "resource_exhaustion", "命令可能停止整个进程环境，已阻止执行。"
                 pending = ("review", "process_termination", "命令会停止进程，需要您先核对范围。")
-            if ((program == "yes" and ">" in joined)
+            if ((program == "yes" and any(mode == "write" for mode, _ in effects))
                     or (program == "dd" and "if=/dev/zero" in lower and not re.search(r"\bcount=\d+", lower))):
                 return "block", "resource_exhaustion", "命令可能持续写满磁盘，已阻止执行。"
             if program == "fillmem":
@@ -872,7 +1224,7 @@ class Guards:
             pending = ("review", "unbounded_loop", "命令可能持续运行，需要您先核对停止条件。")
         if "$(" in command or chr(96) in command or any(p in {"eval", "source", "."} or "$" in p for p, _ in programs):
             pending = ("review", "dynamic_execution", "命令会动态生成执行内容，需要您先核对。")
-        if any(p in {"find", "xargs"} and re.search(r"(?:-delete|-exec|\brm\b)", " ".join(a)) for p, a in programs):
+        if any(p == "find" and re.search(r"(?:-delete|-exec|\brm\b)", " ".join(a)) for p, a in programs):
             pending = ("review", "indirect_file_change", "命令会按搜索结果批量修改文件，需要您先核对范围。")
         return pending or ("allow", "command_rule_clear", "未发现已知的危险命令特征，执行仍受工作目录和权限限制。")
 
