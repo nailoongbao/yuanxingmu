@@ -2,6 +2,7 @@
   "installer_version": "0.2.0a1",
   "runtime_version": "0.5.0a1",
   "runtime_commit": "6859475748c8041d1164d013786400a107eb7214",
+  "runtime_features": [],
   "wheel": {
     "name": "agent_defense_check-0.5.0a1-py3-none-any.whl",
     "bytes": 150831,
@@ -14,6 +15,29 @@
     "url": "https://nodejs.org/dist/v24.16.0/node-v24.16.0-linux-x64.tar.xz",
     "bytes": 31428548,
     "sha256": "d804845d34eddc21dc1092b519d643ef40b1f58ec5dec5c22b1f4bd8fabde6c9"
+  },
+  "hermes": {
+    "version": "0.21.2",
+    "release": "v2026.9.11",
+    "commit": "939e45c91d751fadd94dcd1b873ac3cb44846213",
+    "name": "hermes-939e45c91d751fadd94dcd1b873ac3cb44846213.tar.gz",
+    "url": "https://codeload.github.com/NousResearch/hermes-agent/tar.gz/939e45c91d751fadd94dcd1b873ac3cb44846213",
+    "bytes": 70506408,
+    "sha256": "eb8e393dd403cc903949c877bb09624d8e961fc7097f097353b34349cdc7223d"
+  },
+  "uv": {
+    "version": "0.12.13",
+    "name": "uv-0.12.13-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "url": "https://files.pythonhosted.org/packages/0c/31/f774e18ea9282f63fb3a4f83db8b818b860fb10efda1d295e4547e993bf8/uv-0.12.13-py3-none-manylinux_2_17_x86_64.manylinux2014_x86_64.whl",
+    "bytes": 20029009,
+    "sha256": "5312891392eb5b72eaca9b880e85fe3e706a2b11342e59f7a5cf0304d14d5cc5"
+  },
+  "hermes_npm": {
+    "version": "11.17.0",
+    "name": "npm-11.17.0.tgz",
+    "url": "https://registry.npmjs.org/npm/-/npm-11.17.0.tgz",
+    "bytes": 2966037,
+    "sha256": "b290bbb35b9e72c3ef84edbe041f28c4479c4d9ee79f555817b8caafe7ce4bba"
   },
   "openclaw": {
     "version": "2026.9.4",

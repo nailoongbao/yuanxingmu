@@ -15,12 +15,16 @@ def main():
     demo = commands.add_parser("demo", help="Run isolated synthetic workers and verify independent receipts")
     demo.add_argument("--output", required=True, type=Path)
     demo.add_argument("--bwrap", type=Path)
-    desk = commands.add_parser("desk", help="打开元星木本地工作台，在页面中导入资料和管理 OpenClaw")
+    desk = commands.add_parser("desk", help="打开元星木本地工作台，在页面中管理 OpenClaw 和 Hermes")
     desk.add_argument("--install-root", type=Path, default=Path.home() / "yuanxingmu")
     desk.add_argument("--data", type=Path, help="工作台自己的新目录；默认是安装目录下的 workbench")
     desk.add_argument("--port", type=int, default=18910)
     desk.add_argument("--node", type=Path)
     desk.add_argument("--openclaw-package", type=Path)
+    desk.add_argument("--hermes-python", type=Path)
+    desk.add_argument("--hermes-source", type=Path)
+    desk.add_argument("--action-targets", type=Path, help="宿主登记的消息、上传、表单和文件操作对象 JSON；不会交给 AI")
+    desk.add_argument("--skill", action="append", default=[], metavar="NAME=PATH", help="登记可在页面中选择的技能目录；只加载选中的固定快照")
     desk.add_argument("--bwrap", type=Path)
     desk.add_argument("--no-browser", action="store_true")
     run = commands.add_parser("run", help="Run a command with a persistent task and operator-owned policy")
@@ -46,18 +50,74 @@ def main():
     init.add_argument("--port", type=int, default=18911)
     init.add_argument("--context-window", type=int, default=32768)
     init.add_argument("--max-tokens", type=int, default=2048)
+    init.add_argument("--objective", help="固定工作目标；提供后启用五层检查")
+    init.add_argument("--defense-policy", type=Path, help="宿主防护设置 JSON，必须包含 objective")
+    init.add_argument("--skill", action="append", default=[], metavar="NAME=PATH")
+    init.add_argument("--reviewed-mail", action="store_true")
+    init.add_argument("--action-targets", type=Path)
     for name, help_text in (("start", "启动或重新打开原来的实例"), ("status", "查看模型、资料与权限状态"),
                             ("revoke", "永久收回这个实例的资料读取和发送权限"), ("stop", "关闭本实例及其运行中的命令")):
         action = actions.add_parser(name, help=help_text)
         action.add_argument("--profile", required=True, type=Path)
+    hermes = commands.add_parser("hermes", help="创建和使用受保护的 Hermes 官方网页")
+    hermes_actions = hermes.add_subparsers(dest="action", required=True)
+    hermes_init = hermes_actions.add_parser("init")
+    for name in ("profile", "hermes-python", "hermes-source", "node", "bwrap", "destinations", "defense-policy", "action-targets"):
+        hermes_init.add_argument("--" + name, type=Path, required=name in {"profile", "hermes-python", "hermes-source"})
+    hermes_init.add_argument("--model-url", required=True)
+    hermes_init.add_argument("--model-id", required=True)
+    hermes_init.add_argument("--api-key-env")
+    hermes_init.add_argument("--document", action="append", default=[], metavar="NAME=PATH")
+    hermes_init.add_argument("--skill", action="append", default=[], metavar="NAME=PATH")
+    hermes_init.add_argument("--objective")
+    hermes_init.add_argument("--reviewed-mail", action="store_true")
+    hermes_init.add_argument("--port", type=int, default=18912)
+    hermes_init.add_argument("--context-window", type=int, default=65536)
+    hermes_init.add_argument("--max-tokens", type=int, default=2048)
+    for native_init in (init, hermes_init):
+        native_init.add_argument("--judge-url", help="可选：独立检查模型的地址")
+        native_init.add_argument("--judge-model-id", help="独立检查模型的名称")
+        native_init.add_argument("--judge-api-key-env", help="从这个环境变量读取检查模型密钥")
+        native_init.add_argument("--judge-timeout", type=float, default=30, help="检查等待秒数，最多45秒")
+    for name in ("start", "status", "stop", "revoke"):
+        hermes_actions.add_parser(name).add_argument("--profile", required=True, type=Path)
+    defense = commands.add_parser("defense", help="查看或修改每层防护设置；新版本支持运行中修改")
+    defense_actions = defense.add_subparsers(dest="action", required=True)
+    for name in ("get", "set", "reset"):
+        command = defense_actions.add_parser(name)
+        command.add_argument("--profile", required=True, type=Path)
+        if name == "set":
+            for layer in ("input", "memory", "command", "alignment", "foundation"):
+                command.add_argument("--" + layer, dest="layer_" + layer, choices=("on", "off"))
+            command.add_argument("--mode", choices=("enforce", "observe"))
     args = parser.parse_args()
     try:
+        def selected_skills():
+            result = {}
+            for item in args.skill:
+                name, separator, path = item.partition("=")
+                if not separator or not path or name in result:
+                    raise ValueError("--skill 需要不重复的 NAME=PATH")
+                result[name] = Path(path).expanduser().absolute()
+            return result
+        if args.command == "defense":
+            from .protection import configure_profile
+            changes = None
+            if args.action == "set":
+                changes = {layer + "_enabled": getattr(args, "layer_" + layer) == "on" for layer in ("input", "memory", "command", "alignment", "foundation") if getattr(args, "layer_" + layer) is not None}
+                if args.mode is not None:
+                    changes["mode"] = args.mode
+            result = configure_profile(args.profile, changes, reset=args.action == "reset")
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+            return 0
         if args.command == "desk":
             from .dashboard.server import Runtime, serve
             install_root = args.install_root.expanduser()
-            runtime = Runtime.discover(install_root, node=args.node, openclaw_package=args.openclaw_package, bwrap=args.bwrap)
-            return serve(args.data or install_root / "workbench", runtime, port=args.port, open_browser=not args.no_browser)
-        if args.command == "openclaw":
+            runtime = Runtime.discover(install_root, node=args.node, openclaw_package=args.openclaw_package, bwrap=args.bwrap,
+                                       hermes_python=args.hermes_python, hermes_source=args.hermes_source)
+            targets = json.loads(args.action_targets.read_text(encoding="utf-8")) if args.action_targets else None
+            return serve(args.data or install_root / "workbench", runtime, port=args.port, open_browser=not args.no_browser, action_targets=targets, skill_sources=selected_skills())
+        if args.command in {"openclaw", "hermes"}:
             from .openclaw import init_profile, start_profile, control_profile
             if args.action == "init":
                 documents = {}
@@ -78,16 +138,36 @@ def main():
                     key = getpass("模型 API 密钥（输入不会显示）：")
                 node = args.node or shutil.which("node")
                 bwrap = args.bwrap or shutil.which("bwrap")
-                package = args.openclaw_package
-                if not package:
+                package = getattr(args, "openclaw_package", None)
+                if not package and args.command == "openclaw":
                     executable = shutil.which("openclaw")
                     package = Path(executable).resolve().parent if executable else None
-                if not node or not bwrap or not package:
+                if not node or not bwrap or (args.command == "openclaw" and not package):
                     raise RuntimeError("需要 Node.js、bubblewrap 和 OpenClaw 2026.9.4；也可用 --node / --bwrap / --openclaw-package 指定路径。")
                 destinations = json.loads(args.destinations.read_text(encoding="utf-8")) if args.destinations else {}
-                result = init_profile(args.profile.expanduser(), node=Path(node), bwrap=Path(bwrap), openclaw_package=Path(package),
+                policy = json.loads(args.defense_policy.read_text(encoding="utf-8")) if args.defense_policy else None
+                if args.objective:
+                    policy = {**(policy or {}), "objective": args.objective}
+                targets = json.loads(args.action_targets.read_text(encoding="utf-8")) if args.action_targets else None
+                extra = {"openclaw_package": Path(package)} if args.command == "openclaw" else {"hermes_python": args.hermes_python, "hermes_source": args.hermes_source}
+                if args.command == "hermes":
+                    from .hermes import init_profile
+                judge_config = None
+                if args.judge_url or args.judge_model_id or args.judge_api_key_env:
+                    if not args.judge_url or not args.judge_model_id:
+                        raise ValueError("独立检查模型需同时填写 --judge-url 与 --judge-model-id。")
+                    judge_key = os.environ.get(args.judge_api_key_env, "") if args.judge_api_key_env else ""
+                    if args.judge_api_key_env and not judge_key:
+                        raise ValueError("指定的检查模型密钥环境变量为空。")
+                    judge_config = {"url": args.judge_url, "id": args.judge_model_id,
+                                    "api_key": judge_key, "timeout_seconds": args.judge_timeout}
+                elif args.judge_timeout != 30:
+                    raise ValueError("--judge-timeout 需要同时指定独立检查模型地址和名称。")
+                result = init_profile(args.profile.expanduser(), node=Path(node), bwrap=Path(bwrap), **extra,
                     model_url=args.model_url, model_id=args.model_id, api_key=key, documents=documents,
-                    destinations=destinations, port=args.port, context_window=args.context_window, max_tokens=args.max_tokens)
+                    destinations=destinations, port=args.port, context_window=args.context_window, max_tokens=args.max_tokens,
+                    defense_policy=policy, judge_config=judge_config, selected_skills=selected_skills(), reviewed_mail=args.reviewed_mail,
+                    reviewed_actions=targets is not None, action_targets=targets)
             elif args.action == "start":
                 result = start_profile(args.profile.expanduser())
             else:

@@ -1,0 +1,5900 @@
+{
+  "scope": "Native tool adaptation only: actual SDK registration and invocation, real Broker Unix sockets and local fixture effects",
+  "model_loop_run": false,
+  "process_isolation_validated": false,
+  "legacy_mcp_evidence_reused": false,
+  "test_network_guard": "socket.connect restricted by the test harness to each fixture Broker and its own HTTP receiver; not a product sandbox",
+  "started_at": "2026-09-12T03:52:30.243310+00:00",
+  "finished_at": "2026-09-12T03:52:36.198846+00:00",
+  "duration_seconds": 6.958,
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "packages": {
+    "langchain-core": "1.6.2",
+    "langgraph": "1.2.11",
+    "langgraph-prebuilt": "1.1.0",
+    "langgraph-checkpoint": "4.2.0",
+    "openai-agents": "0.22.2",
+    "openai": "3.13.0",
+    "pydantic-ai-slim": "2.42.0",
+    "pydantic": "2.13.5"
+  },
+  "source_hashes": {
+    "yuanxingmu/adapters/__init__.py": "654e16112d0a1a7e0fae3e07ab7cc9122bd1a37ceee560215d29fb5cc15dbe9b",
+    "yuanxingmu/adapters/_schemas.py": "c63cd9b50bcecc72f33bf6f33526c2696df240cdb113a405d9cfcb0cf2e6b585",
+    "yuanxingmu/adapters/client.py": "f4150499e30b73b21116891db5e412d1c2caaec8c00ad5d1956bfca024e36e3d",
+    "yuanxingmu/adapters/langchain.py": "c3bb9ce35c1d7079b8b6000422118150b51eea92a1b3641d3cf7eb66d1e64ac4",
+    "yuanxingmu/adapters/openai_agents.py": "347c6a6fb70b86671ad6e94cffc8b1d6390fa305202a4525a65ef2dbcddbe344",
+    "yuanxingmu/adapters/pydantic_ai.py": "6f7348a5ab642fe1770ba72428a6dcb62dba3cd969e66ce8c98814d987812876",
+    "yuanxingmu/client.py": "a3368da99492fd83ad84f0f15081ff3a89749245f1c81a7509d86386c8dbe421",
+    "yuanxingmu/broker.py": "fd1081814446eb39293d5efdd6c73ba920679800e8e82fafece5ac796de15d21",
+    "yuanxingmu/authority.py": "213659cbb52727226322b3a1b9e90b29b86bf981b573a63c4ae4ffc38091efb4",
+    "yuanxingmu/actions.py": "100c1aa4990b6d589616bc64e2313c60a7ea588edb863896fbe0e397afb23464",
+    "yuanxingmu/mail_drafts.py": "d829a287ea43deea28432d7e34a2c19e1b9b9788fc77ed4e9a79b5846735ebf7",
+    "yuanxingmu/mail_transport.py": "91fc9d3611ba0b6206e766fb6a903daaf32ed5355c245533490fd2057ad8f7e1",
+    "tests/test_native_tools_client.py": "0b97ea2be374bb286d7750aed17e06852c43d3d7b2e464fa1c58e4b2b85f8c29",
+    "tests/test_native_sdk_adapters.py": "551d4fc69da11055713877ecfe8f83cfd62f302b6fd41f6061efe3d771dae979",
+    "tests/run_native_sdk_adapters.py": "6bcafe2cf6e43b2d09d31db0ec21495177ab7e85982e26b63df6fdd293faec66"
+  },
+  "sources_unchanged_during_run": true,
+  "tests_run": 39,
+  "passed": [
+    "test_native_sdk_adapters.LangChainNativeTests.test_completed_and_cancelled_replays_report_existing_status",
+    "test_native_sdk_adapters.LangChainNativeTests.test_email_drafts_never_send_and_reuse_native_identity",
+    "test_native_sdk_adapters.LangChainNativeTests.test_five_action_kinds_have_no_effect_until_host_commit",
+    "test_native_sdk_adapters.LangChainNativeTests.test_forged_host_fields_are_rejected_before_broker",
+    "test_native_sdk_adapters.LangChainNativeTests.test_missing_native_call_id_cannot_submit_proposals",
+    "test_native_sdk_adapters.LangChainNativeTests.test_model_supplied_call_id_cannot_override_native_call_id",
+    "test_native_sdk_adapters.LangChainNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter",
+    "test_native_sdk_adapters.LangChainNativeTests.test_native_read_send_and_persistent_data_restrictions",
+    "test_native_sdk_adapters.LangChainNativeTests.test_native_schema_exposes_only_content_fields",
+    "test_native_sdk_adapters.LangChainNativeTests.test_revocation_blocks_all_bound_tools",
+    "test_native_sdk_adapters.LangChainNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send",
+    "test_native_sdk_adapters.OpenAINativeTests.test_completed_and_cancelled_replays_report_existing_status",
+    "test_native_sdk_adapters.OpenAINativeTests.test_email_drafts_never_send_and_reuse_native_identity",
+    "test_native_sdk_adapters.OpenAINativeTests.test_five_action_kinds_have_no_effect_until_host_commit",
+    "test_native_sdk_adapters.OpenAINativeTests.test_forged_host_fields_are_rejected_before_broker",
+    "test_native_sdk_adapters.OpenAINativeTests.test_missing_native_call_id_cannot_submit_proposals",
+    "test_native_sdk_adapters.OpenAINativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter",
+    "test_native_sdk_adapters.OpenAINativeTests.test_native_read_send_and_persistent_data_restrictions",
+    "test_native_sdk_adapters.OpenAINativeTests.test_native_schema_exposes_only_content_fields",
+    "test_native_sdk_adapters.OpenAINativeTests.test_raw_function_tool_duplicate_keys_rejected_before_broker",
+    "test_native_sdk_adapters.OpenAINativeTests.test_revocation_blocks_all_bound_tools",
+    "test_native_sdk_adapters.OpenAINativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send",
+    "test_native_sdk_adapters.PydanticNativeTests.test_completed_and_cancelled_replays_report_existing_status",
+    "test_native_sdk_adapters.PydanticNativeTests.test_email_drafts_never_send_and_reuse_native_identity",
+    "test_native_sdk_adapters.PydanticNativeTests.test_five_action_kinds_have_no_effect_until_host_commit",
+    "test_native_sdk_adapters.PydanticNativeTests.test_forged_host_fields_are_rejected_before_broker",
+    "test_native_sdk_adapters.PydanticNativeTests.test_missing_native_call_id_cannot_submit_proposals",
+    "test_native_sdk_adapters.PydanticNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter",
+    "test_native_sdk_adapters.PydanticNativeTests.test_native_read_send_and_persistent_data_restrictions",
+    "test_native_sdk_adapters.PydanticNativeTests.test_native_schema_exposes_only_content_fields",
+    "test_native_sdk_adapters.PydanticNativeTests.test_revocation_blocks_all_bound_tools",
+    "test_native_sdk_adapters.PydanticNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send",
+    "test_native_tools_client.NativeClientTests.test_binding_is_explicit_and_never_reads_environment",
+    "test_native_tools_client.NativeClientTests.test_content_and_host_fields_are_separated_before_connecting",
+    "test_native_tools_client.NativeClientTests.test_form_pairs_are_copied_and_duplicate_names_rejected",
+    "test_native_tools_client.NativeClientTests.test_import_needs_no_optional_sdk",
+    "test_native_tools_client.NativeClientTests.test_proposal_identity_survives_reconstruction_but_separates_sessions_and_operations",
+    "test_native_tools_client.NativeClientTests.test_raw_json_rejects_duplicate_keys_and_nonobjects",
+    "test_native_tools_client.NativeClientTests.test_uncertain_transport_is_never_retried"
+  ],
+  "failures": [],
+  "errors": [],
+  "skipped": [],
+  "observations": [
+    {
+      "framework": "langchain",
+      "test": "test_completed_and_cancelled_replays_report_existing_status",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "committed-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:30.877876+00:00",
+            "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+            "finished_at": null,
+            "id": "7a86b40afa8f4dd28e98a14dee9e6b38",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:30.877876+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "committed-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": "2026-09-12T03:52:30.900763+00:00",
+            "attempt_id": "e064546d854441b3bf4ab022593ee9d1",
+            "created_at": "2026-09-12T03:52:30.877876+00:00",
+            "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+            "finished_at": "2026-09-12T03:52:30.904054+00:00",
+            "id": "7a86b40afa8f4dd28e98a14dee9e6b38",
+            "kind": "message",
+            "reason": "action_already_recorded",
+            "revision": 1,
+            "status": "acknowledged",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:30.904054+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "cancelled-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:30.951020+00:00",
+            "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+            "finished_at": null,
+            "id": "d272f96f7e4e4f3583e2afe2dfba7a5e",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:30.951020+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "cancelled-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:30.951020+00:00",
+            "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+            "finished_at": "2026-09-12T03:52:30.967319+00:00",
+            "id": "d272f96f7e4e4f3583e2afe2dfba7a5e",
+            "kind": "message",
+            "reason": "action_already_recorded",
+            "revision": 1,
+            "status": "cancelled",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:30.967319+00:00"
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/message",
+          "body": "{\"body\":\"SYNTHETIC-PRIVATE-PROPOSAL\"}"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:30.877876+00:00",
+          "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+          "finished_at": null,
+          "id": "7a86b40afa8f4dd28e98a14dee9e6b38",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_8c26f3f7e7e342e3a3faa259e4e0d738",
+          "time": "2026-09-12T03:52:30.880576+00:00",
+          "updated_at": "2026-09-12T03:52:30.877876+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": "2026-09-12T03:52:30.900763+00:00",
+          "attempt_id": "e064546d854441b3bf4ab022593ee9d1",
+          "created_at": "2026-09-12T03:52:30.877876+00:00",
+          "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+          "finished_at": "2026-09-12T03:52:30.904054+00:00",
+          "id": "7a86b40afa8f4dd28e98a14dee9e6b38",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_already_recorded",
+          "revision": 1,
+          "status": "acknowledged",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_8c26f3f7e7e342e3a3faa259e4e0d738",
+          "time": "2026-09-12T03:52:30.919072+00:00",
+          "updated_at": "2026-09-12T03:52:30.904054+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:30.951020+00:00",
+          "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+          "finished_at": null,
+          "id": "d272f96f7e4e4f3583e2afe2dfba7a5e",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_8c26f3f7e7e342e3a3faa259e4e0d738",
+          "time": "2026-09-12T03:52:30.952619+00:00",
+          "updated_at": "2026-09-12T03:52:30.951020+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:30.951020+00:00",
+          "digest": "50542b5ed998ced9572432bf254d6a5cbad96b3aa89da017e402138bb1b51496",
+          "finished_at": "2026-09-12T03:52:30.967319+00:00",
+          "id": "d272f96f7e4e4f3583e2afe2dfba7a5e",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_already_recorded",
+          "revision": 1,
+          "status": "cancelled",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_8c26f3f7e7e342e3a3faa259e4e0d738",
+          "time": "2026-09-12T03:52:30.982641+00:00",
+          "updated_at": "2026-09-12T03:52:30.967319+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "langchain",
+      "test": "test_email_drafts_never_send_and_reuse_native_identity",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "cfa2fe8c211e44d69d029e4ddec4b993",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "pending"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "cfa2fe8c211e44d69d029e4ddec4b993",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "pending"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "different content"
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "mail_request_conflict"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "cfa2fe8c211e44d69d029e4ddec4b993",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "cancelled"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "cfa2fe8c211e44d69d029e4ddec4b993",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "pending",
+          "task_id": "task_c8f5a599247d4a8ea7011edd1f1846d0",
+          "time": "2026-09-12T03:52:31.088762+00:00"
+        },
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "cfa2fe8c211e44d69d029e4ddec4b993",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "pending",
+          "task_id": "task_c8f5a599247d4a8ea7011edd1f1846d0",
+          "time": "2026-09-12T03:52:41.065856+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "draft_email",
+          "reason": "mail_request_conflict",
+          "task_id": "task_c8f5a599247d4a8ea7011edd1f1846d0",
+          "time": "2026-09-12T03:52:41.099297+00:00"
+        },
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "cfa2fe8c211e44d69d029e4ddec4b993",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "cancelled",
+          "task_id": "task_c8f5a599247d4a8ea7011edd1f1846d0",
+          "time": "2026-09-12T03:52:41.128605+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "langchain",
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-0",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:41.224700+00:00",
+            "digest": "c720c8f8db0990f81aa17d31c778aaddb213e0198077adfdf7967fbe8a155efb",
+            "finished_at": null,
+            "id": "aa1b411f1521426fa8a491c126b37e23",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:41.224700+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-1",
+          "arguments": {
+            "proposal": {
+              "kind": "upload",
+              "target_id": "upload",
+              "payload": {
+                "filename": "fixture.txt",
+                "content": "synthetic upload"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:41.257164+00:00",
+            "digest": "f6b613fb1c40bb3c64f83f13b279588dac9ee4d7da9d5652d915e4f6fa816c66",
+            "finished_at": null,
+            "id": "b4ff0da9f7d94c2488aa1d0afd6e75b6",
+            "kind": "upload",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "upload",
+            "target_label": "Fixture upload",
+            "updated_at": "2026-09-12T03:52:41.257164+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-2",
+          "arguments": {
+            "proposal": {
+              "kind": "form",
+              "target_id": "form",
+              "payload": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "value": "Fixture"
+                  },
+                  {
+                    "name": "note",
+                    "value": "synthetic form"
+                  }
+                ]
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:30.840559+00:00",
+            "digest": "36cf2bf57f8a3204825a353f4f36436845f1aa4fdb8ad33028dfb1c1b012e717",
+            "finished_at": null,
+            "id": "b8a0e8f2a5b5477cb4b684c69e02a333",
+            "kind": "form",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "form",
+            "target_label": "Fixture form",
+            "updated_at": "2026-09-12T03:52:30.840559+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-3",
+          "arguments": {
+            "proposal": {
+              "kind": "overwrite",
+              "target_id": "replace",
+              "payload": {
+                "content": "synthetic replacement"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:30.874156+00:00",
+            "digest": "19b8e8a64e389499ba70a84bd156747099e9c7325e7ea9ddc74867279ce92c17",
+            "finished_at": null,
+            "id": "10884d9a7ca741b99bd603118210860d",
+            "kind": "overwrite",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "replace",
+            "target_label": "Fixture report",
+            "updated_at": "2026-09-12T03:52:30.874156+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-4",
+          "arguments": {
+            "proposal": {
+              "kind": "delete",
+              "target_id": "remove",
+              "payload": {}
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:30.903487+00:00",
+            "digest": "6df956abccd51d3c7ed3b293cb1dbe1572de1733302facdac4e5b6d8e301a0ba",
+            "finished_at": null,
+            "id": "ba090fa978bd4b91a7896bb1a9243f9a",
+            "kind": "delete",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "remove",
+            "target_label": "Fixture deletion",
+            "updated_at": "2026-09-12T03:52:30.903487+00:00"
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/message",
+          "body": "{\"body\":\"SYNTHETIC-PRIVATE-PROPOSAL\"}"
+        },
+        {
+          "path": "/upload",
+          "body": "--Yuanxingmu_006627904ae54d619e894ca79273ed1e\r\nContent-Disposition: form-data; name=\"file\"; filename=\"fixture.txt\"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nsynthetic upload\r\n--Yuanxingmu_006627904ae54d619e894ca79273ed1e--\r\n"
+        },
+        {
+          "path": "/form",
+          "body": "name=Fixture&note=synthetic+form"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "fixture_http_receiver",
+        "fixture_http_receiver"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:41.224700+00:00",
+          "digest": "c720c8f8db0990f81aa17d31c778aaddb213e0198077adfdf7967fbe8a155efb",
+          "finished_at": null,
+          "id": "aa1b411f1521426fa8a491c126b37e23",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_08b38f9b92894f0a9d62dcd591576eef",
+          "time": "2026-09-12T03:52:41.226216+00:00",
+          "updated_at": "2026-09-12T03:52:41.224700+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:41.257164+00:00",
+          "digest": "f6b613fb1c40bb3c64f83f13b279588dac9ee4d7da9d5652d915e4f6fa816c66",
+          "finished_at": null,
+          "id": "b4ff0da9f7d94c2488aa1d0afd6e75b6",
+          "kind": "upload",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "upload",
+          "target_label": "Fixture upload",
+          "task_id": "task_08b38f9b92894f0a9d62dcd591576eef",
+          "time": "2026-09-12T03:52:41.258868+00:00",
+          "updated_at": "2026-09-12T03:52:41.257164+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:30.840559+00:00",
+          "digest": "36cf2bf57f8a3204825a353f4f36436845f1aa4fdb8ad33028dfb1c1b012e717",
+          "finished_at": null,
+          "id": "b8a0e8f2a5b5477cb4b684c69e02a333",
+          "kind": "form",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "form",
+          "target_label": "Fixture form",
+          "task_id": "task_08b38f9b92894f0a9d62dcd591576eef",
+          "time": "2026-09-12T03:52:30.844312+00:00",
+          "updated_at": "2026-09-12T03:52:30.840559+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:30.874156+00:00",
+          "digest": "19b8e8a64e389499ba70a84bd156747099e9c7325e7ea9ddc74867279ce92c17",
+          "finished_at": null,
+          "id": "10884d9a7ca741b99bd603118210860d",
+          "kind": "overwrite",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "replace",
+          "target_label": "Fixture report",
+          "task_id": "task_08b38f9b92894f0a9d62dcd591576eef",
+          "time": "2026-09-12T03:52:30.875578+00:00",
+          "updated_at": "2026-09-12T03:52:30.874156+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:30.903487+00:00",
+          "digest": "6df956abccd51d3c7ed3b293cb1dbe1572de1733302facdac4e5b6d8e301a0ba",
+          "finished_at": null,
+          "id": "ba090fa978bd4b91a7896bb1a9243f9a",
+          "kind": "delete",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "remove",
+          "target_label": "Fixture deletion",
+          "task_id": "task_08b38f9b92894f0a9d62dcd591576eef",
+          "time": "2026-09-12T03:52:30.905107+00:00",
+          "updated_at": "2026-09-12T03:52:30.903487+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "langchain",
+      "test": "test_forged_host_fields_are_rejected_before_broker",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "socket_path": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "session_id": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "task_id": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "url": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "headers": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "credentials": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "confirm": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "approved": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "request_key": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL",
+                "url": "http://127.0.0.1:33836/wrong"
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b",
+              "account_id": "forged"
+            }
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        },
+        {
+          "operation": "read",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "resource": 123
+          },
+          "rejected_by_adapter_or_sdk": "NativeRejected"
+        }
+      ],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "langchain",
+      "test": "test_missing_native_call_id_cannot_submit_proposals",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": null,
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": null,
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b"
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        }
+      ],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "langchain",
+      "test": "test_model_supplied_call_id_cannot_override_native_call_id",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "actual-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            },
+            "tool_call_id": "forged-model-value"
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:31.419231+00:00",
+            "digest": "b0f718f38afef09f26610eb6ab60d2e593569bef0f5936ff774656b2a46fa013",
+            "finished_at": null,
+            "id": "cf9e7fbb87aa48ae89d101e7b07e0ef5",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:31.419231+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "actual-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:31.419231+00:00",
+            "digest": "b0f718f38afef09f26610eb6ab60d2e593569bef0f5936ff774656b2a46fa013",
+            "finished_at": null,
+            "id": "cf9e7fbb87aa48ae89d101e7b07e0ef5",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:31.419231+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "forged-model-value",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:31.484777+00:00",
+            "digest": "b0f718f38afef09f26610eb6ab60d2e593569bef0f5936ff774656b2a46fa013",
+            "finished_at": null,
+            "id": "85b0ba4c00d84437a4a5be46deacdd62",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:31.484777+00:00"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:31.419231+00:00",
+          "digest": "b0f718f38afef09f26610eb6ab60d2e593569bef0f5936ff774656b2a46fa013",
+          "finished_at": null,
+          "id": "cf9e7fbb87aa48ae89d101e7b07e0ef5",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_2df2b938706c45e88501c3534aecc3cb",
+          "time": "2026-09-12T03:52:31.420777+00:00",
+          "updated_at": "2026-09-12T03:52:31.419231+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:31.419231+00:00",
+          "digest": "b0f718f38afef09f26610eb6ab60d2e593569bef0f5936ff774656b2a46fa013",
+          "finished_at": null,
+          "id": "cf9e7fbb87aa48ae89d101e7b07e0ef5",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_2df2b938706c45e88501c3534aecc3cb",
+          "time": "2026-09-12T03:52:31.452687+00:00",
+          "updated_at": "2026-09-12T03:52:31.419231+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:31.484777+00:00",
+          "digest": "b0f718f38afef09f26610eb6ab60d2e593569bef0f5936ff774656b2a46fa013",
+          "finished_at": null,
+          "id": "85b0ba4c00d84437a4a5be46deacdd62",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_2df2b938706c45e88501c3534aecc3cb",
+          "time": "2026-09-12T03:52:31.486733+00:00",
+          "updated_at": "2026-09-12T03:52:31.484777+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "langchain",
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:31.588518+00:00",
+            "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+            "finished_at": null,
+            "id": "6a7b2410dad749838ce4edaa96e3476c",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:31.588518+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:31.588518+00:00",
+            "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+            "finished_at": null,
+            "id": "6a7b2410dad749838ce4edaa96e3476c",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:31.588518+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "different content"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "action_request_conflict"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "another-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:31.690142+00:00",
+            "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+            "finished_at": null,
+            "id": "fa6bd05b7a52490bb5c2a737b5c1436c",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:31.690142+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:31.729810+00:00",
+            "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+            "finished_at": null,
+            "id": "e64902a10d224337a74199724dfa021d",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:31.729810+00:00"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:31.588518+00:00",
+          "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+          "finished_at": null,
+          "id": "6a7b2410dad749838ce4edaa96e3476c",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3867a1aa04854b2499dcd5870131b8c9",
+          "time": "2026-09-12T03:52:31.590137+00:00",
+          "updated_at": "2026-09-12T03:52:31.588518+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:31.588518+00:00",
+          "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+          "finished_at": null,
+          "id": "6a7b2410dad749838ce4edaa96e3476c",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3867a1aa04854b2499dcd5870131b8c9",
+          "time": "2026-09-12T03:52:31.624763+00:00",
+          "updated_at": "2026-09-12T03:52:31.588518+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "action_request_conflict",
+          "task_id": "task_3867a1aa04854b2499dcd5870131b8c9",
+          "time": "2026-09-12T03:52:31.658750+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:31.690142+00:00",
+          "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+          "finished_at": null,
+          "id": "fa6bd05b7a52490bb5c2a737b5c1436c",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3867a1aa04854b2499dcd5870131b8c9",
+          "time": "2026-09-12T03:52:31.691767+00:00",
+          "updated_at": "2026-09-12T03:52:31.690142+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:31.729810+00:00",
+          "digest": "8072886318782512419325cc846dca2bc5b3c69ce131308d95965054d0d6e6ea",
+          "finished_at": null,
+          "id": "e64902a10d224337a74199724dfa021d",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3867a1aa04854b2499dcd5870131b8c9",
+          "time": "2026-09-12T03:52:31.731550+00:00",
+          "updated_at": "2026-09-12T03:52:31.729810+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "langchain",
+      "test": "test_native_read_send_and_persistent_data_restrictions",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "public-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic public output"
+          },
+          "result": {
+            "allowed": true,
+            "blocked_labels": [],
+            "destination_id": "public",
+            "event_id": 2,
+            "http_status": 200,
+            "labels": [],
+            "outcome": "acknowledged",
+            "reason": "send_authorized",
+            "request_id": "60c8d1483c104039a7ba6c1c128993d9",
+            "revision": 0,
+            "task_id": "task_3159457c4f0746b497ff9fd43be45547"
+          }
+        },
+        {
+          "operation": "read",
+          "native_call_id": "read-call",
+          "arguments": {
+            "resource": "private"
+          },
+          "result": {
+            "allowed": true,
+            "content": "SYNTHETIC-PRIVATE-CONTENT",
+            "event_id": 3,
+            "labels": [
+              "internal"
+            ],
+            "reason": "read_authorized",
+            "resource_id": "private",
+            "resource_labels": [
+              "internal"
+            ],
+            "revision": 1,
+            "task_id": "task_3159457c4f0746b497ff9fd43be45547"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "denied-call",
+          "arguments": {
+            "destination": "public",
+            "body": "encoded or paraphrased output"
+          },
+          "result": {
+            "allowed": false,
+            "blocked_labels": [
+              "internal"
+            ],
+            "destination_id": "public",
+            "event_id": 4,
+            "labels": [
+              "internal"
+            ],
+            "reason": "destination_cannot_receive_labels",
+            "revision": 1,
+            "task_id": "task_3159457c4f0746b497ff9fd43be45547"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "internal-call",
+          "arguments": {
+            "destination": "internal",
+            "body": "synthetic internal output"
+          },
+          "result": {
+            "allowed": true,
+            "blocked_labels": [],
+            "destination_id": "internal",
+            "event_id": 5,
+            "http_status": 200,
+            "labels": [
+              "internal"
+            ],
+            "outcome": "acknowledged",
+            "reason": "send_authorized",
+            "request_id": "95e9e405029d4880bda16cb04d72949b",
+            "revision": 1,
+            "task_id": "task_3159457c4f0746b497ff9fd43be45547"
+          }
+        },
+        {
+          "operation": "describe",
+          "native_call_id": "native-call-1",
+          "arguments": {},
+          "result": {
+            "active": true,
+            "allowed": true,
+            "destinations": {
+              "internal": [
+                "internal"
+              ],
+              "public": []
+            },
+            "labels": [
+              "internal"
+            ],
+            "resources": {
+              "private": [
+                "internal"
+              ]
+            },
+            "revision": 1,
+            "revoked": false,
+            "task_id": "task_3159457c4f0746b497ff9fd43be45547"
+          }
+        },
+        {
+          "operation": "action_targets",
+          "native_call_id": "native-call-1",
+          "arguments": {},
+          "result": {
+            "allowed": true,
+            "targets": [
+              {
+                "form_fields": [],
+                "kind": "message",
+                "label": "Fixture chat",
+                "provider": "standard",
+                "target_id": "chat"
+              },
+              {
+                "form_fields": [
+                  "name",
+                  "note"
+                ],
+                "kind": "form",
+                "label": "Fixture form",
+                "provider": "standard",
+                "target_id": "form"
+              },
+              {
+                "form_fields": [],
+                "kind": "delete",
+                "label": "Fixture deletion",
+                "provider": "standard",
+                "target_id": "remove"
+              },
+              {
+                "form_fields": [],
+                "kind": "overwrite",
+                "label": "Fixture report",
+                "provider": "standard",
+                "target_id": "replace"
+              },
+              {
+                "form_fields": [],
+                "kind": "upload",
+                "label": "Fixture upload",
+                "provider": "standard",
+                "target_id": "upload"
+              }
+            ]
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/public",
+          "body": "{\"request_id\": \"60c8d1483c104039a7ba6c1c128993d9\", \"body\": \"synthetic public output\"}"
+        },
+        {
+          "path": "/internal",
+          "body": "{\"request_id\": \"95e9e405029d4880bda16cb04d72949b\", \"body\": \"synthetic internal output\"}"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "body_sha256": "b5a2185b0ad2c4e8b7e47d7899e3bece48e511028351366fb9e4ac503345b2ca",
+          "destination_id": "public",
+          "event_id": 2,
+          "labels": [],
+          "operation": "send_intent",
+          "reason": "send_authorized",
+          "request_id": "60c8d1483c104039a7ba6c1c128993d9",
+          "revision": 0,
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:31.833696+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "destination_id": "public",
+          "event_id": 2,
+          "http_status": 200,
+          "labels": [],
+          "operation": "send",
+          "outcome": "acknowledged",
+          "reason": "send_authorized",
+          "request_id": "60c8d1483c104039a7ba6c1c128993d9",
+          "revision": 0,
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:31.836639+00:00"
+        },
+        {
+          "allowed": true,
+          "event_id": 3,
+          "labels": [
+            "internal"
+          ],
+          "operation": "read",
+          "reason": "read_authorized",
+          "resource_id": "private",
+          "resource_labels": [
+            "internal"
+          ],
+          "revision": 1,
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:31.866704+00:00"
+        },
+        {
+          "allowed": false,
+          "blocked_labels": [
+            "internal"
+          ],
+          "destination_id": "public",
+          "event_id": 4,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send",
+          "reason": "destination_cannot_receive_labels",
+          "revision": 1,
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:31.899609+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "body_sha256": "7070e63cddd49657221205503e34711c3a7b984cb80be43a095d3eb7af62f495",
+          "destination_id": "internal",
+          "event_id": 5,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send_intent",
+          "reason": "send_authorized",
+          "request_id": "95e9e405029d4880bda16cb04d72949b",
+          "revision": 1,
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:31.934060+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "destination_id": "internal",
+          "event_id": 5,
+          "http_status": 200,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send",
+          "outcome": "acknowledged",
+          "reason": "send_authorized",
+          "request_id": "95e9e405029d4880bda16cb04d72949b",
+          "revision": 1,
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:31.937901+00:00"
+        },
+        {
+          "active": true,
+          "allowed": true,
+          "destinations": {
+            "internal": [
+              "internal"
+            ],
+            "public": []
+          },
+          "labels": [
+            "internal"
+          ],
+          "operation": "describe",
+          "resources": {
+            "private": [
+              "internal"
+            ]
+          },
+          "revision": 1,
+          "revoked": false,
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:31.968496+00:00"
+        },
+        {
+          "allowed": true,
+          "operation": "action_targets",
+          "targets": [
+            {
+              "form_fields": [],
+              "kind": "message",
+              "label": "Fixture chat",
+              "provider": "standard",
+              "target_id": "chat"
+            },
+            {
+              "form_fields": [
+                "name",
+                "note"
+              ],
+              "kind": "form",
+              "label": "Fixture form",
+              "provider": "standard",
+              "target_id": "form"
+            },
+            {
+              "form_fields": [],
+              "kind": "delete",
+              "label": "Fixture deletion",
+              "provider": "standard",
+              "target_id": "remove"
+            },
+            {
+              "form_fields": [],
+              "kind": "overwrite",
+              "label": "Fixture report",
+              "provider": "standard",
+              "target_id": "replace"
+            },
+            {
+              "form_fields": [],
+              "kind": "upload",
+              "label": "Fixture upload",
+              "provider": "standard",
+              "target_id": "upload"
+            }
+          ],
+          "task_id": "task_3159457c4f0746b497ff9fd43be45547",
+          "time": "2026-09-12T03:52:32.003106+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "langchain",
+      "test": "test_native_schema_exposes_only_content_fields",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "langchain",
+      "test": "test_revocation_blocks_all_bound_tools",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "read",
+          "native_call_id": "revoked-read",
+          "arguments": {
+            "resource": "private"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "revoked-send",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "describe",
+          "native_call_id": "revoked-describe",
+          "arguments": {},
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "action_targets",
+          "native_call_id": "revoked-action_targets",
+          "arguments": {},
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "revoked-propose_action",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "revoked-draft_email",
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b"
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": false,
+          "operation": "read",
+          "reason": "task_revoked",
+          "task_id": "task_cad1b71787c94ef6b97752d17b2741ba",
+          "time": "2026-09-12T03:52:32.192409+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "send",
+          "reason": "task_revoked",
+          "task_id": "task_cad1b71787c94ef6b97752d17b2741ba",
+          "time": "2026-09-12T03:52:32.225614+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "describe",
+          "reason": "task_revoked",
+          "task_id": "task_cad1b71787c94ef6b97752d17b2741ba",
+          "time": "2026-09-12T03:52:32.256901+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "action_targets",
+          "reason": "task_revoked",
+          "task_id": "task_cad1b71787c94ef6b97752d17b2741ba",
+          "time": "2026-09-12T03:52:32.288634+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "task_revoked",
+          "task_id": "task_cad1b71787c94ef6b97752d17b2741ba",
+          "time": "2026-09-12T03:52:32.322214+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "draft_email",
+          "reason": "task_revoked",
+          "task_id": "task_cad1b71787c94ef6b97752d17b2741ba",
+          "time": "2026-09-12T03:52:32.355492+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "langchain",
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "yuanxingmu.adapters.langchain._ClosedStructuredTool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "native-call-1",
+          "arguments": {
+            "destination": "http://127.0.0.1:34046/arbitrary",
+            "body": "synthetic"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "unknown_destination"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "native-call-1",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "not-registered",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "action_target_not_allowed"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "proposal": {
+              "kind": "form",
+              "target_id": "form",
+              "payload": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "value": "one"
+                  },
+                  {
+                    "name": "name",
+                    "value": "two"
+                  }
+                ]
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": false,
+          "operation": "send",
+          "reason": "unknown_destination",
+          "task_id": "task_336eb7f1e5944bcca0fb3d9abc90a8c4",
+          "time": "2026-09-12T03:52:32.452573+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "action_target_not_allowed",
+          "task_id": "task_336eb7f1e5944bcca0fb3d9abc90a8c4",
+          "time": "2026-09-12T03:52:32.486208+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_completed_and_cancelled_replays_report_existing_status",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "committed-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.032391+00:00",
+            "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+            "finished_at": null,
+            "id": "578a1357079f4902addea3171290b757",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.032391+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "committed-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": "2026-09-12T03:52:34.041977+00:00",
+            "attempt_id": "3203a8e7fb3c40ac9052ef03227befe0",
+            "created_at": "2026-09-12T03:52:34.032391+00:00",
+            "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+            "finished_at": "2026-09-12T03:52:34.045194+00:00",
+            "id": "578a1357079f4902addea3171290b757",
+            "kind": "message",
+            "reason": "action_already_recorded",
+            "revision": 1,
+            "status": "acknowledged",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.045194+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "cancelled-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.056040+00:00",
+            "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+            "finished_at": null,
+            "id": "3a685ab3ac1f433b8c1da2f3ac398df6",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.056040+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "cancelled-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.056040+00:00",
+            "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+            "finished_at": "2026-09-12T03:52:34.062686+00:00",
+            "id": "3a685ab3ac1f433b8c1da2f3ac398df6",
+            "kind": "message",
+            "reason": "action_already_recorded",
+            "revision": 1,
+            "status": "cancelled",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.062686+00:00"
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/message",
+          "body": "{\"body\":\"SYNTHETIC-PRIVATE-PROPOSAL\"}"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.032391+00:00",
+          "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+          "finished_at": null,
+          "id": "578a1357079f4902addea3171290b757",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3cf4b6f2490f43599644937ad31036d6",
+          "time": "2026-09-12T03:52:34.034039+00:00",
+          "updated_at": "2026-09-12T03:52:34.032391+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": "2026-09-12T03:52:34.041977+00:00",
+          "attempt_id": "3203a8e7fb3c40ac9052ef03227befe0",
+          "created_at": "2026-09-12T03:52:34.032391+00:00",
+          "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+          "finished_at": "2026-09-12T03:52:34.045194+00:00",
+          "id": "578a1357079f4902addea3171290b757",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_already_recorded",
+          "revision": 1,
+          "status": "acknowledged",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3cf4b6f2490f43599644937ad31036d6",
+          "time": "2026-09-12T03:52:34.047450+00:00",
+          "updated_at": "2026-09-12T03:52:34.045194+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.056040+00:00",
+          "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+          "finished_at": null,
+          "id": "3a685ab3ac1f433b8c1da2f3ac398df6",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3cf4b6f2490f43599644937ad31036d6",
+          "time": "2026-09-12T03:52:34.057518+00:00",
+          "updated_at": "2026-09-12T03:52:34.056040+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.056040+00:00",
+          "digest": "32692ccef6586e04568039291a1b4eb317b62286b1bc39b20dfb9109e13ebc45",
+          "finished_at": "2026-09-12T03:52:34.062686+00:00",
+          "id": "3a685ab3ac1f433b8c1da2f3ac398df6",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_already_recorded",
+          "revision": 1,
+          "status": "cancelled",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_3cf4b6f2490f43599644937ad31036d6",
+          "time": "2026-09-12T03:52:34.064785+00:00",
+          "updated_at": "2026-09-12T03:52:34.062686+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_email_drafts_never_send_and_reuse_native_identity",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "e35d5c52c1f643d8acb3b12818035544",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "pending"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "e35d5c52c1f643d8acb3b12818035544",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "pending"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "different content"
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "mail_request_conflict"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "e35d5c52c1f643d8acb3b12818035544",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "cancelled"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "e35d5c52c1f643d8acb3b12818035544",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "pending",
+          "task_id": "task_3ef2031e6f8b40638a7df6361ff5aa20",
+          "time": "2026-09-12T03:52:34.147275+00:00"
+        },
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "e35d5c52c1f643d8acb3b12818035544",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "pending",
+          "task_id": "task_3ef2031e6f8b40638a7df6361ff5aa20",
+          "time": "2026-09-12T03:52:34.153703+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "draft_email",
+          "reason": "mail_request_conflict",
+          "task_id": "task_3ef2031e6f8b40638a7df6361ff5aa20",
+          "time": "2026-09-12T03:52:34.162493+00:00"
+        },
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "e35d5c52c1f643d8acb3b12818035544",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "cancelled",
+          "task_id": "task_3ef2031e6f8b40638a7df6361ff5aa20",
+          "time": "2026-09-12T03:52:34.171021+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-0",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.256612+00:00",
+            "digest": "d4488ad91b95c55111c935e0737a64a11c487f8082f525c62c38f2349941bd0a",
+            "finished_at": null,
+            "id": "f1a0bc9157b143c39e3edcbec9957b68",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.256612+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-1",
+          "arguments": {
+            "proposal": {
+              "kind": "upload",
+              "target_id": "upload",
+              "payload": {
+                "filename": "fixture.txt",
+                "content": "synthetic upload"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.264562+00:00",
+            "digest": "7fbfd44a2a32efaac346d32dff0eb6baad6b30965e09485d7aa19c1f2f138e6b",
+            "finished_at": null,
+            "id": "7daeba0c8489486aaa811a23c85b97b8",
+            "kind": "upload",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "upload",
+            "target_label": "Fixture upload",
+            "updated_at": "2026-09-12T03:52:34.264562+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-2",
+          "arguments": {
+            "proposal": {
+              "kind": "form",
+              "target_id": "form",
+              "payload": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "value": "Fixture"
+                  },
+                  {
+                    "name": "note",
+                    "value": "synthetic form"
+                  }
+                ]
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.273380+00:00",
+            "digest": "881f9e773f7f5e98e57f813156220c2c336cf4327033d63ad91fdc2350942f67",
+            "finished_at": null,
+            "id": "a9d4657808f4453a892c42a636f392d9",
+            "kind": "form",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "form",
+            "target_label": "Fixture form",
+            "updated_at": "2026-09-12T03:52:34.273380+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-3",
+          "arguments": {
+            "proposal": {
+              "kind": "overwrite",
+              "target_id": "replace",
+              "payload": {
+                "content": "synthetic replacement"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.280953+00:00",
+            "digest": "b008cc77e24d8966918521e5d83af822b5010779f3b979ec5165cca95d2b5f2c",
+            "finished_at": null,
+            "id": "b30c3c3c306844dd9c41c753347279f5",
+            "kind": "overwrite",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "replace",
+            "target_label": "Fixture report",
+            "updated_at": "2026-09-12T03:52:34.280953+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-4",
+          "arguments": {
+            "proposal": {
+              "kind": "delete",
+              "target_id": "remove",
+              "payload": {}
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.288687+00:00",
+            "digest": "b4ebd8889d0a8fb83c475b310fa9fc07a2e414af980950e3b5fa73a3829fb5e5",
+            "finished_at": null,
+            "id": "fbd4a588b39c46cba8049c8b3f436839",
+            "kind": "delete",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "remove",
+            "target_label": "Fixture deletion",
+            "updated_at": "2026-09-12T03:52:34.288687+00:00"
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/message",
+          "body": "{\"body\":\"SYNTHETIC-PRIVATE-PROPOSAL\"}"
+        },
+        {
+          "path": "/upload",
+          "body": "--Yuanxingmu_3cd1fbf6c8ae4f3f9f7c57b36e01b7c6\r\nContent-Disposition: form-data; name=\"file\"; filename=\"fixture.txt\"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nsynthetic upload\r\n--Yuanxingmu_3cd1fbf6c8ae4f3f9f7c57b36e01b7c6--\r\n"
+        },
+        {
+          "path": "/form",
+          "body": "name=Fixture&note=synthetic+form"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "fixture_http_receiver",
+        "fixture_http_receiver"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.256612+00:00",
+          "digest": "d4488ad91b95c55111c935e0737a64a11c487f8082f525c62c38f2349941bd0a",
+          "finished_at": null,
+          "id": "f1a0bc9157b143c39e3edcbec9957b68",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_6c0dc95db90249d393d1feeb32f84a81",
+          "time": "2026-09-12T03:52:34.258085+00:00",
+          "updated_at": "2026-09-12T03:52:34.256612+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.264562+00:00",
+          "digest": "7fbfd44a2a32efaac346d32dff0eb6baad6b30965e09485d7aa19c1f2f138e6b",
+          "finished_at": null,
+          "id": "7daeba0c8489486aaa811a23c85b97b8",
+          "kind": "upload",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "upload",
+          "target_label": "Fixture upload",
+          "task_id": "task_6c0dc95db90249d393d1feeb32f84a81",
+          "time": "2026-09-12T03:52:34.265871+00:00",
+          "updated_at": "2026-09-12T03:52:34.264562+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.273380+00:00",
+          "digest": "881f9e773f7f5e98e57f813156220c2c336cf4327033d63ad91fdc2350942f67",
+          "finished_at": null,
+          "id": "a9d4657808f4453a892c42a636f392d9",
+          "kind": "form",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "form",
+          "target_label": "Fixture form",
+          "task_id": "task_6c0dc95db90249d393d1feeb32f84a81",
+          "time": "2026-09-12T03:52:34.274774+00:00",
+          "updated_at": "2026-09-12T03:52:34.273380+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.280953+00:00",
+          "digest": "b008cc77e24d8966918521e5d83af822b5010779f3b979ec5165cca95d2b5f2c",
+          "finished_at": null,
+          "id": "b30c3c3c306844dd9c41c753347279f5",
+          "kind": "overwrite",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "replace",
+          "target_label": "Fixture report",
+          "task_id": "task_6c0dc95db90249d393d1feeb32f84a81",
+          "time": "2026-09-12T03:52:34.282219+00:00",
+          "updated_at": "2026-09-12T03:52:34.280953+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.288687+00:00",
+          "digest": "b4ebd8889d0a8fb83c475b310fa9fc07a2e414af980950e3b5fa73a3829fb5e5",
+          "finished_at": null,
+          "id": "fbd4a588b39c46cba8049c8b3f436839",
+          "kind": "delete",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "remove",
+          "target_label": "Fixture deletion",
+          "task_id": "task_6c0dc95db90249d393d1feeb32f84a81",
+          "time": "2026-09-12T03:52:34.289913+00:00",
+          "updated_at": "2026-09-12T03:52:34.288687+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_forged_host_fields_are_rejected_before_broker",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "socket_path": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "session_id": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "task_id": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "url": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "headers": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "credentials": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "confirm": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "approved": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "request_key": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL",
+                "url": "http://127.0.0.1:35716/wrong"
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b",
+              "account_id": "forged"
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "read",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "resource": 123
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        }
+      ],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_missing_native_call_id_cannot_submit_proposals",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": null,
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": null,
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b"
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        }
+      ],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.538356+00:00",
+            "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+            "finished_at": null,
+            "id": "7e435d560f404b88a0bdbf4c21f129bb",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.538356+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.538356+00:00",
+            "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+            "finished_at": null,
+            "id": "7e435d560f404b88a0bdbf4c21f129bb",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.538356+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "different content"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "action_request_conflict"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "another-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.565603+00:00",
+            "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+            "finished_at": null,
+            "id": "d8a1748ba1ba4ec6ae1314d5501fec59",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.565603+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:34.577138+00:00",
+            "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+            "finished_at": null,
+            "id": "dfd30863b03b4005862a137f6f4cd9f0",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:34.577138+00:00"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.538356+00:00",
+          "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+          "finished_at": null,
+          "id": "7e435d560f404b88a0bdbf4c21f129bb",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_b07b3fe6fc284470b185dcd41d132883",
+          "time": "2026-09-12T03:52:34.539876+00:00",
+          "updated_at": "2026-09-12T03:52:34.538356+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.538356+00:00",
+          "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+          "finished_at": null,
+          "id": "7e435d560f404b88a0bdbf4c21f129bb",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_b07b3fe6fc284470b185dcd41d132883",
+          "time": "2026-09-12T03:52:34.549166+00:00",
+          "updated_at": "2026-09-12T03:52:34.538356+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "action_request_conflict",
+          "task_id": "task_b07b3fe6fc284470b185dcd41d132883",
+          "time": "2026-09-12T03:52:34.559129+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.565603+00:00",
+          "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+          "finished_at": null,
+          "id": "d8a1748ba1ba4ec6ae1314d5501fec59",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_b07b3fe6fc284470b185dcd41d132883",
+          "time": "2026-09-12T03:52:34.567131+00:00",
+          "updated_at": "2026-09-12T03:52:34.565603+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:34.577138+00:00",
+          "digest": "460a2e5444bf3d24046ced375e2326b267b7e7ce495478601cb36eb1565bc5db",
+          "finished_at": null,
+          "id": "dfd30863b03b4005862a137f6f4cd9f0",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_b07b3fe6fc284470b185dcd41d132883",
+          "time": "2026-09-12T03:52:34.578575+00:00",
+          "updated_at": "2026-09-12T03:52:34.577138+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_native_read_send_and_persistent_data_restrictions",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "public-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic public output"
+          },
+          "result": {
+            "allowed": true,
+            "blocked_labels": [],
+            "destination_id": "public",
+            "event_id": 2,
+            "http_status": 200,
+            "labels": [],
+            "outcome": "acknowledged",
+            "reason": "send_authorized",
+            "request_id": "0a312c46a733497a8baa33742ebac58b",
+            "revision": 0,
+            "task_id": "task_6617488d79774ae69faa2692afdd2f20"
+          }
+        },
+        {
+          "operation": "read",
+          "native_call_id": "read-call",
+          "arguments": {
+            "resource": "private"
+          },
+          "result": {
+            "allowed": true,
+            "content": "SYNTHETIC-PRIVATE-CONTENT",
+            "event_id": 3,
+            "labels": [
+              "internal"
+            ],
+            "reason": "read_authorized",
+            "resource_id": "private",
+            "resource_labels": [
+              "internal"
+            ],
+            "revision": 1,
+            "task_id": "task_6617488d79774ae69faa2692afdd2f20"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "denied-call",
+          "arguments": {
+            "destination": "public",
+            "body": "encoded or paraphrased output"
+          },
+          "result": {
+            "allowed": false,
+            "blocked_labels": [
+              "internal"
+            ],
+            "destination_id": "public",
+            "event_id": 4,
+            "labels": [
+              "internal"
+            ],
+            "reason": "destination_cannot_receive_labels",
+            "revision": 1,
+            "task_id": "task_6617488d79774ae69faa2692afdd2f20"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "internal-call",
+          "arguments": {
+            "destination": "internal",
+            "body": "synthetic internal output"
+          },
+          "result": {
+            "allowed": true,
+            "blocked_labels": [],
+            "destination_id": "internal",
+            "event_id": 5,
+            "http_status": 200,
+            "labels": [
+              "internal"
+            ],
+            "outcome": "acknowledged",
+            "reason": "send_authorized",
+            "request_id": "336caf969126481788a451b6bef7837d",
+            "revision": 1,
+            "task_id": "task_6617488d79774ae69faa2692afdd2f20"
+          }
+        },
+        {
+          "operation": "describe",
+          "native_call_id": "native-call-1",
+          "arguments": {},
+          "result": {
+            "active": true,
+            "allowed": true,
+            "destinations": {
+              "internal": [
+                "internal"
+              ],
+              "public": []
+            },
+            "labels": [
+              "internal"
+            ],
+            "resources": {
+              "private": [
+                "internal"
+              ]
+            },
+            "revision": 1,
+            "revoked": false,
+            "task_id": "task_6617488d79774ae69faa2692afdd2f20"
+          }
+        },
+        {
+          "operation": "action_targets",
+          "native_call_id": "native-call-1",
+          "arguments": {},
+          "result": {
+            "allowed": true,
+            "targets": [
+              {
+                "form_fields": [],
+                "kind": "message",
+                "label": "Fixture chat",
+                "provider": "standard",
+                "target_id": "chat"
+              },
+              {
+                "form_fields": [
+                  "name",
+                  "note"
+                ],
+                "kind": "form",
+                "label": "Fixture form",
+                "provider": "standard",
+                "target_id": "form"
+              },
+              {
+                "form_fields": [],
+                "kind": "delete",
+                "label": "Fixture deletion",
+                "provider": "standard",
+                "target_id": "remove"
+              },
+              {
+                "form_fields": [],
+                "kind": "overwrite",
+                "label": "Fixture report",
+                "provider": "standard",
+                "target_id": "replace"
+              },
+              {
+                "form_fields": [],
+                "kind": "upload",
+                "label": "Fixture upload",
+                "provider": "standard",
+                "target_id": "upload"
+              }
+            ]
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/public",
+          "body": "{\"request_id\": \"0a312c46a733497a8baa33742ebac58b\", \"body\": \"synthetic public output\"}"
+        },
+        {
+          "path": "/internal",
+          "body": "{\"request_id\": \"336caf969126481788a451b6bef7837d\", \"body\": \"synthetic internal output\"}"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "body_sha256": "b5a2185b0ad2c4e8b7e47d7899e3bece48e511028351366fb9e4ac503345b2ca",
+          "destination_id": "public",
+          "event_id": 2,
+          "labels": [],
+          "operation": "send_intent",
+          "reason": "send_authorized",
+          "request_id": "0a312c46a733497a8baa33742ebac58b",
+          "revision": 0,
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.666108+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "destination_id": "public",
+          "event_id": 2,
+          "http_status": 200,
+          "labels": [],
+          "operation": "send",
+          "outcome": "acknowledged",
+          "reason": "send_authorized",
+          "request_id": "0a312c46a733497a8baa33742ebac58b",
+          "revision": 0,
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.668587+00:00"
+        },
+        {
+          "allowed": true,
+          "event_id": 3,
+          "labels": [
+            "internal"
+          ],
+          "operation": "read",
+          "reason": "read_authorized",
+          "resource_id": "private",
+          "resource_labels": [
+            "internal"
+          ],
+          "revision": 1,
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.672081+00:00"
+        },
+        {
+          "allowed": false,
+          "blocked_labels": [
+            "internal"
+          ],
+          "destination_id": "public",
+          "event_id": 4,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send",
+          "reason": "destination_cannot_receive_labels",
+          "revision": 1,
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.680394+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "body_sha256": "7070e63cddd49657221205503e34711c3a7b984cb80be43a095d3eb7af62f495",
+          "destination_id": "internal",
+          "event_id": 5,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send_intent",
+          "reason": "send_authorized",
+          "request_id": "336caf969126481788a451b6bef7837d",
+          "revision": 1,
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.688474+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "destination_id": "internal",
+          "event_id": 5,
+          "http_status": 200,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send",
+          "outcome": "acknowledged",
+          "reason": "send_authorized",
+          "request_id": "336caf969126481788a451b6bef7837d",
+          "revision": 1,
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.690957+00:00"
+        },
+        {
+          "active": true,
+          "allowed": true,
+          "destinations": {
+            "internal": [
+              "internal"
+            ],
+            "public": []
+          },
+          "labels": [
+            "internal"
+          ],
+          "operation": "describe",
+          "resources": {
+            "private": [
+              "internal"
+            ]
+          },
+          "revision": 1,
+          "revoked": false,
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.693269+00:00"
+        },
+        {
+          "allowed": true,
+          "operation": "action_targets",
+          "targets": [
+            {
+              "form_fields": [],
+              "kind": "message",
+              "label": "Fixture chat",
+              "provider": "standard",
+              "target_id": "chat"
+            },
+            {
+              "form_fields": [
+                "name",
+                "note"
+              ],
+              "kind": "form",
+              "label": "Fixture form",
+              "provider": "standard",
+              "target_id": "form"
+            },
+            {
+              "form_fields": [],
+              "kind": "delete",
+              "label": "Fixture deletion",
+              "provider": "standard",
+              "target_id": "remove"
+            },
+            {
+              "form_fields": [],
+              "kind": "overwrite",
+              "label": "Fixture report",
+              "provider": "standard",
+              "target_id": "replace"
+            },
+            {
+              "form_fields": [],
+              "kind": "upload",
+              "label": "Fixture upload",
+              "provider": "standard",
+              "target_id": "upload"
+            }
+          ],
+          "task_id": "task_6617488d79774ae69faa2692afdd2f20",
+          "time": "2026-09-12T03:52:34.701767+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_native_schema_exposes_only_content_fields",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_raw_function_tool_duplicate_keys_rejected_before_broker",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_revocation_blocks_all_bound_tools",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "read",
+          "native_call_id": "revoked-read",
+          "arguments": {
+            "resource": "private"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "revoked-send",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "describe",
+          "native_call_id": "revoked-describe",
+          "arguments": {},
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "action_targets",
+          "native_call_id": "revoked-action_targets",
+          "arguments": {},
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "revoked-propose_action",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "revoked-draft_email",
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b"
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": false,
+          "operation": "read",
+          "reason": "task_revoked",
+          "task_id": "task_32da2dc0f7004306b9c79c2ae7b4b6b2",
+          "time": "2026-09-12T03:52:34.945362+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "send",
+          "reason": "task_revoked",
+          "task_id": "task_32da2dc0f7004306b9c79c2ae7b4b6b2",
+          "time": "2026-09-12T03:52:34.953634+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "describe",
+          "reason": "task_revoked",
+          "task_id": "task_32da2dc0f7004306b9c79c2ae7b4b6b2",
+          "time": "2026-09-12T03:52:34.960567+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "action_targets",
+          "reason": "task_revoked",
+          "task_id": "task_32da2dc0f7004306b9c79c2ae7b4b6b2",
+          "time": "2026-09-12T03:52:34.968466+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "task_revoked",
+          "task_id": "task_32da2dc0f7004306b9c79c2ae7b4b6b2",
+          "time": "2026-09-12T03:52:34.976914+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "draft_email",
+          "reason": "task_revoked",
+          "task_id": "task_32da2dc0f7004306b9c79c2ae7b4b6b2",
+          "time": "2026-09-12T03:52:34.986011+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "openai_agents",
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "agents.tool.FunctionTool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "agents.tool.FunctionTool"
+        }
+      ],
+      "schema_sha256": "d82c22c9e1fba320bf684d1313f7ae4f306ed490b6c04c43d1130c0c17075020",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "native-call-1",
+          "arguments": {
+            "destination": "http://127.0.0.1:35096/arbitrary",
+            "body": "synthetic"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "unknown_destination"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "native-call-1",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "not-registered",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "action_target_not_allowed"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "proposal": {
+              "kind": "form",
+              "target_id": "form",
+              "payload": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "value": "one"
+                  },
+                  {
+                    "name": "name",
+                    "value": "two"
+                  }
+                ]
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": false,
+          "operation": "send",
+          "reason": "unknown_destination",
+          "task_id": "task_4ad0999deee842559d688f3b8a2ed84b",
+          "time": "2026-09-12T03:52:35.067755+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "action_target_not_allowed",
+          "task_id": "task_4ad0999deee842559d688f3b8a2ed84b",
+          "time": "2026-09-12T03:52:35.077546+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_completed_and_cancelled_replays_report_existing_status",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "committed-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.379133+00:00",
+            "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+            "finished_at": null,
+            "id": "29eb24fd770c4d6ca353f35228d7056a",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:35.379133+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "committed-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": "2026-09-12T03:52:35.388027+00:00",
+            "attempt_id": "43ffcb5974684202bfb022ae13ae7b67",
+            "created_at": "2026-09-12T03:52:35.379133+00:00",
+            "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+            "finished_at": "2026-09-12T03:52:35.390797+00:00",
+            "id": "29eb24fd770c4d6ca353f35228d7056a",
+            "kind": "message",
+            "reason": "action_already_recorded",
+            "revision": 1,
+            "status": "acknowledged",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:35.390797+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "cancelled-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.401731+00:00",
+            "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+            "finished_at": null,
+            "id": "a215771deb224eb39ca9a476bf3f493d",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:35.401731+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "cancelled-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.401731+00:00",
+            "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+            "finished_at": "2026-09-12T03:52:35.408869+00:00",
+            "id": "a215771deb224eb39ca9a476bf3f493d",
+            "kind": "message",
+            "reason": "action_already_recorded",
+            "revision": 1,
+            "status": "cancelled",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:35.408869+00:00"
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/message",
+          "body": "{\"body\":\"SYNTHETIC-PRIVATE-PROPOSAL\"}"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.379133+00:00",
+          "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+          "finished_at": null,
+          "id": "29eb24fd770c4d6ca353f35228d7056a",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_655788527aa8416daef91762371b1d7f",
+          "time": "2026-09-12T03:52:35.380788+00:00",
+          "updated_at": "2026-09-12T03:52:35.379133+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": "2026-09-12T03:52:35.388027+00:00",
+          "attempt_id": "43ffcb5974684202bfb022ae13ae7b67",
+          "created_at": "2026-09-12T03:52:35.379133+00:00",
+          "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+          "finished_at": "2026-09-12T03:52:35.390797+00:00",
+          "id": "29eb24fd770c4d6ca353f35228d7056a",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_already_recorded",
+          "revision": 1,
+          "status": "acknowledged",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_655788527aa8416daef91762371b1d7f",
+          "time": "2026-09-12T03:52:35.393334+00:00",
+          "updated_at": "2026-09-12T03:52:35.390797+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.401731+00:00",
+          "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+          "finished_at": null,
+          "id": "a215771deb224eb39ca9a476bf3f493d",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_655788527aa8416daef91762371b1d7f",
+          "time": "2026-09-12T03:52:35.403231+00:00",
+          "updated_at": "2026-09-12T03:52:35.401731+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.401731+00:00",
+          "digest": "c34512138b73724c9d7a75249f5978d3664971ed5e8ad3d6aeb335237dec6ecc",
+          "finished_at": "2026-09-12T03:52:35.408869+00:00",
+          "id": "a215771deb224eb39ca9a476bf3f493d",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_already_recorded",
+          "revision": 1,
+          "status": "cancelled",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_655788527aa8416daef91762371b1d7f",
+          "time": "2026-09-12T03:52:35.411198+00:00",
+          "updated_at": "2026-09-12T03:52:35.408869+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_email_drafts_never_send_and_reuse_native_identity",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "7c9a6494ab9041b382e16af901a86216",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "pending"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "7c9a6494ab9041b382e16af901a86216",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "pending"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "different content"
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "mail_request_conflict"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "mail-native-id",
+          "arguments": {
+            "draft": {
+              "recipient": "receiver@example.test",
+              "subject": "Synthetic draft",
+              "body": "Synthetic body"
+            }
+          },
+          "result": {
+            "allowed": true,
+            "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+            "draft_id": "7c9a6494ab9041b382e16af901a86216",
+            "reason": "mail_draft_saved",
+            "revision": 1,
+            "status": "cancelled"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "7c9a6494ab9041b382e16af901a86216",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "pending",
+          "task_id": "task_74dd628fc9b7415fa39dc8bc65065c07",
+          "time": "2026-09-12T03:52:35.495680+00:00"
+        },
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "7c9a6494ab9041b382e16af901a86216",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "pending",
+          "task_id": "task_74dd628fc9b7415fa39dc8bc65065c07",
+          "time": "2026-09-12T03:52:35.501942+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "draft_email",
+          "reason": "mail_request_conflict",
+          "task_id": "task_74dd628fc9b7415fa39dc8bc65065c07",
+          "time": "2026-09-12T03:52:35.511476+00:00"
+        },
+        {
+          "allowed": true,
+          "digest": "ce943cc3003078b0ed1e1590c12070bdffbde1cb1dda1f1405e80678a561366a",
+          "draft_id": "7c9a6494ab9041b382e16af901a86216",
+          "operation": "draft_email",
+          "reason": "mail_draft_saved",
+          "revision": 1,
+          "status": "cancelled",
+          "task_id": "task_74dd628fc9b7415fa39dc8bc65065c07",
+          "time": "2026-09-12T03:52:35.519036+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-0",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.736049+00:00",
+            "digest": "505ce8e83b4e16cbcc959fa5c8c0294c702f90f381e66b280e25007330a4fa22",
+            "finished_at": null,
+            "id": "0820c581d59f4a85b340a35429b065bd",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:35.736049+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-1",
+          "arguments": {
+            "proposal": {
+              "kind": "upload",
+              "target_id": "upload",
+              "payload": {
+                "filename": "fixture.txt",
+                "content": "synthetic upload"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.744541+00:00",
+            "digest": "2a2f0043a29a73ea469cf7ecad47f5df5fe98e04f13195797197d8b07beb77bd",
+            "finished_at": null,
+            "id": "2d4dedcc6d9448b998da839b8bf550f1",
+            "kind": "upload",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "upload",
+            "target_label": "Fixture upload",
+            "updated_at": "2026-09-12T03:52:35.744541+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-2",
+          "arguments": {
+            "proposal": {
+              "kind": "form",
+              "target_id": "form",
+              "payload": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "value": "Fixture"
+                  },
+                  {
+                    "name": "note",
+                    "value": "synthetic form"
+                  }
+                ]
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.752758+00:00",
+            "digest": "cc740ba9587145c16efa0f23f1b4eed99cd2037502d9beeb2137305c2622bb79",
+            "finished_at": null,
+            "id": "f832cf656d394dde8782e2f29b073263",
+            "kind": "form",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "form",
+            "target_label": "Fixture form",
+            "updated_at": "2026-09-12T03:52:35.752758+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-3",
+          "arguments": {
+            "proposal": {
+              "kind": "overwrite",
+              "target_id": "replace",
+              "payload": {
+                "content": "synthetic replacement"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.760874+00:00",
+            "digest": "04653142998054bf07fe6284b18661cbcb68b79ad32c2c4c0a1ced7f5e7e9cf5",
+            "finished_at": null,
+            "id": "48a8d78f8198457d84a18c94da120a2f",
+            "kind": "overwrite",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "replace",
+            "target_label": "Fixture report",
+            "updated_at": "2026-09-12T03:52:35.760874+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "action-kind-4",
+          "arguments": {
+            "proposal": {
+              "kind": "delete",
+              "target_id": "remove",
+              "payload": {}
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:35.769094+00:00",
+            "digest": "f62ab7d25c870a891d5e412007f57cb8c7d754f2b0c829b307ebf5d96429aaf3",
+            "finished_at": null,
+            "id": "c538d24c953f46dbba8e7d9c180f7808",
+            "kind": "delete",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "remove",
+            "target_label": "Fixture deletion",
+            "updated_at": "2026-09-12T03:52:35.769094+00:00"
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/message",
+          "body": "{\"body\":\"SYNTHETIC-PRIVATE-PROPOSAL\"}"
+        },
+        {
+          "path": "/upload",
+          "body": "--Yuanxingmu_c54bc021596041d181272a045c99a46d\r\nContent-Disposition: form-data; name=\"file\"; filename=\"fixture.txt\"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\nsynthetic upload\r\n--Yuanxingmu_c54bc021596041d181272a045c99a46d--\r\n"
+        },
+        {
+          "path": "/form",
+          "body": "name=Fixture&note=synthetic+form"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "fixture_http_receiver",
+        "fixture_http_receiver"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.736049+00:00",
+          "digest": "505ce8e83b4e16cbcc959fa5c8c0294c702f90f381e66b280e25007330a4fa22",
+          "finished_at": null,
+          "id": "0820c581d59f4a85b340a35429b065bd",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_8938882fc49440e895cb3e71c3d41ddb",
+          "time": "2026-09-12T03:52:35.737768+00:00",
+          "updated_at": "2026-09-12T03:52:35.736049+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.744541+00:00",
+          "digest": "2a2f0043a29a73ea469cf7ecad47f5df5fe98e04f13195797197d8b07beb77bd",
+          "finished_at": null,
+          "id": "2d4dedcc6d9448b998da839b8bf550f1",
+          "kind": "upload",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "upload",
+          "target_label": "Fixture upload",
+          "task_id": "task_8938882fc49440e895cb3e71c3d41ddb",
+          "time": "2026-09-12T03:52:35.745965+00:00",
+          "updated_at": "2026-09-12T03:52:35.744541+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.752758+00:00",
+          "digest": "cc740ba9587145c16efa0f23f1b4eed99cd2037502d9beeb2137305c2622bb79",
+          "finished_at": null,
+          "id": "f832cf656d394dde8782e2f29b073263",
+          "kind": "form",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "form",
+          "target_label": "Fixture form",
+          "task_id": "task_8938882fc49440e895cb3e71c3d41ddb",
+          "time": "2026-09-12T03:52:35.754232+00:00",
+          "updated_at": "2026-09-12T03:52:35.752758+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.760874+00:00",
+          "digest": "04653142998054bf07fe6284b18661cbcb68b79ad32c2c4c0a1ced7f5e7e9cf5",
+          "finished_at": null,
+          "id": "48a8d78f8198457d84a18c94da120a2f",
+          "kind": "overwrite",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "replace",
+          "target_label": "Fixture report",
+          "task_id": "task_8938882fc49440e895cb3e71c3d41ddb",
+          "time": "2026-09-12T03:52:35.762464+00:00",
+          "updated_at": "2026-09-12T03:52:35.760874+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:35.769094+00:00",
+          "digest": "f62ab7d25c870a891d5e412007f57cb8c7d754f2b0c829b307ebf5d96429aaf3",
+          "finished_at": null,
+          "id": "c538d24c953f46dbba8e7d9c180f7808",
+          "kind": "delete",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "remove",
+          "target_label": "Fixture deletion",
+          "task_id": "task_8938882fc49440e895cb3e71c3d41ddb",
+          "time": "2026-09-12T03:52:35.770558+00:00",
+          "updated_at": "2026-09-12T03:52:35.769094+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_forged_host_fields_are_rejected_before_broker",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "socket_path": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "session_id": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "task_id": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "url": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "headers": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "credentials": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "confirm": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "approved": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "send",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic",
+            "request_key": "forged"
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL",
+                "url": "http://127.0.0.1:34604/wrong"
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b",
+              "account_id": "forged"
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        },
+        {
+          "operation": "read",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "resource": 123
+          },
+          "rejected_by_adapter_or_sdk": "ValidationError"
+        }
+      ],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_missing_native_call_id_cannot_submit_proposals",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": null,
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": null,
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b"
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        }
+      ],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:36.017618+00:00",
+            "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+            "finished_at": null,
+            "id": "5365cf7a9924405c851db4ac63b386d4",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:36.017618+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:36.017618+00:00",
+            "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+            "finished_at": null,
+            "id": "5365cf7a9924405c851db4ac63b386d4",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:36.017618+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "different content"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "action_request_conflict"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "another-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:36.043772+00:00",
+            "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+            "finished_at": null,
+            "id": "832c500b6d3f4b6f8fe17aa09315af4f",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:36.043772+00:00"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "stable-native-id",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": true,
+            "approved_at": null,
+            "attempt_id": null,
+            "created_at": "2026-09-12T03:52:36.054574+00:00",
+            "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+            "finished_at": null,
+            "id": "84652a1a927744d2ab057de14f38e1ed",
+            "kind": "message",
+            "reason": "action_waiting_for_review",
+            "revision": 1,
+            "status": "pending",
+            "target_id": "chat",
+            "target_label": "Fixture chat",
+            "updated_at": "2026-09-12T03:52:36.054574+00:00"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:36.017618+00:00",
+          "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+          "finished_at": null,
+          "id": "5365cf7a9924405c851db4ac63b386d4",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_278e7495d87f4a13958fa415150e51a0",
+          "time": "2026-09-12T03:52:36.019347+00:00",
+          "updated_at": "2026-09-12T03:52:36.017618+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:36.017618+00:00",
+          "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+          "finished_at": null,
+          "id": "5365cf7a9924405c851db4ac63b386d4",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_278e7495d87f4a13958fa415150e51a0",
+          "time": "2026-09-12T03:52:36.029154+00:00",
+          "updated_at": "2026-09-12T03:52:36.017618+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "action_request_conflict",
+          "task_id": "task_278e7495d87f4a13958fa415150e51a0",
+          "time": "2026-09-12T03:52:36.041165+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:36.043772+00:00",
+          "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+          "finished_at": null,
+          "id": "832c500b6d3f4b6f8fe17aa09315af4f",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_278e7495d87f4a13958fa415150e51a0",
+          "time": "2026-09-12T03:52:36.045102+00:00",
+          "updated_at": "2026-09-12T03:52:36.043772+00:00"
+        },
+        {
+          "allowed": true,
+          "approved_at": null,
+          "attempt_id": null,
+          "created_at": "2026-09-12T03:52:36.054574+00:00",
+          "digest": "74cc0e1338e90ae79b9a9021a91899ea8a3aa5dbf7bd36b37b16473745bc5084",
+          "finished_at": null,
+          "id": "84652a1a927744d2ab057de14f38e1ed",
+          "kind": "message",
+          "operation": "propose_action",
+          "reason": "action_waiting_for_review",
+          "revision": 1,
+          "status": "pending",
+          "target_id": "chat",
+          "target_label": "Fixture chat",
+          "task_id": "task_278e7495d87f4a13958fa415150e51a0",
+          "time": "2026-09-12T03:52:36.055956+00:00",
+          "updated_at": "2026-09-12T03:52:36.054574+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_native_read_send_and_persistent_data_restrictions",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "public-call",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic public output"
+          },
+          "result": {
+            "allowed": true,
+            "blocked_labels": [],
+            "destination_id": "public",
+            "event_id": 2,
+            "http_status": 200,
+            "labels": [],
+            "outcome": "acknowledged",
+            "reason": "send_authorized",
+            "request_id": "3cca748de5cb4c96aee96140ac192d3f",
+            "revision": 0,
+            "task_id": "task_435e538bfb5542e886f3cf03e0ca409a"
+          }
+        },
+        {
+          "operation": "read",
+          "native_call_id": "read-call",
+          "arguments": {
+            "resource": "private"
+          },
+          "result": {
+            "allowed": true,
+            "content": "SYNTHETIC-PRIVATE-CONTENT",
+            "event_id": 3,
+            "labels": [
+              "internal"
+            ],
+            "reason": "read_authorized",
+            "resource_id": "private",
+            "resource_labels": [
+              "internal"
+            ],
+            "revision": 1,
+            "task_id": "task_435e538bfb5542e886f3cf03e0ca409a"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "denied-call",
+          "arguments": {
+            "destination": "public",
+            "body": "encoded or paraphrased output"
+          },
+          "result": {
+            "allowed": false,
+            "blocked_labels": [
+              "internal"
+            ],
+            "destination_id": "public",
+            "event_id": 4,
+            "labels": [
+              "internal"
+            ],
+            "reason": "destination_cannot_receive_labels",
+            "revision": 1,
+            "task_id": "task_435e538bfb5542e886f3cf03e0ca409a"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "internal-call",
+          "arguments": {
+            "destination": "internal",
+            "body": "synthetic internal output"
+          },
+          "result": {
+            "allowed": true,
+            "blocked_labels": [],
+            "destination_id": "internal",
+            "event_id": 5,
+            "http_status": 200,
+            "labels": [
+              "internal"
+            ],
+            "outcome": "acknowledged",
+            "reason": "send_authorized",
+            "request_id": "4591583532024a35850d6600423c6bcc",
+            "revision": 1,
+            "task_id": "task_435e538bfb5542e886f3cf03e0ca409a"
+          }
+        },
+        {
+          "operation": "describe",
+          "native_call_id": "native-call-1",
+          "arguments": {},
+          "result": {
+            "active": true,
+            "allowed": true,
+            "destinations": {
+              "internal": [
+                "internal"
+              ],
+              "public": []
+            },
+            "labels": [
+              "internal"
+            ],
+            "resources": {
+              "private": [
+                "internal"
+              ]
+            },
+            "revision": 1,
+            "revoked": false,
+            "task_id": "task_435e538bfb5542e886f3cf03e0ca409a"
+          }
+        },
+        {
+          "operation": "action_targets",
+          "native_call_id": "native-call-1",
+          "arguments": {},
+          "result": {
+            "allowed": true,
+            "targets": [
+              {
+                "form_fields": [],
+                "kind": "message",
+                "label": "Fixture chat",
+                "provider": "standard",
+                "target_id": "chat"
+              },
+              {
+                "form_fields": [
+                  "name",
+                  "note"
+                ],
+                "kind": "form",
+                "label": "Fixture form",
+                "provider": "standard",
+                "target_id": "form"
+              },
+              {
+                "form_fields": [],
+                "kind": "delete",
+                "label": "Fixture deletion",
+                "provider": "standard",
+                "target_id": "remove"
+              },
+              {
+                "form_fields": [],
+                "kind": "overwrite",
+                "label": "Fixture report",
+                "provider": "standard",
+                "target_id": "replace"
+              },
+              {
+                "form_fields": [],
+                "kind": "upload",
+                "label": "Fixture upload",
+                "provider": "standard",
+                "target_id": "upload"
+              }
+            ]
+          }
+        }
+      ],
+      "receipts": [
+        {
+          "path": "/public",
+          "body": "{\"request_id\": \"3cca748de5cb4c96aee96140ac192d3f\", \"body\": \"synthetic public output\"}"
+        },
+        {
+          "path": "/internal",
+          "body": "{\"request_id\": \"4591583532024a35850d6600423c6bcc\", \"body\": \"synthetic internal output\"}"
+        }
+      ],
+      "connections": [
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "fixture_http_receiver",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "body_sha256": "b5a2185b0ad2c4e8b7e47d7899e3bece48e511028351366fb9e4ac503345b2ca",
+          "destination_id": "public",
+          "event_id": 2,
+          "labels": [],
+          "operation": "send_intent",
+          "reason": "send_authorized",
+          "request_id": "3cca748de5cb4c96aee96140ac192d3f",
+          "revision": 0,
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.092159+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "destination_id": "public",
+          "event_id": 2,
+          "http_status": 200,
+          "labels": [],
+          "operation": "send",
+          "outcome": "acknowledged",
+          "reason": "send_authorized",
+          "request_id": "3cca748de5cb4c96aee96140ac192d3f",
+          "revision": 0,
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.094509+00:00"
+        },
+        {
+          "allowed": true,
+          "event_id": 3,
+          "labels": [
+            "internal"
+          ],
+          "operation": "read",
+          "reason": "read_authorized",
+          "resource_id": "private",
+          "resource_labels": [
+            "internal"
+          ],
+          "revision": 1,
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.098910+00:00"
+        },
+        {
+          "allowed": false,
+          "blocked_labels": [
+            "internal"
+          ],
+          "destination_id": "public",
+          "event_id": 4,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send",
+          "reason": "destination_cannot_receive_labels",
+          "revision": 1,
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.107047+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "body_sha256": "7070e63cddd49657221205503e34711c3a7b984cb80be43a095d3eb7af62f495",
+          "destination_id": "internal",
+          "event_id": 5,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send_intent",
+          "reason": "send_authorized",
+          "request_id": "4591583532024a35850d6600423c6bcc",
+          "revision": 1,
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.115110+00:00"
+        },
+        {
+          "allowed": true,
+          "blocked_labels": [],
+          "destination_id": "internal",
+          "event_id": 5,
+          "http_status": 200,
+          "labels": [
+            "internal"
+          ],
+          "operation": "send",
+          "outcome": "acknowledged",
+          "reason": "send_authorized",
+          "request_id": "4591583532024a35850d6600423c6bcc",
+          "revision": 1,
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.117866+00:00"
+        },
+        {
+          "active": true,
+          "allowed": true,
+          "destinations": {
+            "internal": [
+              "internal"
+            ],
+            "public": []
+          },
+          "labels": [
+            "internal"
+          ],
+          "operation": "describe",
+          "resources": {
+            "private": [
+              "internal"
+            ]
+          },
+          "revision": 1,
+          "revoked": false,
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.120314+00:00"
+        },
+        {
+          "allowed": true,
+          "operation": "action_targets",
+          "targets": [
+            {
+              "form_fields": [],
+              "kind": "message",
+              "label": "Fixture chat",
+              "provider": "standard",
+              "target_id": "chat"
+            },
+            {
+              "form_fields": [
+                "name",
+                "note"
+              ],
+              "kind": "form",
+              "label": "Fixture form",
+              "provider": "standard",
+              "target_id": "form"
+            },
+            {
+              "form_fields": [],
+              "kind": "delete",
+              "label": "Fixture deletion",
+              "provider": "standard",
+              "target_id": "remove"
+            },
+            {
+              "form_fields": [],
+              "kind": "overwrite",
+              "label": "Fixture report",
+              "provider": "standard",
+              "target_id": "replace"
+            },
+            {
+              "form_fields": [],
+              "kind": "upload",
+              "label": "Fixture upload",
+              "provider": "standard",
+              "target_id": "upload"
+            }
+          ],
+          "task_id": "task_435e538bfb5542e886f3cf03e0ca409a",
+          "time": "2026-09-12T03:52:46.128258+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_native_schema_exposes_only_content_fields",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [],
+      "receipts": [],
+      "connections": [],
+      "broker_events": []
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_revocation_blocks_all_bound_tools",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "read",
+          "native_call_id": "revoked-read",
+          "arguments": {
+            "resource": "private"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "send",
+          "native_call_id": "revoked-send",
+          "arguments": {
+            "destination": "public",
+            "body": "synthetic"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "describe",
+          "native_call_id": "revoked-describe",
+          "arguments": {},
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "action_targets",
+          "native_call_id": "revoked-action_targets",
+          "arguments": {},
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "revoked-propose_action",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "chat",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        },
+        {
+          "operation": "draft_email",
+          "native_call_id": "revoked-draft_email",
+          "arguments": {
+            "draft": {
+              "recipient": "x@example.test",
+              "subject": "s",
+              "body": "b"
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "task_revoked"
+          }
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": false,
+          "operation": "read",
+          "reason": "task_revoked",
+          "task_id": "task_81dae8e26ce349fcb49f5bee95acb303",
+          "time": "2026-09-12T03:52:35.857576+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "send",
+          "reason": "task_revoked",
+          "task_id": "task_81dae8e26ce349fcb49f5bee95acb303",
+          "time": "2026-09-12T03:52:35.875038+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "describe",
+          "reason": "task_revoked",
+          "task_id": "task_81dae8e26ce349fcb49f5bee95acb303",
+          "time": "2026-09-12T03:52:35.879004+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "action_targets",
+          "reason": "task_revoked",
+          "task_id": "task_81dae8e26ce349fcb49f5bee95acb303",
+          "time": "2026-09-12T03:52:35.887192+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "task_revoked",
+          "task_id": "task_81dae8e26ce349fcb49f5bee95acb303",
+          "time": "2026-09-12T03:52:35.894852+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "draft_email",
+          "reason": "task_revoked",
+          "task_id": "task_81dae8e26ce349fcb49f5bee95acb303",
+          "time": "2026-09-12T03:52:35.904126+00:00"
+        }
+      ]
+    },
+    {
+      "framework": "pydantic_ai",
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send",
+      "native_tools": [
+        {
+          "name": "yuanxingmu_read",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_send",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_describe",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_action_targets",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_propose_action",
+          "class": "pydantic_ai.tools.Tool"
+        },
+        {
+          "name": "yuanxingmu_draft_email",
+          "class": "pydantic_ai.tools.Tool"
+        }
+      ],
+      "schema_sha256": "331ef66432ecc1bec837e9a4d693fb44506281529a07d70b6624c2d9e404f3cb",
+      "calls": [
+        {
+          "operation": "send",
+          "native_call_id": "native-call-1",
+          "arguments": {
+            "destination": "http://127.0.0.1:33776/arbitrary",
+            "body": "synthetic"
+          },
+          "result": {
+            "allowed": false,
+            "reason": "unknown_destination"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "native-call-1",
+          "arguments": {
+            "proposal": {
+              "kind": "message",
+              "target_id": "not-registered",
+              "payload": {
+                "body": "SYNTHETIC-PRIVATE-PROPOSAL"
+              }
+            }
+          },
+          "result": {
+            "allowed": false,
+            "reason": "action_target_not_allowed"
+          }
+        },
+        {
+          "operation": "propose_action",
+          "native_call_id": "bad-call",
+          "arguments": {
+            "proposal": {
+              "kind": "form",
+              "target_id": "form",
+              "payload": {
+                "fields": [
+                  {
+                    "name": "name",
+                    "value": "one"
+                  },
+                  {
+                    "name": "name",
+                    "value": "two"
+                  }
+                ]
+              }
+            }
+          },
+          "rejected_by_adapter_or_sdk": "ValueError"
+        }
+      ],
+      "receipts": [],
+      "connections": [
+        "broker_unix_socket",
+        "broker_unix_socket"
+      ],
+      "broker_events": [
+        {
+          "allowed": false,
+          "operation": "send",
+          "reason": "unknown_destination",
+          "task_id": "task_85de4759ab464e6eb926219d3020a435",
+          "time": "2026-09-12T03:52:35.984181+00:00"
+        },
+        {
+          "allowed": false,
+          "operation": "propose_action",
+          "reason": "action_target_not_allowed",
+          "task_id": "task_85de4759ab464e6eb926219d3020a435",
+          "time": "2026-09-12T03:52:35.993696+00:00"
+        }
+      ]
+    }
+  ]
+}

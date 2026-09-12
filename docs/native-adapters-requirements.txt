@@ -1,0 +1,10 @@
+# Versions used by the separate native tool adapter validation environment.
+# Runtime users may install only the SDK for their chosen adapter.
+langchain-core==1.6.2
+langgraph==1.2.11
+langgraph-prebuilt==1.1.0
+langgraph-checkpoint==4.2.0
+openai-agents==0.22.2
+openai==3.13.0
+pydantic-ai-slim==2.42.0
+pydantic==2.13.5

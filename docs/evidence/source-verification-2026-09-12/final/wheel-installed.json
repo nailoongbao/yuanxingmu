@@ -1,0 +1,189 @@
+{
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "executable": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/python",
+  "prefix": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env",
+  "cwd": "/tmp/yxm-source-verification-20260912-bzmpyt4p/outside-source",
+  "version": "0.5.0a1",
+  "imports": {
+    "defensecheck": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/defensecheck/__init__.py",
+    "yuanxingmu": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/__init__.py"
+  },
+  "assets_checked": 29,
+  "assets": [
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/worker-launch.mjs",
+      "sha256": "e1c3fd57408c44dbbe5dbd5f4d6fffe8fcdaaaa25348e64d311a32bcea7f6570",
+      "bytes": 1208,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/worker-launch.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/tools.mjs",
+      "sha256": "5a0a471ed9625cbcdcd4182892f69dc1ae0b900dd37be2f833958d6e9c38f034",
+      "bytes": 10882,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/tools.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/contract.test.mjs",
+      "sha256": "a76360444b3bfee886dd55ffcf79d8618bfe5acf189ece43b4e824f0734473f2",
+      "bytes": 10726,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/contract.test.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/defense-hooks.mjs",
+      "sha256": "ae08b7cbc85b66523eeac9412680219d172206ab6df8fe93d6dcbd5db553ba69",
+      "bytes": 4446,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/defense-hooks.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/commands.mjs",
+      "sha256": "9df4e21397526273eb460753b05165c43e9df9a6cc51b2986db2a6769e5b63d5",
+      "bytes": 2219,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/commands.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/index.mjs",
+      "sha256": "40ff7c6967f141cf21781c37b0b64a47798763db2db319e233297d19656d9f6d",
+      "bytes": 1387,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/index.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/config.mjs",
+      "sha256": "78176906920c6e79cd4b4d01232f63f8c12211ec5627af4a47af58829b5c8c61",
+      "bytes": 3295,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/config.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/sandbox-provider.mjs",
+      "sha256": "47047ee7e7877bf1f2a00533606069d99aace717aba788741d1cfd7106c07e9f",
+      "bytes": 5117,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/sandbox-provider.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/socket-client.mjs",
+      "sha256": "a1a2ee32dd08fbdd5ad7c90b75d1091fd38dbf12d2a3e143e7b59f0d4dd838cd",
+      "bytes": 2093,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/socket-client.mjs"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/package.json",
+      "sha256": "aead86ca8c8071445f98955b3154202858e17eb6074ff32e1307d2ef971dfc98",
+      "bytes": 494,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/package.json"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/openclaw.plugin.json",
+      "sha256": "b3592bf169d75dc60a8c977f894915b813450269e13a715c760280b377026a48",
+      "bytes": 1758,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/openclaw.plugin.json"
+    },
+    {
+      "path": "yuanxingmu/integrations/openclaw/plugin/CONTRACT.md",
+      "sha256": "7282828e15028911c045194c4b27363ab39f0271d169350d18056f5f0bb75058",
+      "bytes": 4273,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/CONTRACT.md"
+    },
+    {
+      "path": "yuanxingmu/integrations/hermes/plugin/__init__.py",
+      "sha256": "bbf3bd447166b919907ce8e23a21caea889d72fe866abd0391abf2f79d5a59fc",
+      "bytes": 893,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/hermes/plugin/__init__.py"
+    },
+    {
+      "path": "yuanxingmu/integrations/hermes/plugin/plugin.yaml",
+      "sha256": "4e5c05caf0c8dcafdad33ba473a59d1a5fc37a6e72589faa32e230bf975327b2",
+      "bytes": 126,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/hermes/plugin/plugin.yaml"
+    },
+    {
+      "path": "yuanxingmu/integrations/hermes/README.md",
+      "sha256": "d43e1816418dc8e3a5e478cd5e305479bceed0ebd00f8abad14df3b41c5d43d7",
+      "bytes": 7458,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/hermes/README.md"
+    },
+    {
+      "path": "yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md",
+      "sha256": "9a51def685415348e57eb2f9cfeb10d97b92f6aeb918c037c41283ba089a720c",
+      "bytes": 8806,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md"
+    },
+    {
+      "path": "yuanxingmu/adapters/mastra/index.mjs",
+      "sha256": "9c3d4479411131dd5ab744f629c42c47b7931bb0e38e65e262d93773cba47298",
+      "bytes": 2602,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/adapters/mastra/index.mjs"
+    },
+    {
+      "path": "yuanxingmu/adapters/mastra/client.mjs",
+      "sha256": "d3e129263a4b57b957a85c95b51592343a566402781fbd469b08d7bd1497617d",
+      "bytes": 5147,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/adapters/mastra/client.mjs"
+    },
+    {
+      "path": "yuanxingmu/adapters/mastra/package.json",
+      "sha256": "e33740ac6bb6f62b0ab2731c69bf4b5a92a6810ed32d09078ea5f6274f6c5953",
+      "bytes": 232,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/adapters/mastra/package.json"
+    },
+    {
+      "path": "yuanxingmu/adapters/mastra/package-lock.json",
+      "sha256": "0a67eeadb6e3ab33f597b19c1593763da17d23080be6ee82bc9e61745a759919",
+      "bytes": 80250,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/adapters/mastra/package-lock.json"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/mark.svg",
+      "sha256": "dda8c7a47d217f6df8a1431636eab6afa41f3124d361e0b64802eb93b78c5d85",
+      "bytes": 348,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/mark.svg"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/styles.css",
+      "sha256": "7664e4a75f6bee7fc85ec6a4775e57090c8653801cdce6c9b8ec5fca3eef1412",
+      "bytes": 24054,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/styles.css"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/protection.js",
+      "sha256": "c1561619da7acdab0d036ec965dbdc868941174fa5bee1f98f6152d269228d7f",
+      "bytes": 19868,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/protection.js"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/index.html",
+      "sha256": "eaa386ffbccd3853c7aeb79216624f4bc0caec49dff76ae47fda5f84fc5464cf",
+      "bytes": 17688,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/index.html"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/mail.js",
+      "sha256": "a0246914dfd81829c17700ed8ab6c82c446bf8d0378d5bf1085d265d419eb332",
+      "bytes": 33649,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/mail.js"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/app.js",
+      "sha256": "a6ea68dd33bb6fe69ed81053d6b5c8745b93ab97f1dd9a0b138f5264c83fb2fc",
+      "bytes": 42198,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/app.js"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/actions.js",
+      "sha256": "a88195ae197563b0ec8c073a62302e4bf82fa10ef08c34e71605216cb4384e1a",
+      "bytes": 30841,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/actions.js"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/targets.js",
+      "sha256": "601d3e5a286540926772fdfceaa80dcb3307c0de83f81c31a434640176b69b81",
+      "bytes": 22518,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/targets.js"
+    },
+    {
+      "path": "yuanxingmu/dashboard/web/alerts.js",
+      "sha256": "0f7227c4cc5811b99ac61b055946d91df8743a6af964024d04e90abf37fc43d6",
+      "bytes": 17770,
+      "installed_path": "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/alerts.js"
+    }
+  ],
+  "scope": "Byte-for-byte packaged source/assets; Python AST, JSON and simple Hermes manifest checked. No Agent/model execution."
+}

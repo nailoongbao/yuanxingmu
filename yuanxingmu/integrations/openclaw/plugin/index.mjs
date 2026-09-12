@@ -5,6 +5,7 @@ import { readTrustedConfig } from "./config.mjs";
 import { registerNativeSandbox } from "./sandbox-provider.mjs";
 import { registerBrokerTools } from "./tools.mjs";
 import { registerRevocationCommand } from "./commands.mjs";
+import { registerDefenseHooks } from "./defense-hooks.mjs";
 
 const manifest = JSON.parse(readFileSync(new URL("./openclaw.plugin.json", import.meta.url), "utf8"));
 
@@ -14,10 +15,16 @@ export default definePluginEntry({
   description: manifest.description,
   configSchema: buildJsonPluginConfigSchema(manifest.configSchema),
   register(api) {
-    if (api.registrationMode !== "full") return;
+    // The agent builds a scoped "discovery" registry for actual tool runs.
+    // Pure tool/hook declarations must also exist there, not only at gateway
+    // activation. Starting a sandbox provider remains a full-mode lifecycle.
+    if (!["full", "discovery"].includes(api.registrationMode)) return;
     const config = readTrustedConfig(api.pluginConfig);
-    registerNativeSandbox(api, config);
     registerBrokerTools(api, config);
-    registerRevocationCommand(api, config);
+    registerDefenseHooks(api, config);
+    if (api.registrationMode === "full") {
+      registerNativeSandbox(api, config);
+      registerRevocationCommand(api, config);
+    }
   },
 });

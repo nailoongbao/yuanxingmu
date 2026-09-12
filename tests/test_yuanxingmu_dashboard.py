@@ -171,10 +171,74 @@ class DashboardTests(unittest.TestCase):
         for forbidden in (self.secret, self.content, *additional):
             self.assertNotIn(forbidden, text)
 
+    def test_target_settings_do_not_send_expose_secrets_or_rebind_old_profiles(self):
+        key = uuid.uuid4().hex
+        target = {"id": "team", "target": {"kind": "message", "label": "团队通知", "url": "https://example.test/private-hook/WEBHOOK-SECRET"}}
+        with mock.patch("http.client.HTTPSConnection") as connection:
+            status, _, first = self.request("POST", "/api/action-targets", target, key=key)
+            self.assertEqual(status, 200, first)
+            self.assertEqual(first, self.request("POST", "/api/action-targets", target, key=key)[2])
+            connection.assert_not_called()
+        self.assertEqual(self.request("GET", "/api/requests/" + key)[2], first)
+        public = self.request("GET", "/api/action-targets")[2]
+        self.assertEqual(public["targets"][0]["destination"], "https://example.test")
+        self.assert_private_response(public, "WEBHOOK-SECRET")
+        _, profile, _ = self.create()
+        self._restart()
+        self.assertEqual(self.request("GET", "/api/action-targets")[2], public)
+        self.assertEqual(self.request("POST", "/api/action-targets/remove", {"id": "team"})[0], 200)
+        self.assertEqual(self.request("GET", "/api/action-targets")[2]["targets"], [])
+        self.assertIn("team", json.loads((profile / "action-targets.json").read_text()))
+        self.assertEqual(self.request("POST", "/api/action-targets", {**target, "id": "different"}, key=key)[0], 409)
+
+    def test_target_settings_require_host_auth_and_reject_private_overlap(self):
+        value = {"id": "file", "target": {"kind": "delete", "label": "不可选择内部记录", "workspace": str(self.root), "relative_path": "catalog.json"}}
+        self.assertEqual(self.request("POST", "/api/action-targets", value)[0], 400)
+        self.assertEqual(self.request("GET", "/api/action-targets", authenticated=False)[0], 401)
+        self.assertEqual(self.request("POST", "/api/action-targets/remove", {"id": "x"}, origin=False)[0], 403)
+
+    def test_defense_setting_change_keeps_task_labels_and_validates_new_binding(self):
+        payload = {**self.payload, "objective": "读取报价，生成摘要，不得外发。"}
+        identifier, profile, _ = self.create(payload)
+        before = self.task_ids(profile)
+        status, _, accepted = self.request("POST", f"/api/profiles/{identifier}/protection", {"settings": {"command_enabled": False}})
+        self.assertEqual(status, 202)
+        self.wait_job(accepted)
+        manifest = core.validate_profile(profile)
+        self.assertEqual(self.task_ids(profile), before)
+        self.assertFalse(json.loads((profile / "defense-policy.json").read_text())["command_enabled"])
+        from yuanxingmu.protection import profile_services
+        resources, destinations = load_policy(profile / "policy.json")
+        with Broker(profile / "broker-state", resources, destinations, **profile_services(profile, manifest)) as broker:
+            self.assertEqual(broker.authority.describe(manifest["task_id"])["labels"], ["private"])
+        self.assertEqual(self.request("GET", f"/api/profiles/{identifier}/protection")[0], 200)
+        self.assertEqual(self.request("POST", f"/api/profiles/{identifier}/protection", {"settings": {"objective": "changed"}})[0], 400)
+
+    def test_protection_history_skips_corrupt_lines_and_handles_wrong_evidence_type(self):
+        identifier, profile, _ = self.create({**self.payload, "objective": "整理报价"})
+        (profile / "defense-events.jsonl").write_text('[]\nnull\nnot-json\n' + json.dumps({"layer": "input", "verdict": "allow", "evidence": []}) + '\n')
+        status, _, value = self.request("GET", f"/api/profiles/{identifier}/protection")
+        self.assertEqual(status, 200, value)
+        self.assertEqual(len(value["events"]), 1)
+        self.assertEqual(value["events"][0]["evidence"], {})
+
+    def test_selected_skill_uses_fixed_copy_and_rejects_unregistered_directory(self):
+        skill = self.base / "selected-skill"
+        skill.mkdir()
+        (skill / "SKILL.md").write_text("---\nname: quote-helper\ndescription: Summarize a quote.\n---\nRead the quotation and state its date.\n")
+        self.manager.skill_sources = {"quote-helper": skill}
+        _, profile, _ = self.create({**self.payload, "skills": ["quote-helper"]})
+        manifest = core.validate_profile(profile)
+        snapshot = Path(manifest["skills_snapshot"]["tree_path"])
+        (skill / "SKILL.md").write_text("changed source")
+        self.assertNotEqual((snapshot / "quote-helper" / "SKILL.md").read_text(), "changed source")
+        core.validate_profile(profile)
+        self.assertEqual(self.request("POST", "/api/profiles", {**self.payload, "skills": ["unregistered"]})[0], 400)
+
     def mail_fixture(self):
         identifier, path, _ = self.create()
         resources, destinations = load_policy(path / "policy.json")
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
             task_id = self.task_ids(path)[0]
             row = broker.mail.submit(task_id, uuid.uuid4().hex, {
                 "recipient": "buyer@example.test", "subject": "报价待确认", "body": self.content})
@@ -278,7 +342,7 @@ class DashboardTests(unittest.TestCase):
             self.wait_job(self.request("POST", prefix + "/send", payload)[2])
             send.assert_called_once()
         resources, destinations = load_policy(path / "policy.json")
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
             other = broker.mail.submit(self.task_ids(path)[0], uuid.uuid4().hex, {
                 "recipient": "other@example.test", "subject": "不能发送", "body": "撤权检查"})
         self.wait_job(self.request("POST", f"/api/profiles/{identifier}/revoke", {"confirm": "revoke"})[2])
@@ -463,7 +527,7 @@ class DashboardTests(unittest.TestCase):
         resources, destinations = load_policy(path / "policy.json")
         self.assertEqual(destinations, {})
         self.assertEqual(resources["quote"].labels, ("private",))
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
             read = broker.dispatch(task_ids[0], {"op": "read", "resource": "quote"})
             self.assertTrue(read["allowed"])
             self.assertEqual(read["content"], self.content)
@@ -486,7 +550,7 @@ class DashboardTests(unittest.TestCase):
             initialize.assert_not_called()
             launch.assert_not_called()
         self.assertEqual(self.task_ids(path), task_ids)
-        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+        with Broker(path / "broker-state", resources, destinations, reviewed_mail=True, action_targets={}) as broker:
             self.assertEqual(broker.dispatch(task_ids[0], {"op": "read", "resource": "quote"})["reason"], "task_revoked")
 
     def test_uploads_are_private_snapshots_and_status_receipts_do_not_contain_secrets(self):

@@ -1,0 +1,130 @@
+{
+  "recorded_at": "2026-09-12T06:17:44.139785+00:00",
+  "result": "passed",
+  "identity": "Local uncommitted source snapshots, identified by per-file SHA256 manifests; this is not a release or an attack benchmark.",
+  "scope": "Windows and Linux/WSL complete unittest discovery, fresh pure-Python wheel build, fresh isolated installation, external-directory CLI and packaged-file verification.",
+  "not_performed": [
+    "model inference",
+    "real external delivery",
+    "Hermes/npm full installation",
+    "additional SDK end-to-end suites",
+    "GPU compilation",
+    "release publication"
+  ],
+  "suites": {
+    "linux-wsl": {
+      "tests_run": 719,
+      "passed": 541,
+      "skipped": 178,
+      "failures": 0,
+      "errors": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "elapsed_seconds": 58.339,
+      "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+      "source_file_count": 159,
+      "source_changes_during_run": [],
+      "log": "linux-wsl-unittest.log",
+      "log_sha256": "949a5813f94127d66bd8c594f90990cd5c749e3e91ab379de1311bd088485041"
+    },
+    "windows": {
+      "tests_run": 719,
+      "passed": 204,
+      "skipped": 515,
+      "failures": 0,
+      "errors": 0,
+      "expected_failures": 0,
+      "unexpected_successes": 0,
+      "elapsed_seconds": 17.031,
+      "python": "3.12.9 | packaged by conda-forge | (main, Mar  4 2025, 22:37:18) [MSC v.1943 64 bit (AMD64)]",
+      "source_file_count": 159,
+      "source_changes_during_run": [],
+      "log": "windows-unittest.log",
+      "log_sha256": "bf004102a7e9e776594e17ca5bd7afdce8382bf6f35b5bd8ea53281260aae1c5"
+    }
+  },
+  "skip_details": {
+    "linux-wsl": "linux-wsl-unittest.json",
+    "windows": "windows-unittest.json"
+  },
+  "suite_source_maps_match_across_platforms": true,
+  "test_to_final_package_source_differences": [
+    "yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md"
+  ],
+  "difference_reason": "Hermes validation documentation changed during the first packaging attempt; executable source was unchanged, so tests were not repeated for that documentation update.",
+  "package": {
+    "version": "0.5.0a1",
+    "wheel": "final/dist/agent_defense_check-0.5.0a1-py3-none-any.whl",
+    "sha256": "f9dfe75b0abde8e628c3dfec0cf257fc014b20d302bac2a14800aaff5dfddec6",
+    "bytes": 322795,
+    "assets_checked": 29,
+    "asset_groups": {
+      "openclaw": [
+        "yuanxingmu/integrations/openclaw/plugin/worker-launch.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/tools.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/contract.test.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/defense-hooks.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/commands.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/index.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/config.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/sandbox-provider.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/socket-client.mjs",
+        "yuanxingmu/integrations/openclaw/plugin/package.json",
+        "yuanxingmu/integrations/openclaw/plugin/openclaw.plugin.json",
+        "yuanxingmu/integrations/openclaw/plugin/CONTRACT.md"
+      ],
+      "hermes": [
+        "yuanxingmu/integrations/hermes/plugin/__init__.py",
+        "yuanxingmu/integrations/hermes/plugin/plugin.yaml",
+        "yuanxingmu/integrations/hermes/README.md",
+        "yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md"
+      ],
+      "mastra": [
+        "yuanxingmu/adapters/mastra/index.mjs",
+        "yuanxingmu/adapters/mastra/client.mjs",
+        "yuanxingmu/adapters/mastra/package.json",
+        "yuanxingmu/adapters/mastra/package-lock.json"
+      ],
+      "workbench": [
+        "yuanxingmu/dashboard/web/mark.svg",
+        "yuanxingmu/dashboard/web/styles.css",
+        "yuanxingmu/dashboard/web/protection.js",
+        "yuanxingmu/dashboard/web/index.html",
+        "yuanxingmu/dashboard/web/mail.js",
+        "yuanxingmu/dashboard/web/app.js",
+        "yuanxingmu/dashboard/web/actions.js",
+        "yuanxingmu/dashboard/web/targets.js",
+        "yuanxingmu/dashboard/web/alerts.js"
+      ]
+    },
+    "python_source_files_checked_in_wheel_and_install": 57,
+    "cli_checks_passed": 4,
+    "javascript_syntax_checks_passed": 17,
+    "source_changes_during_final_build": [],
+    "evidence": "final/wheel-verification.json",
+    "installed_evidence": "final/wheel-installed.json",
+    "python_code_hashes": "final/python-code-hashes.json",
+    "source_manifest": "final/wheel-source-before.json"
+  },
+  "attempts": [
+    {
+      "evidence": "wheel-verification.json",
+      "accepted": false,
+      "reason": "Source snapshot changed during otherwise successful build/install/CLI/asset checks.",
+      "changed_files": [
+        "yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md"
+      ]
+    },
+    {
+      "evidence": "final/wheel-verification.json",
+      "accepted": true,
+      "reason": "Rebuilt latest documentation after source freeze; all verification passed with unchanged source hashes."
+    }
+  ],
+  "source_manifest_sha256": {
+    "linux-wsl-source-before.json": "d07986647f70bf8ffeec0340144711e4fbfe5a8cc7eddd97e4fededb9856b8f1",
+    "windows-source-before.json": "2321211d5345da45d31533be7204e03add30334b404a950f5ed4ef30e9cbf4fa",
+    "final/wheel-source-before.json": "00f8d38c0c0a5c3797707382441d3e92bfc83c64872acf693439ea8499931221"
+  },
+  "notification_documentation": "Current 28/28 queue checks include deterministic clock changes and format migration; stop the old Workbench before migrating the same queue from format 1 to 2."
+}

@@ -172,6 +172,9 @@ class Authority:
             raise AuthorizationError("unknown_task")
         if require_active and task["revoked"]:
             raise AuthorizationError("task_revoked")
+        if require_active:
+            from .quarantine import assert_admission
+            assert_admission(db, task)
         return task
 
     @staticmethod
@@ -306,6 +309,9 @@ class Authority:
             result = {"task_id": task_id, "active": not bool(task["revoked"]), "revoked": bool(task["revoked"]),
                       "labels": self._labels(db, task["family_id"]),
                       "revision": self._revision(db, task["family_id"])}
+            if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='quarantine_families'").fetchone():
+                paused = db.execute("SELECT state,epoch FROM quarantine_families WHERE family_id=?", (task["family_id"],)).fetchone()
+                result.update(paused=bool(paused and paused["state"] == "paused"), pause_epoch=paused["epoch"] if paused else 0)
             for kind in ("resource", "destination"):
                 result[kind + "s"] = {row[0]: json.loads(row[1]) for row in db.execute(
                     f"SELECT p.{kind}_id,p.labels FROM authority_{kind}s p "

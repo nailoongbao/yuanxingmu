@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const PATH_KEYS = ["python", "corePath", "workspace", "brokerSocket", "bwrap", "auditPath", "operatorSocket"];
 const ALL_KEYS = [...PATH_KEYS, "resourceIds", "destinationIds"];
+const FLAGS = ["reviewedMail", "defenseEnabled", "reviewedActions"];
 
 function inside(candidate, root) {
   const relative = path.relative(root, candidate);
@@ -18,13 +19,15 @@ function canonicalTarget(value) {
 export function readTrustedConfig(value) {
   if (process.platform !== "linux") throw new Error("Yuanxingmu requires Linux; no host fallback");
   if (!value || typeof value !== "object" || Array.isArray(value)
-      || Object.keys(value).length !== ALL_KEYS.length + (Object.hasOwn(value, "reviewedMail") ? 1 : 0)
-      || Object.keys(value).some((key) => !ALL_KEYS.includes(key) && key !== "reviewedMail")
-      || (Object.hasOwn(value, "reviewedMail") && typeof value.reviewedMail !== "boolean")) {
+      || Object.keys(value).length !== ALL_KEYS.length + FLAGS.filter(key => Object.hasOwn(value, key)).length
+      || Object.keys(value).some((key) => !ALL_KEYS.includes(key) && !FLAGS.includes(key))
+      || FLAGS.some(key => Object.hasOwn(value, key) && typeof value[key] !== "boolean")) {
     throw new Error("Invalid Yuanxingmu plugin configuration fields");
   }
   const result = {};
   result.reviewedMail = value.reviewedMail === true;
+  result.defenseEnabled = value.defenseEnabled === true;
+  result.reviewedActions = value.reviewedActions === true;
   for (const key of PATH_KEYS) {
     if (typeof value[key] !== "string" || !path.isAbsolute(value[key]) || value[key].includes("\0")) {
       throw new Error("Invalid trusted plugin path: " + key);

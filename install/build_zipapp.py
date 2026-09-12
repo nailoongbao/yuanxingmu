@@ -11,7 +11,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 INPUTS = {"yxm_setup/" + name: "install/yxm_setup/" + name for name in (
-    "__init__.py", "setup.py", "launcher.py", "pins.json", "openclaw-package.json", "openclaw-package-lock.json")}
+    "__init__.py", "setup.py", "launcher.py", "hermes.py", "pins.json", "openclaw-package.json", "openclaw-package-lock.json")}
 INPUTS.update({name: name for name in ("LICENSE", "NOTICE.md", "LICENSES/Invariant-Apache-2.0.txt")})
 ENTRY = b"from yxm_setup.setup import main\nraise SystemExit(main())\n"
 

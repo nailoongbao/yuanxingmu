@@ -1,5 +1,7 @@
 # 元星木 · Yuanxingmu
 
+当前源码正在补齐输入、记忆、任务偏移、危险命令、技能与配置五层检查，以及本人审批、暂停恢复、回答显示前检查和 Hermes 官方界面接入。[玄甲逐项对照](docs/agentward-coverage.zh-CN.md)列出源码、证据与缺口；[框架支持表](docs/framework-support.zh-CN.md)区分工具适配与完整实机验证。这批功能尚未进入旧安装包和旧视频。小模型实测仍会误拦正常本地写入，不能据此宣称已全面超过玄甲。
+
 **把资料交给 AI，权限留在自己手里。**
 
 让 AI 读报价、写邮件，你来核对收件人和全文，再决定是否发送。元星木把每项工作单独保存，让你随时关闭、继续，或收回资料权限。AI 不能用起草工具替你确认发送；你选用的模型服务仍会收到聊天和使用的资料。
@@ -74,7 +76,7 @@ python -I -m yuanxingmu run --policy policy.json --state authority-state \
 
 恢复时使用同一状态目录和 `--task`，去掉 `--new-task`。完整配置与发送例子见[运行说明](docs/yuanxingmu.md)。这条命令的配置、任务创建与工作目录选择由可信宿主管理，不能交给被防护的 Agent 自由调用。
 
-[OpenClaw 原生执行](examples/yuanxingmu/openclaw/README.md)与 [Hermes 原生终端环境](examples/yuanxingmu/hermes/README.md)已分别完成接入演示。早期 OpenClaw 示例使用本地脚本模型；新版真实模型记录见上方视频。Hermes 验证原生工具调用链，没有运行模型对话。结果只覆盖各示例列出的工具和配置。
+[OpenClaw 原生执行](examples/yuanxingmu/openclaw/README.md)与 [Hermes 原生终端环境](examples/yuanxingmu/hermes/README.md)已分别完成接入演示。早期 OpenClaw 示例使用本地脚本模型；新版真实模型记录见上方视频。早期 Hermes 示例只验证工具调用链；新版官方网页和真实模型的结果及失败分类见 [Hermes 实测说明](yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md)。结果只覆盖各记录列出的版本、工具和配置。
 
 [独立 Linux CI 记录](examples/yuanxingmu/verified-hosted-report.json)保存了 33 项测试和 19 项核心演示检查的结果。它验证执行核心，不包含这两种框架的 WebUI 或真实模型攻击评测。
 

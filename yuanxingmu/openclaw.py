@@ -102,6 +102,8 @@ def _manifest(profile: Path):
     value = json.loads((profile / "profile.json").read_text(encoding="utf-8"))
     if value.get("version") != 2 or value.get("profile") != str(profile):
         raise RuntimeError("profile_identity_changed")
+    if value.get("framework", "openclaw") not in {"openclaw", "hermes"}:
+        raise RuntimeError("profile_framework_unknown")
     return profile, value
 
 
@@ -115,11 +117,16 @@ def _task_state(profile: Path, manifest: dict):
         labels = [r[0] for r in db.execute("SELECT label FROM authority_labels WHERE family_id=? ORDER BY label", (row[0],))]
         if "private" not in labels:
             raise RuntimeError("profile_private_label_missing")
-        return {"task_id": manifest["task_id"], "active": not bool(row[1]), "revoked": bool(row[1]), "labels": labels}
+        result = {"task_id": manifest["task_id"], "active": not bool(row[1]), "revoked": bool(row[1]), "labels": labels}
+        if db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='quarantine_families'").fetchone():
+            paused = db.execute("SELECT state,epoch FROM quarantine_families WHERE family_id=?", (row[0],)).fetchone()
+            result.update(paused=bool(paused and paused[0] == "paused"), pause_epoch=paused[1] if paused else 0)
+        return result
 
 
 def _public(profile: Path, manifest: dict):
     return {"profile": str(profile), "task_id": manifest["task_id"], "model": manifest["model"],
+            "framework": manifest.get("framework", "openclaw"),
             "documents": manifest["documents"], "destinations": manifest["destinations"],
             "url": f"http://127.0.0.1:{manifest['port']}/", "input_privacy": "private",
             "features": manifest.get("features", [])}
@@ -149,9 +156,14 @@ def _offline_lifecycle(profile: Path):
 def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Path,
                  model_url: str, model_id: str, api_key: str = "local-unused",
                  documents: dict[str, Path] | None = None, destinations: dict | None = None, reviewed_mail=False,
+                 defense_policy: dict | None = None, reviewed_actions=False, action_targets: dict | None = None,
+                 judge_config: dict | None = None,
+                 selected_skills: dict[str, Path] | None = None,
                  port: int = 18911, context_window: int = 32768, max_tokens: int = 2048) -> dict:
     """Create once. Inputs and policy are snapshots; init never overwrites a profile."""
     _linux()
+    if judge_config is not None and defense_policy is None:
+        raise ValueError("judge_requires_layered_defense")
     model_url = _model_url(model_url)
     if not isinstance(model_id, str) or not model_id.strip() or any(c in model_id for c in "\x00\r\n"):
         raise ValueError("需要有效的模型名称。")
@@ -198,6 +210,9 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
     profile.parent.mkdir(parents=True, exist_ok=True)
     profile.mkdir(mode=0o700)
     profile = profile.resolve()
+    from .skills import create_snapshot
+    skill_snapshot = create_snapshot(profile / "skill-store", selected_skills or {})
+    empty_snapshot = create_snapshot(profile / "skill-store", {})
     for name in ("documents", "workspace", "trusted-core", "plugin", "openclaw-state", "host-home", "node_modules", "gateway-audit", "runtime-etc"):
         (profile / name).mkdir(mode=0o700)
     (profile / "trusted-core" / "yuanxingmu").mkdir(mode=0o700)
@@ -213,14 +228,27 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
         resources[name] = {"path": "documents/" + name + ".txt", "labels": ["private"]}
     _save(profile / "policy.json", {"resources": resources, "destinations": destinations})
     loaded_resources, loaded_destinations = load_policy(profile / "policy.json")
-    with Broker(profile / "broker-state", loaded_resources, loaded_destinations, reviewed_mail=reviewed_mail) as broker:
+    _bytes(profile / "model-key", api_key.encode())
+    from .judge_profile import save_judge_profile
+    judge_files = save_judge_profile(profile, judge_config)
+    guards = None
+    if defense_policy is not None:
+        _save(profile / "defense-policy.json", defense_policy)
+        from .protection import load_guards
+        guards = load_guards(profile, {"url": model_url, "id": model_id})
+    targets = None
+    if reviewed_actions:
+        _save(profile / "action-targets.json", action_targets or {})
+        from .protection import load_action_targets
+        targets = load_action_targets(profile)
+    with Broker(profile / "broker-state", loaded_resources, loaded_destinations,
+                reviewed_mail=reviewed_mail, guards=guards, action_targets=targets) as broker:
         task = broker.create_task(initial_labels=["private"])
         broker.bind_workspace(task, profile / "workspace")
         family = broker.authority._db.execute("SELECT family_id FROM authority_tasks WHERE id=?", (task,)).fetchone()[0]
     profile_id = uuid.uuid4().hex
     sockets = Path("/tmp") / ("yxm-" + str(os.getuid()) + "-" + profile_id)
     token = secrets.token_urlsafe(32)
-    _bytes(profile / "model-key", api_key.encode())
     _bytes(profile / "gateway-token", token.encode())
     for name, value in {
         "passwd": f"yuanxingmu:x:{os.getuid()}:{os.getgid()}:Yuanxingmu:{profile / 'host-home'}:/bin/sh\n",
@@ -246,8 +274,9 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                     "input": ["text"], "reasoning": False, "contextWindow": context_window,
                     "maxTokens": max_tokens,
                     "cost": {"input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0}}]}}},
-        "tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []),
-                  "sandbox": {"tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else [])}}, "fs": {"workspaceOnly": True},
+        "skills": {"allowBundled": [], "load": {"extraDirs": [], "watch": False}},
+        "tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []) + (["yuanxingmu_action_targets", "yuanxingmu_prepare_action"] if reviewed_actions else []),
+                  "sandbox": {"tools": {"allow": TOOLS + (["yuanxingmu_prepare_email"] if reviewed_mail else []) + (["yuanxingmu_action_targets", "yuanxingmu_prepare_action"] if reviewed_actions else [])}}, "fs": {"workspaceOnly": True},
                   "elevated": {"enabled": False}, "codeMode": {"enabled": False},
                   "exec": {"host": "sandbox", "timeoutSeconds": 25}},
         "plugins": {"allow": ["yuanxingmu"], "slots": {"memory": "none"},
@@ -257,23 +286,33 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                             "brokerSocket": str(sockets / "broker.sock"), "operatorSocket": str(sockets / "operator.sock"),
                             "bwrap": str(bwrap), "auditPath": str(profile / "gateway-audit" / "adapter-events.jsonl"),
                             "resourceIds": sorted(resources), "destinationIds": sorted(destinations),
+                            "defenseEnabled": defense_policy is not None,
+                            "reviewedActions": reviewed_actions is True,
                             "reviewedMail": reviewed_mail is True}}}},
     }
     _save(profile / "openclaw.json", config)
     immutable = [profile / "openclaw.json", profile / "policy.json", profile / "model-key", profile / "gateway-token",
                  profile / "broker-state" / "bindings.json", profile / "broker-state" / "workspaces.json"]
+    if defense_policy is not None:
+        immutable.append(profile / "defense-policy.json")
+    immutable.extend(judge_files)
+    if reviewed_actions:
+        immutable.append(profile / "action-targets.json")
     for directory in ("documents", "trusted-core", "plugin", "runtime-etc"):
         immutable.extend(p for p in (profile / directory).rglob("*") if p.is_file())
     identities = {name: _identity(profile / name) for name in (
         ".", "workspace", "documents", "trusted-core", "plugin", "host-home", "openclaw-state",
         "broker-state", "broker-state/authority.sqlite3", "gateway-audit", "runtime-etc")}
-    manifest = {"version": 2, "profile": str(profile), "profile_id": profile_id, "task_id": task, "family_id": family,
-                "features": ["reviewed_email_v1"] if reviewed_mail else [],
+    manifest = {"version": 2, "framework": "openclaw", "profile": str(profile), "profile_id": profile_id, "task_id": task, "family_id": family,
+                "features": (["reviewed_email_v1"] if reviewed_mail else []) + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1"] if defense_policy is not None else []) + (["reviewed_actions_v1"] if reviewed_actions else []),
                 "node": str(node), "openclaw_package": str(openclaw_package), "bwrap": str(bwrap), "python": str(Path(sys.executable).resolve()),
                 "runtime": str(sockets), "port": port, "model": {"url": model_url, "id": model_id},
                 "documents": sorted(resources), "destinations": sorted(destinations),
+                "skills_snapshot": skill_snapshot.to_dict(), "skills_empty_snapshot": empty_snapshot.to_dict(),
                 "files": {str(p.relative_to(profile)): _hash(p) for p in immutable}, "identities": identities,
                 "runtime_files": {str(p): _hash(p) for p in (node, bwrap, openclaw_package / "package.json", openclaw_package / "openclaw.mjs")}}
+    if judge_config is not None:
+        manifest["features"].append("independent_judge_v1")
     _save(profile / "profile.json", manifest)
     return {"status": "created", **_public(profile, manifest)}
 
@@ -281,6 +320,13 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
 def validate_profile(profile: Path) -> dict:
     _linux()
     profile, manifest = _manifest(profile)
+    if "skills_snapshot" in manifest:
+        from .skills import verify_snapshot
+        for key in ("skills_snapshot", "skills_empty_snapshot"):
+            snapshot = manifest[key]
+            verified = verify_snapshot(Path(snapshot["path"]), snapshot["digest"])
+            if verified.to_dict() != snapshot:
+                raise RuntimeError("profile_skill_snapshot_changed")
     for name, expected in manifest["identities"].items():
         if _identity(profile / name) != expected:
             raise RuntimeError("profile_directory_or_ledger_replaced: " + name)
@@ -296,7 +342,10 @@ def validate_profile(profile: Path) -> dict:
     for name, digest in manifest["runtime_files"].items():
         if _hash(Path(name)) != digest:
             raise RuntimeError("profile_runtime_changed")
-    if (profile / "node_modules" / "openclaw").resolve(strict=True) != Path(manifest["openclaw_package"]):
+    if manifest.get("framework", "openclaw") == "hermes":
+        from .hermes import validate_binding
+        validate_binding(profile, manifest)
+    elif (profile / "node_modules" / "openclaw").resolve(strict=True) != Path(manifest["openclaw_package"]):
         raise RuntimeError("profile_openclaw_binding_changed")
     _task_state(profile, manifest)
     return manifest
@@ -343,8 +392,8 @@ def control_profile(profile: Path, action: str) -> dict:
                         "reason": "supervisor_unreachable_cleanup_not_confirmed", "task": _task_state(profile, manifest)}
             if action == "revoke":
                 resources, destinations = load_policy(profile / "policy.json")
-                with Broker(profile / "broker-state", resources, destinations,
-                            reviewed_mail="reviewed_email_v1" in manifest.get("features", [])) as broker:
+                from .protection import profile_services
+                with Broker(profile / "broker-state", resources, destinations, **profile_services(profile, manifest)) as broker:
                     broker.revoke(manifest["task_id"])
             return {"status": state, "operator_action": action, **_public(profile, manifest),
                     "task": _task_state(profile, manifest)}
@@ -363,9 +412,14 @@ def review_profile(profile: Path, action: str, value: dict | None = None) -> dic
     """Use only the unmounted host review endpoint; never the agent operator socket."""
     _linux()
     profile, manifest = _manifest(profile)
-    if "reviewed_email_v1" not in manifest.get("features", []):
-        raise AuthorizationError("reviewed_mail_not_enabled")
-    if action not in {"list", "get", "edit", "cancel", "send"} or (value is not None and (not isinstance(value, dict) or "op" in value)):
+    is_action = action.startswith("action_")
+    is_tool = action.startswith("tool_")
+    is_quarantine = action.startswith("quarantine_")
+    is_protection = action.startswith("protection_")
+    feature = "layered_defense_v1" if is_tool or is_quarantine or is_protection else "reviewed_actions_v1" if is_action else "reviewed_email_v1"
+    if feature not in manifest.get("features", []):
+        raise AuthorizationError("reviewed_actions_not_enabled" if is_action else "reviewed_mail_not_enabled")
+    if action not in {"list", "get", "edit", "cancel", "send", "action_list", "action_get", "action_edit", "action_cancel", "action_commit", "tool_list", "tool_get", "tool_approve", "tool_deny", "quarantine_status", "quarantine_resume", "protection_set"} or (value is not None and (not isinstance(value, dict) or "op" in value)):
         raise AuthorizationError("invalid_mail_review")
     request = {"op": action, **(value or {})}
     payload = json.dumps(request, ensure_ascii=True).encode() + b"\n"
@@ -389,14 +443,18 @@ def review_profile(profile: Path, action: str, value: dict | None = None) -> dic
         # profile validation are also required, and live failures never retry here.
         with _profile_lock(profile):
             manifest = validate_profile(profile)
-            if action not in {"list", "get"} and _offline_lifecycle(profile) != "stopped":
+            if action not in {"list", "get", "action_list", "action_get", "tool_list", "tool_get", "quarantine_status"} and _offline_lifecycle(profile) != "stopped":
                 raise AuthorizationError("mail_profile_state_unconfirmed")
             resources, destinations = load_policy(profile / "policy.json")
-            with Broker(profile / "broker-state", resources, destinations, reviewed_mail=True) as broker:
+            from .protection import profile_services
+            with Broker(profile / "broker-state", resources, destinations, **profile_services(profile, manifest)) as broker:
                 return {"ok": True, **broker.review_mail(manifest["task_id"], request)}
 
 
 def _environment(profile: Path, manifest: dict):
+    if manifest.get("framework", "openclaw") == "hermes":
+        from .hermes import environment
+        return environment(profile, manifest)
     # Do not inherit provider credentials, HOME, OPENCLAW_* overrides or proxies.
     return {"PATH": str(Path(manifest["node"]).parent) + ":/usr/bin:/bin", "HOME": str(profile / "host-home"),
             "LANG": "C.UTF-8", "PYTHONDONTWRITEBYTECODE": "1",
@@ -414,6 +472,9 @@ def gateway_command(profile: Path, manifest: dict) -> list[str]:
     network namespace has only loopback bridges. Worker namespaces remain
     available; the inner worker applies --disable-userns itself.
     """
+    if manifest.get("framework", "openclaw") == "hermes":
+        from .hermes import gateway_command as hermes_command
+        return hermes_command(profile, manifest)
     from .gateway_network import INNER_BOOTSTRAP
     runtime = Path(manifest["runtime"])
     args = [manifest["bwrap"], "--unshare-user", "--unshare-net", "--unshare-pid", "--unshare-ipc",
@@ -439,6 +500,17 @@ def gateway_command(profile: Path, manifest: dict) -> list[str]:
     for name in ("openclaw-state", "host-home", "workspace", "gateway-audit"):
         path = profile / name
         args += ["--bind", str(path), str(path)]
+    if "skills_snapshot" in manifest:
+        selected = manifest["skills_snapshot"]["tree_path"]
+        empty = manifest["skills_empty_snapshot"]["tree_path"]
+        args += ["--ro-bind", selected, str(profile / "workspace" / "skills")]
+        for target in (profile / "workspace" / ".agents" / "skills", profile / "openclaw-state" / "skills",
+                       profile / "host-home" / ".agents" / "skills"):
+            args += ["--ro-bind", empty, str(target)]
+        for name in ("skills", "custodian-skills"):
+            target = Path(manifest["openclaw_package"]) / name
+            if target.is_dir():
+                args += ["--ro-bind", empty, str(target)]
     for name in ("model.sock", "broker.sock", "operator.sock"):
         path = runtime / name
         args += ["--ro-bind", str(path), str(path)]
@@ -505,6 +577,8 @@ def serve_profile(profile: Path):
     profile, manifest = _manifest(profile)
     with _profile_lock(profile):
         manifest = validate_profile(profile)
+        framework = manifest.get("framework", "openclaw")
+        display = "Hermes" if framework == "hermes" else "OpenClaw"
         if not _task_state(profile, manifest)["active"]:
             raise AuthorizationError("task_revoked")
         ready = sandbox_available(bwrap=Path(manifest["bwrap"]))
@@ -534,10 +608,21 @@ def serve_profile(profile: Path):
         gateway, server, thread, network = None, None, None, None
         resources, destinations = load_policy(profile / "policy.json")
         try:
-            with Broker(profile / "broker-state", resources, destinations,
-                        reviewed_mail="reviewed_email_v1" in manifest.get("features", [])) as broker:
+            from .protection import profile_services, foundation_config
+            with Broker(profile / "broker-state", resources, destinations, **profile_services(profile, manifest)) as broker:
+                from .protection import apply_profile_settings
+                broker.configure_callback = lambda settings: apply_profile_settings(profile, manifest, broker, settings)
+                if broker.guards is not None:
+                    snapshot = manifest.get("skills_snapshot")
+                    roots = [Path(value) for value in snapshot["scan_paths"]] if snapshot else []
+                    if snapshot and not roots:
+                        roots = [Path(snapshot["tree_path"])]
+                    report = broker.guards.scan_foundation(foundation_config(profile, manifest), roots)
+                    _save(profile / "foundation-report.json", {**report.to_dict(), "policy_sha256": manifest["files"]["defense-policy.json"]})
+                    if not report.allowed:
+                        raise RuntimeError("启动检查未通过；请查看 foundation-report.json。")
                 broker.serve(manifest["task_id"], runtime / "broker.sock")
-                if "reviewed_email_v1" in manifest.get("features", []):
+                if {"reviewed_email_v1", "reviewed_actions_v1", "layered_defense_v1"}.intersection(manifest.get("features", [])):
                     # gateway_command mounts three individual sockets, never this
                     # endpoint or its parent. Worker tools cannot approve a draft.
                     broker.serve_reviews(manifest["task_id"], runtime / "review.sock")
@@ -569,8 +654,10 @@ def serve_profile(profile: Path):
                 thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": .05}, daemon=True)
                 thread.start()
                 from .gateway_network import HostNetwork
+                from .model_output import ModelOutputGuard
                 network = HostNetwork(runtime, model_url=manifest["model"]["url"],
-                                      api_key=(profile / "model-key").read_text(), webui_port=manifest["port"])
+                                      api_key=(profile / "model-key").read_text(), webui_port=manifest["port"],
+                                      output_guard=ModelOutputGuard(broker, manifest["task_id"]) if broker.guards is not None else None)
                 network.__enter__()
                 with (profile / "gateway.stdout.log").open("ab") as out, (profile / "gateway.stderr.log").open("ab") as err:
                     os.fchmod(out.fileno(), 0o600)
@@ -589,9 +676,15 @@ def serve_profile(profile: Path):
                 deadline = time.monotonic() + 90
                 while time.monotonic() < deadline:
                     if gateway.poll() is not None:
-                        raise RuntimeError("OpenClaw 启动失败；请查看 gateway.stderr.log。")
+                        raise RuntimeError(display + " 启动失败；请查看 gateway.stderr.log。")
                     if stop.wait(.2):
                         raise RuntimeError("stopped_while_starting")
+                    if framework == "hermes":
+                        from .hermes import check_ready
+                        healthy = check_ready(profile, manifest)
+                        if healthy.get("ok") is True:
+                            break
+                        continue
                     connection = http.client.HTTPConnection("127.0.0.1", manifest["port"], timeout=1)
                     try:
                         connection.request("GET", "/")
@@ -604,17 +697,18 @@ def serve_profile(profile: Path):
                     finally:
                         connection.close()
                 else:
-                    raise RuntimeError("OpenClaw 启动超时；请查看 gateway.stderr.log。")
-                health = subprocess.run([manifest["node"], str(Path(manifest["openclaw_package"]) / "openclaw.mjs"),
+                    raise RuntimeError(display + " 启动超时；请查看 gateway.stderr.log。")
+                if framework == "openclaw":
+                    health = subprocess.run([manifest["node"], str(Path(manifest["openclaw_package"]) / "openclaw.mjs"),
                                          "health", "--json", "--timeout", "3000"], env=_environment(profile, manifest),
                                         cwd=profile / "host-home", capture_output=True, text=True, timeout=20)
-                try:
-                    healthy = json.loads(health.stdout)
-                except ValueError:
-                    healthy = {}
-                if (health.returncode or healthy.get("ok") is not True or gateway.poll() is not None
+                    try:
+                        healthy = json.loads(health.stdout) if health.returncode == 0 else {}
+                    except ValueError:
+                        healthy = {}
+                if (healthy.get("ok") is not True or gateway.poll() is not None
                         or _process_identity(gateway.pid) != lifecycle["gateway_start"]):
-                    raise RuntimeError("OpenClaw 身份与健康检查未通过；请检查端口是否被其他实例占用。")
+                    raise RuntimeError(display + " 身份与健康检查未通过；请检查端口是否被其他实例占用。")
                 # An unrelated OpenClaw page cannot pass a handshake with our
                 # randomly generated token. Non-JSON output is not a success.
                 _save(profile / "gateway-health.json", {"authenticated": True, "gateway_pid": gateway.pid})
@@ -622,7 +716,7 @@ def serve_profile(profile: Path):
                 _save(profile / "lifecycle.json", lifecycle)
                 while not stop.wait(.2):
                     if gateway.poll() is not None:
-                        raise RuntimeError("OpenClaw 意外退出；请查看 gateway.stderr.log。")
+                        raise RuntimeError(display + " 意外退出；请查看 gateway.stderr.log。")
                 _shutdown_children(gateway)
         except BaseException as exc:
             lifecycle.update(status="failed", reason=str(exc))
@@ -645,6 +739,13 @@ def serve_profile(profile: Path):
             _save(profile / "lifecycle.json", lifecycle)
 
 
+def _dashboard_url(profile: Path, manifest: dict):
+    if manifest.get("framework", "openclaw") == "hermes":
+        from .hermes import dashboard_url
+        return dashboard_url(profile, manifest)
+    return f"http://127.0.0.1:{manifest['port']}/#token=" + (profile / "gateway-token").read_text()
+
+
 def start_profile(profile: Path) -> dict:
     manifest = validate_profile(profile)
     profile = Path(manifest["profile"])
@@ -653,7 +754,7 @@ def start_profile(profile: Path) -> dict:
     try:
         running = _rpc(Path(manifest["runtime"]) / "operator.sock", "status")
         if running.get("status") == "ready":
-            return {**running, "dashboard_url": running["url"] + "#token=" + (profile / "gateway-token").read_text()}
+            return {**running, "dashboard_url": _dashboard_url(profile, manifest)}
         raise RuntimeError("profile_already_running_or_starting")
     except (FileNotFoundError, ConnectionRefusedError):
         pass
@@ -666,14 +767,14 @@ def start_profile(profile: Path) -> dict:
         process = subprocess.Popen([sys.executable, "-I", "-B", "-c", bootstrap, str(profile / "trusted-core"), str(profile)],
             cwd=profile / "host-home", env={"PATH": "/usr/bin:/bin", "LANG": "C.UTF-8"},
             stdin=subprocess.DEVNULL, stdout=log, stderr=log, close_fds=True, start_new_session=True)
-    deadline = time.monotonic() + 100
+    deadline = time.monotonic() + (140 + 35 * manifest.get("skills_snapshot", {}).get("file_count", 0) if "layered_defense_v1" in manifest.get("features", []) else 100)
     while time.monotonic() < deadline:
         if process.poll() is not None:
             raise RuntimeError("启动失败；请查看实例目录中的 supervisor.log。")
         try:
             ready = _rpc(Path(manifest["runtime"]) / "operator.sock", "status")
             if ready.get("status") == "ready":
-                return {**ready, "dashboard_url": ready["url"] + "#token=" + (profile / "gateway-token").read_text()}
+                return {**ready, "dashboard_url": _dashboard_url(profile, manifest)}
         except (FileNotFoundError, ConnectionRefusedError):
             pass
         time.sleep(.2)
@@ -683,4 +784,4 @@ def start_profile(profile: Path) -> dict:
         process.wait(timeout=20)
     except subprocess.TimeoutExpired:
         raise RuntimeError("启动未确认，清理也未确认；请检查 supervisor.log。") from None
-    raise RuntimeError("OpenClaw 启动超时。")
+    raise RuntimeError("聊天服务启动超时。")

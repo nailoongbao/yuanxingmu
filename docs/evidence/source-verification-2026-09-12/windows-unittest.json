@@ -1,0 +1,2118 @@
+{
+  "started_at": "2026-09-12T06:12:12.835896+00:00",
+  "finished_at": "2026-09-12T06:12:29.857884+00:00",
+  "elapsed_seconds": 17.031,
+  "scope": "All unittest cases discovered under tests, equivalent to python -m unittest discover -s tests -v. Counts are tests, not attacks.",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.9 | packaged by conda-forge | (main, Mar  4 2025, 22:37:18) [MSC v.1943 64 bit (AMD64)]",
+  "executable": "D:\\miniconda\\python.exe",
+  "tests_run": 719,
+  "passed": 204,
+  "skipped": 515,
+  "failures": 0,
+  "errors": 0,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "successful": true,
+  "skip_reasons": {
+    "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 97,
+    "This platform does not permit creating test symlinks: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\tmprr9difwp\\\\配置 有空格\\\\python.exe' -> 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\tmprr9difwp\\\\配置 有空格\\\\venv\\\\bin\\\\python'": 1,
+    "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+    "Real Broker native adapter checks require Linux": 32,
+    "Safe file actions require POSIX no-follow directory descriptors": 6,
+    "Host scanner requires Linux private profiles": 15,
+    "Linux broker only": 9,
+    "Linux workbench storage and authority only": 40,
+    "Linux Unix socket bridges only": 10,
+    "Linux broker sockets and persistent authority": 16,
+    "Optional native Hermes installation required": 3,
+    "Real Broker sockets require Linux": 5,
+    "Linux no-follow directory descriptor checks": 9,
+    "Linux Hermes profile only": 10,
+    "requires the optional real Hermes installation": 16,
+    "Linux installer filesystem and process boundaries": 48,
+    "Real protected profile management requires Linux": 11,
+    "Protected profile storage uses Linux descriptor-relative I/O": 21,
+    "Live host settings require Linux": 4,
+    "Linux broker and Unix socket boundaries": 14,
+    "Real Linux broker and Unix model socket": 16,
+    "Durable host queue uses Linux private directories": 26,
+    "Linux OpenClaw profile only": 20,
+    "Linux plugin and Unix socket contract": 1,
+    "Quarantine Broker integration requires Linux": 8,
+    "Real Workbench HTTP quarantine tests require Linux": 2,
+    "Linux execution only": 2,
+    "Linux bubblewrap only": 6,
+    "secure snapshots require Linux file descriptors": 26,
+    "Real Broker Unix sockets require Linux": 11
+  },
+  "skipped_tests": [
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_additional_sdk_adapters.AgnoNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_additional_sdk_adapters.AgnoNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_additional_sdk_adapters.AgnoNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_additional_sdk_adapters.AgnoNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_additional_sdk_adapters.AgnoNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_fc_cannot_override_native_function_call (test_additional_sdk_adapters.AgnoNativeTests.test_model_fc_cannot_override_native_function_call)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_additional_sdk_adapters.AgnoNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_additional_sdk_adapters.AgnoNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_additional_sdk_adapters.AgnoNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_additional_sdk_adapters.AgnoNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_additional_sdk_adapters.AgnoNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_sync_function_execute_uses_the_same_native_identity (test_additional_sdk_adapters.AgnoNativeTests.test_sync_function_execute_uses_the_same_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_additional_sdk_adapters.AgnoNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_additional_sdk_adapters.CrewAINativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_additional_sdk_adapters.CrewAINativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_additional_sdk_adapters.CrewAINativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_additional_sdk_adapters.CrewAINativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_additional_sdk_adapters.CrewAINativeTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_host_nonce_cannot_submit_proposals (test_additional_sdk_adapters.CrewAINativeTests.test_missing_host_nonce_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_additional_sdk_adapters.CrewAINativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_additional_sdk_adapters.CrewAINativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_nonce_scope_exits_and_model_nonce_is_rejected (test_additional_sdk_adapters.CrewAINativeTests.test_nonce_scope_exits_and_model_nonce_is_rejected)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_additional_sdk_adapters.CrewAINativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_additional_sdk_adapters.CrewAINativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_sync_structured_tool_and_base_tool_preserve_host_nonce (test_additional_sdk_adapters.CrewAINativeTests.test_sync_structured_tool_and_base_tool_preserve_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_additional_sdk_adapters.CrewAINativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_additional_sdk_adapters.GoogleADKNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_additional_sdk_adapters.GoogleADKNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_additional_sdk_adapters.GoogleADKNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_additional_sdk_adapters.GoogleADKNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_additional_sdk_adapters.GoogleADKNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_cannot_supply_native_tool_context (test_additional_sdk_adapters.GoogleADKNativeTests.test_model_cannot_supply_native_tool_context)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_additional_sdk_adapters.GoogleADKNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_additional_sdk_adapters.GoogleADKNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_additional_sdk_adapters.GoogleADKNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_additional_sdk_adapters.GoogleADKNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_additional_sdk_adapters.GoogleADKNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_additional_sdk_adapters.GoogleADKNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_already_cancelled_dispatch_does_not_reach_broker (test_autogen_llama_adapters.AutoGenNativeTests.test_already_cancelled_dispatch_does_not_reach_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_autogen_llama_adapters.AutoGenNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_core_tool_agent_message_uses_same_native_identity (test_autogen_llama_adapters.AutoGenNativeTests.test_core_tool_agent_message_uses_same_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_direct_run_cannot_reuse_previous_call_identity (test_autogen_llama_adapters.AutoGenNativeTests.test_direct_run_cannot_reuse_previous_call_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_autogen_llama_adapters.AutoGenNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_autogen_llama_adapters.AutoGenNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_autogen_llama_adapters.AutoGenNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_autogen_llama_adapters.AutoGenNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_cannot_supply_hidden_call_id_or_cancellation_token (test_autogen_llama_adapters.AutoGenNativeTests.test_model_cannot_supply_hidden_call_id_or_cancellation_token)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_autogen_llama_adapters.AutoGenNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_autogen_llama_adapters.AutoGenNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_autogen_llama_adapters.AutoGenNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_autogen_llama_adapters.AutoGenNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_autogen_llama_adapters.AutoGenNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_autogen_llama_adapters.AutoGenNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_autogen_llama_adapters.LlamaIndexNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_host_nonce (test_autogen_llama_adapters.LlamaIndexNativeTests.test_email_drafts_never_send_and_reuse_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_autogen_llama_adapters.LlamaIndexNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_autogen_llama_adapters.LlamaIndexNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_autogen_llama_adapters.LlamaIndexNativeTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_host_nonce_cannot_submit_proposals (test_autogen_llama_adapters.LlamaIndexNativeTests.test_missing_host_nonce_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_agent_dispatch_requires_host_binding_despite_workflow_context (test_autogen_llama_adapters.LlamaIndexNativeTests.test_native_agent_dispatch_requires_host_binding_despite_workflow_context)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_autogen_llama_adapters.LlamaIndexNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_autogen_llama_adapters.LlamaIndexNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_autogen_llama_adapters.LlamaIndexNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_autogen_llama_adapters.LlamaIndexNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_scope_restores_after_exceptions_and_model_context_cannot_override_it (test_autogen_llama_adapters.LlamaIndexNativeTests.test_scope_restores_after_exceptions_and_model_context_cannot_override_it)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_sync_tool_call_preserves_host_nonce_and_rejects_missing_binding (test_autogen_llama_adapters.LlamaIndexNativeTests.test_sync_tool_call_preserves_host_nonce_and_rejects_missing_binding)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_autogen_llama_adapters.LlamaIndexNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_aggregation_virtualenv_interpreter_symlink_is_not_replaced_by_system_python (test_config_plan.PlanTests.test_aggregation_virtualenv_interpreter_symlink_is_not_replaced_by_system_python)",
+      "reason": "This platform does not permit creating test symlinks: [WinError 1314] 客户端没有所需的特权。: 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\tmprr9difwp\\\\配置 有空格\\\\python.exe' -> 'C:\\\\Users\\\\PC\\\\AppData\\\\Local\\\\Temp\\\\tmprr9difwp\\\\配置 有空格\\\\venv\\\\bin\\\\python'"
+    },
+    {
+      "test": "test_agent_execution_tool_wrapper_forwards_call_id (test_mastra_native_adapter.MastraAgentContextTests.test_agent_execution_tool_wrapper_forwards_call_id)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_already_aborted_call_never_reaches_broker (test_mastra_native_adapter.MastraAgentContextTests.test_already_aborted_call_never_reaches_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_mastra_native_adapter.MastraAgentContextTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_mastra_native_adapter.MastraAgentContextTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_mastra_native_adapter.MastraAgentContextTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_mastra_native_adapter.MastraAgentContextTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_mastra_native_adapter.MastraAgentContextTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_and_host_identities_with_same_text_are_separate (test_mastra_native_adapter.MastraAgentContextTests.test_native_and_host_identities_with_same_text_are_separate)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_mastra_native_adapter.MastraAgentContextTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_mastra_native_adapter.MastraAgentContextTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_mastra_native_adapter.MastraAgentContextTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_mastra_native_adapter.MastraAgentContextTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_resume_input_is_revalidated_before_broker (test_mastra_native_adapter.MastraAgentContextTests.test_resume_input_is_revalidated_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_mastra_native_adapter.MastraAgentContextTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_unicode_identity_has_stable_documented_key (test_mastra_native_adapter.MastraAgentContextTests.test_unicode_identity_has_stable_documented_key)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_mastra_native_adapter.MastraAgentContextTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_already_aborted_call_never_reaches_broker (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_already_aborted_call_never_reaches_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_async_host_scope_restores_after_exception (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_async_host_scope_restores_after_exception)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_host_nonce (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_email_drafts_never_send_and_reuse_host_nonce)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_resume_input_is_revalidated_before_broker (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_resume_input_is_revalidated_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_workflow_run_id_cannot_replace_missing_host_nonce (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_workflow_run_id_cannot_replace_missing_host_nonce)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_direct_function_cannot_reuse_previous_identity_and_raw_result_can_replay (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_direct_function_cannot_reuse_previous_identity_and_raw_result_can_replay)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_middleware_route_preserves_native_id_despite_metadata_changes (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_middleware_route_preserves_native_id_despite_metadata_changes)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_cannot_supply_runtime_context_or_native_id (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_model_cannot_supply_runtime_context_or_native_id)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_session_and_metadata_cannot_replace_missing_native_id (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_session_and_metadata_cannot_replace_missing_native_id)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_chat_tool_call_id_is_not_injected_into_registered_tool (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_chat_tool_call_id_is_not_injected_into_registered_tool)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_direct_tool_call_enforces_nested_schema_and_host_nonce (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_direct_tool_call_enforces_nested_schema_and_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_host_nonce (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_email_drafts_never_send_and_reuse_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_host_nonce_cannot_submit_proposals (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_missing_host_nonce_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_declaration_preserves_nested_schemas_but_omits_root_extra_flag (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_native_declaration_preserves_nested_schemas_but_omits_root_extra_flag)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_nonce_scope_restores_after_exception_and_model_values_are_rejected (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_nonce_scope_restores_after_exception_and_model_values_are_rejected)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_state_substitution_cannot_set_host_endpoint_or_approval (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_state_substitution_cannot_set_host_endpoint_or_approval)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_native_sdk_adapters.LangChainNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_native_sdk_adapters.LangChainNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_native_sdk_adapters.LangChainNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_native_sdk_adapters.LangChainNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_native_sdk_adapters.LangChainNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_model_supplied_call_id_cannot_override_native_call_id (test_native_sdk_adapters.LangChainNativeTests.test_model_supplied_call_id_cannot_override_native_call_id)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_native_sdk_adapters.LangChainNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_native_sdk_adapters.LangChainNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_native_sdk_adapters.LangChainNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_native_sdk_adapters.LangChainNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_native_sdk_adapters.LangChainNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_native_sdk_adapters.OpenAINativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_native_sdk_adapters.OpenAINativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_native_sdk_adapters.OpenAINativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_native_sdk_adapters.OpenAINativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_native_sdk_adapters.OpenAINativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_native_sdk_adapters.OpenAINativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_native_sdk_adapters.OpenAINativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_native_sdk_adapters.OpenAINativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_raw_function_tool_duplicate_keys_rejected_before_broker (test_native_sdk_adapters.OpenAINativeTests.test_raw_function_tool_duplicate_keys_rejected_before_broker)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_native_sdk_adapters.OpenAINativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_native_sdk_adapters.OpenAINativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_native_sdk_adapters.PydanticNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_native_sdk_adapters.PydanticNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_native_sdk_adapters.PydanticNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_native_sdk_adapters.PydanticNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_native_sdk_adapters.PydanticNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_native_sdk_adapters.PydanticNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_native_sdk_adapters.PydanticNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_native_sdk_adapters.PydanticNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_native_sdk_adapters.PydanticNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_native_sdk_adapters.PydanticNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Real Broker native adapter checks require Linux"
+    },
+    {
+      "test": "test_host_change_during_replacement_preparation_preserves_new_file_and_consumes_attempt (test_yuanxingmu_actions.ActionsTests.test_host_change_during_replacement_preparation_preserves_new_file_and_consumes_attempt)",
+      "reason": "Safe file actions require POSIX no-follow directory descriptors"
+    },
+    {
+      "test": "test_host_only_file_review_overwrites_and_deletes_exact_selected_files (test_yuanxingmu_actions.ActionsTests.test_host_only_file_review_overwrites_and_deletes_exact_selected_files)",
+      "reason": "Safe file actions require POSIX no-follow directory descriptors"
+    },
+    {
+      "test": "test_modified_file_or_replaced_directory_requires_new_review (test_yuanxingmu_actions.ActionsTests.test_modified_file_or_replaced_directory_requires_new_review)",
+      "reason": "Safe file actions require POSIX no-follow directory descriptors"
+    },
+    {
+      "test": "test_payload_and_existing_file_size_limits_and_cancel_are_enforced (test_yuanxingmu_actions.ActionsTests.test_payload_and_existing_file_size_limits_and_cancel_are_enforced)",
+      "reason": "Safe file actions require POSIX no-follow directory descriptors"
+    },
+    {
+      "test": "test_symlinks_hardlinks_special_files_and_traversal_never_change_outside_file (test_yuanxingmu_actions.ActionsTests.test_symlinks_hardlinks_special_files_and_traversal_never_change_outside_file)",
+      "reason": "Safe file actions require POSIX no-follow directory descriptors"
+    },
+    {
+      "test": "test_workspace_alias_is_canonical_for_broker_overlap_checks (test_yuanxingmu_actions.ActionsTests.test_workspace_alias_is_canonical_for_broker_overlap_checks)",
+      "reason": "Safe file actions require POSIX no-follow directory descriptors"
+    },
+    {
+      "test": "test_actual_broker_pause_resume_and_revoke_are_not_changed_by_failed_notifications (test_yuanxingmu_alerts.AlertsTests.test_actual_broker_pause_resume_and_revoke_are_not_changed_by_failed_notifications)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_authenticated_configuration_is_durable_idempotent_and_secret_free (test_yuanxingmu_alerts.AlertsTests.test_authenticated_configuration_is_durable_idempotent_and_secret_free)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_changing_target_stops_old_queue_and_only_new_events_use_new_target (test_yuanxingmu_alerts.AlertsTests.test_changing_target_stops_old_queue_and_only_new_events_use_new_target)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_disable_does_not_queue_and_reenable_starts_from_new_events (test_yuanxingmu_alerts.AlertsTests.test_disable_does_not_queue_and_reenable_starts_from_new_events)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_events_created_while_workbench_is_offline_are_delivered_after_restart (test_yuanxingmu_alerts.AlertsTests.test_events_created_while_workbench_is_offline_are_delivered_after_restart)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_failed_cursor_save_keeps_queue_durable_and_latches_visible_fault (test_yuanxingmu_alerts.AlertsTests.test_failed_cursor_save_keeps_queue_durable_and_latches_visible_fault)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_first_configuration_skips_history_and_background_delivers_all_states_without_browser (test_yuanxingmu_alerts.AlertsTests.test_first_configuration_skips_history_and_background_delivers_all_states_without_browser)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_full_queue_retains_cursor_before_unsaved_event_and_is_visible (test_yuanxingmu_alerts.AlertsTests.test_full_queue_retains_cursor_before_unsaved_event_and_is_visible)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_missing_queue_on_restart_is_fault_not_new_queue (test_yuanxingmu_alerts.AlertsTests.test_missing_queue_on_restart_is_fault_not_new_queue)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_newly_created_profiles_join_the_existing_background_scanner (test_yuanxingmu_alerts.AlertsTests.test_newly_created_profiles_join_the_existing_background_scanner)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_only_successful_state_events_and_real_confirmation_requests_notify (test_yuanxingmu_alerts.AlertsTests.test_only_successful_state_events_and_real_confirmation_requests_notify)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_same_settings_with_new_key_do_not_reset_cursor_or_generation (test_yuanxingmu_alerts.AlertsTests.test_same_settings_with_new_key_do_not_reset_cursor_or_generation)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_saved_queue_entry_is_deduplicated_if_cursor_was_not_committed_before_restart (test_yuanxingmu_alerts.AlertsTests.test_saved_queue_entry_is_deduplicated_if_cursor_was_not_committed_before_restart)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_settings_reject_event_fields_bad_urls_and_duplicate_json_keys (test_yuanxingmu_alerts.AlertsTests.test_settings_reject_event_fields_bad_urls_and_duplicate_json_keys)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_source_ledger_replacement_and_rewind_are_not_silently_accepted (test_yuanxingmu_alerts.AlertsTests.test_source_ledger_replacement_and_rewind_are_not_silently_accepted)",
+      "reason": "Host scanner requires Linux private profiles"
+    },
+    {
+      "test": "test_bound_socket_rejects_identity_and_arbitrary_destination_and_preserves_reconnect_state (test_yuanxingmu_broker.BrokerTests.test_bound_socket_rejects_identity_and_arbitrary_destination_and_preserves_reconnect_state)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_changed_resource_never_returns_unlabelled_new_bytes (test_yuanxingmu_broker.BrokerTests.test_changed_resource_never_returns_unlabelled_new_bytes)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_protocol_unknown_operations_and_malformed_json_fail_closed (test_yuanxingmu_broker.BrokerTests.test_protocol_unknown_operations_and_malformed_json_fail_closed)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_read_cannot_release_private_data_during_an_authorized_public_send (test_yuanxingmu_broker.BrokerTests.test_read_cannot_release_private_data_during_an_authorized_public_send)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_restart_preserves_labels_and_policy_drift_cannot_reset_state (test_yuanxingmu_broker.BrokerTests.test_restart_preserves_labels_and_policy_drift_cannot_reset_state)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_revoke_blocks_existing_endpoints_and_descendant_send (test_yuanxingmu_broker.BrokerTests.test_revoke_blocks_existing_endpoints_and_descendant_send)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_same_state_cannot_be_owned_by_two_brokers (test_yuanxingmu_broker.BrokerTests.test_same_state_cannot_be_owned_by_two_brokers)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_unconfirmed_send_is_not_reported_as_no_side_effect (test_yuanxingmu_broker.BrokerTests.test_unconfirmed_send_is_not_reported_as_no_side_effect)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_workspace_cannot_expose_state_resources_or_reset_under_a_new_task (test_yuanxingmu_broker.BrokerTests.test_workspace_cannot_expose_state_resources_or_reset_under_a_new_task)",
+      "reason": "Linux broker only"
+    },
+    {
+      "test": "test_browser_payload_cannot_select_paths_policy_runtime_or_commands (test_yuanxingmu_dashboard.DashboardTests.test_browser_payload_cannot_select_paths_policy_runtime_or_commands)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_cached_observation_keeps_pending_when_job_finishes_before_response (test_yuanxingmu_dashboard.DashboardTests.test_cached_observation_keeps_pending_when_job_finishes_before_response)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_catalog_identity_tampering_blocks_reopen_instead_of_creating_authority (test_yuanxingmu_dashboard.DashboardTests.test_catalog_identity_tampering_blocks_reopen_instead_of_creating_authority)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_concurrent_offline_status_queries_serialize_the_real_profile_lock (test_yuanxingmu_dashboard.DashboardTests.test_concurrent_offline_status_queries_serialize_the_real_profile_lock)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_create_idempotency_conflict_and_restart_never_allocate_another_task (test_yuanxingmu_dashboard.DashboardTests.test_create_idempotency_conflict_and_restart_never_allocate_another_task)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_defense_setting_change_keeps_task_labels_and_validates_new_binding (test_yuanxingmu_dashboard.DashboardTests.test_defense_setting_change_keeps_task_labels_and_validates_new_binding)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_directory_replacement_and_unknown_catalog_identity_do_not_recover_by_init (test_yuanxingmu_dashboard.DashboardTests.test_directory_replacement_and_unknown_catalog_identity_do_not_recover_by_init)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_extra_mutation_fields_unknown_ids_and_paths_do_not_call_runtime (test_yuanxingmu_dashboard.DashboardTests.test_extra_mutation_fields_unknown_ids_and_paths_do_not_call_runtime)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_gets_unsupported_methods_and_noncanonical_paths_cannot_mutate (test_yuanxingmu_dashboard.DashboardTests.test_gets_unsupported_methods_and_noncanonical_paths_cannot_mutate)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_host_origin_and_duplicate_sensitive_headers_never_invoke_core (test_yuanxingmu_dashboard.DashboardTests.test_host_origin_and_duplicate_sensitive_headers_never_invoke_core)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_invalid_framing_and_json_never_invoke_initializer (test_yuanxingmu_dashboard.DashboardTests.test_invalid_framing_and_json_never_invoke_initializer)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_killed_manager_recovers_accepted_job_as_failed_without_replay (test_yuanxingmu_dashboard.DashboardTests.test_killed_manager_recovers_accepted_job_as_failed_without_replay)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_mail_account_is_private_durable_and_changes_invalidate_old_confirmation (test_yuanxingmu_dashboard.DashboardTests.test_mail_account_is_private_durable_and_changes_invalidate_old_confirmation)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_mail_cancellation_and_cross_work_draft_identity_are_enforced (test_yuanxingmu_dashboard.DashboardTests.test_mail_cancellation_and_cross_work_draft_identity_are_enforced)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_mail_edit_requires_fresh_content_and_send_attempt_is_never_repeated (test_yuanxingmu_dashboard.DashboardTests.test_mail_edit_requires_fresh_content_and_send_attempt_is_never_repeated)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_mail_routes_require_same_origin_token_and_exact_confirmation_fields (test_yuanxingmu_dashboard.DashboardTests.test_mail_routes_require_same_origin_token_and_exact_confirmation_fields)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_mail_unknown_result_is_durable_and_revocation_blocks_pending_draft (test_yuanxingmu_dashboard.DashboardTests.test_mail_unknown_result_is_durable_and_revocation_blocks_pending_draft)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_missing_ledger_is_not_recreated_or_reported_as_stopped (test_yuanxingmu_dashboard.DashboardTests.test_missing_ledger_is_not_recreated_or_reported_as_stopped)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_model_connection_and_request_key_validation_precede_runtime (test_yuanxingmu_dashboard.DashboardTests.test_model_connection_and_request_key_validation_precede_runtime)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_partial_initialization_is_retained_and_exact_retry_is_not_reexecuted (test_yuanxingmu_dashboard.DashboardTests.test_partial_initialization_is_retained_and_exact_retry_is_not_reexecuted)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_per_profile_mutator_is_serialized_and_retries_keep_one_job (test_yuanxingmu_dashboard.DashboardTests.test_per_profile_mutator_is_serialized_and_retries_keep_one_job)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_polling_during_real_start_lock_uses_pending_then_refreshes_after_completion (test_yuanxingmu_dashboard.DashboardTests.test_polling_during_real_start_lock_uses_pending_then_refreshes_after_completion)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_protection_history_skips_corrupt_lines_and_handles_wrong_evidence_type (test_yuanxingmu_dashboard.DashboardTests.test_protection_history_skips_corrupt_lines_and_handles_wrong_evidence_type)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_real_http_requires_token_and_returns_defensive_headers (test_yuanxingmu_dashboard.DashboardTests.test_real_http_requires_token_and_returns_defensive_headers)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_real_profile_defaults_private_and_revoke_survives_workbench_restart (test_yuanxingmu_dashboard.DashboardTests.test_real_profile_defaults_private_and_revoke_survives_workbench_restart)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_receipt_write_failure_starts_no_worker_and_refuses_further_mutations (test_yuanxingmu_dashboard.DashboardTests.test_receipt_write_failure_starts_no_worker_and_refuses_further_mutations)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_refreshed_status_keeps_revocation_separate_and_close_does_not_stop_core (test_yuanxingmu_dashboard.DashboardTests.test_refreshed_status_keeps_revocation_separate_and_close_does_not_stop_core)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_selected_skill_uses_fixed_copy_and_rejects_unregistered_directory (test_yuanxingmu_dashboard.DashboardTests.test_selected_skill_uses_fixed_copy_and_rejects_unregistered_directory)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_snapshot_drift_fails_existing_task_without_reinitializing (test_yuanxingmu_dashboard.DashboardTests.test_snapshot_drift_fails_existing_task_without_reinitializing)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_status_already_waiting_before_start_rechecks_pending_instead_of_waiting_for_start (test_yuanxingmu_dashboard.DashboardTests.test_status_already_waiting_before_start_rechecks_pending_instead_of_waiting_for_start)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_storage_exclusive_owner_and_private_permissions_are_required (test_yuanxingmu_dashboard.DashboardTests.test_storage_exclusive_owner_and_private_permissions_are_required)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_successful_start_url_is_not_persisted_or_recreated_after_restart (test_yuanxingmu_dashboard.DashboardTests.test_successful_start_url_is_not_persisted_or_recreated_after_restart)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_symlink_or_missing_catalog_is_not_silently_replaced (test_yuanxingmu_dashboard.DashboardTests.test_symlink_or_missing_catalog_is_not_silently_replaced)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_target_settings_do_not_send_expose_secrets_or_rebind_old_profiles (test_yuanxingmu_dashboard.DashboardTests.test_target_settings_do_not_send_expose_secrets_or_rebind_old_profiles)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_target_settings_require_host_auth_and_reject_private_overlap (test_yuanxingmu_dashboard.DashboardTests.test_target_settings_require_host_auth_and_reject_private_overlap)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_unavailable_isolation_has_no_direct_execution_fallback (test_yuanxingmu_dashboard.DashboardTests.test_unavailable_isolation_has_no_direct_execution_fallback)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_unconfirmed_runtime_states_and_stop_failures_are_not_success (test_yuanxingmu_dashboard.DashboardTests.test_unconfirmed_runtime_states_and_stop_failures_are_not_success)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_uploads_are_private_snapshots_and_status_receipts_do_not_contain_secrets (test_yuanxingmu_dashboard.DashboardTests.test_uploads_are_private_snapshots_and_status_receipts_do_not_contain_secrets)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_utf8_and_document_limits_are_measured_in_bytes (test_yuanxingmu_dashboard.DashboardTests.test_utf8_and_document_limits_are_measured_in_bytes)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_worker_start_failure_is_a_durable_failed_receipt_not_permanent_busy (test_yuanxingmu_dashboard.DashboardTests.test_worker_start_failure_is_a_durable_failed_receipt_not_permanent_busy)",
+      "reason": "Linux workbench storage and authority only"
+    },
+    {
+      "test": "test_chunked_sse_first_event_arrives_before_upstream_finishes (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_chunked_sse_first_event_arrives_before_upstream_finishes)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_cleanup_leaves_replaced_path_untouched_and_start_refuses_existing_path (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_cleanup_leaves_replaced_path_untouched_and_start_refuses_existing_path)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_close_interrupts_active_http_and_releases_socket_and_port (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_close_interrupts_active_http_and_releases_socket_and_port)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_host_and_inner_relays_preserve_websocket_upgrade_and_both_directions (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_host_and_inner_relays_preserve_websocket_upgrade_and_both_directions)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_inner_launch_bridges_model_and_cleans_up_after_child_exit (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_inner_launch_bridges_model_and_cleans_up_after_child_exit)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_only_fixed_target_and_host_authorization_reach_upstream (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_only_fixed_target_and_host_authorization_reach_upstream)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_other_urls_paths_methods_and_ambiguous_http_never_reach_upstream (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_other_urls_paths_methods_and_ambiguous_http_never_reach_upstream)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_parent_death_stops_inner_gateway_and_gateway_process_group (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_parent_death_stops_inner_gateway_and_gateway_process_group)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_redirect_does_not_contact_its_destination_or_reveal_location (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_redirect_does_not_contact_its_destination_or_reveal_location)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_relay_drains_large_buffer_after_client_half_close (test_yuanxingmu_gateway_network.GatewayNetworkTransportTests.test_relay_drains_large_buffer_after_client_half_close)",
+      "reason": "Linux Unix socket bridges only"
+    },
+    {
+      "test": "test_authority_denial_cannot_be_overridden_by_model_allow (test_yuanxingmu_guard_broker.GuardBrokerTests.test_authority_denial_cannot_be_overridden_by_model_allow)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_enabled_guards_cannot_be_removed_or_changed_on_reopen (test_yuanxingmu_guard_broker.GuardBrokerTests.test_enabled_guards_cannot_be_removed_or_changed_on_reopen)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_guard_tool_is_denied_after_revoke_and_cannot_rebind_task (test_yuanxingmu_guard_broker.GuardBrokerTests.test_guard_tool_is_denied_after_revoke_and_cannot_rebind_task)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_guard_tool_stops_dangerous_command_before_judge_or_effects (test_yuanxingmu_guard_broker.GuardBrokerTests.test_guard_tool_stops_dangerous_command_before_judge_or_effects)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_guard_tool_stops_memory_poisoning_before_judge (test_yuanxingmu_guard_broker.GuardBrokerTests.test_guard_tool_stops_memory_poisoning_before_judge)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_inspect_input_does_not_echo_raw_content_or_write_it_to_audit (test_yuanxingmu_guard_broker.GuardBrokerTests.test_inspect_input_does_not_echo_raw_content_or_write_it_to_audit)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_missing_or_invalid_judge_response_prevents_actual_send (test_yuanxingmu_guard_broker.GuardBrokerTests.test_missing_or_invalid_judge_response_prevents_actual_send)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_native_review_remains_pending_and_model_can_still_block_it (test_yuanxingmu_guard_broker.GuardBrokerTests.test_native_review_remains_pending_and_model_can_still_block_it)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_prepare_message_and_email_are_checked_without_sending (test_yuanxingmu_guard_broker.GuardBrokerTests.test_prepare_message_and_email_are_checked_without_sending)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_read_checks_alignment_then_withholds_injected_document (test_yuanxingmu_guard_broker.GuardBrokerTests.test_read_checks_alignment_then_withholds_injected_document)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_read_performs_actual_judge_check_and_returns_only_selected_content (test_yuanxingmu_guard_broker.GuardBrokerTests.test_read_performs_actual_judge_check_and_returns_only_selected_content)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_real_hook_component_preserves_newlines_and_withholds_failed_inspection (test_yuanxingmu_guard_broker.GuardBrokerTests.test_real_hook_component_preserves_newlines_and_withholds_failed_inspection)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_real_hook_component_requests_single_use_native_approval_and_blocks_destruction (test_yuanxingmu_guard_broker.GuardBrokerTests.test_real_hook_component_requests_single_use_native_approval_and_blocks_destruction)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_same_guard_policy_reopens_and_preserves_task_authority (test_yuanxingmu_guard_broker.GuardBrokerTests.test_same_guard_policy_reopens_and_preserves_task_authority)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_semantic_block_and_review_prevent_actual_send_then_allow_sends_once (test_yuanxingmu_guard_broker.GuardBrokerTests.test_semantic_block_and_review_prevent_actual_send_then_allow_sends_once)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_semantic_block_cannot_save_a_pending_action_or_email (test_yuanxingmu_guard_broker.GuardBrokerTests.test_semantic_block_cannot_save_a_pending_action_or_email)",
+      "reason": "Linux broker sockets and persistent authority"
+    },
+    {
+      "test": "test_native_preflight_pass_then_final_judge_block_never_executes (test_yuanxingmu_guard_rules.GuardRulesNativeHermesTests.test_native_preflight_pass_then_final_judge_block_never_executes)",
+      "reason": "Optional native Hermes installation required"
+    },
+    {
+      "test": "test_native_preflight_pass_then_final_judge_timeout_never_executes (test_yuanxingmu_guard_rules.GuardRulesNativeHermesTests.test_native_preflight_pass_then_final_judge_timeout_never_executes)",
+      "reason": "Optional native Hermes installation required"
+    },
+    {
+      "test": "test_process_manage_retains_full_guard_tool_check (test_yuanxingmu_guard_rules.GuardRulesNativeHermesTests.test_process_manage_retains_full_guard_tool_check)",
+      "reason": "Optional native Hermes installation required"
+    },
+    {
+      "test": "test_rules_check_original_source_tool_memory_before_final_translation (test_yuanxingmu_guard_rules.GuardRulesSocketTests.test_rules_check_original_source_tool_memory_before_final_translation)",
+      "reason": "Real Broker sockets require Linux"
+    },
+    {
+      "test": "test_rules_dangerous_command_blocks_without_judge_and_pauses_task (test_yuanxingmu_guard_rules.GuardRulesSocketTests.test_rules_dangerous_command_blocks_without_judge_and_pauses_task)",
+      "reason": "Real Broker sockets require Linux"
+    },
+    {
+      "test": "test_rules_respects_pause_revoke_and_storage_fault_before_any_judge (test_yuanxingmu_guard_rules.GuardRulesSocketTests.test_rules_respects_pause_revoke_and_storage_fault_before_any_judge)",
+      "reason": "Real Broker sockets require Linux"
+    },
+    {
+      "test": "test_rules_rpc_rejects_task_rebinding_extra_fields_and_invalid_arguments (test_yuanxingmu_guard_rules.GuardRulesSocketTests.test_rules_rpc_rejects_task_rebinding_extra_fields_and_invalid_arguments)",
+      "reason": "Real Broker sockets require Linux"
+    },
+    {
+      "test": "test_safe_rules_result_requires_final_check_and_mints_no_execution_receipt (test_yuanxingmu_guard_rules.GuardRulesSocketTests.test_safe_rules_result_requires_final_check_and_mints_no_execution_receipt)",
+      "reason": "Real Broker sockets require Linux"
+    },
+    {
+      "test": "test_changed_file_gets_new_hash_and_fresh_model_check (test_yuanxingmu_guards.FoundationFilesystemTests.test_changed_file_gets_new_hash_and_fresh_model_check)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_complete_skill_contents_and_manifest_go_through_semantic_check (test_yuanxingmu_guards.FoundationFilesystemTests.test_complete_skill_contents_and_manifest_go_through_semantic_check)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_duplicate_root_and_dotdot_path_are_rejected (test_yuanxingmu_guards.FoundationFilesystemTests.test_duplicate_root_and_dotdot_path_are_rejected)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_hardlink_fifo_binary_and_unreadable_files_never_count_as_scanned (test_yuanxingmu_guards.FoundationFilesystemTests.test_hardlink_fifo_binary_and_unreadable_files_never_count_as_scanned)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_observation_of_malicious_skill_is_not_full_protection (test_yuanxingmu_guards.FoundationFilesystemTests.test_observation_of_malicious_skill_is_not_full_protection)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_size_total_and_file_count_limits_fail_instead_of_skipping (test_yuanxingmu_guards.FoundationFilesystemTests.test_size_total_and_file_count_limits_fail_instead_of_skipping)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_skill_review_receives_actual_content_separately_and_cannot_override_block (test_yuanxingmu_guards.FoundationFilesystemTests.test_skill_review_receives_actual_content_separately_and_cannot_override_block)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_skill_rules_and_model_rejection_are_separately_identifiable (test_yuanxingmu_guards.FoundationFilesystemTests.test_skill_rules_and_model_rejection_are_separately_identifiable)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_symlink_file_and_symlink_parent_are_not_followed (test_yuanxingmu_guards.FoundationFilesystemTests.test_symlink_file_and_symlink_parent_are_not_followed)",
+      "reason": "Linux no-follow directory descriptor checks"
+    },
+    {
+      "test": "test_credentials_and_inherited_overrides_do_not_enter_hermes (test_yuanxingmu_hermes.HermesProfileTests.test_credentials_and_inherited_overrides_do_not_enter_hermes)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_independent_judge_requires_defense_and_keeps_credential_host_only (test_yuanxingmu_hermes.HermesProfileTests.test_independent_judge_requires_defense_and_keeps_credential_host_only)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_outer_mounts_exclude_secrets_ledger_and_review_socket (test_yuanxingmu_hermes.HermesProfileTests.test_outer_mounts_exclude_secrets_ledger_and_review_socket)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_profile_is_private_before_reads_and_uses_shared_lifecycle (test_yuanxingmu_hermes.HermesProfileTests.test_profile_is_private_before_reads_and_uses_shared_lifecycle)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_python_keeps_venv_identity_when_binary_is_a_symlink (test_yuanxingmu_hermes.HermesProfileTests.test_python_keeps_venv_identity_when_binary_is_a_symlink)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_readiness_does_not_disclose_token_to_wrong_instance (test_yuanxingmu_hermes.HermesProfileTests.test_readiness_does_not_disclose_token_to_wrong_instance)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_readiness_rejects_token_only_headless_server_and_ungated_api (test_yuanxingmu_hermes.HermesProfileTests.test_readiness_rejects_token_only_headless_server_and_ungated_api)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_runtime_requires_both_native_frontends_and_exact_supported_version (test_yuanxingmu_hermes.HermesProfileTests.test_runtime_requires_both_native_frontends_and_exact_supported_version)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_selected_skill_snapshot_is_effective_and_builtin_roots_are_hidden (test_yuanxingmu_hermes.HermesProfileTests.test_selected_skill_snapshot_is_effective_and_builtin_roots_are_hidden)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_tampered_plugin_or_binding_is_rejected_before_launch (test_yuanxingmu_hermes.HermesProfileTests.test_tampered_plugin_or_binding_is_rejected_before_launch)",
+      "reason": "Linux Hermes profile only"
+    },
+    {
+      "test": "test_action_schema_exposes_payload_fields_without_host_authority_fields (test_yuanxingmu_hermes_backend.HermesBackendTests.test_action_schema_exposes_payload_fields_without_host_authority_fields)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_changing_hermes_task_id_does_not_change_host_authority (test_yuanxingmu_hermes_backend.HermesBackendTests.test_changing_hermes_task_id_does_not_change_host_authority)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_draft_correlation_is_required_and_stable_for_retry (test_yuanxingmu_hermes_backend.HermesBackendTests.test_draft_correlation_is_required_and_stable_for_retry)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_guard_transport_failure_prevents_execution (test_yuanxingmu_hermes_backend.HermesBackendTests.test_guard_transport_failure_prevents_execution)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_host_approval_waits_then_consumes_exact_candidate_before_execution (test_yuanxingmu_hermes_backend.HermesBackendTests.test_host_approval_waits_then_consumes_exact_candidate_before_execution)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_lost_consumption_reply_is_not_retried_and_command_does_not_run (test_yuanxingmu_hermes_backend.HermesBackendTests.test_lost_consumption_reply_is_not_retried_and_command_does_not_run)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_mismatched_or_revoked_authority_cannot_create_execution_environment (test_yuanxingmu_hermes_backend.HermesBackendTests.test_mismatched_or_revoked_authority_cannot_create_execution_environment)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_missing_native_invocation_never_executes_with_defense_enabled (test_yuanxingmu_hermes_backend.HermesBackendTests.test_missing_native_invocation_never_executes_with_defense_enabled)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_model_cannot_supply_approval_or_extra_destination_fields (test_yuanxingmu_hermes_backend.HermesBackendTests.test_model_cannot_supply_approval_or_extra_destination_fields)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_native_cancel_while_waiting_does_not_execute_after_approval (test_yuanxingmu_hermes_backend.HermesBackendTests.test_native_cancel_while_waiting_does_not_execute_after_approval)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_native_hook_blocks_host_denial_before_upstream_command_guard (test_yuanxingmu_hermes_backend.HermesBackendTests.test_native_hook_blocks_host_denial_before_upstream_command_guard)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_output_rejected_by_host_is_never_returned_by_provider (test_yuanxingmu_hermes_backend.HermesBackendTests.test_output_rejected_by_host_is_never_returned_by_provider)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_real_broker_judges_final_candidate_once_then_consumes_without_rejudging (test_yuanxingmu_hermes_backend.HermesBackendTests.test_real_broker_judges_final_candidate_once_then_consumes_without_rejudging)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_real_file_executor_checks_each_underlying_command_separately (test_yuanxingmu_hermes_backend.HermesBackendTests.test_real_file_executor_checks_each_underlying_command_separately)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_review_denial_expiry_reuse_or_mismatched_reply_never_executes (test_yuanxingmu_hermes_backend.HermesBackendTests.test_review_denial_expiry_reuse_or_mismatched_reply_never_executes)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_same_native_call_retry_keeps_request_key_and_hard_block_never_asks (test_yuanxingmu_hermes_backend.HermesBackendTests.test_same_native_call_retry_keeps_request_key_and_hard_block_never_asks)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_app_complete_without_file_receipts_is_rejected_before_runtime_import (test_yuanxingmu_installer.InstallerTests.test_app_complete_without_file_receipts_is_rejected_before_runtime_import)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_cache_download_is_verified_private_and_reused_without_network (test_yuanxingmu_installer.InstallerTests.test_cache_download_is_verified_private_and_reused_without_network)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_cached_digest_mismatch_removes_partial_and_never_extracts_or_executes (test_yuanxingmu_installer.InstallerTests.test_cached_digest_mismatch_removes_partial_and_never_extracts_or_executes)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_complete_install_checks_files_without_overwriting_work (test_yuanxingmu_installer.InstallerTests.test_complete_install_checks_files_without_overwriting_work)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_completed_hermes_install_checks_without_rebuilding (test_yuanxingmu_installer.InstallerTests.test_completed_hermes_install_checks_without_rebuilding)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_corrupted_previous_download_is_preserved_and_not_replaced (test_yuanxingmu_installer.InstallerTests.test_corrupted_previous_download_is_preserved_and_not_replaced)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_dangling_apparmor_profile_is_rejected_without_writing_system_files (test_yuanxingmu_installer.InstallerTests.test_dangling_apparmor_profile_is_rejected_without_writing_system_files)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_development_retry_requires_original_explicit_input (test_yuanxingmu_installer.InstallerTests.test_development_retry_requires_original_explicit_input)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_development_wheel_never_replaces_completed_or_legacy_incomplete_install (test_yuanxingmu_installer.InstallerTests.test_development_wheel_never_replaces_completed_or_legacy_incomplete_install)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_development_wheel_rejects_symlink_and_duplicate_metadata (test_yuanxingmu_installer.InstallerTests.test_development_wheel_rejects_symlink_and_duplicate_metadata)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_development_wheel_requires_matching_hash_metadata_and_package_version (test_yuanxingmu_installer.InstallerTests.test_development_wheel_requires_matching_hash_metadata_and_package_version)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_existing_extraction_directory_symlink_is_not_followed (test_yuanxingmu_installer.InstallerTests.test_existing_extraction_directory_symlink_is_not_followed)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_existing_unmarked_directory_is_not_adopted (test_yuanxingmu_installer.InstallerTests.test_existing_unmarked_directory_is_not_adopted)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_full_node_tree_matches_real_archive_without_executing_it (test_yuanxingmu_installer.InstallerTests.test_full_node_tree_matches_real_archive_without_executing_it)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_hermes_build_environment_has_private_home_without_user_keys_or_config (test_yuanxingmu_installer.InstallerTests.test_hermes_build_environment_has_private_home_without_user_keys_or_config)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_hermes_environment_rejects_changed_lib64_or_external_python_link (test_yuanxingmu_installer.InstallerTests.test_hermes_environment_rejects_changed_lib64_or_external_python_link)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_hermes_failure_preserves_openclaw_and_never_marks_complete (test_yuanxingmu_installer.InstallerTests.test_hermes_failure_preserves_openclaw_and_never_marks_complete)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_hermes_inventory_covers_python_environment_source_and_web_assets (test_yuanxingmu_installer.InstallerTests.test_hermes_inventory_covers_python_environment_source_and_web_assets)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_hermes_missing_records_or_paths_prevent_completed_install_use (test_yuanxingmu_installer.InstallerTests.test_hermes_missing_records_or_paths_prevent_completed_install_use)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_hermes_source_rejects_traversal_links_duplicates_before_writing_members (test_yuanxingmu_installer.InstallerTests.test_hermes_source_rejects_traversal_links_duplicates_before_writing_members)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_http_download_hash_and_size_fail_closed (test_yuanxingmu_installer.InstallerTests.test_http_download_hash_and_size_fail_closed)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_incomplete_workbench_entry_blocks_retry_even_if_link_is_broken (test_yuanxingmu_installer.InstallerTests.test_incomplete_workbench_entry_blocks_retry_even_if_link_is_broken)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_launcher_returns_recorded_hermes_paths_after_real_file_verification (test_yuanxingmu_installer.InstallerTests.test_launcher_returns_recorded_hermes_paths_after_real_file_verification)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_launcher_server_factory_rejects_live_port_and_keeps_handler_checks (test_yuanxingmu_installer.InstallerTests.test_launcher_server_factory_rejects_live_port_and_keeps_handler_checks)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_launcher_server_factory_reopens_after_real_closed_http (test_yuanxingmu_installer.InstallerTests.test_launcher_server_factory_reopens_after_real_closed_http)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_lock_symlink_never_changes_its_target (test_yuanxingmu_installer.InstallerTests.test_lock_symlink_never_changes_its_target)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_matching_content_via_symlink_is_still_rejected (test_yuanxingmu_installer.InstallerTests.test_matching_content_via_symlink_is_still_rejected)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_modified_complete_install_is_not_repaired (test_yuanxingmu_installer.InstallerTests.test_modified_complete_install_is_not_repaired)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_new_receipt_and_lock_are_private_and_identity_bound (test_yuanxingmu_installer.InstallerTests.test_new_receipt_and_lock_are_private_and_identity_bound)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_node_archive_traversal_external_links_and_special_files_fail_closed (test_yuanxingmu_installer.InstallerTests.test_node_archive_traversal_external_links_and_special_files_fail_closed)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_node_tree_missing_and_unrecorded_files_are_rejected (test_yuanxingmu_installer.InstallerTests.test_node_tree_missing_and_unrecorded_files_are_rejected)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_nonzero_real_command_retains_private_log (test_yuanxingmu_installer.InstallerTests.test_nonzero_real_command_retains_private_log)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_npm_failure_keeps_completed_components_but_not_install_complete (test_yuanxingmu_installer.InstallerTests.test_npm_failure_keeps_completed_components_but_not_install_complete)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_plain_http_is_rejected_before_network (test_yuanxingmu_installer.InstallerTests.test_plain_http_is_rejected_before_network)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_private_directory_check_rejects_group_access (test_yuanxingmu_installer.InstallerTests.test_private_directory_check_rejects_group_access)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_real_lock_excludes_another_open_handle (test_yuanxingmu_installer.InstallerTests.test_real_lock_excludes_another_open_handle)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_receipt_from_another_directory_is_rejected (test_yuanxingmu_installer.InstallerTests.test_receipt_from_another_directory_is_rejected)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_resumed_install_rejects_changed_npm_script_before_execution (test_yuanxingmu_installer.InstallerTests.test_resumed_install_rejects_changed_npm_script_before_execution)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_resumed_install_rejects_changed_npm_symlink_before_execution (test_yuanxingmu_installer.InstallerTests.test_resumed_install_rejects_changed_npm_symlink_before_execution)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_runtime_failure_never_writes_complete_or_launcher (test_yuanxingmu_installer.InstallerTests.test_runtime_failure_never_writes_complete_or_launcher)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_safe_node_archive_allows_only_internal_symlink (test_yuanxingmu_installer.InstallerTests.test_safe_node_archive_allows_only_internal_symlink)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_safe_wheel_files_are_extracted_privately (test_yuanxingmu_installer.InstallerTests.test_safe_wheel_files_are_extracted_privately)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_timeout_kills_same_group_child_even_after_parent_exits_on_term (test_yuanxingmu_installer.InstallerTests.test_timeout_kills_same_group_child_even_after_parent_exits_on_term)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_unknown_empty_directory_is_not_given_a_lock_or_receipt (test_yuanxingmu_installer.InstallerTests.test_unknown_empty_directory_is_not_given_a_lock_or_receipt)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_uv_lock_is_made_private_without_following_a_link (test_yuanxingmu_installer.InstallerTests.test_uv_lock_is_made_private_without_following_a_link)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_valid_http_response_is_saved_only_after_verification (test_yuanxingmu_installer.InstallerTests.test_valid_http_response_is_saved_only_after_verification)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_wheel_path_traversal_does_not_touch_outside_files (test_yuanxingmu_installer.InstallerTests.test_wheel_path_traversal_does_not_touch_outside_files)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_wheel_symlink_and_duplicate_members_are_rejected (test_yuanxingmu_installer.InstallerTests.test_wheel_symlink_and_duplicate_members_are_rejected)",
+      "reason": "Linux installer filesystem and process boundaries"
+    },
+    {
+      "test": "test_cli_creates_independent_judge_from_env_without_printing_credentials (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_cli_creates_independent_judge_from_env_without_printing_credentials)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_cli_default_stays_with_working_model_and_independent_timeout_is_bounded (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_cli_default_stays_with_working_model_and_independent_timeout_is_bounded)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_cli_requires_paired_judge_url_and_model_and_nonempty_requested_env (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_cli_requires_paired_judge_url_and_model_and_nonempty_requested_env)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_cli_timeout_option_cannot_silently_disappear_without_judge_selection (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_cli_timeout_option_cannot_silently_disappear_without_judge_selection)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_http_configuration_validation_does_not_create_profiles_or_call_endpoints (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_http_configuration_validation_does_not_create_profiles_or_call_endpoints)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_http_create_and_read_pin_distinct_model_and_keep_keys_out_of_public_state (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_http_create_and_read_pin_distinct_model_and_keep_keys_out_of_public_state)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_http_detects_tampered_judge_key_without_echoing_it (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_http_detects_tampered_judge_key_without_echoing_it)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_http_policy_changes_and_manager_restart_keep_judge_key_pins_and_task (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_http_policy_changes_and_manager_restart_keep_judge_key_pins_and_task)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_http_rejects_judge_changes_inside_layer_settings (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_http_rejects_judge_changes_inside_layer_settings)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_http_rejects_unpinned_independent_files_in_an_existing_profile (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_http_rejects_unpinned_independent_files_in_an_existing_profile)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_real_judge_transport_uses_independent_endpoint_model_and_host_key (test_yuanxingmu_judge_integration.JudgeIntegrationTests.test_real_judge_transport_uses_independent_endpoint_model_and_host_key)",
+      "reason": "Real protected profile management requires Linux"
+    },
+    {
+      "test": "test_changed_file_during_read_is_rejected_without_using_unpinned_bytes (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_changed_file_during_read_is_rejected_without_using_unpinned_bytes)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_concurrent_creates_have_exactly_one_winner_without_overwrite (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_concurrent_creates_have_exactly_one_winner_without_overwrite)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_disk_configuration_cannot_inject_paths_extra_keys_or_json_duplicates (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_disk_configuration_cannot_inject_paths_extra_keys_or_json_duplicates)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_each_configuration_field_is_pinned (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_each_configuration_field_is_pinned)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_existing_profile_rejects_unpinned_or_partially_pinned_pair (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_existing_profile_rejects_unpinned_or_partially_pinned_pair)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_files_cannot_be_overwritten (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_files_cannot_be_overwritten)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_initialization_without_pins_does_not_require_working_model_key (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_initialization_without_pins_does_not_require_working_model_key)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_key_is_pinned_independently_of_public_configuration (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_key_is_pinned_independently_of_public_configuration)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_no_independent_files_preserves_agent_source_key_and_timeout (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_no_independent_files_preserves_agent_source_key_and_timeout)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_oversized_config_key_and_invalid_key_text_are_rejected (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_oversized_config_key_and_invalid_key_text_are_rejected)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_partial_pair_never_falls_back (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_partial_pair_never_falls_back)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_partial_write_failure_stays_unloadable (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_partial_write_failure_stays_unloadable)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_pinned_pair_cannot_be_removed_to_fall_back (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_pinned_pair_cannot_be_removed_to_fall_back)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_profile_and_parent_symlink_or_traversal_are_rejected (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_profile_and_parent_symlink_or_traversal_are_rejected)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_publicly_readable_key_and_writable_profile_are_rejected (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_publicly_readable_key_and_writable_profile_are_rejected)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_report_is_allowlisted_read_only_and_never_returns_credentials (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_report_is_allowlisted_read_only_and_never_returns_credentials)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_report_redacts_key_accidentally_pasted_into_display_fields (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_report_redacts_key_accidentally_pasted_into_display_fields)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_save_load_validate_and_report_never_make_network_calls (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_save_load_validate_and_report_never_make_network_calls)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_separate_private_files_and_complete_pins_round_trip (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_separate_private_files_and_complete_pins_round_trip)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_special_files_cannot_block_read_or_masquerade_as_key (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_special_files_cannot_block_read_or_masquerade_as_key)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_symlink_dangling_symlink_and_hardlink_files_are_rejected (test_yuanxingmu_judge_profile.JudgeProfileStorageTests.test_symlink_dangling_symlink_and_hardlink_files_are_rejected)",
+      "reason": "Protected profile storage uses Linux descriptor-relative I/O"
+    },
+    {
+      "test": "test_live_update_changes_next_check_without_restarting_or_rebinding (test_yuanxingmu_live_settings.LiveSettingsTests.test_live_update_changes_next_check_without_restarting_or_rebinding)",
+      "reason": "Live host settings require Linux"
+    },
+    {
+      "test": "test_partial_live_file_update_latches_fault_and_keeps_dirty_marker (test_yuanxingmu_live_settings.LiveSettingsTests.test_partial_live_file_update_latches_fault_and_keeps_dirty_marker)",
+      "reason": "Live host settings require Linux"
+    },
+    {
+      "test": "test_settings_do_not_resume_a_paused_task_or_revive_pending_drafts (test_yuanxingmu_live_settings.LiveSettingsTests.test_settings_do_not_resume_a_paused_task_or_revive_pending_drafts)",
+      "reason": "Live host settings require Linux"
+    },
+    {
+      "test": "test_worker_cannot_change_settings_and_objective_cannot_be_replaced (test_yuanxingmu_live_settings.LiveSettingsTests.test_worker_cannot_change_settings_and_objective_cannot_be_replaced)",
+      "reason": "Live host settings require Linux"
+    },
+    {
+      "test": "test_audit_contains_only_metadata_and_never_mail_or_account_content (test_yuanxingmu_mail_broker.MailBrokerTests.test_audit_contains_only_metadata_and_never_mail_or_account_content)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_broker_to_real_tls_smtp_preserves_the_exact_approved_body_and_envelope (test_yuanxingmu_mail_broker.MailBrokerTests.test_broker_to_real_tls_smtp_preserves_the_exact_approved_body_and_envelope)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_cancelled_draft_never_reaches_transport (test_yuanxingmu_mail_broker.MailBrokerTests.test_cancelled_draft_never_reaches_transport)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_invalid_worker_operation_cannot_smuggle_private_content_into_audit (test_yuanxingmu_mail_broker.MailBrokerTests.test_invalid_worker_operation_cannot_smuggle_private_content_into_audit)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_new_review_connections_and_extra_http_ids_cannot_create_another_attempt (test_yuanxingmu_mail_broker.MailBrokerTests.test_new_review_connections_and_extra_http_ids_cannot_create_another_attempt)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_real_gateway_namespace_can_submit_but_cannot_reach_host_review_socket (test_yuanxingmu_mail_broker.MailBrokerTests.test_real_gateway_namespace_can_submit_but_cannot_reach_host_review_socket)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_result_save_failure_recovers_sending_as_unconfirmed_and_never_resends (test_yuanxingmu_mail_broker.MailBrokerTests.test_result_save_failure_recovers_sending_as_unconfirmed_and_never_resends)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_review_binds_task_revision_digest_and_explicit_confirmation (test_yuanxingmu_mail_broker.MailBrokerTests.test_review_binds_task_revision_digest_and_explicit_confirmation)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_reviewed_send_does_not_clear_private_labels_or_expand_ordinary_grants (test_yuanxingmu_mail_broker.MailBrokerTests.test_reviewed_send_does_not_clear_private_labels_or_expand_ordinary_grants)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_revocation_before_confirmation_blocks_send_and_new_drafts (test_yuanxingmu_mail_broker.MailBrokerTests.test_revocation_before_confirmation_blocks_send_and_new_drafts)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_send_lock_orders_revoke_after_the_single_inflight_attempt (test_yuanxingmu_mail_broker.MailBrokerTests.test_send_lock_orders_revoke_after_the_single_inflight_attempt)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_submit_is_idempotent_and_changed_content_cannot_reuse_key (test_yuanxingmu_mail_broker.MailBrokerTests.test_submit_is_idempotent_and_changed_content_cannot_reuse_key)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_transport_exception_consumes_attempt_without_leaking_reason_or_retrying (test_yuanxingmu_mail_broker.MailBrokerTests.test_transport_exception_consumes_attempt_without_leaking_reason_or_retrying)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_worker_endpoint_cannot_review_confirm_or_forge_task (test_yuanxingmu_mail_broker.MailBrokerTests.test_worker_endpoint_cannot_review_confirm_or_forge_task)",
+      "reason": "Linux broker and Unix socket boundaries"
+    },
+    {
+      "test": "test_disabled_response_layer_does_not_claim_a_check_or_interception (test_yuanxingmu_model_output.ModelOutputTransportTests.test_disabled_response_layer_does_not_claim_a_check_or_interception)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_failed_state_read_has_no_upstream_request_or_raw_database_exception (test_yuanxingmu_model_output.ModelOutputTransportTests.test_failed_state_read_has_no_upstream_request_or_raw_database_exception)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_json_allow_releases_identical_bytes_after_full_candidate_review (test_yuanxingmu_model_output.ModelOutputTransportTests.test_json_allow_releases_identical_bytes_after_full_candidate_review)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_judge_timeout_withholds_complete_answer_and_never_releases_late_allow (test_yuanxingmu_model_output.ModelOutputTransportTests.test_judge_timeout_withholds_complete_answer_and_never_releases_late_allow)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_latched_storage_failure_gets_precise_notice_with_zero_upstream_requests (test_yuanxingmu_model_output.ModelOutputTransportTests.test_latched_storage_failure_gets_precise_notice_with_zero_upstream_requests)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_malformed_stream_is_replaced_without_querying_the_judge (test_yuanxingmu_model_output.ModelOutputTransportTests.test_malformed_stream_is_replaced_without_querying_the_judge)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_observe_records_a_block_without_intercepting_or_pausing (test_yuanxingmu_model_output.ModelOutputTransportTests.test_observe_records_a_block_without_intercepting_or_pausing)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_oversize_body_sends_only_host_error_without_any_prefix (test_yuanxingmu_model_output.ModelOutputTransportTests.test_oversize_body_sends_only_host_error_without_any_prefix)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_paused_task_gets_precise_notice_before_contacting_upstream (test_yuanxingmu_model_output.ModelOutputTransportTests.test_paused_task_gets_precise_notice_before_contacting_upstream)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_rejection_releases_no_original_prose_or_associated_tool_call (test_yuanxingmu_model_output.ModelOutputTransportTests.test_rejection_releases_no_original_prose_or_associated_tool_call)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_revocation_after_request_does_not_claim_that_no_request_was_sent (test_yuanxingmu_model_output.ModelOutputTransportTests.test_revocation_after_request_does_not_claim_that_no_request_was_sent)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_revoked_task_gets_precise_notice_and_cannot_be_described_as_resumable (test_yuanxingmu_model_output.ModelOutputTransportTests.test_revoked_task_gets_precise_notice_and_cannot_be_described_as_resumable)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_sse_first_chunk_waits_for_final_chunk_and_completed_check (test_yuanxingmu_model_output.ModelOutputTransportTests.test_sse_first_chunk_waits_for_final_chunk_and_completed_check)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_stalled_upstream_times_out_without_releasing_first_chunk (test_yuanxingmu_model_output.ModelOutputTransportTests.test_stalled_upstream_times_out_without_releasing_first_chunk)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_storage_failure_while_recording_a_checked_answer_never_releases_the_answer (test_yuanxingmu_model_output.ModelOutputTransportTests.test_storage_failure_while_recording_a_checked_answer_never_releases_the_answer)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_unknown_admission_denial_and_malformed_request_never_echo_private_details (test_yuanxingmu_model_output.ModelOutputTransportTests.test_unknown_admission_denial_and_malformed_request_never_echo_private_details)",
+      "reason": "Real Linux broker and Unix model socket"
+    },
+    {
+      "test": "test_capacity_counts_durable_deduplication_records_and_never_drops_alerts (test_yuanxingmu_notifications.NotificationQueueTests.test_capacity_counts_durable_deduplication_records_and_never_drops_alerts)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_clock_rollback_and_forward_jump_neither_stall_nor_accelerate_retries (test_yuanxingmu_notifications.NotificationQueueTests.test_clock_rollback_and_forward_jump_neither_stall_nor_accelerate_retries)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_close_cancels_a_not_yet_sent_request_even_if_connection_returns_later (test_yuanxingmu_notifications.NotificationQueueTests.test_close_cancels_a_not_yet_sent_request_even_if_connection_returns_later)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_close_cannot_retract_an_already_sent_request_and_keeps_unconfirmed_attempt (test_yuanxingmu_notifications.NotificationQueueTests.test_close_cannot_retract_an_already_sent_request_and_keeps_unconfirmed_attempt)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_database_failure_latches_fault_without_sending_or_inventing_success (test_yuanxingmu_notifications.NotificationQueueTests.test_database_failure_latches_fault_without_sending_or_inventing_success)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_default_any_2xx_accepts_empty_or_non_protocol_response (test_yuanxingmu_notifications.NotificationQueueTests.test_default_any_2xx_accepts_empty_or_non_protocol_response)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_duplicate_event_is_stable_across_restart_and_status_conflict_is_rejected (test_yuanxingmu_notifications.NotificationQueueTests.test_duplicate_event_is_stable_across_restart_and_status_conflict_is_rejected)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_enqueue_and_inspection_have_no_network_then_background_delivers_without_browser (test_yuanxingmu_notifications.NotificationQueueTests.test_enqueue_and_inspection_have_no_network_then_background_delivers_without_browser)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_failed_delivery_retries_boundedly_with_identical_body_and_idempotency_key (test_yuanxingmu_notifications.NotificationQueueTests.test_failed_delivery_retries_boundedly_with_identical_body_and_idempotency_key)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_four_statuses_have_only_fixed_generic_messages (test_yuanxingmu_notifications.NotificationQueueTests.test_four_statuses_have_only_fixed_generic_messages)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_invalid_event_payloads_cannot_smuggle_candidate_or_document_text (test_yuanxingmu_notifications.NotificationQueueTests.test_invalid_event_payloads_cannot_smuggle_candidate_or_document_text)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_late_success_after_timeout_does_not_mark_delivered (test_yuanxingmu_notifications.NotificationQueueTests.test_late_success_after_timeout_does_not_mark_delivered)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_legacy_queue_migration_bounds_retry_and_preserves_a_full_unknown_lease (test_yuanxingmu_notifications.NotificationQueueTests.test_legacy_queue_migration_bounds_retry_and_preserves_a_full_unknown_lease)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_new_boot_does_not_grant_another_attempt_to_an_exhausted_unconfirmed_lease (test_yuanxingmu_notifications.NotificationQueueTests.test_new_boot_does_not_grant_another_attempt_to_an_exhausted_unconfirmed_lease)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_new_boot_rebases_retry_and_recovers_old_lease_without_resetting_attempts_or_ids (test_yuanxingmu_notifications.NotificationQueueTests.test_new_boot_rebases_retry_and_recovers_old_lease_without_resetting_attempts_or_ids)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_pending_retry_survives_restart_and_then_delivers (test_yuanxingmu_notifications.NotificationQueueTests.test_pending_retry_survives_restart_and_then_delivers)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_private_storage_rejects_links_and_missing_binding_instead_of_resetting (test_yuanxingmu_notifications.NotificationQueueTests.test_private_storage_rejects_links_and_missing_binding_instead_of_resetting)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_process_crash_after_durable_claim_recovers_expired_lease (test_yuanxingmu_notifications.NotificationQueueTests.test_process_crash_after_durable_claim_recovers_expired_lease)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_queue_binding_covers_endpoint_key_and_delivery_policy (test_yuanxingmu_notifications.NotificationQueueTests.test_queue_binding_covers_endpoint_key_and_delivery_policy)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_redirects_and_auth_failure_never_forward_or_retry_credentials (test_yuanxingmu_notifications.NotificationQueueTests.test_redirects_and_auth_failure_never_forward_or_retry_credentials)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_replaced_open_database_faults_closed_instead_of_writing_orphaned_state (test_yuanxingmu_notifications.NotificationQueueTests.test_replaced_open_database_faults_closed_instead_of_writing_orphaned_state)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_retry_deadline_survives_reopen_and_is_shared_by_competing_instances_after_rollback (test_yuanxingmu_notifications.NotificationQueueTests.test_retry_deadline_survives_reopen_and_is_shared_by_competing_instances_after_rollback)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_slow_connection_resolution_has_one_bounded_transport_and_no_late_send (test_yuanxingmu_notifications.NotificationQueueTests.test_slow_connection_resolution_has_one_bounded_transport_and_no_late_send)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_strict_receipt_requires_matching_event_id_and_acceptance (test_yuanxingmu_notifications.NotificationQueueTests.test_strict_receipt_requires_matching_event_id_and_acceptance)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_strict_slow_body_cannot_extend_deadline_with_small_chunks (test_yuanxingmu_notifications.NotificationQueueTests.test_strict_slow_body_cannot_extend_deadline_with_small_chunks)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_two_queue_instances_concurrently_deduplicate_and_lease_one_event (test_yuanxingmu_notifications.NotificationQueueTests.test_two_queue_instances_concurrently_deduplicate_and_lease_one_event)",
+      "reason": "Durable host queue uses Linux private directories"
+    },
+    {
+      "test": "test_configuration_or_imported_content_drift_never_creates_a_clean_task (test_yuanxingmu_openclaw.OpenClawProfileTests.test_configuration_or_imported_content_drift_never_creates_a_clean_task)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_confirmed_cleanup_permits_restart_without_confusing_reused_pid (test_yuanxingmu_openclaw.OpenClawProfileTests.test_confirmed_cleanup_permits_restart_without_confusing_reused_pid)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_dead_or_reused_processes_without_cleanup_proof_remain_interrupted (test_yuanxingmu_openclaw.OpenClawProfileTests.test_dead_or_reused_processes_without_cleanup_proof_remain_interrupted)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_empty_profile_is_private_and_grants_no_external_destinations (test_yuanxingmu_openclaw.OpenClawProfileTests.test_empty_profile_is_private_and_grants_no_external_destinations)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_exact_effective_tool_lists_require_isolated_execution (test_yuanxingmu_openclaw.OpenClawProfileTests.test_exact_effective_tool_lists_require_isolated_execution)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_existing_profile_cannot_be_reinitialized_to_erase_authority (test_yuanxingmu_openclaw.OpenClawProfileTests.test_existing_profile_cannot_be_reinitialized_to_erase_authority)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_gateway_model_configuration_has_only_the_local_bridge_and_no_provider_key (test_yuanxingmu_openclaw.OpenClawProfileTests.test_gateway_model_configuration_has_only_the_local_bridge_and_no_provider_key)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_gateway_mounts_hide_host_credentials_documents_and_authority (test_yuanxingmu_openclaw.OpenClawProfileTests.test_gateway_mounts_hide_host_credentials_documents_and_authority)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_import_is_a_private_snapshot_and_original_file_edits_do_not_change_it (test_yuanxingmu_openclaw.OpenClawProfileTests.test_import_is_a_private_snapshot_and_original_file_edits_do_not_change_it)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_initialization_does_not_change_personal_openclaw_configuration (test_yuanxingmu_openclaw.OpenClawProfileTests.test_initialization_does_not_change_personal_openclaw_configuration)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_missing_persisted_security_files_fail_without_recreating_them (test_yuanxingmu_openclaw.OpenClawProfileTests.test_missing_persisted_security_files_fail_without_recreating_them)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_model_secret_stays_outside_workspace_and_public_status (test_yuanxingmu_openclaw.OpenClawProfileTests.test_model_secret_stays_outside_workspace_and_public_status)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_native_session_rotation_retains_task_identity_and_default_private_labels (test_yuanxingmu_openclaw.OpenClawProfileTests.test_native_session_rotation_retains_task_identity_and_default_private_labels)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_offline_revoke_denies_broker_without_claiming_process_shutdown (test_yuanxingmu_openclaw.OpenClawProfileTests.test_offline_revoke_denies_broker_without_claiming_process_shutdown)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_pasted_private_input_cannot_be_sent_publicly_before_any_broker_read (test_yuanxingmu_openclaw.OpenClawProfileTests.test_pasted_private_input_cannot_be_sent_publicly_before_any_broker_read)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_real_gateway_boundary_runs_the_native_worker_launcher_without_host_access (test_yuanxingmu_openclaw.OpenClawProfileTests.test_real_gateway_boundary_runs_the_native_worker_launcher_without_host_access)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_reopening_profile_preserves_revocation_and_start_cannot_reset_it (test_yuanxingmu_openclaw.OpenClawProfileTests.test_reopening_profile_preserves_revocation_and_start_cannot_reset_it)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_replacing_workspace_directory_at_the_same_path_is_not_a_fresh_identity (test_yuanxingmu_openclaw.OpenClawProfileTests.test_replacing_workspace_directory_at_the_same_path_is_not_a_fresh_identity)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_runtime_mount_cannot_expose_a_parent_of_the_protected_profile (test_yuanxingmu_openclaw.OpenClawProfileTests.test_runtime_mount_cannot_expose_a_parent_of_the_protected_profile)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_unreachable_operator_does_not_report_live_processes_as_stopped (test_yuanxingmu_openclaw.OpenClawProfileTests.test_unreachable_operator_does_not_report_live_processes_as_stopped)",
+      "reason": "Linux OpenClaw profile only"
+    },
+    {
+      "test": "test_actual_plugin_mail_contracts (test_yuanxingmu_openclaw_mail_tools.OpenClawMailToolsTests.test_actual_plugin_mail_contracts)",
+      "reason": "Linux plugin and Unix socket contract"
+    },
+    {
+      "test": "test_blocked_input_pauses_family_and_root_host_alone_can_resume (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_blocked_input_pauses_family_and_root_host_alone_can_resume)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_clean_restart_keeps_an_existing_pause_and_does_not_reset_labels (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_clean_restart_keeps_an_existing_pause_and_does_not_reset_labels)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_exact_resume_rejects_forged_identity_stale_epoch_and_replay (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_exact_resume_rejects_forged_identity_stale_epoch_and_replay)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_failed_close_directory_sync_releases_lock_and_restart_keeps_pause (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_failed_close_directory_sync_releases_lock_and_restart_keeps_pause)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_observe_only_candidate_does_not_pause_and_review_remains_individual (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_observe_only_candidate_does_not_pause_and_review_remains_individual)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_pause_permanently_invalidates_unused_reviews_mail_and_actions (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_pause_permanently_invalidates_unused_reviews_mail_and_actions)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_pause_storage_failure_faults_closed_and_restart_creates_durable_pause (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_pause_storage_failure_faults_closed_and_restart_creates_durable_pause)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_revoked_family_cannot_be_recovered (test_yuanxingmu_quarantine_broker.QuarantineBrokerTests.test_revoked_family_cannot_be_recovered)",
+      "reason": "Quarantine Broker integration requires Linux"
+    },
+    {
+      "test": "test_actual_http_observes_fault_restart_pause_and_can_resume_it (test_yuanxingmu_quarantine_broker.QuarantineWorkbenchTests.test_actual_http_observes_fault_restart_pause_and_can_resume_it)",
+      "reason": "Real Workbench HTTP quarantine tests require Linux"
+    },
+    {
+      "test": "test_actual_http_resume_requires_auth_origin_and_exact_current_snapshot (test_yuanxingmu_quarantine_broker.QuarantineWorkbenchTests.test_actual_http_resume_requires_auth_origin_and_exact_current_snapshot)",
+      "reason": "Real Workbench HTTP quarantine tests require Linux"
+    },
+    {
+      "test": "test_demo_receiver_ignores_model_writable_current_directory (test_yuanxingmu_run.OperatorRunTests.test_demo_receiver_ignores_model_writable_current_directory)",
+      "reason": "Linux execution only"
+    },
+    {
+      "test": "test_operator_cli_resumes_persisted_task_and_refuses_workspace_identity_reset (test_yuanxingmu_run.OperatorRunTests.test_operator_cli_resumes_persisted_task_and_refuses_workspace_identity_reset)",
+      "reason": "Linux execution only"
+    },
+    {
+      "test": "test_background_process_exits_with_task_even_after_setsid (test_yuanxingmu_sandbox.SandboxTests.test_background_process_exits_with_task_even_after_setsid)",
+      "reason": "Linux bubblewrap only"
+    },
+    {
+      "test": "test_launcher_group_cancellation_exits_background_process (test_yuanxingmu_sandbox.SandboxTests.test_launcher_group_cancellation_exits_background_process)",
+      "reason": "Linux bubblewrap only"
+    },
+    {
+      "test": "test_real_file_network_socket_and_environment_boundaries (test_yuanxingmu_sandbox.SandboxTests.test_real_file_network_socket_and_environment_boundaries)",
+      "reason": "Linux bubblewrap only"
+    },
+    {
+      "test": "test_rejects_broad_home_and_root_mounts (test_yuanxingmu_sandbox.SandboxTests.test_rejects_broad_home_and_root_mounts)",
+      "reason": "Linux bubblewrap only"
+    },
+    {
+      "test": "test_rejects_broker_parent_and_mutable_socket_location (test_yuanxingmu_sandbox.SandboxTests.test_rejects_broker_parent_and_mutable_socket_location)",
+      "reason": "Linux bubblewrap only"
+    },
+    {
+      "test": "test_rejects_unusable_socket_and_control_environment_override (test_yuanxingmu_sandbox.SandboxTests.test_rejects_unusable_socket_and_control_environment_override)",
+      "reason": "Linux bubblewrap only"
+    },
+    {
+      "test": "test_actual_readonly_mount_prevents_same_user_write_and_chmod (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_actual_readonly_mount_prevents_same_user_write_and_chmod)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_aliases_and_absolute_paths_reject_traversal (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_aliases_and_absolute_paths_reject_traversal)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_binary_non_utf8_and_control_content_are_explicit_errors (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_binary_non_utf8_and_control_content_are_explicit_errors)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_concurrent_identical_creations_publish_one_exact_snapshot (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_concurrent_identical_creations_publish_one_exact_snapshot)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_default_empty_library_has_no_implicit_source (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_default_empty_library_has_no_implicit_source)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_exact_content_origins_paths_and_executable_modes_are_bound (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_exact_content_origins_paths_and_executable_modes_are_bound)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_existing_invalid_digest_directory_is_never_overwritten (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_existing_invalid_digest_directory_is_never_overwritten)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_existing_store_permissions_are_not_silently_repaired (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_existing_store_permissions_are_not_silently_repaired)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_fifo_and_socket_are_rejected_without_blocking (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_fifo_and_socket_are_rejected_without_blocking)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_file_total_count_depth_and_entry_limits_fail_without_partial_publish (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_file_total_count_depth_and_entry_limits_fail_without_partial_publish)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_foundation_scanner_reads_snapshot_paths_after_original_changes (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_foundation_scanner_reads_snapshot_paths_after_original_changes)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_hardlinks_are_rejected_without_touching_target (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_hardlinks_are_rejected_without_touching_target)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_nested_symlink_and_broken_link_are_rejected (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_nested_symlink_and_broken_link_are_rejected)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_regular_file_swapped_for_fifo_between_stat_and_open_does_not_hang (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_regular_file_swapped_for_fifo_between_stat_and_open_does_not_hang)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_source_and_store_must_not_overlap (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_source_and_store_must_not_overlap)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_source_changes_do_not_modify_published_snapshot (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_source_changes_do_not_modify_published_snapshot)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_source_modified_during_read_is_not_published (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_source_modified_during_read_is_not_published)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_source_root_and_ancestor_symlinks_are_not_followed (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_source_root_and_ancestor_symlinks_are_not_followed)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_store_symlinks_are_rejected_without_writing_outside (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_store_symlinks_are_rejected_without_writing_outside)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_unsafe_names_and_privilege_bits_are_rejected (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_unsafe_names_and_privilege_bits_are_rejected)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_untrusted_writable_store_parent_is_rejected (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_untrusted_writable_store_parent_is_rejected)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_verify_detects_changed_content_even_after_readonly_mode_is_restored (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_verify_detects_changed_content_even_after_readonly_mode_is_restored)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_verify_detects_extra_and_missing_entries (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_verify_detects_extra_and_missing_entries)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_verify_detects_writable_permissions (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_verify_detects_writable_permissions)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_verify_rejects_replaced_file_symlink (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_verify_rejects_replaced_file_symlink)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_verify_requires_the_pinned_manifest_digest (test_yuanxingmu_skills.SkillSnapshotFilesystemTests.test_verify_requires_the_pinned_manifest_digest)",
+      "reason": "secure snapshots require Linux file descriptors"
+    },
+    {
+      "test": "test_approval_cannot_be_transferred_to_changed_candidate_or_task (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_approval_cannot_be_transferred_to_changed_candidate_or_task)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_expiry_is_checked_at_decision_and_consumption (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_expiry_is_checked_at_decision_and_consumption)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_host_must_confirm_exact_digest_and_pending_consumption_does_not_spend_it (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_host_must_confirm_exact_digest_and_pending_consumption_does_not_spend_it)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_initial_model_block_is_terminal_for_that_native_call (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_initial_model_block_is_terminal_for_that_native_call)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_lost_consumption_reply_does_not_make_permission_replayable (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_lost_consumption_reply_does_not_make_permission_replayable)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_parent_revocation_prevents_approval_and_consumption_on_descendant_socket (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_parent_revocation_prevents_approval_and_consumption_on_descendant_socket)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_real_socket_concurrent_consumers_receive_exactly_one_permission (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_real_socket_concurrent_consumers_receive_exactly_one_permission)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_recorded_status_never_reenters_a_later_allowing_judge (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_recorded_status_never_reenters_a_later_allowing_judge)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_restarting_the_broker_invalidates_pending_and_approved_permissions (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_restarting_the_broker_invalidates_pending_and_approved_permissions)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_same_call_with_changed_parameters_remains_a_conflict (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_same_call_with_changed_parameters_remains_a_conflict)",
+      "reason": "Real Broker Unix sockets require Linux"
+    },
+    {
+      "test": "test_worker_socket_never_reaches_host_approval_or_listing (test_yuanxingmu_tool_review_broker.ToolReviewBrokerTests.test_worker_socket_never_reaches_host_approval_or_listing)",
+      "reason": "Real Broker Unix sockets require Linux"
+    }
+  ],
+  "failure_details": [],
+  "source_changes_during_run": [],
+  "source_file_count": 159,
+  "source_manifest_before": "windows-source-before.json",
+  "source_manifest_after": "windows-source-after.json",
+  "log": "windows-unittest.log",
+  "log_sha256": "bf004102a7e9e776594e17ca5bd7afdce8382bf6f35b5bd8ea53281260aae1c5"
+}

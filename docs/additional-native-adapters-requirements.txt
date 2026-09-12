@@ -1,0 +1,10 @@
+# Separate optional SDK validation environment: Google ADK, CrewAI, Agno.
+# Keep separate from the older native-adapters-requirements.txt environment;
+# CrewAI's tested version requires OpenAI <3, while that environment pins 3.x.
+google-adk==2.9.0
+google-genai==2.23.0
+crewai==1.15.21
+crewai-core==1.15.21
+agno==3.0.9
+pydantic==2.12.5
+openai==2.54.0

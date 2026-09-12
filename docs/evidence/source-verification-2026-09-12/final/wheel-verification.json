@@ -1,0 +1,51 @@
+{
+  "started_at": "2026-09-12T06:15:18.781549+00:00",
+  "finished_at": "2026-09-12T06:15:29.514750+00:00",
+  "successful": true,
+  "scope": "Pure Python wheel from a fresh source copy, installed without dependencies/network into a new venv. CLI/import/assets checked outside the repository. No Hermes/npm installation, SDK end-to-end suite, or model call.",
+  "scratch": "/tmp/yxm-source-verification-20260912-bzmpyt4p",
+  "build_tools": {
+    "setuptools": "83.0.0",
+    "wheel": "0.48.0",
+    "packaging": "26.0"
+  },
+  "wheel": "dist/agent_defense_check-0.5.0a1-py3-none-any.whl",
+  "wheel_sha256": "f9dfe75b0abde8e628c3dfec0cf257fc014b20d302bac2a14800aaff5dfddec6",
+  "wheel_bytes": 322795,
+  "package_version": "0.5.0a1",
+  "assets_checked": 29,
+  "cli_checks": [
+    [
+      "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/defensecheck",
+      "--help"
+    ],
+    [
+      "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/yuanxingmu",
+      "--help"
+    ],
+    [
+      "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/python",
+      "-I",
+      "-m",
+      "yuanxingmu",
+      "desk",
+      "--help"
+    ],
+    [
+      "/tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/python",
+      "-I",
+      "-m",
+      "yuanxingmu",
+      "hermes",
+      "init",
+      "--help"
+    ]
+  ],
+  "javascript_syntax_checks": 17,
+  "source_changes_during_build": [],
+  "source_manifest_before": "wheel-source-before.json",
+  "source_manifest_after": "wheel-source-after.json",
+  "installed_evidence": "wheel-installed.json",
+  "log": "wheel-build-install.log",
+  "log_sha256": "dea44c1c0c8f2aba4aaea0c8f63480072c5eef5b8766a9d55c9750ff51115a99"
+}

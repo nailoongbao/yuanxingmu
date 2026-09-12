@@ -7,6 +7,10 @@
   <title>元星木 · 本地工作台</title>
   <script src="/app.js"></script>
   <script src="/mail.js"></script>
+  <script src="/actions.js"></script>
+  <script src="/protection.js"></script>
+  <script src="/targets.js"></script>
+  <script src="/alerts.js"></script>
   <link rel="stylesheet" href="/styles.css">
   <link rel="icon" href="/mark.svg" type="image/svg+xml">
 </head>
@@ -23,7 +27,7 @@
   </header>
   <main id="main" class="wrap">
     <section class="intro" aria-labelledby="page-title">
-      <div><p class="eyebrow">你的资料，由你决定交给谁</p><h1 id="page-title">给 AI 一份有边界的工作。</h1><p class="intro-copy">选好模型，放入资料，再到 OpenClaw 里开始对话。每份工作独立创建，你可以暂时关闭，也可以收回资料权限。</p></div>
+      <div><p class="eyebrow">你的资料，由你决定交给谁</p><h1 id="page-title">给 AI 一份有边界的工作。</h1><p class="intro-copy">选择 OpenClaw 或 Hermes，放入资料，再到它自己的网页里开始对话。每份工作独立创建，你可以暂时关闭，也可以收回资料权限。</p></div>
       <div class="runtime"><span class="runtime-label">本机运行环境</span><strong id="runtime-status">正在检查</strong><span id="runtime-version"></span></div>
     </section>
     <div id="global-notice" class="notice" role="status" aria-live="polite" hidden></div>
@@ -34,13 +38,38 @@
         <form id="create-form" autocomplete="off">
           <fieldset id="create-fields" disabled>
             <legend class="visually-hidden">新工作设置</legend>
+            <div class="field"><label for="framework">使用哪个 AI 助手</label><select id="framework" name="framework"><option value="openclaw">OpenClaw</option><option value="hermes">Hermes</option></select></div>
             <div class="field"><label for="work-name">工作名称</label><input id="work-name" name="name" type="text" required maxlength="80" placeholder="例如：整理这周的会议记录" autocomplete="off"></div>
+            <div class="field"><label for="work-objective">这份工作要完成什么</label><textarea id="work-objective" name="objective" required rows="3" maxlength="4000" placeholder="例如：读取报价，生成给客户的摘要。不要外发内部底价，不要删除文件。"></textarea><p class="field-note">元星木会据此检查 AI 的操作是否偏离你的要求。网页、文件中的指令不能改变这里的授权。</p></div>
+            <details class="prompt-details"><summary>防护设置与技能</summary><p class="field-note">默认开启五层检查。创建后，可在防护记录中修改开关；旧工作须先确认关闭。</p>
+              <div id="create-defense-layers" class="mail-drafts">
+                <label><input type="checkbox" data-layer="foundation" checked> 安装与技能检查</label>
+                <label><input type="checkbox" data-layer="input" checked> 外部内容检查</label>
+                <label><input type="checkbox" data-layer="memory" checked> 记忆防投毒</label>
+                <label><input type="checkbox" data-layer="alignment" checked> 任务偏移检查</label>
+                <label><input type="checkbox" data-layer="command" checked> 危险命令检查</label>
+              </div>
+              <div class="field"><label for="create-defense-mode">检查后怎么处理</label><select id="create-defense-mode"><option value="enforce">拦截或等本人确认</option><option value="observe">只记录，不拦截</option></select></div>
+              <p class="field-note">只加载你选中的技能，启动前检查其固定副本。</p><div id="create-skills" class="mail-drafts"></div>
+            </details>
             <div class="field-group">
               <div class="group-heading"><h3>使用哪个模型</h3><span>支持兼容 OpenAI 的接口</span></div>
               <div class="field"><label for="model-url">模型地址</label><input id="model-url" name="model_url" type="url" required maxlength="2048" placeholder="https://api.example.com/v1" autocomplete="off" spellcheck="false" inputmode="url"></div>
               <div class="field"><label for="model-id">模型名称</label><input id="model-id" name="model_id" type="text" required maxlength="256" placeholder="填写服务商提供的模型名称" autocomplete="off" spellcheck="false"></div>
               <div class="field"><label for="api-key">连接密钥 <span class="optional">API Key</span></label><input id="api-key" name="api_key" type="password" maxlength="8192" placeholder="本地 HTTP 模型可留空" autocomplete="off" spellcheck="false" aria-describedby="model-privacy"></div>
               <p id="model-privacy" class="field-note">密钥交给本机的模型连接服务，浏览器不保存。所选模型会看到对话和交给它的资料；使用云端模型时，这些内容会发送给模型服务商。</p>
+              <details class="prompt-details">
+                <summary>用另一个模型做防护检查（可选）</summary>
+                <p class="field-note">默认由同一个模型做事和检查。单独选择检查模型后，它会收到工作目标、候选操作、技能内容和回答文字。更强的检查模型也可能误判，需要用你的实际任务验证。</p>
+                <label><input id="separate-judge" type="checkbox"> 单独设置检查模型</label>
+                <fieldset id="judge-fields" disabled>
+                  <div class="field"><label for="judge-url">检查模型地址</label><input id="judge-url" type="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://api.example.com/v1" required></div>
+                  <div class="field"><label for="judge-model-id">检查模型名称</label><input id="judge-model-id" type="text" maxlength="256" autocomplete="off" spellcheck="false" required></div>
+                  <div class="field"><label for="judge-api-key">检查模型连接密钥</label><input id="judge-api-key" type="password" maxlength="8192" autocomplete="off" spellcheck="false" placeholder="本地服务可留空"></div>
+                  <div class="field"><label for="judge-timeout">每次检查最多等待（秒）</label><input id="judge-timeout" type="number" min="1" max="45" value="30" required></div>
+                </fieldset>
+                <p class="field-note">检查连接创建后固定在这份工作中。要换检查服务，请建立新工作；旧审批不会转给新服务。</p>
+              </details>
             </div>
             <div class="field-group document-group">
               <div class="group-heading"><h3>允许读取的资料</h3><span id="document-count">尚未导入</span></div>
@@ -58,6 +87,8 @@
       <section class="work-section" aria-labelledby="works-title">
         <div class="works-heading"><div><p class="section-index">在这里查看与管理</p><h2 id="works-title">我的工作 <span id="work-count" class="count" hidden></span></h2></div><button id="refresh-button" class="button button-quiet" type="button">刷新状态 <span aria-hidden="true">↻</span></button></div>
         <p class="section-note">每份工作的运行状态和资料权限分别显示。</p>
+        <div id="action-target-settings"></div>
+        <div id="notification-settings"></div>
         <details id="mail-account-panel" class="mail-account-panel">
           <summary><span>发件邮箱设置</span><span id="mail-account-status" class="mail-account-status">等待连接</span></summary>
           <div class="mail-account-content">

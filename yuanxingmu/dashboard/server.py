@@ -58,13 +58,16 @@ def _fault(exc: Exception):
     if isinstance(exc, APIError):
         return exc.public()
     # Never return exception text: upstream errors can contain keys or documents.
-    reason = str(exc)
+    reason = getattr(exc, "reason", str(exc))
     mail_errors = {
         "mail_draft_changed": "这封草稿已经改变，请重新打开并核对最新内容。",
         "mail_draft_not_pending": "这封草稿已经取消或开始发送，不能再修改或重新发送。",
         "mail_account_changed": "发件邮箱已改变，请重新核对发件地址后再确认。",
         "mail_account_missing": "请先设置这台电脑使用的发件邮箱。",
         "reviewed_mail_not_enabled": "这项旧工作没有邮件核对功能，请保留原工作并建立新工作。",
+        "task_paused": "这份工作已暂停，请查看最新防护记录并由你确认恢复。",
+        "defense_storage_fault": "防护状态写入失败，后续操作已停止。请保留记录、检查存储并重启服务。",
+        "quarantine_incident_changed": "暂停原因已更新，请重新读取并核对，旧确认没有恢复工作。",
     }
     if reason in mail_errors:
         return {"code": reason, "message": mail_errors[reason]}
@@ -90,16 +93,24 @@ class Runtime:
     node: Path | None
     openclaw_package: Path | None
     bwrap: Path | None
+    hermes_python: Path | None = None
+    hermes_source: Path | None = None
 
     @classmethod
-    def discover(cls, install_root: Path, *, node=None, openclaw_package=None, bwrap=None):
-        def choose(explicit, preferred, fallback=None):
+    def discover(cls, install_root: Path, *, node=None, openclaw_package=None, bwrap=None,
+                 hermes_python=None, hermes_source=None):
+        def choose(explicit, preferred, fallback=None, *, keep_leaf=False):
             value = explicit or (preferred if preferred and preferred.exists() else fallback)
-            return Path(value).expanduser().resolve() if value else None
+            if not value:
+                return None
+            path = Path(value).expanduser()
+            return path.parent.resolve() / path.name if keep_leaf else path.resolve()
         return cls(
             choose(node, install_root / "tools/node-v24.16.0-linux-x64/bin/node", shutil.which("node")),
             choose(openclaw_package, install_root / "openclaw/node_modules/openclaw"),
             choose(bwrap, None, shutil.which("bwrap")),
+            choose(hermes_python, install_root / "hermes/env/bin/python", keep_leaf=True),
+            choose(hermes_source, install_root / "hermes/source"),
         )
 
     def public(self):
@@ -127,10 +138,41 @@ class Runtime:
             return {"available": False, "openclaw": core.OPENCLAW_VERSION, "reason": message}
         return {"available": True, "openclaw": core.OPENCLAW_VERSION, "reason": None}
 
+    def hermes_public(self):
+        if not self.hermes_python or not self.hermes_source:
+            return {"available": False, "reason": "本机尚未安装支持的 Hermes 网页运行环境。"}
+        from ..hermes import runtime_available
+        return runtime_available(node=self.node, hermes_python=self.hermes_python,
+                                 hermes_source=self.hermes_source, bwrap=self.bwrap)
+
 
 def validate_create(value):
-    if not isinstance(value, dict) or set(value) != {"name", "model_url", "model_id", "api_key", "documents"}:
+    required = {"name", "model_url", "model_id", "api_key", "documents"}
+    if not isinstance(value, dict) or not required <= set(value) or set(value) - required - {"framework", "objective", "defense", "skills", "judge"}:
         raise APIError(400, "invalid_fields", "请填写工作名称、模型连接信息和资料。")
+    if not isinstance(value.get("framework", "openclaw"), str) or value.get("framework", "openclaw") not in {"openclaw", "hermes"}:
+        raise APIError(400, "invalid_framework", "请选择 OpenClaw 或 Hermes。")
+    if "objective" in value and (not isinstance(value["objective"], str) or not value["objective"].strip()
+                                  or len(value["objective"].encode("utf-8")) > 8192 or "\x00" in value["objective"]):
+        raise APIError(400, "invalid_objective", "请写明这份工作要完成什么，以及不能做什么；最多 8 KB。")
+    if "defense" in value:
+        fields = {name + "_enabled" for name in ("foundation", "input", "memory", "alignment", "command")} | {"mode"}
+        if (not value.get("objective") or type(value["defense"]) is not dict or set(value["defense"]) - fields
+                or any(type(item) is not bool for key, item in value["defense"].items() if key != "mode")
+                or value["defense"].get("mode", "enforce") not in {"enforce", "observe"}):
+            raise APIError(400, "invalid_defense_settings", "防护设置无效。")
+    if "judge" in value:
+        from ..judge_profile import normalize_judge_config
+        try:
+            if not value.get("objective"):
+                raise ValueError("judge_requires_layered_defense")
+            normalize_judge_config(value["judge"])
+        except (ValueError, TypeError):
+            raise APIError(400, "invalid_judge_config", "请填写独立检查模型的地址、名称及有效密钥；检查等待最多45秒。") from None
+    if "skills" in value and (type(value["skills"]) is not list or len(value["skills"]) > 32
+            or any(type(item) is not str or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,63}", item) for item in value["skills"])
+            or len(set(value["skills"])) != len(value["skills"])):
+        raise APIError(400, "invalid_skills", "请选择已在本机登记的技能。")
     for field, maximum in (("name", 80), ("model_url", 2048), ("model_id", 256), ("api_key", 8192)):
         item = value[field]
         if not isinstance(item, str) or len(item) > maximum or any(ord(c) < 32 or ord(c) == 127 for c in item):
@@ -187,10 +229,16 @@ def validate_create(value):
 
 
 class Workbench:
-    def __init__(self, root: Path, runtime: Runtime, *, port: int = 18910):
+    def __init__(self, root: Path, runtime: Runtime, *, port: int = 18910, action_targets: dict | None = None, skill_sources: dict | None = None):
         core._linux()
         self.root = root.expanduser().absolute()
         self.runtime = runtime
+        self.skill_sources = {core._name(name): Path(path).expanduser().absolute() for name, path in (skill_sources or {}).items()}
+        from ..actions import ActionTarget
+        if action_targets is not None and (not isinstance(action_targets, dict) or len(action_targets) > 32):
+            raise ValueError("invalid_action_targets")
+        self.action_targets = {core._name(name): ActionTarget(**value).to_config()
+                               for name, value in (action_targets or {}).items()}
         self.port = port
         self.token = secrets.token_urlsafe(32)
         self.mutex = threading.RLock()
@@ -201,7 +249,9 @@ class Workbench:
         self.closing = False
         self.write_failed = False
         self._lock_file = None
+        self.alerts = None
         self.runtime_status = runtime.public()
+        self.hermes_status = runtime.hermes_public()
         fresh = not self.root.exists() and not self.root.is_symlink()
         if fresh:
             self.root.mkdir(mode=0o700, parents=True)
@@ -234,6 +284,11 @@ class Workbench:
                 self._validate_catalog()
                 self._check_storage()
             self.jobs = copy.deepcopy(self.catalog["jobs"])
+            if "action_targets" in self.catalog:
+                self.action_targets = {core._name(name): ActionTarget(**value).to_config()
+                                       for name, value in self.catalog["action_targets"].items()}
+            else:
+                self.catalog["action_targets"] = copy.deepcopy(self.action_targets)
             if self.port and self.port in {entry["port"] for entry in self.catalog["profiles"].values()}:
                 raise APIError(409, "manager_port_conflict", "工作台端口与已有聊天端口重复，请使用其他工作台端口。")
             for job in self.jobs.values():
@@ -244,6 +299,8 @@ class Workbench:
                 if entry["phase"] == "creating":
                     entry["phase"] = "creation_failed"
             self._save_jobs()
+            from .alerts import HostAlerts
+            self.alerts = HostAlerts(self)
         except Exception:
             if self._lock_file:
                 self._lock_file.close()
@@ -271,6 +328,11 @@ class Workbench:
             MailAccount(**account["config"])
         if not isinstance(catalog.get("mail_account_requests", {}), dict):
             raise ValueError("mail_account_changed")
+        if not isinstance(catalog.get("action_targets", {}), dict) or len(catalog.get("action_targets", {})) > 32:
+            raise ValueError("action_targets_changed")
+        if "notifications" in catalog:
+            from .alerts import validate_catalog
+            validate_catalog(catalog["notifications"])
 
     def _check_storage(self):
         for path, expected, directory in (
@@ -335,7 +397,9 @@ class Workbench:
         return path
 
     def info(self):
-        return {"application": "元星木", "runtime": copy.deepcopy(self.runtime_status), "limits": dict(LIMITS)}
+        return {"application": "元星木", "runtime": copy.deepcopy(self.runtime_status), "limits": dict(LIMITS),
+                "skills": [{"id": name, "label": name} for name in sorted(self.skill_sources)],
+                "frameworks": {"openclaw": copy.deepcopy(self.runtime_status), "hermes": copy.deepcopy(self.hermes_status)}}
 
     def mail_account(self):
         with self.mutex:
@@ -398,6 +462,146 @@ class Workbench:
         finally:
             lock.release()
 
+    def actions_view(self, identifier, action_id=None):
+        lock = self._core_lock(identifier)
+        if not lock.acquire(blocking=False):
+            raise APIError(409, "profile_busy", "这项工作有操作正在执行，请稍后查看。")
+        try:
+            with self.mutex:
+                path = self._profile_path(self._entry(identifier))
+                features = json.loads((path / "profile.json").read_text()).get("features", [])
+            if "reviewed_actions_v1" not in features:
+                return {"supported": False, "active": False, "actions": [], "targets": []}
+            result = core.review_profile(path, "action_get" if action_id else "action_list", {"action_id": action_id} if action_id else {})
+            return {"supported": True, **result}
+        finally:
+            lock.release()
+
+    def targets_view(self):
+        from ..actions import ActionTarget
+        with self.mutex:
+            self._check_storage()
+            items = []
+            for name, value in self.action_targets.items():
+                target = ActionTarget(**value)
+                items.append({"id": name, **target.describe(name, host=True)})
+            return {"targets": items, "applies_to": "new_profiles"}
+
+    def set_target(self, value, request_key, *, remove=False):
+        from ..actions import ActionTarget
+        from ..sandbox import _overlaps
+        if not isinstance(request_key, str) or not HEX_ID.fullmatch(request_key):
+            raise APIError(400, "invalid_request_key", "操作标识无效。")
+        if type(value) is not dict or set(value) != ({"id"} if remove else {"id", "target"}):
+            raise APIError(400, "invalid_target", "请填写操作对象的名称与设置。")
+        try:
+            identifier = core._name(value["id"])
+            if not remove:
+                fields = {"kind", "label", "url", "provider", "workspace", "relative_path", "form_fields"}
+                if type(value["target"]) is not dict or set(value["target"]) - fields:
+                    raise ValueError
+                target = ActionTarget(**value["target"])
+                if target.workspace is not None and _overlaps(target.workspace, self.root):
+                    raise ValueError
+                config = target.to_config()
+        except (ValueError, TypeError, OSError):
+            raise APIError(400, "invalid_target", "请核对对象类型和名称。网络地址须为 HTTPS 或本机地址；文件须位于工作台目录之外的现有 Linux/WSL 文件夹中。") from None
+        with self.mutex:
+            self._check_storage()
+            if self.closing or self.write_failed:
+                raise APIError(409, "manager_unavailable", "工作台正在关闭或保存状态未确认。")
+            operation = "target_remove" if remove else "target_set"
+            fingerprint = hmac.new(bytes.fromhex(self.catalog["fingerprint_key"]),
+                json.dumps([operation, value], ensure_ascii=True, sort_keys=True).encode(), hashlib.sha256).hexdigest()
+            prior = self.catalog["requests"].get(request_key)
+            if prior:
+                if prior["fingerprint"] != fingerprint:
+                    raise APIError(409, "request_conflict", "这次设置内容已经改变，请重新读取。")
+                return {"job": copy.deepcopy(self.jobs[prior["job_id"]])}
+            if len(self.jobs) >= MAX_JOBS or (not remove and identifier not in self.action_targets and len(self.action_targets) >= 32):
+                raise APIError(409, "target_limit", "预览版的操作对象或记录数量已达到上限。")
+            targets = copy.deepcopy(self.action_targets)
+            if remove:
+                targets.pop(identifier, None)
+            else:
+                targets[identifier] = config
+            job_id = uuid.uuid4().hex
+            self.jobs[job_id] = {"id": job_id, "profile_id": None, "action": operation, "status": "succeeded",
+                "created_at": _now(), "finished_at": _now(), "result": {"targets_updated": True}}
+            self.catalog["requests"][request_key] = {"fingerprint": fingerprint, "job_id": job_id}
+            self.catalog["action_targets"] = targets
+            try:
+                self._save_jobs()
+            except Exception:
+                self.write_failed = True
+                raise APIError(503, "storage_unconfirmed", "对象设置保存未确认，请保留当前页面并重新读取原操作记录。") from None
+            self.action_targets = targets
+            return {"job": copy.deepcopy(self.jobs[job_id])}
+
+    def tools_view(self, identifier, review_id=None):
+        lock = self._core_lock(identifier)
+        if not lock.acquire(blocking=False):
+            raise APIError(409, "profile_busy", "这项工作有操作正在执行，请稍后查看。")
+        try:
+            with self.mutex:
+                path = self._profile_path(self._entry(identifier))
+                features = json.loads((path / "profile.json").read_text()).get("features", [])
+            if "layered_defense_v1" not in features:
+                return {"supported": False, "active": False, "reviews": []}
+            result = core.review_profile(path, "tool_get" if review_id else "tool_list", {"review_id": review_id} if review_id else {})
+            return {"supported": True, **result}
+        finally:
+            lock.release()
+
+    def protection_view(self, identifier):
+        with self.mutex:
+            path = self._profile_path(self._entry(identifier))
+        manifest = core.validate_profile(path)
+        if "layered_defense_v1" not in manifest.get("features", []):
+            return {"supported": False, "events": [], "message": "这项工作保留原有权限和隔离；没有启用新增的五层检查。"}
+        policy = json.loads((path / "defense-policy.json").read_text())
+        events = []
+        event_path = path / "defense-events.jsonl"
+        if event_path.exists():
+            with event_path.open("rb") as stream:
+                stream.seek(0, 2)
+                start = max(0, stream.tell() - 1048576)
+                stream.seek(start)
+                if start:
+                    stream.readline()
+                lines = stream.read(1048576).splitlines()
+            for line in lines[-100:]:
+                try:
+                    value = json.loads(line)
+                    if not isinstance(value, dict):
+                        continue
+                    event = {key: value.get(key) for key in ("time", "layer", "verdict", "code", "reason", "enforced", "assessed", "would_verdict")}
+                    evidence = value.get("evidence", {})
+                    if not isinstance(evidence, dict):
+                        evidence = {}
+                    event["evidence"] = {key: evidence.get(key) for key in ("elapsed_ms", "judge_valid", "raw_verdict_sha256", "input_sha256", "candidate_sha256") if key in evidence}
+                    events.append(event)
+                except (ValueError, TypeError):
+                    continue
+        report = path / "foundation-report.json"
+        foundation = json.loads(report.read_text()) if report.exists() else None
+        if foundation is not None:
+            foundation["current_policy"] = foundation.get("policy_sha256") == manifest["files"]["defense-policy.json"]
+        quarantine = core.review_profile(path, "quarantine_status") if "quarantine_v1" in manifest.get("features", []) else None
+        from ..judge_profile import judge_profile_report
+        judge = judge_profile_report(path, manifest["model"], pins=manifest["files"])
+        stopped = core._offline_lifecycle(path) == "stopped"
+        live_settings = "live_settings_v1" in manifest.get("features", [])
+        return {"supported": True, "framework": manifest.get("framework", "openclaw"),
+                "editable": (stopped or live_settings) and not (quarantine or {}).get("storage_fault", False),
+                "live_settings": live_settings and not stopped,
+                "judge": judge,
+                "skills": {"names": list(manifest.get("skills_snapshot", {}).get("source_paths", {})), "files": manifest.get("skills_snapshot", {}).get("file_count", 0)},
+                "objective": policy["objective"], "mode": policy.get("mode", "enforce"),
+                "layers": {name: policy.get(name + "_enabled", True) for name in ("foundation", "input", "memory", "alignment", "command")},
+                "buffered_response": "buffered_response_v1" in manifest.get("features", []),
+                "quarantine": quarantine, "foundation": foundation, "events": list(reversed(events))}
+
     def _core_lock(self, identifier):
         with self.mutex:
             return self.core_locks.setdefault(identifier, threading.RLock())
@@ -441,6 +645,7 @@ class Workbench:
             self._check_storage()
             entry = copy.deepcopy(self._entry(identifier))
         result = {key: entry[key] for key in ("id", "name", "created_at", "model_id", "documents")}
+        result["framework"] = entry.get("framework", "openclaw")
         result.update(status="failed", revoked=None, pending=None, features=[])
         cached_pending = None
         try:
@@ -449,7 +654,8 @@ class Workbench:
             else:
                 with self.mutex:
                     path = self._profile_path(entry)
-                    result["features"] = [name for name in json.loads((path / "profile.json").read_text()).get("features", []) if name == "reviewed_email_v1"]
+                    result["features"] = [name for name in json.loads((path / "profile.json").read_text()).get("features", [])
+                                          if name in {"reviewed_email_v1", "reviewed_actions_v1", "layered_defense_v1", "quarantine_v1", "buffered_response_v1"}]
                 actual = self._remember(identifier, observed) if observed is not None else self._observe(identifier, path)
                 cached_pending = actual.get("_pending_observation")
                 if actual.get("status") not in STATUSES:
@@ -457,6 +663,9 @@ class Workbench:
                 result["status"] = actual["status"]
                 revoked = actual.get("task", {}).get("revoked")
                 result["revoked"] = revoked if isinstance(revoked, bool) else None
+                if "quarantine_v1" in result["features"]:
+                    result["paused"] = actual.get("task", {}).get("paused")
+                    result["pause_epoch"] = actual.get("task", {}).get("pause_epoch")
                 if actual["status"] in {"interrupted", "unconfirmed", "failed"}:
                     result["error"] = {"code": "state_unconfirmed", "message": "服务状态异常，尚不能确认已经关闭。请保留记录并检查。"}
         except Exception as exc:
@@ -480,6 +689,14 @@ class Workbench:
                 raise APIError(404, "job_not_found", "没有找到这次操作记录。")
             return {"job": copy.deepcopy(self.jobs[identifier])}
 
+    def request_job(self, request_key):
+        with self.mutex:
+            self._check_storage()
+            item = self.catalog["requests"].get(request_key)
+            if item is None:
+                raise APIError(404, "request_not_found", "尚未找到这次提交记录；请保留当前页面，不要重复执行。")
+            return self.job(item["job_id"])
+
     def _reserve_port(self):
         occupied = {entry["port"] for entry in self.catalog["profiles"].values()} | {self.port, 18701}
         for port in range(18911, 19912):
@@ -498,11 +715,44 @@ class Workbench:
             raise APIError(400, "invalid_request_key", "操作标识无效，请刷新工作台后重试。")
         if action == "create":
             payload = validate_create(value)
+            if set(payload.get("skills", [])) - set(self.skill_sources):
+                raise APIError(400, "unknown_skill", "所选技能不在本机登记列表中。")
         elif action in {"start", "stop", "revoke"}:
             expected = {"confirm": "revoke"} if action == "revoke" else {}
             if not isinstance(value, dict) or value != expected:
                 raise APIError(400, "invalid_fields", "操作参数无效；收回权限需要明确确认。")
             payload = None
+        elif action == "defense_set":
+            fields = {name + "_enabled" for name in ("foundation", "input", "memory", "alignment", "command")} | {"mode"}
+            if (type(value) is not dict or set(value) != {"settings"} or type(value["settings"]) is not dict
+                    or set(value["settings"]) - fields or any(type(item) is not bool for key, item in value["settings"].items() if key != "mode")
+                    or value["settings"].get("mode", "enforce") not in {"enforce", "observe"}):
+                raise APIError(400, "invalid_defense_settings", "防护设置无效。")
+            payload = copy.deepcopy(value)
+        elif action == "quarantine_resume":
+            if (type(value) is not dict or set(value) != {"epoch", "incident_id", "confirm"}
+                    or type(value["epoch"]) is not int or value["epoch"] < 1
+                    or type(value["incident_id"]) is not str or not HEX_ID.fullmatch(value["incident_id"])
+                    or value["confirm"] != "resume"):
+                raise APIError(400, "invalid_quarantine_resume", "请先查看最新的暂停原因，再确认恢复工作。")
+            payload = copy.deepcopy(value)
+        elif action in {"tool_approve", "tool_deny"}:
+            if (not isinstance(value, dict) or set(value) != {"review_id", "digest", "confirm"}
+                    or not isinstance(value.get("review_id"), str) or not HEX_ID.fullmatch(value["review_id"])
+                    or not isinstance(value.get("digest"), str) or not re.fullmatch(r"[0-9a-f]{64}", value["digest"])
+                    or value["confirm"] != action.removeprefix("tool_")):
+                raise APIError(400, "invalid_tool_review", "请重新读取并核对这一次操作的完整内容。")
+            payload = copy.deepcopy(value)
+        elif action in {"action_edit", "action_commit", "action_cancel"}:
+            fields = {"action_id", "revision", "digest"}
+            fields |= {"proposal"} if action == "action_edit" else {"confirm"} if action == "action_commit" else set()
+            if (not isinstance(value, dict) or set(value) != fields or not isinstance(value.get("action_id"), str)
+                    or not HEX_ID.fullmatch(value["action_id"]) or type(value.get("revision")) is not int or value["revision"] < 1
+                    or not isinstance(value.get("digest"), str) or not re.fullmatch(r"[0-9a-f]{64}", value["digest"])
+                    or (action == "action_commit" and value["confirm"] != "commit")
+                    or (action == "action_edit" and not isinstance(value["proposal"], dict))):
+                raise APIError(400, "invalid_action_review", "请重新打开操作，核对对象、版本和完整内容后再确认。")
+            payload = copy.deepcopy(value)
         elif action in {"mail_edit", "mail_send", "mail_cancel"}:
             fields = {"draft_id", "revision", "digest"}
             fields |= {"draft"} if action == "mail_edit" else {"account_id", "confirm"} if action == "mail_send" else set()
@@ -536,12 +786,14 @@ class Workbench:
             if len(self.jobs) >= MAX_JOBS:
                 raise APIError(409, "job_limit", "此预览版的操作记录已达到上限，请保留原目录。")
             if action == "create":
-                if not self.runtime_status["available"]:
-                    raise APIError(409, "runtime_unavailable", self.runtime_status["reason"])
+                runtime_status = self.hermes_status if payload.get("framework") == "hermes" else self.runtime_status
+                if not runtime_status["available"]:
+                    raise APIError(409, "runtime_unavailable", runtime_status["reason"])
                 if len(self.catalog["profiles"]) >= MAX_PROFILES:
                     raise APIError(409, "profile_limit", "此预览版最多保存 128 项工作。")
                 identifier = uuid.uuid4().hex
                 entry = {"id": identifier, "name": payload["name"], "created_at": _now(), "model_id": payload["model_id"],
+                    "framework": payload.get("framework", "openclaw"),
                     "documents": [{"name": d["name"], "filename": d["filename"], "bytes": len(d["content"].encode())} for d in payload["documents"]],
                     "port": self._reserve_port(), "phase": "creating", "identity": None, "manifest_sha256": None}
                 self.catalog["profiles"][identifier] = entry
@@ -603,7 +855,19 @@ class Workbench:
                 with os.fdopen(descriptor, "wb") as stream:
                     stream.write(document["content"].encode("utf-8"))
                 imported[document["name"]] = source
-            core.init_profile(path, node=self.runtime.node, openclaw_package=self.runtime.openclaw_package,
+            if payload.get("framework") == "hermes":
+                from ..hermes import init_profile
+                framework_args = {"hermes_python": self.runtime.hermes_python, "hermes_source": self.runtime.hermes_source}
+            else:
+                init_profile = core.init_profile
+                framework_args = {"openclaw_package": self.runtime.openclaw_package}
+            if payload.get("objective"):
+                framework_args["defense_policy"] = {"objective": payload["objective"].strip(), **payload.get("defense", {})}
+            framework_args["selected_skills"] = {name: self.skill_sources[name] for name in payload.get("skills", [])}
+            if "judge" in payload:
+                framework_args["judge_config"] = payload["judge"]
+            framework_args.update(reviewed_actions=True, action_targets=copy.deepcopy(self.action_targets))
+            init_profile(path, node=self.runtime.node, **framework_args,
                 bwrap=self.runtime.bwrap, model_url=payload["model_url"], model_id=payload["model_id"], api_key=payload["api_key"],
                 documents=imported, destinations={}, port=entry["port"], reviewed_mail=True)
             with self.mutex:
@@ -634,7 +898,18 @@ class Workbench:
             else:
                 with self.mutex:
                     path = self._profile_path(entry)
-                if job["action"].startswith("mail_"):
+                if job["action"] == "defense_set":
+                    from ..protection import configure_profile
+                    extra = configure_profile(path, payload["settings"])
+                    with self.mutex:
+                        entry["manifest_sha256"] = hashlib.sha256((path / "profile.json").read_bytes()).hexdigest()
+                        self._save_jobs()
+                    observed = core.control_profile(path, "status")
+                elif job["action"].startswith(("action_", "tool_", "quarantine_")):
+                    extra = core.review_profile(path, job["action"], payload)
+                    extra.pop("ok", None)
+                    observed = core.control_profile(path, "status")
+                elif job["action"].startswith("mail_"):
                     if job["action"] == "mail_send":
                         with self.mutex:
                             self._check_storage()
@@ -663,7 +938,10 @@ class Workbench:
             outcome = {"status": "succeeded", "result": {"profile": summary, **extra}}
             if job["action"] == "start":
                 url = observed.get("dashboard_url", "")
-                if not re.fullmatch(r"http://127\.0\.0\.1:" + str(entry["port"]) + r"/#token=[A-Za-z0-9_-]{16,128}", url):
+                expected = r"http://127\.0\.0\.1:" + str(entry["port"]) + r"/"
+                if entry.get("framework", "openclaw") == "openclaw":
+                    expected += r"#token=[A-Za-z0-9_-]{16,128}"
+                if not isinstance(url, str) or not re.fullmatch(expected, url):
                     raise RuntimeError("invalid_native_url")
                 outcome["result"]["dashboard_url"] = url
         except Exception as exc:
@@ -694,6 +972,8 @@ class Workbench:
         # Let accepted operations finish; never pretend closing this manager stops agents.
         for worker in workers:
             worker.join()
+        if self.alerts is not None:
+            self.alerts.close()
         if self._lock_file:
             self._lock_file.close()
             self._lock_file = None
@@ -768,7 +1048,11 @@ class Handler(BaseHTTPRequestHandler):
         if self.command != "POST" and length not in (None, "0"):
             raise APIError(400, "unexpected_body", "此操作不接收请求内容。")
         static = {"/": ("index.html", "text/html; charset=utf-8"), "/app.js": ("app.js", "text/javascript; charset=utf-8"),
+                  "/actions.js": ("actions.js", "text/javascript; charset=utf-8"),
+                  "/protection.js": ("protection.js", "text/javascript; charset=utf-8"),
                   "/mail.js": ("mail.js", "text/javascript; charset=utf-8"),
+                  "/targets.js": ("targets.js", "text/javascript; charset=utf-8"),
+                  "/alerts.js": ("alerts.js", "text/javascript; charset=utf-8"),
                   "/styles.css": ("styles.css", "text/css; charset=utf-8"), "/mark.svg": ("mark.svg", "image/svg+xml")}
         if self.path in static and self.command == "GET":
             filename, content_type = static[self.path]
@@ -784,12 +1068,28 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(200, manager.profiles())
             if self.path == "/api/mail-account":
                 return self._send(200, manager.mail_account())
+            if self.path == "/api/action-targets":
+                return self._send(200, manager.targets_view())
+            if self.path == "/api/notifications":
+                return self._send(200, manager.alerts.view())
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/tools(?:/([0-9a-f]{32}))?", self.path)
+            if match:
+                return self._send(200, manager.tools_view(match[1], match[2]))
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/actions(?:/([0-9a-f]{32}))?", self.path)
+            if match:
+                return self._send(200, manager.actions_view(match[1], match[2]))
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/protection", self.path)
+            if match:
+                return self._send(200, manager.protection_view(match[1]))
             match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/mail(?:/([0-9a-f]{32}))?", self.path)
             if match:
                 return self._send(200, manager.mail_view(match[1], match[2]))
             match = re.fullmatch(r"/api/jobs/([0-9a-f]{32})", self.path)
             if match:
                 return self._send(200, manager.job(match[1]))
+            match = re.fullmatch(r"/api/requests/([0-9a-f]{32})", self.path)
+            if match:
+                return self._send(200, manager.request_job(match[1]))
         elif self.command == "POST":
             if origin != self.server.origin:
                 raise APIError(403, "invalid_origin", "只能从本机工作台执行操作。")
@@ -819,6 +1119,26 @@ class Handler(BaseHTTPRequestHandler):
                 return self._send(202, manager.submit("create", None, value, request_key))
             if self.path == "/api/mail-account":
                 return self._send(200, manager.set_mail_account(value, request_key))
+            if self.path in {"/api/action-targets", "/api/action-targets/remove"}:
+                return self._send(200, manager.set_target(value, request_key, remove=self.path.endswith("/remove")))
+            if self.path == "/api/notifications":
+                return self._send(200, manager.alerts.configure(value, request_key))
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/tools/([0-9a-f]{32})/(approve|deny)", self.path)
+            if match:
+                if not isinstance(value, dict) or "review_id" in value:
+                    raise APIError(400, "invalid_tool_review", "操作参数无效。")
+                return self._send(202, manager.submit("tool_" + match[3], match[1], {**value, "review_id": match[2]}, request_key))
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/protection", self.path)
+            if match:
+                return self._send(202, manager.submit("defense_set", match[1], value, request_key))
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/quarantine/resume", self.path)
+            if match:
+                return self._send(202, manager.submit("quarantine_resume", match[1], value, request_key))
+            match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/actions/([0-9a-f]{32})/(edit|cancel|commit)", self.path)
+            if match:
+                if not isinstance(value, dict) or "action_id" in value:
+                    raise APIError(400, "invalid_action_review", "操作参数无效。")
+                return self._send(202, manager.submit("action_" + match[3], match[1], {**value, "action_id": match[2]}, request_key))
             match = re.fullmatch(r"/api/profiles/([0-9a-f]{32})/mail/(edit|send|cancel)", self.path)
             if match:
                 return self._send(202, manager.submit("mail_" + match[2], match[1], value, request_key))
@@ -850,10 +1170,10 @@ def make_server(manager: Workbench):
     return Server(manager)
 
 
-def serve(root: Path, runtime: Runtime, *, port=18910, open_browser=True):
+def serve(root: Path, runtime: Runtime, *, port=18910, open_browser=True, action_targets=None, skill_sources=None):
     if not 1024 <= port <= 65535 or port == 18701:
         raise ValueError("工作台端口须在 1024–65535 之间，且不能使用 18701。")
-    manager = Workbench(root, runtime, port=port)
+    manager = Workbench(root, runtime, port=port, action_targets=action_targets, skill_sources=skill_sources)
     server = None
     try:
         server = make_server(manager)

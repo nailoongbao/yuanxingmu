@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 from contextlib import contextmanager
+from email.parser import BytesParser
 import hashlib
 from importlib.resources import files
 import json
@@ -22,6 +23,9 @@ import urllib.error
 import urllib.request
 import uuid
 import zipfile
+
+from . import hermes as hermes_installer
+from .launcher import LauncherError, hermes_runtime_files
 
 VERSION = "0.2.0a1"
 RUNTIME = "0.5.0a1"
@@ -135,7 +139,7 @@ def check_environment(root: Path):
 
 
 @contextmanager
-def installation(root: Path):
+def installation(root: Path, *, features=(), development=None):
     import fcntl
     if not root.exists():
         # A failed mkdir or missing initial receipt never authorizes adoption.
@@ -143,7 +147,9 @@ def installation(root: Path):
         info = private(root, directory=True)
         state = {"schema_version": 1, "installer_version": VERSION, "runtime_version": RUNTIME,
                  "install_id": uuid.uuid4().hex, "root_identity": [info.st_dev, info.st_ino],
-                 "status": "installing", "components": {}, "files": {}}
+                 "status": "installing", "components": {}, "files": {}, "features": list(features)}
+        if development is not None:
+            state["development_wheel"] = development
         save(root, state)
     info = private(root, directory=True)
     # Unknown existing directories stay untouched, including no new lock file.
@@ -176,7 +182,8 @@ def installation(root: Path):
                 or not re.fullmatch(r"[0-9a-f]{32}", state["install_id"])
                 or state.get("status") not in {"installing", "complete"}
                 or not isinstance(state.get("components"), dict) or not isinstance(state.get("files"), dict)
-                or not set(state["components"]).issubset({"app", "node", "openclaw"})
+                or state.get("features", []) not in ([], ["hermes"])
+                or not set(state["components"]).issubset({"app", "node", "openclaw", "hermes"})
                 or any(value != "complete" for value in state["components"].values())):
             raise InstallError("此目录不属于这版安装器；请保留原目录并选择一个新位置。")
         if state["status"] != "complete" and ((root / "workbench").exists() or (root / "workbench").is_symlink()):
@@ -274,6 +281,39 @@ def clear_partial(root: Path, name: str):
         shutil.rmtree(target)
 
 
+def development_wheel(path: Path | None, sha256: str | None):
+    """Validate a deliberate local preview input before touching an install root."""
+    if path is None and sha256 is None:
+        return None
+    if path is None or not isinstance(sha256, str) or not re.fullmatch(r"[0-9a-f]{64}", sha256):
+        raise InstallError("开发验收需要同时填写 --development-wheel 和它的完整小写 SHA256。")
+    path = path.expanduser().absolute()
+    if path.is_symlink() or not path.is_file() or path.stat().st_size > 20 * 1024 ** 2:
+        raise InstallError("开发 wheel 必须是实际的普通文件，且不超过 20 MiB。")
+    details = record(path)
+    if details["sha256"] != sha256:
+        raise InstallError("开发 wheel 的 SHA256 与传入值不一致，未安装。")
+    with zipfile.ZipFile(path) as wheel:
+        metadata_name = "agent_defense_check-" + RUNTIME + ".dist-info/METADATA"
+        metadata = [item for item in wheel.infolist() if item.filename.endswith(".dist-info/METADATA")]
+        if (len(metadata) != 1 or metadata[0].filename != metadata_name
+                or metadata[0].file_size > 1024 ** 2):
+            raise InstallError("开发 wheel 的发行名称或版本与当前安装器不符。")
+        message = BytesParser().parsebytes(wheel.read(metadata[0]))
+        if message.get("Name") != "agent-defense-check" or message.get("Version") != RUNTIME:
+            raise InstallError("开发 wheel 必须与当前安装器的程序版本 " + RUNTIME + " 一致。")
+        try:
+            package_version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]+)',
+                                       wheel.read("yuanxingmu/__init__.py").decode("utf-8"), re.M)
+        except KeyError:
+            package_version = None
+        if package_version is None or package_version.group(1) != RUNTIME:
+            raise InstallError("开发 wheel 的 Python 程序版本与发行元数据不一致。")
+        if "yuanxingmu/hermes.py" not in wheel.namelist():
+            raise InstallError("这个开发 wheel 尚未包含 Hermes 接入，请先构建当前源码。")
+    return {"name": path.name, **details, "version": RUNTIME, "url": "development:local"}
+
+
 def extract_wheel(root: Path, archive: Path):
     app = below(root, "app")
     app.mkdir(mode=0o700)
@@ -285,7 +325,7 @@ def extract_wheel(root: Path, archive: Path):
             if item.is_dir():
                 continue
             path = member(item.filename)
-            if (item.filename in names or path.parts[0] not in {"yuanxingmu", "defensecheck", "agent_defense_check-0.5.0a1.dist-info"}
+            if (item.filename in names or path.parts[0] not in {"yuanxingmu", "defensecheck", "agent_defense_check-" + RUNTIME + ".dist-info"}
                     or stat.S_ISLNK(item.external_attr >> 16)):
                 raise InstallError("Python 包内容与安装范围不符。")
             names.add(item.filename)
@@ -459,9 +499,12 @@ def verify_files(root: Path, state: dict):
     components = state.get("components")
     inventory = state.get("files")
     if (not isinstance(components, dict) or not isinstance(inventory, dict)
-            or set(components) not in (set(), {"app"}, {"app", "node"}, {"app", "node", "openclaw"})
+            or set(components) not in (set(), {"app"}, {"app", "node"}, {"app", "node", "openclaw"}, {"app", "node", "openclaw", "hermes"})
             or any(value != "complete" for value in components.values())):
         raise InstallError("安装组件记录不完整。")
+    features = state.get("features", [])
+    if features not in ([], ["hermes"]) or ("hermes" in components and "hermes" not in features):
+        raise InstallError("Hermes 组件与安装功能记录不一致。")
     required = set()
     if "app" in components:
         required |= {"app/yuanxingmu/" + name for name in (
@@ -475,12 +518,19 @@ def verify_files(root: Path, state: dict):
         required.add("tools/node-v24.16.0-linux-x64/bin/node")
     if "openclaw" in components:
         required |= {"openclaw/node_modules/openclaw/" + name for name in ("package.json", "openclaw.mjs")}
+    if "hermes" in components:
+        try:
+            required |= hermes_runtime_files(root) | {"hermes/SOURCE.json", "hermes/build-constraints.txt", "hermes/uv.toml"}
+        except (LauncherError, OSError) as exc:
+            raise InstallError("Hermes 运行文件缺失或路径发生变化。") from exc
     if state.get("status") == "complete":
         paths = state.get("paths", {})
         if (not isinstance(paths, dict) or paths.get("app") != "app" or paths.get("node") != "tools/node-v24.16.0-linux-x64/bin/node"
                 or paths.get("openclaw") != "openclaw/node_modules/openclaw"
                 or paths.get("bwrap") not in {"/usr/bin/bwrap", "/opt/yuanxingmu/bin/bwrap"}
-                or set(state["components"]) != {"app", "node", "openclaw"}):
+                or set(state["components"]) != {"app", "node", "openclaw", *features}
+                or "hermes" in features and (paths.get("hermes_python") != "hermes/env/bin/python"
+                                              or paths.get("hermes_source") != "hermes/source")):
             raise InstallError("已完成安装的运行路径或组件记录不完整。")
         required |= {"open-yuanxingmu", "bwrap:" + paths["bwrap"]}
         if record(root / "open-yuanxingmu")["sha256"] != state.get("launcher_sha256"):
@@ -499,12 +549,25 @@ def verify_files(root: Path, state: dict):
             raise InstallError("已安装的运行文件发生变化；不会覆盖或修复已有工作的运行环境。")
 
 
-def verify_runtime(root: Path, bwrap: Path):
+def verify_runtime(root: Path, bwrap: Path, *, hermes=False):
     code = ("from pathlib import Path;from yuanxingmu.dashboard.server import Runtime;"
             "r=Runtime(Path(sys.argv[1]),Path(sys.argv[2]),Path(sys.argv[3])).public();"
             "print(r);raise SystemExit(0 if r['available'] else 2)")
     command(root, "核对完整运行环境", app_python(root, code, str(root / "tools/node-v24.16.0-linux-x64/bin/node"),
         str(root / "openclaw/node_modules/openclaw"), str(bwrap)), timeout=40)
+    if hermes:
+        code = ("from pathlib import Path;from yuanxingmu.dashboard.server import Runtime;"
+                "r=Runtime.discover(Path(sys.argv[1]),bwrap=sys.argv[2]).hermes_public();"
+                "print(r);raise SystemExit(0 if r['available'] else 2)")
+        command(root, "核对Hermes运行环境", app_python(root, code, str(root), str(bwrap)), timeout=40)
+
+
+def require_hermes_app(root: Path, pins: dict):
+    code = ("from yuanxingmu.hermes import HERMES_VERSION,HERMES_COMMIT;"
+            "from yuanxingmu.dashboard.server import Runtime;"
+            "assert hasattr(Runtime,'hermes_public');"
+            "assert HERMES_VERSION==sys.argv[1] and HERMES_COMMIT==sys.argv[2]")
+    command(root, "核对程序中的Hermes接入", app_python(root, code, pins["hermes"]["version"], pins["hermes"]["commit"]), timeout=30)
 
 
 def desktop_entry(root: Path):
@@ -527,31 +590,48 @@ def desktop_entry(root: Path):
     target.chmod(0o600)
 
 
-def install(root: Path, *, system_deps=False, cache=None, shortcut=True):
+def install(root: Path, *, system_deps=False, cache=None, shortcut=True, dev_wheel=None, dev_sha256=None):
     check_environment(root)
     pins = json.loads(bundled("pins.json"))
     if pins["installer_version"] != VERSION or pins["runtime_version"] != RUNTIME:
         raise InstallError("安装器与固定版本记录不一致。")
-    with installation(root) as state:
+    local_wheel = development_wheel(dev_wheel, dev_sha256)
+    features = ["hermes"] if local_wheel else pins.get("runtime_features", [])
+    if features not in ([], ["hermes"]):
+        raise InstallError("安装器的运行功能记录不受支持。")
+    with installation(root, features=features, development=local_wheel) as state:
+        if local_wheel is not None and (state["status"] == "complete" or state.get("development_wheel") != local_wheel):
+            raise InstallError("开发 wheel 只能用于新目录，或使用同一 wheel 恢复未完成的开发安装；不会更换已有运行程序。")
+        if state.get("development_wheel") and state["status"] != "complete" and local_wheel is None:
+            raise InstallError("请带上原来的开发 wheel 和 SHA256 继续这次安装。")
+        use_hermes = "hermes" in state.get("features", [])
         verify_files(root, state)
         if state["status"] == "complete":
-            verify_runtime(root, Path(state["paths"]["bwrap"]))
+            if use_hermes:
+                verify_runtime(root, Path(state["paths"]["bwrap"]), hermes=True)
+            else:
+                verify_runtime(root, Path(state["paths"]["bwrap"]))
             print("这个目录已经装好，运行文件检查通过。没有覆盖已有资料或运行版本。", flush=True)
             return state
         components = state["components"]
-        print("1/4 准备元星木（固定版本 0.5.0a1）", flush=True)
+        steps = "5" if use_hermes else "4"
+        print("1/" + steps + " 准备元星木（固定版本 " + RUNTIME + "）", flush=True)
+        if local_wheel:
+            print("这是本地开发 wheel 验收，不是已发布的正式安装。", flush=True)
         if components.get("app") != "complete":
-            wheel = fetch(root, pins["wheel"], cache)
+            wheel = fetch(root, local_wheel, dev_wheel.expanduser().absolute().parent) if local_wheel else fetch(root, pins["wheel"], cache)
             clear_partial(root, "app")
             state["files"].update(extract_wheel(root, wheel))
             components["app"] = "complete"
             save(root, state)
         verify_files(root, state)
-        print("2/4 检查这台电脑的实际隔离能力", flush=True)
+        if use_hermes:
+            require_hermes_app(root, pins)
+        print("2/" + steps + " 检查这台电脑的实际隔离能力", flush=True)
         bwrap = isolation(root, system_deps)
         state["files"]["bwrap:" + str(bwrap)] = record(bwrap)
         save(root, state)
-        print("3/4 安装固定版本的 Node.js 与 OpenClaw（首次可能需要几分钟）", flush=True)
+        print("3/" + steps + " 安装固定版本的 Node.js 与 OpenClaw（首次可能需要几分钟）", flush=True)
         archive = fetch(root, pins["node"], cache)
         if components.get("node") != "complete":
             clear_partial(root, "tools")
@@ -565,9 +645,18 @@ def install(root: Path, *, system_deps=False, cache=None, shortcut=True):
             state["files"].update(npm_install(root, pins))
             components["openclaw"] = "complete"
             save(root, state)
-        print("4/4 核对运行环境并准备日常入口", flush=True)
+        if use_hermes:
+            print("4/5 安装 Hermes 独立环境，构建官方网页与终端（首次可能需要几分钟）", flush=True)
+            if components.get("hermes") != "complete":
+                state["files"].update(hermes_installer.install(root, pins, cache))
+                components["hermes"] = "complete"
+                save(root, state)
+        print(steps + "/" + steps + " 核对运行环境并准备日常入口", flush=True)
         verify_files(root, state)
-        verify_runtime(root, bwrap)
+        if use_hermes:
+            verify_runtime(root, bwrap, hermes=True)
+        else:
+            verify_runtime(root, bwrap)
         launcher = bundled("launcher.py")
         if not launcher.startswith(b"#!/usr/bin/python3"):
             raise InstallError("日常启动器缺少固定解释器声明。")
@@ -576,6 +665,8 @@ def install(root: Path, *, system_deps=False, cache=None, shortcut=True):
         state["files"]["open-yuanxingmu"] = record(root / "open-yuanxingmu")
         state["paths"] = {"app": "app", "node": "tools/node-v24.16.0-linux-x64/bin/node",
                           "openclaw": "openclaw/node_modules/openclaw", "bwrap": str(bwrap)}
+        if use_hermes:
+            state["paths"].update({"hermes_python": "hermes/env/bin/python", "hermes_source": "hermes/source"})
         state["status"] = "complete"
         save(root, state)
         if shortcut:
@@ -589,13 +680,17 @@ def main(argv=None):
     parser.add_argument("--system-deps", action="store_true", help="允许通过 sudo 安装隔离组件、配置指定组件的 Ubuntu 权限")
     parser.add_argument("--download-cache", type=Path, help="可复用下载目录；所有文件仍需核对固定 SHA256")
     parser.add_argument("--no-shortcut", action="store_true", help="不创建 Linux 应用入口")
+    parser.add_argument("--development-wheel", type=Path, help="仅本机开发验收：使用当前版本的本地 wheel，并安装 Hermes")
+    parser.add_argument("--development-wheel-sha256", help="本地开发 wheel 的完整 SHA256；必须与 --development-wheel 一起提供")
     args = parser.parse_args(argv)
     os.umask(0o077)
     root = args.install_root.expanduser().absolute()
     try:
-        install(root, system_deps=args.system_deps, cache=args.download_cache, shortcut=not args.no_shortcut)
+        result = install(root, system_deps=args.system_deps, cache=args.download_cache, shortcut=not args.no_shortcut,
+                         dev_wheel=args.development_wheel, dev_sha256=args.development_wheel_sha256)
         print(f"\n安装完成。打开工作台：\n{root / 'open-yuanxingmu'}\n", flush=True)
-        print("进入后可以连接自己的模型、选择资料并打开 OpenClaw。请保留工作台终端；首次模型连接仍需自行填写。", flush=True)
+        frameworks = "OpenClaw 或 Hermes" if "hermes" in result.get("features", []) else "OpenClaw"
+        print("进入后可以连接自己的模型、选择资料并打开 " + frameworks + "。请保留工作台终端；首次模型连接仍需自行填写。", flush=True)
         return 0
     except (InstallError, OSError, ValueError, subprocess.SubprocessError, zipfile.BadZipFile, tarfile.TarError) as exc:
         print("安装没有完成：" + str(exc), file=sys.stderr, flush=True)

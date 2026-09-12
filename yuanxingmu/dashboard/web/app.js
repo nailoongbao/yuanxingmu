@@ -48,6 +48,10 @@
   };
   const elements = {};
   let mail = null;
+  let actionReview = null;
+  let protection = null;
+  let targets = null;
+  let alerts = null;
   let lastProfileRender = "";
   const profileID = /^[a-f0-9]{32}$/;
   const resourceName = /^[A-Za-z0-9][A-Za-z0-9_-]{0,63}$/;
@@ -62,6 +66,10 @@
     creation_failed: ["创建未完成", "failed"]
   };
   const actionLabels = {create: "创建", start: "启动", stop: "暂时关闭", revoke: "收回权限"};
+  const frameworkLabel = name => name === "hermes" ? "Hermes" : "OpenClaw";
+  const frameworkReady = name => Boolean((state.info?.frameworks?.[name || "openclaw"] || state.info?.runtime)?.available);
+  const anyFrameworkReady = () => state.info?.frameworks
+    ? Object.values(state.info.frameworks).some(item => item.available) : Boolean(state.info?.runtime?.available);
   const delay = milliseconds => new Promise(resolve => window.setTimeout(resolve, milliseconds));
 
   class APIError extends Error {
@@ -113,7 +121,7 @@
       message = state.infoError;
     } else if (state.profilesError) {
       message = "暂时无法刷新工作状态。下方若有内容，是上一次收到的结果。" + state.profilesError;
-    } else if (state.info && !state.info.runtime.available) {
+    } else if (state.info && !anyFrameworkReady()) {
       message = "本机运行环境尚未就绪，暂时不能创建或启动工作。" + (state.info.runtime.reason || "");
     } else if (!storageAvailable) {
       message = "浏览器未允许在本标签页保存访问凭证。刷新网页后，请重新打开终端中的完整启动链接。";
@@ -130,9 +138,14 @@
     state.requests.clear();
     state.dashboardURLs.clear();
     mail?.reset();
+    actionReview?.reset();
+    protection?.reset();
+    targets?.reset();
+    alerts?.reset();
     try { window.sessionStorage.removeItem(SESSION_KEY); } catch { /* Storage may be unavailable. */ }
     if (elements.apiKey) {
       elements.apiKey.value = "";
+      if(elements.judgeKey) elements.judgeKey.value="";
       elements.runtimeStatus.textContent = "访问凭证已失效";
       setConnection(false, "需要重新打开");
       updateControls();
@@ -181,7 +194,7 @@
         return data;
       } catch (error) {
         if (error instanceof APIError) throw error;
-        if (attempt === 0 && accessToken) {
+        if (attempt === 0 && accessToken && !(isPost && options.noRetry)) {
           await delay(700);
           continue;
         }
@@ -198,9 +211,10 @@
 
   function updateControls() {
     const authorized = Boolean(accessToken) && !state.authRejected;
-    const runtimeReady = Boolean(state.info?.runtime?.available);
+    const runtimeReady = anyFrameworkReady();
     const createBusy = Boolean(state.createAttempt || state.createJob || state.importing || state.createSending);
     elements.createFields.disabled = !authorized || !runtimeReady || createBusy;
+    elements.createSubmit.disabled = !frameworkReady(elements.framework.value) || createBusy;
     elements.createSubmit.textContent = state.importing ? "正在读取文本…" : state.createJob ? "正在创建，请稍候…" : state.createSending ? "正在提交…" : "创建独立工作 ↗";
     elements.refreshButton.disabled = !authorized || state.refreshing;
     elements.refreshButton.textContent = state.refreshing ? "正在刷新…" : "刷新状态 ↻";
@@ -208,6 +222,9 @@
     elements.retryCreate.disabled = !authorized || state.createSending;
     elements.confirmRevoke.disabled = !authorized;
     mail?.updateControls();
+    actionReview?.updateControls();
+    targets?.updateControls();
+    alerts?.updateControls();
   }
 
   function setCreateMessage(message, isError = false) {
@@ -218,9 +235,25 @@
 
   function renderInfo(info) {
     state.info = info;
-    elements.runtimeStatus.textContent = info.runtime.available ? "可以开始工作" : "尚未就绪";
-    elements.runtimeVersion.textContent = info.runtime.openclaw ? "OpenClaw " + info.runtime.openclaw : "";
+    elements.runtimeStatus.textContent = anyFrameworkReady() ? "可以开始工作" : "尚未就绪";
+    elements.runtimeVersion.textContent = ["openclaw", "hermes"].filter(frameworkReady).map(frameworkLabel).join(" · ");
+    for (const option of elements.framework.options) {
+      option.disabled = !frameworkReady(option.value);
+      option.textContent = frameworkLabel(option.value) + (option.disabled ? "（尚未安装）" : "");
+    }
+    if (!frameworkReady(elements.framework.value)) {
+      const first = Array.from(elements.framework.options).find(option => !option.disabled);
+      if (first) elements.framework.value = first.value;
+    }
     elements.fileLimitNote.textContent = "UTF-8 文本，每份最多 " + sizeLabel(info.limits.document_bytes);
+    const skills=document.getElementById("create-skills");
+    const chosen=new Set(Array.from(skills.querySelectorAll("input:checked")).map(input=>input.value));
+    skills.replaceChildren();
+    for(const item of info.skills || []) {
+      const label=node("label",""),input=node("input","");input.type="checkbox";input.value=item.id;input.checked=chosen.has(item.id);
+      label.append(input,node("span","",item.label));skills.append(label);
+    }
+    if(!(info.skills || []).length) skills.append(node("p","field-note","本机还没有登记可选技能，将使用不加载额外技能的工作环境。"));
     renderDocuments();
     updateControls();
   }
@@ -241,6 +274,7 @@
       setConnection(true, "已连接本机");
       renderProfiles();
       mail?.profilesChanged();
+      protection?.profilesChanged(state.profiles);
     } catch (error) {
       if (error.status !== 401) {
         state.profilesError = errorText(error);
@@ -400,6 +434,11 @@
       state.createAttempt = {
         key: newKey(),
         body: {
+          framework: elements.framework.value,
+          objective: elements.objective.value.trim(),
+          defense: {mode:document.getElementById("create-defense-mode").value,
+            ...Object.fromEntries(Array.from(document.querySelectorAll("#create-defense-layers input[data-layer]")).map(input=>[input.dataset.layer+"_enabled",input.checked]))},
+          skills: Array.from(document.querySelectorAll("#create-skills input:checked")).map(input=>input.value),
           name: elements.workName.value.trim(),
           model_url: elements.modelURL.value.trim(),
           model_id: elements.modelID.value.trim(),
@@ -407,7 +446,9 @@
           documents: state.documents.map(item => ({name: item.name, filename: item.filename, content: item.content}))
         }
       };
+      if(elements.separateJudge.checked) state.createAttempt.body.judge={url:elements.judgeURL.value.trim(),id:elements.judgeID.value.trim(),api_key:elements.judgeKey.value,timeout_seconds:Number(elements.judgeTimeout.value)};
       elements.apiKey.value = "";
+      elements.judgeKey.value = "";
     }
     const attempt = state.createAttempt;
     state.createSending = true;
@@ -418,6 +459,7 @@
       if (!result.job?.id) throw new APIError("尚未收到创建结果，请重试确认同一次操作。", 0, true);
       state.createAttempt = null;
       attempt.body.api_key = "";
+      if(attempt.body.judge) attempt.body.judge.api_key="";
       state.createJob = result.job.id;
       setCreateMessage("本机正在创建工作，请稍候。关闭网页不会取消已经提交的操作。");
       registerJob(result.job);
@@ -425,6 +467,7 @@
     } catch (error) {
       if (!error.uncertain) {
         attempt.body.api_key = "";
+        if(attempt.body.judge) attempt.body.judge.api_key="";
         state.createAttempt = null;
       }
       setCreateMessage(errorText(error) + (error.uncertain ? " 创建是否收到暂未确认；下方按钮会继续确认同一次操作。" : ""), true);
@@ -487,8 +530,9 @@
             if (job.status === "succeeded") {
               state.createdProfiles.add(job.profile_id);
               const name = job.result?.profile?.name;
-              setCreateMessage((name ? "“" + name + "”" : "工作") + "已创建。请在工作卡片中启动，再进入 OpenClaw 对话。");
+              setCreateMessage((name ? "“" + name + "”" : "工作") + "已创建。请在工作卡片中启动，再进入聊天界面对话。");
               elements.workName.value = "";
+              elements.objective.value = "";
               state.documents = [];
               elements.fileError.hidden = true;
               renderDocuments();
@@ -571,10 +615,14 @@
     const status = statusLabels[profile.status] || ["状态待确认", "uncertain"];
     heading.append(titleGroup, node("span", "status-badge " + status[1], status[0]));
     card.append(heading);
+    if(profile.paused === true) {
+      const warning=node("p","job-notice error","工作已暂停，后续工具操作已停止。请打开防护记录，核对原因后恢复。");
+      warning.setAttribute("role","alert");card.append(warning);
+    }
 
     const permission = node("div", "permission" + (profile.revoked === true ? " revoked" : profile.revoked !== false ? " unknown" : ""));
     const permissionText = node("div");
-    permissionText.append(node("p", "", profile.revoked === true ? "资料权限已永久收回" : profile.revoked === false ? "本次资料权限仍有效" : "资料权限尚未确认"));
+    permissionText.append(node("p", "", profile.revoked === true ? "资料权限已永久收回" : profile.paused === true ? "本次资料权限已暂停使用" : profile.revoked === false ? "本次资料权限仍有效" : "资料权限尚未确认"));
     if (profile.revoked === true) permissionText.append(node("p", "", "这份工作不能重新启动。已读到的内容不会被清除；是否仍在运行，请看上方状态。"));
     if (profile.revoked === null) permissionText.append(node("p", "", "请刷新查看结果，当前不能确认资料是否仍可读取。"));
     permission.append(node("span", "permission-indicator", profile.revoked === true ? "−" : profile.revoked === false ? "◇" : "?"), permissionText);
@@ -599,13 +647,19 @@
         details.append(node("summary", "", "进入聊天后，可以这样开始"));
         const names = documents.map(item => item.name).join("、");
         details.append(node("p", "prompt-example", "请阅读资源 " + names + "，用中文总结主要内容，并注明资料来源。"));
-        details.append(node("p", "prompt-footnote", "把这句话发到 OpenClaw 中；资料名称需要与上方一致。"));
+        details.append(node("p", "prompt-footnote", "把这句话发到 " + frameworkLabel(profile.framework) + " 中；资料名称需要与上方一致。"));
         card.append(details);
       }
     } else card.append(node("p", "no-documents", "这份工作没有导入资料。"));
 
     const mailEntry = mail?.profileEntry(profile);
     if (mailEntry) card.append(mailEntry);
+    const extraActions = node("div", "profile-actions");
+    const reviewButton = actionReview?.profileButton(profile);
+    const protectionButton = protection?.profileButton(profile);
+    if (reviewButton) extraActions.append(reviewButton);
+    if (protectionButton) extraActions.append(protectionButton);
+    if (extraActions.childElementCount) card.append(extraActions);
 
     const request = state.requests.get(profile.id);
     const job = pendingFor(profile);
@@ -630,7 +684,7 @@
     const actions = node("div", "profile-actions");
     const url = state.dashboardURLs.get(profile.id);
     if (url && profile.status === "ready") {
-      const open = node("a", "button button-primary", "进入 OpenClaw ↗");
+      const open = node("a", "button button-primary", "进入 " + frameworkLabel(profile.framework) + " ↗");
       open.href = url;
       open.target = "_blank";
       open.rel = "noopener noreferrer";
@@ -638,7 +692,7 @@
       actions.append(open);
     } else {
       const start = button(profile.status === "ready" ? "获取聊天入口" : "启动工作", "button-primary", () => { void runMutation(profile, "start"); }, profile.id + "-start");
-      start.disabled = busy || !accessToken || profile.revoked === true || !state.info?.runtime?.available || ["creation_failed", "unconfirmed"].includes(profile.status);
+      start.disabled = busy || !accessToken || profile.revoked === true || !frameworkReady(profile.framework) || ["creation_failed", "unconfirmed"].includes(profile.status);
       actions.append(start);
     }
     const stop = button("暂时关闭", "button-secondary", () => { void runMutation(profile, "stop"); }, profile.id + "-stop");
@@ -660,7 +714,7 @@
       loaded: state.profilesLoaded,
       error: state.profilesError,
       authorized: Boolean(accessToken),
-      runtimeAvailable: Boolean(state.info?.runtime?.available),
+      runtimeAvailable: state.info?.frameworks || state.info?.runtime,
       createDisabled: elements.createFields.disabled,
       created: Array.from(state.createdProfiles),
       requests: Array.from(state.requests, ([id, request]) => [id, request.action, request.sending, request.error]),
@@ -710,8 +764,9 @@
     const ids = {
       connectionText: "connection-text", connectionDot: "connection-dot", globalNotice: "global-notice",
       runtimeStatus: "runtime-status", runtimeVersion: "runtime-version", createForm: "create-form",
-      createFields: "create-fields", workName: "work-name", modelURL: "model-url", modelID: "model-id",
+      createFields: "create-fields", framework: "framework", objective: "work-objective", workName: "work-name", modelURL: "model-url", modelID: "model-id",
       apiKey: "api-key", documentFiles: "document-files", documentList: "document-list", documentCount: "document-count",
+      separateJudge:"separate-judge",judgeFields:"judge-fields",judgeURL:"judge-url",judgeID:"judge-model-id",judgeKey:"judge-api-key",judgeTimeout:"judge-timeout",
       fileLimitNote: "file-limit-note", fileError: "file-error", createSubmit: "create-submit", createMessage: "create-message",
       retryCreate: "retry-create", refreshButton: "refresh-button", profileList: "profile-list", workCount: "work-count",
       refreshTime: "refresh-time", revokeDialog: "revoke-dialog", revokeWorkName: "revoke-work-name",
@@ -727,10 +782,29 @@
       });
       mail.boot();
     }
+    if (typeof window.createYuanxingmuActions === "function") {
+      actionReview = window.createYuanxingmuActions({api,newKey,node,authorized:()=>Boolean(accessToken)&&!state.authRejected,
+        getProfile:id=>state.profiles.find(profile=>profile.id===id),upsertProfile,refreshProfiles});
+      actionReview.boot();
+    }
+    if (typeof window.createYuanxingmuProtection === "function") {
+      protection = window.createYuanxingmuProtection({api,node,authorized:()=>Boolean(accessToken)&&!state.authRejected});
+      protection.boot();
+    }
+    if (typeof window.createYuanxingmuTargets === "function") {
+      targets = window.createYuanxingmuTargets({api,node,authorized:()=>Boolean(accessToken)&&!state.authRejected});
+      targets.boot();
+    }
+    if (typeof window.createYuanxingmuAlerts === "function") {
+      alerts = window.createYuanxingmuAlerts({api,node,authorized:()=>Boolean(accessToken)&&!state.authRejected});
+      alerts.boot();
+    }
     elements.documentFiles.addEventListener("change", () => { void importDocuments(); });
+    elements.framework.addEventListener("change", updateControls);
     elements.createForm.addEventListener("submit", event => { void submitCreate(event); });
     elements.retryCreate.addEventListener("click", () => { void submitCreate(); });
     elements.refreshButton.addEventListener("click", () => { void refreshAll(); });
+    elements.separateJudge.addEventListener("change",()=>{elements.judgeFields.disabled=!elements.separateJudge.checked;if(!elements.separateJudge.checked)elements.judgeKey.value="";});
     for (const input of [elements.workName, elements.modelURL, elements.modelID, elements.apiKey]) {
       input.addEventListener("input", () => { input.setCustomValidity(""); elements.apiKey.setCustomValidity(""); });
     }
@@ -751,7 +825,7 @@
       renderProfiles();
     }
     window.setInterval(() => {
-      if (accessToken && !state.refreshing && document.visibilityState === "visible") void refreshProfiles();
+      if (accessToken && !state.refreshing && (document.visibilityState === "visible" || protection?.notificationsEnabled())) void refreshProfiles();
     }, 6500);
     document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible" && accessToken) void refreshAll();
@@ -761,6 +835,8 @@
   window.addEventListener("hashchange", () => {
     const incoming = new URLSearchParams(window.location.hash.slice(1));
     if (!incoming.has("access")) return;
+    if(elements.apiKey) elements.apiKey.value="";
+    if(elements.judgeKey) elements.judgeKey.value="";
     window.history.replaceState(null, "", window.location.pathname + window.location.search);
     accessToken = incoming.get("access") || "";
     incoming.delete("access");
@@ -783,6 +859,10 @@
       state.infoError = "";
       state.profilesError = "";
       mail?.reset();
+      actionReview?.reset();
+      protection?.reset();
+      targets?.reset();
+      alerts?.reset();
       updateControls();
       updateNotice();
       renderProfiles();

@@ -1,0 +1,5 @@
+agent-framework-core==1.18.0
+smolagents==1.26.0
+pydantic==2.13.5
+huggingface-hub==1.31.0
+msgspec==0.21.1

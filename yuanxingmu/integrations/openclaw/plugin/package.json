@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "files": ["index.mjs", "config.mjs", "socket-client.mjs", "tools.mjs", "commands.mjs", "sandbox-provider.mjs", "worker-launch.mjs", "openclaw.plugin.json", "CONTRACT.md"],
+  "files": ["index.mjs", "config.mjs", "socket-client.mjs", "tools.mjs", "commands.mjs", "defense-hooks.mjs", "sandbox-provider.mjs", "worker-launch.mjs", "openclaw.plugin.json", "CONTRACT.md"],
   "openclaw": {
     "extensions": ["./index.mjs"],
     "compat": {"pluginApi": ">=2026.9.4"}

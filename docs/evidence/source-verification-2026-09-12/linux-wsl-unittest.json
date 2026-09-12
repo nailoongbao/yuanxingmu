@@ -1,0 +1,745 @@
+{
+  "started_at": "2026-09-12T06:12:02.977063+00:00",
+  "finished_at": "2026-09-12T06:12:55.822755+00:00",
+  "elapsed_seconds": 58.339,
+  "scope": "All unittest cases discovered under tests, equivalent to python -m unittest discover -s tests -v. Counts are tests, not attacks.",
+  "platform": "Linux-5.15.167.4-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "python": "3.12.3 (main, Aug 31 2026, 10:18:26) [GCC 13.3.0]",
+  "executable": "/usr/bin/python3",
+  "tests_run": 719,
+  "passed": 541,
+  "skipped": 178,
+  "failures": 0,
+  "errors": 0,
+  "expected_failures": 0,
+  "unexpected_successes": 0,
+  "successful": true,
+  "skip_reasons": {
+    "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 97,
+    "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+    "Install docs/native-adapters-requirements.txt for actual SDK checks": 32,
+    "Optional native Hermes installation required": 3,
+    "requires the optional real Hermes installation": 16
+  },
+  "skipped_tests": [
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_additional_sdk_adapters.AgnoNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_additional_sdk_adapters.AgnoNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_additional_sdk_adapters.AgnoNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_additional_sdk_adapters.AgnoNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_additional_sdk_adapters.AgnoNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_fc_cannot_override_native_function_call (test_additional_sdk_adapters.AgnoNativeTests.test_model_fc_cannot_override_native_function_call)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_additional_sdk_adapters.AgnoNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_additional_sdk_adapters.AgnoNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_additional_sdk_adapters.AgnoNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_additional_sdk_adapters.AgnoNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_additional_sdk_adapters.AgnoNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_sync_function_execute_uses_the_same_native_identity (test_additional_sdk_adapters.AgnoNativeTests.test_sync_function_execute_uses_the_same_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_additional_sdk_adapters.AgnoNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_additional_sdk_adapters.CrewAINativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_additional_sdk_adapters.CrewAINativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_additional_sdk_adapters.CrewAINativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_additional_sdk_adapters.CrewAINativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_additional_sdk_adapters.CrewAINativeTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_host_nonce_cannot_submit_proposals (test_additional_sdk_adapters.CrewAINativeTests.test_missing_host_nonce_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_additional_sdk_adapters.CrewAINativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_additional_sdk_adapters.CrewAINativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_nonce_scope_exits_and_model_nonce_is_rejected (test_additional_sdk_adapters.CrewAINativeTests.test_nonce_scope_exits_and_model_nonce_is_rejected)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_additional_sdk_adapters.CrewAINativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_additional_sdk_adapters.CrewAINativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_sync_structured_tool_and_base_tool_preserve_host_nonce (test_additional_sdk_adapters.CrewAINativeTests.test_sync_structured_tool_and_base_tool_preserve_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_additional_sdk_adapters.CrewAINativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_additional_sdk_adapters.GoogleADKNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_additional_sdk_adapters.GoogleADKNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_additional_sdk_adapters.GoogleADKNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_additional_sdk_adapters.GoogleADKNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_additional_sdk_adapters.GoogleADKNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_cannot_supply_native_tool_context (test_additional_sdk_adapters.GoogleADKNativeTests.test_model_cannot_supply_native_tool_context)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_additional_sdk_adapters.GoogleADKNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_additional_sdk_adapters.GoogleADKNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_additional_sdk_adapters.GoogleADKNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_additional_sdk_adapters.GoogleADKNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_additional_sdk_adapters.GoogleADKNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_additional_sdk_adapters.GoogleADKNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_already_cancelled_dispatch_does_not_reach_broker (test_autogen_llama_adapters.AutoGenNativeTests.test_already_cancelled_dispatch_does_not_reach_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_autogen_llama_adapters.AutoGenNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_core_tool_agent_message_uses_same_native_identity (test_autogen_llama_adapters.AutoGenNativeTests.test_core_tool_agent_message_uses_same_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_direct_run_cannot_reuse_previous_call_identity (test_autogen_llama_adapters.AutoGenNativeTests.test_direct_run_cannot_reuse_previous_call_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_autogen_llama_adapters.AutoGenNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_autogen_llama_adapters.AutoGenNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_autogen_llama_adapters.AutoGenNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_autogen_llama_adapters.AutoGenNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_cannot_supply_hidden_call_id_or_cancellation_token (test_autogen_llama_adapters.AutoGenNativeTests.test_model_cannot_supply_hidden_call_id_or_cancellation_token)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_autogen_llama_adapters.AutoGenNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_autogen_llama_adapters.AutoGenNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_autogen_llama_adapters.AutoGenNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_autogen_llama_adapters.AutoGenNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_autogen_llama_adapters.AutoGenNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_autogen_llama_adapters.AutoGenNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_autogen_llama_adapters.LlamaIndexNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_host_nonce (test_autogen_llama_adapters.LlamaIndexNativeTests.test_email_drafts_never_send_and_reuse_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_autogen_llama_adapters.LlamaIndexNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_autogen_llama_adapters.LlamaIndexNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_autogen_llama_adapters.LlamaIndexNativeTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_host_nonce_cannot_submit_proposals (test_autogen_llama_adapters.LlamaIndexNativeTests.test_missing_host_nonce_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_agent_dispatch_requires_host_binding_despite_workflow_context (test_autogen_llama_adapters.LlamaIndexNativeTests.test_native_agent_dispatch_requires_host_binding_despite_workflow_context)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_autogen_llama_adapters.LlamaIndexNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_autogen_llama_adapters.LlamaIndexNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_autogen_llama_adapters.LlamaIndexNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_autogen_llama_adapters.LlamaIndexNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_scope_restores_after_exceptions_and_model_context_cannot_override_it (test_autogen_llama_adapters.LlamaIndexNativeTests.test_scope_restores_after_exceptions_and_model_context_cannot_override_it)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_sync_tool_call_preserves_host_nonce_and_rejects_missing_binding (test_autogen_llama_adapters.LlamaIndexNativeTests.test_sync_tool_call_preserves_host_nonce_and_rejects_missing_binding)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_autogen_llama_adapters.LlamaIndexNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_agent_execution_tool_wrapper_forwards_call_id (test_mastra_native_adapter.MastraAgentContextTests.test_agent_execution_tool_wrapper_forwards_call_id)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_already_aborted_call_never_reaches_broker (test_mastra_native_adapter.MastraAgentContextTests.test_already_aborted_call_never_reaches_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_mastra_native_adapter.MastraAgentContextTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_mastra_native_adapter.MastraAgentContextTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_mastra_native_adapter.MastraAgentContextTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_mastra_native_adapter.MastraAgentContextTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_mastra_native_adapter.MastraAgentContextTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_and_host_identities_with_same_text_are_separate (test_mastra_native_adapter.MastraAgentContextTests.test_native_and_host_identities_with_same_text_are_separate)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_mastra_native_adapter.MastraAgentContextTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_mastra_native_adapter.MastraAgentContextTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_mastra_native_adapter.MastraAgentContextTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_mastra_native_adapter.MastraAgentContextTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_resume_input_is_revalidated_before_broker (test_mastra_native_adapter.MastraAgentContextTests.test_resume_input_is_revalidated_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_mastra_native_adapter.MastraAgentContextTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_unicode_identity_has_stable_documented_key (test_mastra_native_adapter.MastraAgentContextTests.test_unicode_identity_has_stable_documented_key)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_mastra_native_adapter.MastraAgentContextTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_already_aborted_call_never_reaches_broker (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_already_aborted_call_never_reaches_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_async_host_scope_restores_after_exception (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_async_host_scope_restores_after_exception)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_host_nonce (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_email_drafts_never_send_and_reuse_host_nonce)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_resume_input_is_revalidated_before_broker (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_resume_input_is_revalidated_before_broker)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_workflow_run_id_cannot_replace_missing_host_nonce (test_mastra_native_adapter.MastraWorkflowHostNonceTests.test_workflow_run_id_cannot_replace_missing_host_nonce)",
+      "reason": "Use run_mastra_native_adapter.py with an independent Node SDK environment"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_direct_function_cannot_reuse_previous_identity_and_raw_result_can_replay (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_direct_function_cannot_reuse_previous_identity_and_raw_result_can_replay)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_middleware_route_preserves_native_id_despite_metadata_changes (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_middleware_route_preserves_native_id_despite_metadata_changes)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_model_cannot_supply_runtime_context_or_native_id (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_model_cannot_supply_runtime_context_or_native_id)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_session_and_metadata_cannot_replace_missing_native_id (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_session_and_metadata_cannot_replace_missing_native_id)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_microsoft_smolagents_adapters.MicrosoftAgentFrameworkNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_chat_tool_call_id_is_not_injected_into_registered_tool (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_chat_tool_call_id_is_not_injected_into_registered_tool)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_direct_tool_call_enforces_nested_schema_and_host_nonce (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_direct_tool_call_enforces_nested_schema_and_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_host_nonce (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_email_drafts_never_send_and_reuse_host_nonce)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_host_nonces_deduplicate_after_rebuilding_adapter (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_host_nonces_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_missing_host_nonce_cannot_submit_proposals (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_missing_host_nonce_cannot_submit_proposals)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_declaration_preserves_nested_schemas_but_omits_root_extra_flag (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_native_declaration_preserves_nested_schemas_but_omits_root_extra_flag)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_nonce_scope_restores_after_exception_and_model_values_are_rejected (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_nonce_scope_restores_after_exception_and_model_values_are_rejected)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_parallel_proposals_keep_separate_call_identities (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_parallel_proposals_keep_separate_call_identities)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_state_substitution_cannot_set_host_endpoint_or_approval (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_state_substitution_cannot_set_host_endpoint_or_approval)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_microsoft_smolagents_adapters.SmolagentsNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/additional-native-adapters-requirements.txt for these SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_native_sdk_adapters.LangChainNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_native_sdk_adapters.LangChainNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_native_sdk_adapters.LangChainNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_native_sdk_adapters.LangChainNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_native_sdk_adapters.LangChainNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_model_supplied_call_id_cannot_override_native_call_id (test_native_sdk_adapters.LangChainNativeTests.test_model_supplied_call_id_cannot_override_native_call_id)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_native_sdk_adapters.LangChainNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_native_sdk_adapters.LangChainNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_native_sdk_adapters.LangChainNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_native_sdk_adapters.LangChainNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_native_sdk_adapters.LangChainNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_native_sdk_adapters.OpenAINativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_native_sdk_adapters.OpenAINativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_native_sdk_adapters.OpenAINativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_native_sdk_adapters.OpenAINativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_native_sdk_adapters.OpenAINativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_native_sdk_adapters.OpenAINativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_native_sdk_adapters.OpenAINativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_native_sdk_adapters.OpenAINativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_raw_function_tool_duplicate_keys_rejected_before_broker (test_native_sdk_adapters.OpenAINativeTests.test_raw_function_tool_duplicate_keys_rejected_before_broker)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_native_sdk_adapters.OpenAINativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_native_sdk_adapters.OpenAINativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_completed_and_cancelled_replays_report_existing_status (test_native_sdk_adapters.PydanticNativeTests.test_completed_and_cancelled_replays_report_existing_status)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_email_drafts_never_send_and_reuse_native_identity (test_native_sdk_adapters.PydanticNativeTests.test_email_drafts_never_send_and_reuse_native_identity)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_five_action_kinds_have_no_effect_until_host_commit (test_native_sdk_adapters.PydanticNativeTests.test_five_action_kinds_have_no_effect_until_host_commit)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_forged_host_fields_are_rejected_before_broker (test_native_sdk_adapters.PydanticNativeTests.test_forged_host_fields_are_rejected_before_broker)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_missing_native_call_id_cannot_submit_proposals (test_native_sdk_adapters.PydanticNativeTests.test_missing_native_call_id_cannot_submit_proposals)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_call_ids_deduplicate_after_rebuilding_adapter (test_native_sdk_adapters.PydanticNativeTests.test_native_call_ids_deduplicate_after_rebuilding_adapter)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_read_send_and_persistent_data_restrictions (test_native_sdk_adapters.PydanticNativeTests.test_native_read_send_and_persistent_data_restrictions)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_schema_exposes_only_content_fields (test_native_sdk_adapters.PydanticNativeTests.test_native_schema_exposes_only_content_fields)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_revocation_blocks_all_bound_tools (test_native_sdk_adapters.PydanticNativeTests.test_revocation_blocks_all_bound_tools)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_unknown_targets_and_duplicate_form_fields_do_not_send (test_native_sdk_adapters.PydanticNativeTests.test_unknown_targets_and_duplicate_form_fields_do_not_send)",
+      "reason": "Install docs/native-adapters-requirements.txt for actual SDK checks"
+    },
+    {
+      "test": "test_native_preflight_pass_then_final_judge_block_never_executes (test_yuanxingmu_guard_rules.GuardRulesNativeHermesTests.test_native_preflight_pass_then_final_judge_block_never_executes)",
+      "reason": "Optional native Hermes installation required"
+    },
+    {
+      "test": "test_native_preflight_pass_then_final_judge_timeout_never_executes (test_yuanxingmu_guard_rules.GuardRulesNativeHermesTests.test_native_preflight_pass_then_final_judge_timeout_never_executes)",
+      "reason": "Optional native Hermes installation required"
+    },
+    {
+      "test": "test_process_manage_retains_full_guard_tool_check (test_yuanxingmu_guard_rules.GuardRulesNativeHermesTests.test_process_manage_retains_full_guard_tool_check)",
+      "reason": "Optional native Hermes installation required"
+    },
+    {
+      "test": "test_action_schema_exposes_payload_fields_without_host_authority_fields (test_yuanxingmu_hermes_backend.HermesBackendTests.test_action_schema_exposes_payload_fields_without_host_authority_fields)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_changing_hermes_task_id_does_not_change_host_authority (test_yuanxingmu_hermes_backend.HermesBackendTests.test_changing_hermes_task_id_does_not_change_host_authority)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_draft_correlation_is_required_and_stable_for_retry (test_yuanxingmu_hermes_backend.HermesBackendTests.test_draft_correlation_is_required_and_stable_for_retry)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_guard_transport_failure_prevents_execution (test_yuanxingmu_hermes_backend.HermesBackendTests.test_guard_transport_failure_prevents_execution)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_host_approval_waits_then_consumes_exact_candidate_before_execution (test_yuanxingmu_hermes_backend.HermesBackendTests.test_host_approval_waits_then_consumes_exact_candidate_before_execution)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_lost_consumption_reply_is_not_retried_and_command_does_not_run (test_yuanxingmu_hermes_backend.HermesBackendTests.test_lost_consumption_reply_is_not_retried_and_command_does_not_run)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_mismatched_or_revoked_authority_cannot_create_execution_environment (test_yuanxingmu_hermes_backend.HermesBackendTests.test_mismatched_or_revoked_authority_cannot_create_execution_environment)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_missing_native_invocation_never_executes_with_defense_enabled (test_yuanxingmu_hermes_backend.HermesBackendTests.test_missing_native_invocation_never_executes_with_defense_enabled)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_model_cannot_supply_approval_or_extra_destination_fields (test_yuanxingmu_hermes_backend.HermesBackendTests.test_model_cannot_supply_approval_or_extra_destination_fields)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_native_cancel_while_waiting_does_not_execute_after_approval (test_yuanxingmu_hermes_backend.HermesBackendTests.test_native_cancel_while_waiting_does_not_execute_after_approval)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_native_hook_blocks_host_denial_before_upstream_command_guard (test_yuanxingmu_hermes_backend.HermesBackendTests.test_native_hook_blocks_host_denial_before_upstream_command_guard)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_output_rejected_by_host_is_never_returned_by_provider (test_yuanxingmu_hermes_backend.HermesBackendTests.test_output_rejected_by_host_is_never_returned_by_provider)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_real_broker_judges_final_candidate_once_then_consumes_without_rejudging (test_yuanxingmu_hermes_backend.HermesBackendTests.test_real_broker_judges_final_candidate_once_then_consumes_without_rejudging)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_real_file_executor_checks_each_underlying_command_separately (test_yuanxingmu_hermes_backend.HermesBackendTests.test_real_file_executor_checks_each_underlying_command_separately)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_review_denial_expiry_reuse_or_mismatched_reply_never_executes (test_yuanxingmu_hermes_backend.HermesBackendTests.test_review_denial_expiry_reuse_or_mismatched_reply_never_executes)",
+      "reason": "requires the optional real Hermes installation"
+    },
+    {
+      "test": "test_same_native_call_retry_keeps_request_key_and_hard_block_never_asks (test_yuanxingmu_hermes_backend.HermesBackendTests.test_same_native_call_retry_keeps_request_key_and_hard_block_never_asks)",
+      "reason": "requires the optional real Hermes installation"
+    }
+  ],
+  "failure_details": [],
+  "source_changes_during_run": [],
+  "source_file_count": 159,
+  "source_manifest_before": "linux-wsl-source-before.json",
+  "source_manifest_after": "linux-wsl-source-after.json",
+  "log": "linux-wsl-unittest.log",
+  "log_sha256": "949a5813f94127d66bd8c594f90990cd5c749e3e91ab379de1311bd088485041"
+}

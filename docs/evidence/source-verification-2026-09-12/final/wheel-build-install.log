@@ -1,0 +1,150 @@
+$ /usr/bin/python3 -m venv /tmp/yxm-source-verification-20260912-bzmpyt4p/build-env
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/build-env/bin/python -m pip install --only-binary=:all: setuptools==83.0.0 wheel==0.48.0 packaging==26.0
+Collecting setuptools==83.0.0
+  Using cached setuptools-83.0.0-py3-none-any.whl.metadata (6.6 kB)
+Collecting wheel==0.48.0
+  Using cached wheel-0.48.0-py3-none-any.whl.metadata (2.3 kB)
+Collecting packaging==26.0
+  Using cached packaging-26.0-py3-none-any.whl.metadata (3.3 kB)
+Using cached setuptools-83.0.0-py3-none-any.whl (1.0 MB)
+Using cached wheel-0.48.0-py3-none-any.whl (33 kB)
+Using cached packaging-26.0-py3-none-any.whl (74 kB)
+Installing collected packages: setuptools, packaging, wheel
+Successfully installed packaging-26.0 setuptools-83.0.0 wheel-0.48.0
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/build-env/bin/python -m pip wheel --no-deps --no-build-isolation --wheel-dir /mnt/c/Users/PC/Desktop/agent防御体系纵深评估/agent-defense-check/docs/evidence/source-verification-2026-09-12/final/dist /tmp/yxm-source-verification-20260912-bzmpyt4p/source
+Processing /tmp/yxm-source-verification-20260912-bzmpyt4p/source
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Building wheels for collected packages: agent-defense-check
+  Building wheel for agent-defense-check (pyproject.toml): started
+  Building wheel for agent-defense-check (pyproject.toml): finished with status 'done'
+  Created wheel for agent-defense-check: filename=agent_defense_check-0.5.0a1-py3-none-any.whl size=322795 sha256=f9dfe75b0abde8e628c3dfec0cf257fc014b20d302bac2a14800aaff5dfddec6
+  Stored in directory: /tmp/pip-ephem-wheel-cache-vsrcoa09/wheels/84/65/a9/6dda1bfad4cb4cf10a3bf24c42bb36a236c74a2164d37aacc5
+Successfully built agent-defense-check
+$ /usr/bin/python3 -m venv /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/python -m pip install --no-index --no-deps /mnt/c/Users/PC/Desktop/agent防御体系纵深评估/agent-defense-check/docs/evidence/source-verification-2026-09-12/final/dist/agent_defense_check-0.5.0a1-py3-none-any.whl
+Processing /mnt/c/Users/PC/Desktop/agent防御体系纵深评估/agent-defense-check/docs/evidence/source-verification-2026-09-12/final/dist/agent_defense_check-0.5.0a1-py3-none-any.whl
+Installing collected packages: agent-defense-check
+Successfully installed agent-defense-check-0.5.0a1
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/defensecheck --help
+usage: defensecheck [-h] {inspect,plan,demo} ...
+
+Check whether selected MCP tools share a defense boundary
+
+positional arguments:
+  {inspect,plan,demo}
+    inspect            Read configuration without starting servers or calling
+                       tools
+    plan               Generate an unverified candidate for the supported
+                       rule; do not deploy it
+    demo               Run real installed runtimes with two independent
+                       synthetic MCP services
+
+options:
+  -h, --help           show this help message and exit
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/yuanxingmu --help
+usage: yuanxingmu [-h] {doctor,demo,desk,run,openclaw,hermes,defense} ...
+
+Yuanxingmu / 元星木 — authority outside the agent
+
+positional arguments:
+  {doctor,demo,desk,run,openclaw,hermes,defense}
+    doctor              Check actual Linux isolation availability
+    demo                Run isolated synthetic workers and verify independent
+                        receipts
+    desk                打开元星木本地工作台，在页面中管理 OpenClaw 和 Hermes
+    run                 Run a command with a persistent task and operator-
+                        owned policy
+    openclaw            创建和使用受保护的 OpenClaw
+    hermes              创建和使用受保护的 Hermes 官方网页
+    defense             查看或修改每层防护设置；新版本支持运行中修改
+
+options:
+  -h, --help            show this help message and exit
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/python -I -m yuanxingmu desk --help
+usage: yuanxingmu desk [-h] [--install-root INSTALL_ROOT] [--data DATA]
+                       [--port PORT] [--node NODE]
+                       [--openclaw-package OPENCLAW_PACKAGE]
+                       [--hermes-python HERMES_PYTHON]
+                       [--hermes-source HERMES_SOURCE]
+                       [--action-targets ACTION_TARGETS] [--skill NAME=PATH]
+                       [--bwrap BWRAP] [--no-browser]
+
+options:
+  -h, --help            show this help message and exit
+  --install-root INSTALL_ROOT
+  --data DATA           工作台自己的新目录；默认是安装目录下的 workbench
+  --port PORT
+  --node NODE
+  --openclaw-package OPENCLAW_PACKAGE
+  --hermes-python HERMES_PYTHON
+  --hermes-source HERMES_SOURCE
+  --action-targets ACTION_TARGETS
+                        宿主登记的消息、上传、表单和文件操作对象 JSON；不会交给 AI
+  --skill NAME=PATH     登记可在页面中选择的技能目录；只加载选中的固定快照
+  --bwrap BWRAP
+  --no-browser
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/python -I -m yuanxingmu hermes init --help
+usage: yuanxingmu hermes init [-h] --profile PROFILE --hermes-python
+                              HERMES_PYTHON --hermes-source HERMES_SOURCE
+                              [--node NODE] [--bwrap BWRAP]
+                              [--destinations DESTINATIONS]
+                              [--defense-policy DEFENSE_POLICY]
+                              [--action-targets ACTION_TARGETS] --model-url
+                              MODEL_URL --model-id MODEL_ID
+                              [--api-key-env API_KEY_ENV]
+                              [--document NAME=PATH] [--skill NAME=PATH]
+                              [--objective OBJECTIVE] [--reviewed-mail]
+                              [--port PORT] [--context-window CONTEXT_WINDOW]
+                              [--max-tokens MAX_TOKENS]
+                              [--judge-url JUDGE_URL]
+                              [--judge-model-id JUDGE_MODEL_ID]
+                              [--judge-api-key-env JUDGE_API_KEY_ENV]
+                              [--judge-timeout JUDGE_TIMEOUT]
+
+options:
+  -h, --help            show this help message and exit
+  --profile PROFILE
+  --hermes-python HERMES_PYTHON
+  --hermes-source HERMES_SOURCE
+  --node NODE
+  --bwrap BWRAP
+  --destinations DESTINATIONS
+  --defense-policy DEFENSE_POLICY
+  --action-targets ACTION_TARGETS
+  --model-url MODEL_URL
+  --model-id MODEL_ID
+  --api-key-env API_KEY_ENV
+  --document NAME=PATH
+  --skill NAME=PATH
+  --objective OBJECTIVE
+  --reviewed-mail
+  --port PORT
+  --context-window CONTEXT_WINDOW
+  --max-tokens MAX_TOKENS
+  --judge-url JUDGE_URL
+                        可选：独立检查模型的地址
+  --judge-model-id JUDGE_MODEL_ID
+                        独立检查模型的名称
+  --judge-api-key-env JUDGE_API_KEY_ENV
+                        从这个环境变量读取检查模型密钥
+  --judge-timeout JUDGE_TIMEOUT
+                        检查等待秒数，最多45秒
+$ /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/bin/python -I /mnt/c/Users/PC/Desktop/agent防御体系纵深评估/agent-defense-check/docs/evidence/source-verification-2026-09-12/verify_source.py installed --manifest /mnt/c/Users/PC/Desktop/agent防御体系纵深评估/agent-defense-check/docs/evidence/source-verification-2026-09-12/final/wheel-expected-assets.json --result /mnt/c/Users/PC/Desktop/agent防御体系纵深评估/agent-defense-check/docs/evidence/source-verification-2026-09-12/final/wheel-installed.json
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/worker-launch.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/tools.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/contract.test.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/defense-hooks.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/commands.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/index.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/config.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/sandbox-provider.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/integrations/openclaw/plugin/socket-client.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/adapters/mastra/index.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/adapters/mastra/client.mjs
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/protection.js
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/mail.js
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/app.js
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/actions.js
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/targets.js
+$ /usr/bin/node --check /tmp/yxm-source-verification-20260912-bzmpyt4p/installed-env/lib/python3.12/site-packages/yuanxingmu/dashboard/web/alerts.js

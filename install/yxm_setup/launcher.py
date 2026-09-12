@@ -97,6 +97,43 @@ def _digest(path, *, system_owner=False):
     return before.st_size, digest
 
 
+def hermes_runtime_files(root):
+    """Inventory runtime source, built assets and the independent Python env.
+
+    npm build dependencies are deliberately excluded. Hermes's official TUI
+    build is self-contained; Python and web files are checked in full.
+    """
+    required = {"hermes/" + name for name in (
+        "env/bin/python", "env/pyvenv.cfg", "source/pyproject.toml", "source/uv.lock",
+        "source/package.json", "source/package-lock.json", "source/hermes_cli/__init__.py",
+        "source/hermes_cli/main.py", "source/hermes_cli/web_server.py",
+        "source/hermes_cli/web_dist/index.html", "source/ui-tui/dist/entry.js",
+        "source/agent/terminal_env_provider.py", "source/tools/environments/base.py")}
+    for location in ("hermes/source", "hermes/env"):
+        base = _inside(root, location, directory=True)
+        for directory, directories, names in os.walk(base, followlinks=False):
+            for name in list(directories):
+                path = Path(directory) / name
+                relative = path.relative_to(root).as_posix()
+                if relative == "hermes/env/lib64" and path.is_symlink():
+                    if os.readlink(path) != "lib":
+                        raise LauncherError("Hermes 虚拟环境的 lib64 链接发生变化。")
+                    directories.remove(name)
+                    continue
+                _ordinary(path, directory=True)
+                if name == "node_modules" and location == "hermes/source":
+                    directories.remove(name)
+            for name in names:
+                path = Path(directory) / name
+                _ordinary(path)
+                required.add(path.relative_to(root).as_posix())
+    for name in required:
+        _inside(root, name)
+    if not os.access(root / "hermes/env/bin/python", os.X_OK):
+        raise LauncherError("Hermes 独立 Python 不能执行。")
+    return required
+
+
 def _verify_installation(launcher):
     _ordinary(launcher)
     root = launcher.resolve(strict=True).parent
@@ -144,8 +181,20 @@ def _verify_installation(launcher):
         raise LauncherError("安装记录中的运行路径不完整。") from exc
     if not os.access(node, os.X_OK):
         raise LauncherError("安装记录中的 Node.js 不能执行。")
+    hermes_python = hermes_source = None
+    components = marker.get("components", {})
+    features = marker.get("features", [])
+    if features not in ([], ["hermes"]) or ("hermes" in components) != ("hermes" in features):
+        raise LauncherError("安装记录中的 Hermes 组件和功能不一致。")
     required = {paths["node"], paths["openclaw"] + "/package.json",
                 paths["openclaw"] + "/openclaw.mjs", "bwrap:" + str(bwrap)}
+    if "hermes" in features:
+        if (components.get("hermes") != "complete" or paths.get("hermes_python") != "hermes/env/bin/python"
+                or paths.get("hermes_source") != "hermes/source"):
+            raise LauncherError("安装记录中的 Hermes 运行路径不完整。")
+        hermes_python = _inside(root, paths["hermes_python"])
+        hermes_source = _inside(root, paths["hermes_source"], directory=True)
+        required |= hermes_runtime_files(root) | {"hermes/SOURCE.json", "hermes/build-constraints.txt", "hermes/uv.toml"}
     for directory, directories, names in os.walk(app, followlinks=False):
         for name in directories:
             _ordinary(Path(directory) / name, directory=True)
@@ -170,7 +219,7 @@ def _verify_installation(launcher):
         path = bwrap if system_owner else _inside(root, name)
         if _digest(path, system_owner=system_owner) != (size, digest):
             raise LauncherError("安装文件与安装时的记录不同，不能继续启动。请保留目录和已有工作。")
-    return root, app, node, openclaw, bwrap
+    return root, app, node, openclaw, bwrap, hermes_python, hermes_source
 
 
 @contextmanager
@@ -256,7 +305,7 @@ def _make_server(manager):
     return WorkbenchHTTPServer(manager)
 
 
-def _serve(app, root, node, openclaw, bwrap, *, port, open_browser):
+def _serve(app, root, node, openclaw, bwrap, *, port, open_browser, hermes_python=None, hermes_source=None):
     if any(name == "yuanxingmu" or name.startswith("yuanxingmu.") for name in sys.modules):
         raise LauncherError("当前 Python 已载入其他元星木程序，请直接运行安装目录中的启动入口。")
     sys.dont_write_bytecode = True
@@ -267,10 +316,13 @@ def _serve(app, root, node, openclaw, bwrap, *, port, open_browser):
     if yuanxingmu.__version__ != RUNTIME_VERSION:
         raise LauncherError("安装的程序版本与启动入口不一致，不能继续启动。")
 
-    runtime = Runtime(node, openclaw, bwrap)
+    runtime = (Runtime(node, openclaw, bwrap, hermes_python, hermes_source)
+               if hermes_python is not None else Runtime(node, openclaw, bwrap))
     readiness = runtime.public()
     if readiness.get("available") is not True:
         raise LauncherError(readiness.get("reason") or "运行环境或隔离检查未通过，不能打开工作台。")
+    if hermes_python is not None and runtime.hermes_public().get("available") is not True:
+        raise LauncherError("Hermes 运行环境或隔离检查未通过，不能打开工作台。")
     manager = server = None
     watched = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP)
     previous = {signum: signal.signal(signum, _stop_requested) for signum in watched}
@@ -330,10 +382,11 @@ def main(argv=None):
             raise LauncherError("请用安装时的普通用户和系统 Python 打开工作台，不要使用 sudo。")
         launcher = Path(__file__).absolute()
         print("正在核对安装文件和运行环境，请稍候。", flush=True)
-        root, app, node, openclaw, bwrap = _verify_installation(launcher)
+        root, app, node, openclaw, bwrap, hermes_python, hermes_source = _verify_installation(launcher)
         with _launch_lock(root):
             _check_port(args.port)
-            return _serve(app, root, node, openclaw, bwrap, port=args.port, open_browser=not args.no_browser)
+            return _serve(app, root, node, openclaw, bwrap, port=args.port, open_browser=not args.no_browser,
+                          hermes_python=hermes_python, hermes_source=hermes_source)
     except KeyboardInterrupt:
         print("已取消打开工作台；已有工作和权限记录仍然保留。", flush=True)
         return 130

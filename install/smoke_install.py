@@ -1,11 +1,12 @@
-"""Exercise a fresh real installation, including the native OpenClaw gateway.
+"""Exercise a fresh real installation with native OpenClaw and/or Hermes pages.
 
-Creates one synthetic work item. No model request or message send is performed.
+Creates synthetic work items. A local model stub counts unexpected requests.
 Only the newly created item and this script's launcher process are stopped.
 Management links stay in private logs and never enter the public report.
 """
 import argparse
 from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import os
 from pathlib import Path
@@ -13,6 +14,7 @@ import re
 import signal
 import socket
 import subprocess
+import threading
 import time
 import urllib.error
 import urllib.parse
@@ -20,20 +22,41 @@ import urllib.request
 import uuid
 
 
-def smoke(root, report_path):
+def smoke(root, report_path, *, frameworks=("openclaw",)):
     os.umask(0o077)
     if (root / "workbench").exists() or (root / "workbench").is_symlink():
         raise RuntimeError("Use a fresh installation with no workbench; saved work is never adopted")
-    if report_path.exists():
+    if report_path.exists() or report_path.is_symlink():
         raise RuntimeError("Preserve the existing acceptance report and choose a new path")
+    if not frameworks or len(set(frameworks)) != len(frameworks) or set(frameworks) - {"openclaw", "hermes"}:
+        raise ValueError("Choose openclaw, hermes or both")
     with socket.socket() as probe:
         probe.bind(("127.0.0.1", 0))
         port = probe.getsockname()[1]
     origin = f"http://127.0.0.1:{port}"
     opener = urllib.request.build_opener(urllib.request.ProxyHandler({}))
     checks, failures = [], []
+    model_requests = []
+
+    class NoModel(BaseHTTPRequestHandler):
+        def do_POST(self):
+            model_requests.append(self.command)
+            self.send_response(503)
+            self.send_header("Content-Length", "0")
+            self.end_headers()
+
+        do_GET = do_PUT = do_DELETE = do_POST
+
+        def log_message(self, *_):
+            pass
+
+    model_server = ThreadingHTTPServer(("127.0.0.1", 0), NoModel)
+    model_thread = threading.Thread(target=model_server.serve_forever, daemon=True)
+    model_thread.start()
+    model_url = f"http://127.0.0.1:{model_server.server_port}/v1"
     process = None
-    token = identifier = None
+    token = None
+    identifiers = {}
     sequence = 0
     scenario_completed = False
 
@@ -91,39 +114,49 @@ def smoke(root, report_path):
             time.sleep(.3)
         raise TimeoutError("Workbench operation did not complete")
 
-    def native_page(job):
+    def profile(identifier):
+        return next(item for item in request("/api/profiles")["profiles"] if item["id"] == identifier)
+
+    def native_page(job, framework):
         url = urllib.parse.urlsplit(job["result"]["dashboard_url"])
         if url.scheme != "http" or url.hostname != "127.0.0.1":
             raise RuntimeError("Native gateway URL is not loopback")
         with opener.open(url._replace(fragment="").geturl(), timeout=15) as response:
             body = response.read()
-            return response.status == 200 and b"openclaw" in body.lower()
+            return response.status == 200 and framework.encode() in body.lower()
 
     try:
         launch()
-        check("installed runtime is available", request("/api/info")["runtime"]["available"] is True)
+        info = request("/api/info")
+        check("installed runtime is available", info["runtime"]["available"] is True)
+        if "hermes" in frameworks:
+            check("installed Hermes is available", info["frameworks"]["hermes"]["available"] is True)
         check("new workbench has no saved work", request("/api/profiles")["profiles"] == [])
         with opener.open(origin, timeout=10) as response:
             check("real workbench page is served", response.status == 200 and "元星木".encode() in response.read())
         duplicate = subprocess.run([str(root / "open-yuanxingmu"), "--no-browser", "--port", str(port)],
             stdin=subprocess.DEVNULL, capture_output=True, timeout=45)
         check("duplicate launcher is refused", duplicate.returncode == 2 and "已经打开".encode() in duplicate.stderr)
-        created = operation("/api/profiles", {"name": "安装检查 · 合成报价", "model_url": "http://127.0.0.1:19999/v1",
-            "model_id": "acceptance-no-model-request", "api_key": "", "documents": [
-                {"name": "quote", "filename": "quote.txt", "content": "仅供安装验收的合成资料：报价为 10000 元。"}]})
-        identifier = created["profile_id"]
-        prefix = "/api/profiles/" + identifier
-        installed_profile = request("/api/profiles")["profiles"][0]
-        check("real OpenClaw profile is initialized", installed_profile["id"] == identifier)
-        check("installed profile exposes reviewed email", "reviewed_email_v1" in installed_profile.get("features", []))
-        initial_mail = request(prefix + "/mail")
-        check("new reviewed email queue is empty", initial_mail.get("supported") is True
-              and initial_mail.get("active") is True and initial_mail.get("drafts") == [])
         check("new installation has no sender account", request("/api/mail-account").get("configured") is False)
-        started = operation(prefix + "/start", {})
-        check("native OpenClaw WebUI responds", native_page(started))
-        operation(prefix + "/stop", {})
-        check("native agent stops", request("/api/profiles")["profiles"][0]["status"] == "stopped")
+        for framework in frameworks:
+            payload = {"name": "安装检查 · " + framework, "model_url": model_url,
+                "model_id": "acceptance-no-model-request", "api_key": "", "documents": [
+                    {"name": "quote", "filename": "quote.txt", "content": "仅供安装验收的合成资料：报价为 10000 元。"}]}
+            # The old public OpenClaw-only wheel predates this optional field.
+            if framework == "hermes":
+                payload["framework"] = framework
+            identifier = operation("/api/profiles", payload)["profile_id"]
+            identifiers[framework] = identifier
+            prefix = "/api/profiles/" + identifier
+            installed_profile = profile(identifier)
+            check("real " + framework + " profile is initialized", installed_profile["id"] == identifier)
+            check(framework + " profile exposes reviewed email", "reviewed_email_v1" in installed_profile.get("features", []))
+            initial_mail = request(prefix + "/mail")
+            check(framework + " reviewed email queue is empty", initial_mail.get("supported") is True
+                  and initial_mail.get("active") is True and initial_mail.get("drafts") == [])
+            check("native " + framework + " WebUI responds", native_page(operation(prefix + "/start", {}), framework))
+            operation(prefix + "/stop", {})
+            check(framework + " native agent stops", profile(identifier)["status"] == "stopped")
         catalog = json.loads((root / "workbench/catalog.json").read_text())
         identity = {key: catalog[key] for key in ("root_identity", "profiles_identity", "imports_identity")}
         old_token = token
@@ -137,37 +170,47 @@ def smoke(root, report_path):
             old_status = exc.code
         check("previous management token is refused", old_status == 401)
         reopened = request("/api/profiles")["profiles"]
-        check("same work survives reopening", len(reopened) == 1 and reopened[0]["id"] == identifier)
+        check("same work survives reopening", {item["id"] for item in reopened} == set(identifiers.values()))
         catalog = json.loads((root / "workbench/catalog.json").read_text())
         check("workbench storage identity is preserved", all(catalog[key] == value for key, value in identity.items()))
-        check("native WebUI reopens", native_page(operation(prefix + "/start", {})))
-        operation(prefix + "/revoke", {"confirm": "revoke"})
-        check("authority is revoked", request("/api/profiles")["profiles"][0]["revoked"] is True)
-        operation(prefix + "/stop", {})
-        final = request("/api/profiles")["profiles"][0]
-        check("final native state is stopped and revoked", final["status"] == "stopped" and final["revoked"] is True)
+        for framework, identifier in identifiers.items():
+            prefix = "/api/profiles/" + identifier
+            check(framework + " native WebUI reopens", native_page(operation(prefix + "/start", {}), framework))
+            operation(prefix + "/revoke", {"confirm": "revoke"})
+            check(framework + " authority is revoked", profile(identifier)["revoked"] is True)
+            operation(prefix + "/stop", {})
+            final = profile(identifier)
+            check(framework + " final native state is stopped and revoked", final["status"] == "stopped" and final["revoked"] is True)
         scenario_completed = True
     except BaseException as exc:
         failures.append(type(exc).__name__ + ": " + str(exc))
     finally:
-        if identifier and token:
-            try:
-                state = request("/api/profiles")["profiles"][0]
-                if state["revoked"] is not True:
-                    operation("/api/profiles/" + identifier + "/revoke", {"confirm": "revoke"})
-                if state["status"] != "stopped":
-                    operation("/api/profiles/" + identifier + "/stop", {})
-            except Exception as exc:
-                failures.append("Cleanup of created profile: " + type(exc).__name__)
+        if token:
+            for identifier in identifiers.values():
+                try:
+                    state = profile(identifier)
+                    if state["revoked"] is not True:
+                        operation("/api/profiles/" + identifier + "/revoke", {"confirm": "revoke"})
+                    if state["status"] != "stopped":
+                        operation("/api/profiles/" + identifier + "/stop", {})
+                except Exception as exc:
+                    failures.append("Cleanup of created profile: " + type(exc).__name__)
         try:
             stop_launcher()
         except Exception as exc:
             failures.append("Launcher cleanup: " + type(exc).__name__)
+        model_server.shutdown()
+        model_server.server_close()
+        model_thread.join(timeout=5)
+        checks.append({"name": "no requests reached the synthetic model", "passed": not model_requests})
+        if model_requests:
+            failures.append("Unexpected requests reached the synthetic model")
         if not scenario_completed and not failures:
             failures.append("Acceptance scenario did not finish")
         result = {"schema_version": 1, "time": datetime.now(timezone.utc).isoformat(),
             "passed": scenario_completed and not failures, "scenario_completed": scenario_completed,
-            "scope": "Fresh installed launcher, actual OpenClaw initialization, native WebUI HTTP, duplicate refusal, reopen, revoke and stop, reviewed-email feature, empty draft list and unconfigured sender; no model inference or message sending.",
+            "frameworks": list(frameworks), "model_requests": len(model_requests),
+            "scope": "Fresh installed launcher, actual framework initialization, native WebUI HTTP, duplicate refusal, reopen, revoke and stop, reviewed-email feature, empty draft list and unconfigured sender; no model inference or message sending.",
             "checks": checks, "failures": failures}
         report_path.parent.mkdir(parents=True, exist_ok=True)
         with report_path.open("x") as output:
@@ -180,5 +223,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--install-root", required=True, type=Path)
     parser.add_argument("--report", required=True, type=Path)
+    parser.add_argument("--framework", choices=("openclaw", "hermes", "both"), default="openclaw")
     args = parser.parse_args()
-    raise SystemExit(smoke(args.install_root, args.report))
+    frameworks = ("openclaw", "hermes") if args.framework == "both" else (args.framework,)
+    raise SystemExit(smoke(args.install_root, args.report, frameworks=frameworks))

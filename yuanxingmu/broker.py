@@ -6,7 +6,7 @@ distributed authorization service. No approval result is reusable by a worker.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 import hashlib
 import http.client
@@ -76,7 +76,8 @@ class _Server(socketserver.ThreadingUnixStreamServer if hasattr(socketserver, "T
 class Broker:
     """Host-only management API; a worker receives only its mounted Unix socket."""
 
-    def __init__(self, state_dir: Path, resources: dict[str, Resource], destinations: dict[str, Destination], *, reviewed_mail=False):
+    def __init__(self, state_dir: Path, resources: dict[str, Resource], destinations: dict[str, Destination], *,
+                 reviewed_mail=False, guards=None, action_targets=None):
         if not sys.platform.startswith("linux") or not hasattr(socket, "AF_UNIX"):
             raise RuntimeError("broker_requires_linux")
         import fcntl
@@ -92,9 +93,17 @@ class Broker:
         self._lock = threading.RLock()
         self._servers: list[tuple[_Server, threading.Thread, Path]] = []
         self._closed = False
+        self._fault = False
+        self._guard_marker = self.state_dir / "guard-session.dirty"
+        self.configure_callback = None
         self.resources = dict(resources)
         self.destinations = dict(destinations)
         self.reviewed_mail = reviewed_mail is True
+        self.guards = guards
+        self.action_targets = None if action_targets is None else dict(action_targets)
+        self.actions = None
+        self.tool_reviews = None
+        self.quarantine = None
         self.mail = None
         self.authority = None
         try:
@@ -109,10 +118,35 @@ class Broker:
                     stream.flush()
                     os.fsync(stream.fileno())
             self.authority = Authority(self.state_dir / "authority.sqlite3")
+            if self.guards is not None:
+                from .tool_reviews import ToolReviews
+                from .quarantine import Quarantine
+                self.tool_reviews = ToolReviews(self.authority)
+                self.tool_reviews.recover()
+                self.quarantine = Quarantine(self.authority)
+            if self.action_targets is not None:
+                from .actions import Actions
+                self.actions = Actions(self.authority, self.action_targets)
+                self.actions.recover()
             if self.reviewed_mail:
                 self.mail = MailDrafts(self.authority)
                 # The exclusive broker lock proves no earlier sender is live.
                 self.mail.recover()
+            if self.quarantine is not None:
+                unclean = self._guard_marker.exists() or self._guard_marker.is_symlink()
+                fd = os.open(self._guard_marker, os.O_CREAT | os.O_WRONLY | os.O_TRUNC | os.O_NOFOLLOW, 0o600)
+                try:
+                    os.write(fd, b"Host defense session open. Retain on faults or unconfirmed termination.\n")
+                    os.fsync(fd)
+                finally:
+                    os.close(fd)
+                self._sync_state_directory()
+                if unclean:
+                    with self.authority._transaction() as db:
+                        roots = [r[0] for r in db.execute("SELECT id FROM authority_tasks WHERE parent_id IS NULL AND revoked=0")]
+                    for task in roots:
+                        self.quarantine.pause(task, layer="foundation", code="previous_defense_session_unconfirmed",
+                            reason="上一次防护服务未确认正常结束，已暂停后续操作。请先核对记录，再恢复工作。")
         except BaseException:
             if self.authority is not None:
                 self.authority.close()
@@ -150,16 +184,108 @@ class Broker:
         binding = {"version": 1, "resources": resource_binding, "destinations": destination_binding}
         if self.reviewed_mail:
             binding["reviewed_mail"] = 1
-        return binding
+        if self.guards is not None:
+            # Changing the objective, enabled layers or judge requires a new
+            # profile. Credentials are represented by a digest only.
+            judge = asdict(self.guards.judge) if self.guards.judge is not None else None
+            binding["guards"] = {"policy": asdict(self.guards.policy),
+                                 "judge_sha256": _digest(json.dumps(judge, sort_keys=True).encode())}
+        if self.action_targets is not None:
+            binding["reviewed_actions"] = {name: target.binding() for name, target in sorted(self.action_targets.items())}
+            existing = self.state_dir / "workspaces.json"
+            workspaces = [Path(name) for name in json.loads(existing.read_text())] if existing.exists() else []
+            for target in self.action_targets.values():
+                if target.workspace is None:
+                    continue
+                for protected in [self.state_dir, *workspaces, *(Path(r.path).resolve() for r in self.resources.values())]:
+                    if target.workspace == protected or target.workspace in protected.parents or protected in target.workspace.parents:
+                        raise ValueError("reviewed_file_target_overlaps_agent_or_trusted_state")
+        return json.loads(json.dumps(binding))
+
+    def _guard_result(self, task_id, result):
+        value = result.to_dict()
+        try:
+            self._event(task_id, "defense_check", {k: v for k, v in value.items() if k != "cleaned_text"})
+        except Exception:
+            self._fault = True
+            raise
+        if not result.allowed:
+            self._pause_for_check(task_id, value)
+            raise AuthorizationError(value["code"], value["reason"])
+        return value
+
+    def _pause_for_check(self, task_id, value):
+        """Pause subsequent admissions, not effects already admitted to an executor."""
+        if self.quarantine is None or value.get("verdict") != "block" or value.get("enforced") is False:
+            return
+        evidence = value.get("evidence", {})
+        try:
+            self.quarantine.pause(task_id, layer=value["layer"], code=value["code"], reason=value["reason"],
+                                  evidence_sha256=evidence.get("candidate_sha256") or evidence.get("input_sha256"))
+        except Exception:
+            self._fault = True
+            raise
+
+    def _sync_state_directory(self):
+        fd = os.open(self.state_dir, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+
+    def _require_healthy(self):
+        if self._closed:
+            raise AuthorizationError("broker_closed")
+        if self._fault:
+            raise AuthorizationError("defense_storage_fault", "防护状态写入失败，后续操作已停止。请保留记录并重启防护服务。")
+
+    def _require_admission(self, task_id):
+        self._require_healthy()
+        with self.authority._transaction() as db:
+            self.authority._task(db, task_id)
+
+    def _guard_tool(self, task_id, tool, arguments):
+        if self.guards is None:
+            return
+        if not self.authority.describe(task_id)["active"]:
+            raise AuthorizationError("task_revoked")
+        self._guard_result(task_id, self.guards.check_memory(tool, arguments))
+        if tool in {"exec", "terminal"}:
+            self._guard_result(task_id, self.guards.check_command(arguments.get("command", "")))
+        self._guard_result(task_id, self.guards.check_alignment({"tool": tool, "arguments": arguments}))
+
+    def _guard_native_tool(self, task_id, tool, arguments, *, alignment=True):
+        """Return review to the native human approval hook; never execute here."""
+        checks = [self.guards.check_memory(tool, arguments)]
+        source = arguments.get("source_tool")
+        if isinstance(source, dict) and isinstance(source.get("tool"), str) and isinstance(source.get("arguments"), dict):
+            checks.append(self.guards.check_memory(source["tool"], source["arguments"]))
+        if tool in {"exec", "terminal"}:
+            checks.append(self.guards.check_command(arguments.get("command", "")))
+        for check in checks:
+            value = check.to_dict()
+            self._event(task_id, "defense_check", {k: v for k, v in value.items() if k != "cleaned_text"})
+        if alignment and not any(check.verdict == "block" for check in checks):
+            check = self.guards.check_alignment({"tool": tool, "arguments": arguments})
+            checks.append(check)
+            self._event(task_id, "defense_check", {k: v for k, v in check.to_dict().items() if k != "cleaned_text"})
+        outcome = next((check for check in checks if check.verdict == "block"), None)
+        outcome = outcome or next((check for check in checks if check.verdict == "review"), None)
+        if outcome is not None:
+            return {"allowed": False, "verdict": outcome.verdict, "reason": outcome.code, "message": outcome.reason,
+                    "mode": self.guards.policy.mode, "check": outcome.to_dict()}
+        return {"allowed": True, "verdict": "allow", "reason": "candidate_checks_completed", "mode": self.guards.policy.mode}
 
     def create_task(self, *, task_id: str | None = None, initial_labels: list[str] | None = None) -> str:
         with self._lock:
+            self._require_healthy()
             return self.authority.create_root({k: list(v.labels) for k, v in self.resources.items()},
                 {k: list(v.labels) for k, v in self.destinations.items()}, task_id=task_id,
                 initial_labels=initial_labels)
 
     def delegate(self, task_id: str, *, resources=None, destinations=None) -> str:
         with self._lock:
+            self._require_admission(task_id)
             return self.authority.delegate(task_id, resources=resources, destinations=destinations)
 
     def revoke(self, task_id: str) -> dict:
@@ -174,6 +300,9 @@ class Broker:
             work = Path(workspace).resolve(strict=True)
             if not work.is_dir():
                 raise ValueError("workspace_must_be_a_directory")
+            for target in (self.action_targets or {}).values():
+                if target.workspace is not None and (target.workspace == work or target.workspace in work.parents or work in target.workspace.parents):
+                    raise ValueError("reviewed_file_target_overlaps_agent_workspace")
             for protected in [self.state_dir, *(Path(r.path).resolve() for r in self.resources.values())]:
                 if protected == work or work in protected.parents or protected in work.parents:
                     raise ValueError("workspace_overlaps_trusted_state_or_resource")
@@ -195,10 +324,15 @@ class Broker:
     def _event(self, task_id: str, operation: str, result: dict, **extra) -> None:
         event = {"time": datetime.now(timezone.utc).isoformat(), "task_id": task_id, "operation": operation,
                  **{k: v for k, v in result.items() if k not in ("content", "body")}, **extra}
-        with (self.state_dir / "broker-events.jsonl").open("a", encoding="utf-8") as stream:
-            stream.write(json.dumps(event, sort_keys=True) + "\n")
-            stream.flush()
-            os.fsync(stream.fileno())
+        try:
+            with (self.state_dir / "broker-events.jsonl").open("a", encoding="utf-8") as stream:
+                stream.write(json.dumps(event, sort_keys=True) + "\n")
+                stream.flush()
+                os.fsync(stream.fileno())
+        except Exception:
+            if self.guards is not None:
+                self._fault = True
+            raise
 
     def dispatch(self, task_id: str, request: dict) -> dict:
         with self._lock:
@@ -207,10 +341,66 @@ class Broker:
                 if self._closed:
                     raise AuthorizationError("broker_closed")
                 fields = {"read": {"op", "resource"}, "send": {"op", "destination", "body"}, "describe": {"op"},
-                          "draft_email": {"op", "request_key", "draft"}}
+                          "draft_email": {"op", "request_key", "draft"},
+                          "action_targets": {"op"}, "propose_action": {"op", "request_key", "proposal"},
+                          "guard_tool": {"op", "tool", "arguments"}, "guard_rules": {"op", "tool", "arguments"}, "inspect_input": {"op", "text"},
+                          "request_tool_review": {"op", "request_key", "tool", "arguments"},
+                          "consume_tool_review": {"op", "review_id", "digest", "tool", "arguments"}}
                 if not isinstance(operation, str) or operation not in fields or set(request) != fields[operation]:
                     raise AuthorizationError("invalid_request")
-                if operation == "describe":
+                self._require_healthy()
+                if operation != "request_tool_review":
+                    self._require_admission(task_id)
+                if operation in {"request_tool_review", "consume_tool_review"}:
+                    if self.tool_reviews is None:
+                        raise AuthorizationError("layered_defense_not_enabled")
+                    if not self.authority.describe(task_id)["active"]:
+                        raise AuthorizationError("task_revoked")
+                    from .tool_reviews import candidate
+                    candidate(request["tool"], request["arguments"])
+                    if operation == "request_tool_review":
+                        result = self.tool_reviews.prior(task_id, request["request_key"], request["tool"], request["arguments"])
+                        if result is None:
+                            self._require_admission(task_id)
+                            result = self._guard_native_tool(task_id, request["tool"], request["arguments"])
+                            check = result.pop("check", None)
+                            if result.get("verdict") in {"review", "block"}:
+                                result = self.tool_reviews.request(task_id, request["request_key"], request["tool"], request["arguments"],
+                                    reason=result["message"], blocked=result["verdict"] == "block")
+                            if check:
+                                self._pause_for_check(task_id, check)
+                    else:
+                        result = self.tool_reviews.consume(task_id, request["review_id"], request["digest"], request["tool"], request["arguments"])
+                elif operation in {"action_targets", "propose_action"}:
+                    if self.actions is None:
+                        raise AuthorizationError("reviewed_actions_not_enabled")
+                    if not self.authority.describe(task_id)["active"]:
+                        raise AuthorizationError("task_revoked")
+                    if operation == "action_targets":
+                        result = {"allowed": True, "targets": self.actions.describe_targets()}
+                    else:
+                        self._guard_tool(task_id, "yuanxingmu_prepare_action", request["proposal"])
+                        action = self.actions.submit(task_id, request["request_key"], request["proposal"])
+                        result = {"allowed": True, "reason": "action_waiting_for_review" if action["status"] == "pending" else "action_already_recorded", **action}
+                elif operation in {"guard_tool", "guard_rules", "inspect_input"}:
+                    if self.guards is None:
+                        raise AuthorizationError("layered_defense_not_enabled")
+                    if not self.authority.describe(task_id)["active"]:
+                        raise AuthorizationError("task_revoked")
+                    if operation in {"guard_tool", "guard_rules"}:
+                        if not isinstance(request["tool"], str) or not isinstance(request["arguments"], dict):
+                            raise AuthorizationError("invalid_guard_candidate")
+                        result = self._guard_native_tool(task_id, request["tool"], request["arguments"], alignment=operation == "guard_tool")
+                        if operation == "guard_rules":
+                            result["final_execution_check_required"] = True
+                        check = result.pop("check", None)
+                        if check:
+                            self._pause_for_check(task_id, check)
+                    else:
+                        check = self.guards.check_input(request["text"])
+                        self._guard_result(task_id, check)
+                        result = {"allowed": True, "reason": "input_check_completed", "mode": self.guards.policy.mode}
+                elif operation == "describe":
                     state = self.authority.describe(task_id)
                     if not state["active"]:
                         raise AuthorizationError("task_revoked")
@@ -219,15 +409,20 @@ class Broker:
                     name = request["resource"]
                     if not isinstance(name, str) or name not in self.resources:
                         raise AuthorizationError("unknown_resource")
+                    self._guard_tool(task_id, "yuanxingmu_read", {"resource": name})
                     decision = self.authority.record_read(task_id, name)
                     content = Path(self.resources[name].path).read_bytes()
                     expected = json.loads((self.state_dir / "bindings.json").read_text())["resources"][name]["sha256"]
                     if len(content) > MAX_CONTENT or _digest(content) != expected:
                         raise AuthorizationError("resource_changed")
-                    result = {**decision, "content": content.decode("utf-8")}
+                    text = content.decode("utf-8")
+                    if self.guards is not None:
+                        self._guard_result(task_id, self.guards.check_input(text))
+                    result = {**decision, "content": text}
                 elif operation == "draft_email":
                     if self.mail is None:
                         raise AuthorizationError("reviewed_mail_not_enabled")
+                    self._guard_tool(task_id, "yuanxingmu_prepare_email", request["draft"])
                     draft = self.mail.submit(task_id, request["request_key"], request["draft"])
                     result = {"allowed": True, "reason": "mail_draft_saved", "draft_id": draft["id"],
                               "digest": draft["digest"], "revision": draft["revision"], "status": draft["status"]}
@@ -240,6 +435,7 @@ class Broker:
                     decision = self.authority.authorize_send(task_id, name)
                     result = dict(decision)
                     if decision["allowed"]:
+                        self._guard_tool(task_id, "yuanxingmu_send", {"destination": name, "body": body})
                         request_id = uuid.uuid4().hex
                         # Persist intent first; interrupted/unacknowledged attempts
                         # remain distinguishable from attempts never authorized.
@@ -253,15 +449,28 @@ class Broker:
                 return result
             except AuthorizationError as exc:
                 result = {"allowed": False, "reason": exc.reason}
+                if str(exc) != exc.reason:
+                    result["message"] = str(exc)
             except (OSError, ValueError, TypeError):
                 result = {"allowed": False, "reason": "broker_operation_failed"}
-            audit_operation = operation if isinstance(operation, str) and operation in {"read", "send", "describe", "draft_email"} else "invalid"
+            audit_operation = operation if isinstance(operation, str) and operation in {"read", "send", "describe", "draft_email", "guard_tool", "guard_rules", "inspect_input", "action_targets", "propose_action", "request_tool_review", "consume_tool_review"} else "invalid"
             self._event(task_id, audit_operation, result)
             return result
 
     def review_mail(self, task_id: str, request: dict) -> dict:
         """Host-only approval. Never call this from dispatch or a worker socket."""
         with self._lock:
+            if isinstance(request, dict) and str(request.get("op", "")).startswith("quarantine_"):
+                return self.review_quarantine(task_id, request)
+            if isinstance(request, dict) and str(request.get("op", "")).startswith("protection_"):
+                self._require_healthy()
+                if set(request) != {"op", "settings"} or request["op"] != "protection_set" or not callable(self.configure_callback):
+                    raise AuthorizationError("live_defense_settings_unavailable")
+                return self.configure_callback(request["settings"])
+            if isinstance(request, dict) and str(request.get("op", "")).startswith("tool_"):
+                return self.review_tool(task_id, request)
+            if isinstance(request, dict) and str(request.get("op", "")).startswith("action_"):
+                return self.review_action(task_id, request)
             if self._closed or self.mail is None:
                 raise AuthorizationError("reviewed_mail_unavailable")
             fields = {
@@ -278,6 +487,7 @@ class Broker:
             if op == "get":
                 return self.mail.get(task_id, request["draft_id"])
             args = (task_id, request["draft_id"], request["revision"], request["digest"])
+            self._require_healthy()
             if op == "edit":
                 return {"draft": self.mail.edit(*args, request["draft"])}
             if op == "cancel":
@@ -302,10 +512,72 @@ class Broker:
                 raise
             return {"draft": self.mail.finish_send(task_id, draft["id"], draft["attempt_id"], outcome)}
 
+    def review_action(self, task_id: str, request: dict) -> dict:
+        """Only the unmounted review socket reaches this method."""
+        with self._lock:
+            if self._closed or self.actions is None:
+                raise AuthorizationError("reviewed_actions_not_enabled")
+            fields = {"action_list": {"op"}, "action_get": {"op", "action_id"},
+                      "action_edit": {"op", "action_id", "revision", "digest", "proposal"},
+                      "action_cancel": {"op", "action_id", "revision", "digest"},
+                      "action_commit": {"op", "action_id", "revision", "digest", "confirm"}}
+            op = request.get("op") if isinstance(request, dict) else None
+            if not isinstance(op, str) or op not in fields or set(request) != fields[op]:
+                raise AuthorizationError("invalid_action_review")
+            if op == "action_list":
+                return {**self.actions.list(task_id), "targets": self.actions.describe_targets()}
+            if op == "action_get":
+                return self.actions.get(task_id, request["action_id"])
+            args = (task_id, request["action_id"], request["revision"], request["digest"])
+            self._require_healthy()
+            if op == "action_edit":
+                return {"action": self.actions.edit(*args, request["proposal"])}
+            if op == "action_cancel":
+                return {"action": self.actions.cancel(*args)}
+            if request["confirm"] != "commit":
+                raise AuthorizationError("action_confirmation_required")
+            return self.actions.commit(*args)
+
+    def review_tool(self, task_id: str, request: dict) -> dict:
+        with self._lock:
+            if self._closed or self.tool_reviews is None:
+                raise AuthorizationError("layered_defense_not_enabled")
+            fields = {"tool_list": {"op"}, "tool_get": {"op", "review_id"},
+                      "tool_approve": {"op", "review_id", "digest", "confirm"},
+                      "tool_deny": {"op", "review_id", "digest", "confirm"}}
+            op = request.get("op") if isinstance(request, dict) else None
+            if not isinstance(op, str) or op not in fields or set(request) != fields[op]:
+                raise AuthorizationError("invalid_tool_review")
+            if op == "tool_list":
+                return self.tool_reviews.list(task_id)
+            if op == "tool_get":
+                return self.tool_reviews.get(task_id, request["review_id"])
+            decision = op.removeprefix("tool_")
+            self._require_healthy()
+            if request["confirm"] != decision:
+                raise AuthorizationError("tool_confirmation_required")
+            return self.tool_reviews.decide(task_id, request["review_id"], request["digest"], decision)
+
+    def review_quarantine(self, task_id: str, request: dict) -> dict:
+        """Host-only recovery; agent-facing dispatch never routes these operations."""
+        with self._lock:
+            if self._closed or self.quarantine is None:
+                raise AuthorizationError("layered_defense_not_enabled")
+            fields = {"quarantine_status": {"op"},
+                      "quarantine_resume": {"op", "epoch", "incident_id", "confirm"}}
+            op = request.get("op") if isinstance(request, dict) else None
+            if not isinstance(op, str) or op not in fields or set(request) != fields[op]:
+                raise AuthorizationError("invalid_quarantine_request")
+            if op == "quarantine_status":
+                return {**self.quarantine.status(task_id), "storage_fault": self._fault}
+            self._require_healthy()
+            return self.quarantine.resume(task_id, epoch=request["epoch"], incident_id=request["incident_id"],
+                                          confirm=request["confirm"], operator="workbench")
+
     def serve_reviews(self, task_id: str, socket_path: Path) -> Path:
         """Bind a host-only socket. Its path must not be mounted into any agent."""
         with self._lock:
-            if self._closed or self.mail is None:
+            if self._closed or (self.mail is None and self.actions is None and self.tool_reviews is None):
                 raise AuthorizationError("reviewed_mail_unavailable")
             socket_path = Path(socket_path).absolute()
             if len(os.fsencode(socket_path)) > 100:
@@ -375,18 +647,52 @@ class Broker:
 
     def close(self) -> None:
         with self._lock:
+            if self._file_lock.closed:
+                return
             self._closed = True
+        errors = []
         for server, thread, path in self._servers:
-            server.shutdown()
-            server.server_close()
-            thread.join(timeout=2)
-            path.unlink(missing_ok=True)
+            for cleanup in (server.shutdown, server.server_close, lambda: thread.join(timeout=2),
+                            lambda: path.unlink(missing_ok=True)):
+                try:
+                    cleanup()
+                except BaseException as exc:
+                    errors.append(exc)
         self._servers.clear()
         with self._lock:
-            if self.authority is not None:
-                self.authority.close()
+            try:
+                if self.authority is not None:
+                    self.authority.close()
+            except BaseException as exc:
+                errors.append(exc)
+            finally:
                 self.authority = None
-            self._file_lock.close()
+            try:
+                if self.quarantine is not None and not self._fault and not errors:
+                    try:
+                        self._guard_marker.unlink(missing_ok=True)
+                        self._sync_state_directory()
+                    except BaseException as exc:
+                        errors.append(exc)
+                if errors:
+                    self._fault = True
+                if self.quarantine is not None and self._fault and not self._guard_marker.exists():
+                    # A failed directory fsync after unlink is not a clean close.
+                    # Restore the marker when storage permits; never mask the
+                    # original failure or retain the exclusive process lock.
+                    fd = os.open(self._guard_marker, os.O_CREAT | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+                    try:
+                        os.write(fd, b"Defense shutdown was not confirmed. Host review required.\n")
+                        os.fsync(fd)
+                    finally:
+                        os.close(fd)
+                    self._sync_state_directory()
+            except BaseException as exc:
+                errors.append(exc)
+            finally:
+                self._file_lock.close()
+        if errors:
+            raise errors[0]
 
     def __enter__(self):
         return self

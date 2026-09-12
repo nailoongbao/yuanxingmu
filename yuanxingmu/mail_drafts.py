@@ -177,7 +177,9 @@ class MailDrafts:
         with self.authority._transaction() as db:
             task = self.authority._task(db, task_id, require_active=False)
             columns = ",".join(name for name in _PUBLIC_FIELDS if name != "body")
-            rows = db.execute(f"SELECT {columns} FROM mail_drafts WHERE task_id=? ORDER BY created_at DESC,rowid DESC LIMIT ?",
+            # History rows are retained. Use committed insertion order so a
+            # host clock correction cannot hide newer drafts behind older ones.
+            rows = db.execute(f"SELECT {columns} FROM mail_drafts WHERE task_id=? ORDER BY rowid DESC LIMIT ?",
                               (task_id, MAX_LIST)).fetchall()
             return {"drafts": [self._public(row, include_body=False) for row in rows],
                     "active": not bool(task["revoked"])}

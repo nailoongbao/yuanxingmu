@@ -140,6 +140,249 @@ class InstallerTests(unittest.TestCase):
         ])
         return self.node_tar(name, entries)
 
+    def development_archive(self, name="development.whl", *, metadata_version=None, package_version=None, hermes=True):
+        version = metadata_version or installer.RUNTIME
+        entries = [
+            ("agent_defense_check-" + version + ".dist-info/METADATA",
+             "Metadata-Version: 2.4\nName: agent-defense-check\nVersion: " + version + "\n"),
+            ("yuanxingmu/__init__.py", '__version__ = "' + (package_version or installer.RUNTIME) + '"\n'),
+        ]
+        if hermes:
+            entries.append(("yuanxingmu/hermes.py", "# synthetic fixture; never imported\n"))
+        path = self.wheel(name, entries)
+        return path, installer.digest(path)
+
+    def hermes_fixture(self, state):
+        """Ordinary files only; no installed third-party code or subprocesses."""
+        keys = ("env/bin/python", "env/pyvenv.cfg", "source/pyproject.toml", "source/uv.lock",
+                "source/package.json", "source/package-lock.json", "source/hermes_cli/__init__.py",
+                "source/hermes_cli/main.py", "source/hermes_cli/web_server.py", "source/hermes_cli/web_dist/index.html",
+                "source/ui-tui/dist/entry.js", "source/agent/terminal_env_provider.py", "source/tools/environments/base.py",
+                "source/run_agent.py", "env/lib/python3.12/site-packages/fixture.pth",
+                "SOURCE.json", "build-constraints.txt", "uv.toml")
+        records = {}
+        for key in keys:
+            path = self.write(self.root / "hermes" / key, b"synthetic Hermes runtime; never executed")
+            records["hermes/" + key] = installer.record(path)
+        (self.root / "hermes/env/bin/python").chmod(0o700)
+        (self.root / "hermes/env/lib64").symlink_to("lib")
+        state["features"] = ["hermes"]
+        state["components"]["hermes"] = "complete"
+        state["files"].update(records)
+        state["paths"].update({"hermes_python": "hermes/env/bin/python", "hermes_source": "hermes/source"})
+        installer.save(self.root, state)
+        return records
+
+    def test_development_wheel_requires_matching_hash_metadata_and_package_version(self):
+        valid, digest = self.development_archive()
+        result = installer.development_wheel(valid, digest)
+        self.assertEqual(result["version"], installer.RUNTIME)
+        self.assertEqual(result["sha256"], digest)
+        with self.assertRaises(installer.InstallError):
+            installer.development_wheel(valid, "0" * 64)
+        for path, value in ((valid, None), (None, digest)):
+            with self.assertRaises(installer.InstallError):
+                installer.development_wheel(path, value)
+        for name, kwargs in (("metadata", {"metadata_version": "99.0.0"}),
+                             ("package", {"package_version": "99.0.0"}), ("old", {"hermes": False})):
+            with self.subTest(name=name):
+                path, value = self.development_archive(name + ".whl", **kwargs)
+                with self.assertRaises(installer.InstallError):
+                    installer.development_wheel(path, value)
+        self.assertFalse(self.root.exists())
+
+    def test_development_wheel_rejects_symlink_and_duplicate_metadata(self):
+        path, digest = self.development_archive()
+        link = self.base / "linked.whl"
+        link.symlink_to(path)
+        with self.assertRaises(installer.InstallError):
+            installer.development_wheel(link, digest)
+        name = "agent_defense_check-" + installer.RUNTIME + ".dist-info/METADATA"
+        duplicate = self.wheel("duplicate-metadata.whl", [(name, b"a"), (name, b"b")])
+        with self.assertRaises(installer.InstallError):
+            installer.development_wheel(duplicate, installer.digest(duplicate))
+
+    def test_development_wheel_never_replaces_completed_or_legacy_incomplete_install(self):
+        path, digest = self.development_archive()
+        for complete in (False, True):
+            with self.subTest(complete=complete):
+                self.root = self.base / ("existing-" + str(complete))
+                self.fixture_state(complete=complete)
+                before = (self.root / installer.MARKER).read_bytes()
+                with mock.patch.object(installer, "check_environment"), \
+                     mock.patch.object(installer, "fetch") as fetch, \
+                     mock.patch.object(installer, "verify_runtime") as runtime:
+                    with self.assertRaises(installer.InstallError):
+                        installer.install(self.root, dev_wheel=path, dev_sha256=digest)
+                fetch.assert_not_called()
+                runtime.assert_not_called()
+                self.assertEqual((self.root / installer.MARKER).read_bytes(), before)
+                self.assertEqual((self.root / "app/keep.txt").read_bytes(), b"installed fixture bytes")
+
+    def test_development_retry_requires_original_explicit_input(self):
+        path, digest = self.development_archive()
+        spec = installer.development_wheel(path, digest)
+        with installer.installation(self.root, features=["hermes"], development=spec):
+            pass
+        before = (self.root / installer.MARKER).read_bytes()
+        other, other_digest = self.development_archive("different.whl", package_version=installer.RUNTIME)
+        for kwargs in ({}, {"dev_wheel": other, "dev_sha256": other_digest}):
+            with mock.patch.object(installer, "check_environment"), mock.patch.object(installer, "fetch") as fetch:
+                with self.assertRaises(installer.InstallError):
+                    installer.install(self.root, **kwargs)
+            fetch.assert_not_called()
+            self.assertEqual((self.root / installer.MARKER).read_bytes(), before)
+
+    def test_hermes_inventory_covers_python_environment_source_and_web_assets(self):
+        state, _ = self.fixture_state(complete=True)
+        records = self.hermes_fixture(state)
+        installer.verify_files(self.root, state)
+        self.assertIn("hermes/env/lib/python3.12/site-packages/fixture.pth", records)
+        for key in ("hermes/source/run_agent.py", "hermes/env/lib/python3.12/site-packages/fixture.pth",
+                    "hermes/source/hermes_cli/web_dist/index.html"):
+            with self.subTest(key=key):
+                original = (self.root / key).read_bytes()
+                self.write(self.root / key, b"changed fixture")
+                with self.assertRaises(installer.InstallError):
+                    installer.verify_files(self.root, state)
+                self.write(self.root / key, original)
+        self.write(self.root / "hermes/env/lib/python3.12/site-packages/unrecorded.pth", b"unrecorded fixture")
+        with self.assertRaises(installer.InstallError):
+            installer.verify_files(self.root, state)
+
+    def test_hermes_environment_rejects_changed_lib64_or_external_python_link(self):
+        state, _ = self.fixture_state(complete=True)
+        self.hermes_fixture(state)
+        link = self.root / "hermes/env/lib64"
+        link.unlink()
+        outside = self.directory("outside-lib")
+        sentinel = self.write(outside / "keep", b"untouched")
+        link.symlink_to(outside)
+        with self.assertRaises(installer.InstallError):
+            installer.verify_files(self.root, state)
+        self.assertEqual(sentinel.read_bytes(), b"untouched")
+        link.unlink()
+        link.symlink_to("lib")
+        python = self.root / "hermes/env/bin/python"
+        original = self.write(self.base / "outside-python", python.read_bytes())
+        python.unlink()
+        python.symlink_to(original)
+        with self.assertRaises(installer.InstallError):
+            installer.verify_files(self.root, state)
+
+    def test_hermes_missing_records_or_paths_prevent_completed_install_use(self):
+        state, _ = self.fixture_state(complete=True)
+        self.hermes_fixture(state)
+        for key in ("hermes/SOURCE.json", "hermes/source/ui-tui/dist/entry.js"):
+            record = state["files"].pop(key)
+            with self.assertRaises(installer.InstallError):
+                installer.verify_files(self.root, state)
+            state["files"][key] = record
+        state["paths"]["hermes_python"] = "/usr/bin/python3"
+        with self.assertRaises(installer.InstallError):
+            installer.verify_files(self.root, state)
+
+    def test_completed_hermes_install_checks_without_rebuilding(self):
+        state, _ = self.fixture_state(complete=True)
+        self.hermes_fixture(state)
+        document = self.write(self.root / "workbench/keep", b"keep previous work")
+        before = (self.root / installer.MARKER).read_bytes()
+        with mock.patch.object(installer, "check_environment"), \
+             mock.patch.object(installer, "verify_runtime") as runtime, \
+             mock.patch.object(installer.hermes_installer, "install") as install_hermes, \
+             mock.patch.object(installer, "fetch") as fetch:
+            result = installer.install(self.root, shortcut=False)
+        self.assertEqual(result, state)
+        runtime.assert_called_once_with(self.root, self.fixture_bwrap, hermes=True)
+        install_hermes.assert_not_called()
+        fetch.assert_not_called()
+        self.assertEqual((self.root / installer.MARKER).read_bytes(), before)
+        self.assertEqual(document.read_bytes(), b"keep previous work")
+
+    def test_hermes_failure_preserves_openclaw_and_never_marks_complete(self):
+        state, bwrap = self.fixture_state()
+        state["features"] = ["hermes"]
+        installer.save(self.root, state)
+        with mock.patch.object(installer, "check_environment"), \
+             mock.patch.object(installer, "require_hermes_app"), \
+             mock.patch.object(installer, "isolation", return_value=bwrap), \
+             mock.patch.object(installer, "fetch", return_value=self.base / "not-used"), \
+             mock.patch.object(installer, "verify_node_tree"), \
+             mock.patch.object(installer.hermes_installer, "install", side_effect=installer.InstallError("synthetic Hermes failure")), \
+             mock.patch.object(installer, "npm_install") as npm, \
+             mock.patch.object(installer, "verify_runtime") as runtime:
+            with self.assertRaises(installer.InstallError):
+                installer.install(self.root, shortcut=False)
+        self.assertEqual(self.state_on_disk()["status"], "installing")
+        self.assertNotIn("hermes", self.state_on_disk()["components"])
+        self.assertEqual(self.state_on_disk()["components"]["openclaw"], "complete")
+        self.assertFalse((self.root / "open-yuanxingmu").exists())
+        npm.assert_not_called()
+        runtime.assert_not_called()
+
+    def test_hermes_build_environment_has_private_home_without_user_keys_or_config(self):
+        with installer.installation(self.root):
+            pass
+        (self.root / "hermes").mkdir(mode=0o700)
+        with mock.patch.dict(os.environ, {"OPENAI_API_KEY": "synthetic-key", "HOME": "/other/home",
+                                         "UV_INDEX": "https://untrusted.invalid", "HTTPS_PROXY": "https://proxy.invalid"}, clear=True):
+            env = installer.hermes_installer.environment(self.root)
+        self.assertNotIn("OPENAI_API_KEY", env)
+        self.assertNotIn("UV_INDEX", env)
+        self.assertEqual(env["HOME"], str(self.root / "hermes/build-home"))
+        self.assertEqual(env["UV_PROJECT_ENVIRONMENT"], str(self.root / "hermes/env"))
+        self.assertEqual(env["HTTPS_PROXY"], "https://proxy.invalid")
+        self.assertEqual((self.root / "hermes/npm-user.conf").read_bytes(), b"")
+
+    def test_hermes_source_rejects_traversal_links_duplicates_before_writing_members(self):
+        prefix = "hermes-agent-" + "a" * 40
+        outside = self.write(self.base / "outside-source", b"must survive")
+        attacks = [(prefix + "/../outside-source", tarfile.REGTYPE, ""),
+                   (prefix + "/evil", tarfile.SYMTYPE, str(outside)),
+                   (prefix + "/evil", tarfile.LNKTYPE, str(outside)),
+                   (prefix + "/evil", tarfile.FIFOTYPE, ""),
+                   (prefix + "/would-write", tarfile.REGTYPE, "")]
+        for index, (name, kind, link) in enumerate(attacks):
+            root = self.directory("source-" + str(index))
+            (root / "hermes").mkdir(mode=0o700)
+            archive = self.base / ("source-" + str(index) + ".tar.gz")
+            with tarfile.open(archive, "w:gz") as stream:
+                valid = tarfile.TarInfo(prefix + "/would-write")
+                valid.size = 1
+                stream.addfile(valid, io.BytesIO(b"x"))
+                bad = tarfile.TarInfo(name)
+                bad.type, bad.linkname = kind, link
+                stream.addfile(bad, io.BytesIO(b"") if bad.isfile() else None)
+            with self.assertRaises(installer.InstallError):
+                installer.hermes_installer.extract_source(root, archive, {"commit": "a" * 40, "version": "0.21.2"})
+            self.assertFalse((root / "hermes/source/would-write").exists())
+            self.assertEqual(outside.read_bytes(), b"must survive")
+
+    def test_uv_lock_is_made_private_without_following_a_link(self):
+        with installer.installation(self.root):
+            pass
+        lock = self.write(self.root / "hermes/env/.lock", b"")
+        lock.chmod(0o666)  # uv 0.12.13 creates this inside its private venv.
+        installer.hermes_installer.secure_uv_lock(self.root)
+        self.assertEqual(stat.S_IMODE(lock.stat().st_mode), 0o600)
+        lock.unlink()
+        target = self.write(self.base / "outside-uv-lock", b"unchanged")
+        lock.symlink_to(target)
+        with self.assertRaises(installer.InstallError):
+            installer.hermes_installer.secure_uv_lock(self.root)
+        self.assertEqual(target.read_bytes(), b"unchanged")
+
+    def test_launcher_returns_recorded_hermes_paths_after_real_file_verification(self):
+        state, _ = self.fixture_state(complete=True)
+        self.hermes_fixture(state)
+        (self.root / state["paths"]["node"]).chmod(0o700)
+        actual_digest = launcher._digest
+        with mock.patch.object(launcher, "_bwrap_path", return_value=self.system_bwrap), \
+             mock.patch.object(launcher, "_digest", side_effect=lambda path, **kwargs: actual_digest(
+                 self.fixture_bwrap if str(path) == "/usr/bin/bwrap" else path)):
+            result = launcher._verify_installation(self.root / "open-yuanxingmu")
+        self.assertEqual(result[-2:], (self.root / "hermes/env/bin/python", self.root / "hermes/source"))
+
     def test_new_receipt_and_lock_are_private_and_identity_bound(self):
         with installer.installation(self.root) as state:
             info = self.root.stat()

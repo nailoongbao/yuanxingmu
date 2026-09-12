@@ -2,7 +2,7 @@
 
 The host holds the model credential and contacts one configured model service.
 The inner process receives only Unix socket paths; its TCP listeners stay in the
-namespace. These bridges do not inspect or log conversation bodies. The caller
+namespace. An optional host callback buffers and inspects model responses. The caller
 must put ``inner`` in a network namespace and mount only the specified sockets
 and the narrow ``runtime/webui`` directory, not the host runtime directory.
 """
@@ -24,10 +24,12 @@ import stat
 import subprocess
 import sys
 import threading
+import time
 from urllib.parse import urlsplit
 
 
 MODEL_PORT = 18701
+MODEL_RESPONSE_TIMEOUT = 180
 MAX_MODEL_REQUEST = 16 * 1024 * 1024
 INNER_BOOTSTRAP = (
     "import sys; sys.path.insert(0, sys.argv.pop(1)); "
@@ -227,6 +229,20 @@ class _ModelHandler(BaseHTTPRequestHandler):
             if len(body) != length:
                 self._error(400, "incomplete_request")
                 return
+            output_guard = getattr(self.server, "output_guard", None)
+            if output_guard is not None and hasattr(output_guard, "preflight"):
+                notice = output_guard.preflight(body)
+                if notice is not None:
+                    kind, checked = notice
+                    self.send_response_only(200)
+                    self.send_header("Content-Type", kind)
+                    self.send_header("Content-Length", str(len(checked)))
+                    self.send_header("Cache-Control", "no-store")
+                    self.send_header("Connection", "close")
+                    self.end_headers()
+                    response_started = True
+                    self.wfile.write(checked)
+                    return
             scheme, hostname, port, path = self.server.upstream
             cls = http.client.HTTPSConnection if scheme == "https" else http.client.HTTPConnection
             connection = cls(hostname, port, timeout=10)
@@ -247,6 +263,45 @@ class _ModelHandler(BaseHTTPRequestHandler):
                 self._error(502, "model_upstream_redirect_or_upgrade_refused")
                 return
             content_type = response.getheader("Content-Type", "").lower()
+            output_guard = getattr(self.server, "output_guard", None)
+            if output_guard is not None:
+                # A native post-response hook may run after UI deltas were shown.
+                # Release no provider headers or body until the whole response
+                # has passed the host check. One response has a bounded buffer.
+                from .model_output import MAX_RESPONSE
+                if response.status != 200:
+                    self._error(502, "model_upstream_error")
+                    return
+                data = bytearray()
+                deadline = time.monotonic() + MODEL_RESPONSE_TIMEOUT
+                while not self.server.stopping.is_set():
+                    if response.isclosed() or response.length == 0:
+                        break
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        self._error(504, "model_response_deadline")
+                        return
+                    tracked.settimeout(remaining)
+                    chunk = response.read1(min(64 * 1024, MAX_RESPONSE + 1 - len(data)))
+                    if not chunk:
+                        break
+                    data.extend(chunk)
+                    if len(data) > MAX_RESPONSE:
+                        self._error(502, "model_response_too_large")
+                        return
+                if self.server.stopping.is_set():
+                    return
+                checked = output_guard(bytes(data), content_type)
+                self.send_response_only(200)
+                self.send_header("Content-Type", "text/event-stream" if content_type.startswith("text/event-stream") else "application/json")
+                self.send_header("Content-Length", str(len(checked)))
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Connection", "close")
+                self.end_headers()
+                response_started = True
+                self.wfile.write(checked)
+                self.wfile.flush()
+                return
             self.send_response_only(response.status)
             self.send_header("Content-Type", "text/event-stream" if content_type.startswith("text/event-stream") else "application/json")
             self.send_header("Cache-Control", "no-store")
@@ -340,12 +395,15 @@ class HostNetwork:
     The host and inner process must use the same absolute runtime paths.
     """
 
-    def __init__(self, runtime: Path, *, model_url: str, api_key: str, webui_port: int):
+    def __init__(self, runtime: Path, *, model_url: str, api_key: str, webui_port: int, output_guard=None):
         self.runtime = Path(runtime).absolute()
         self.upstream = _upstream(model_url)
         if not isinstance(api_key, str) or not api_key or any(ord(c) < 33 or ord(c) > 126 for c in api_key):
             raise ValueError("invalid_model_api_key")
         self.api_key = api_key
+        if output_guard is not None and not callable(output_guard):
+            raise ValueError("invalid_model_output_guard")
+        self.output_guard = output_guard
         self.webui_port = _port(webui_port)
         self._stack = None
 
@@ -360,6 +418,7 @@ class HostNetwork:
             server, path = _listen(socket.AF_UNIX, str(self.runtime / "model.sock"), _ModelHandler)
             server.upstream = self.upstream
             server.api_key = self.api_key
+            server.output_guard = self.output_guard
             stack.enter_context(_Serving(server, path))
             stack.enter_context(_relay(socket.AF_INET, ("127.0.0.1", self.webui_port),
                                        socket.AF_UNIX, str(self.runtime / "webui" / "gateway.sock")))

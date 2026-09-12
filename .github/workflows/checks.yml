@@ -24,8 +24,70 @@ jobs:
         run: python -I -m defensecheck --help
       - name: Check packaged OpenClaw integration
         run: python -I -c "from importlib.resources import files; assert files('yuanxingmu').joinpath('integrations/openclaw/plugin/index.mjs').is_file()"
+      - name: Check packaged Hermes and Mastra integrations
+        run: python -I -c "from importlib.resources import files; root = files('yuanxingmu'); required = ('integrations/hermes/plugin/__init__.py', 'integrations/hermes/plugin/plugin.yaml', 'adapters/mastra/index.mjs', 'adapters/mastra/client.mjs', 'adapters/mastra/package.json', 'adapters/mastra/package-lock.json'); assert all(root.joinpath(name).is_file() and root.joinpath(name).read_bytes() for name in required), 'Packaged integrations missing or empty'"
       - name: Check packaged workbench CLI and browser assets
         working-directory: ${{ runner.temp }}
         run: |
           python -I -m yuanxingmu desk --help
-          python -I -c "from importlib.resources import files; root = files('yuanxingmu.dashboard').joinpath('web'); required = ('index.html', 'app.js', 'mail.js', 'styles.css', 'mark.svg'); assert all(root.joinpath(name).is_file() and root.joinpath(name).read_bytes() for name in required), 'Packaged dashboard assets missing or empty'"
+          python -I -m yuanxingmu hermes init --help
+          python -I -c "from importlib.resources import files; root = files('yuanxingmu.dashboard').joinpath('web'); required = ('index.html', 'app.js', 'mail.js', 'actions.js', 'targets.js', 'protection.js', 'alerts.js', 'styles.css', 'mark.svg'); assert all(root.joinpath(name).is_file() and root.joinpath(name).read_bytes() for name in required), 'Packaged dashboard assets missing or empty'"
+
+  python-native-tools:
+    name: Native tools / ${{ matrix.batch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - batch: langchain-openai-pydantic
+            requirements: docs/native-adapters-requirements.txt
+            runner: tests/run_native_sdk_adapters.py
+          - batch: adk-crewai-agno
+            requirements: docs/additional-native-adapters-requirements.txt
+            runner: tests/run_additional_sdk_adapters.py
+          - batch: autogen-llamaindex
+            requirements: docs/autogen-llama-adapters-requirements.txt
+            runner: tests/run_autogen_llama_adapters.py
+          - batch: microsoft-smolagents
+            requirements: docs/microsoft-smolagents-adapters-requirements.txt
+            runner: tests/run_microsoft_smolagents_adapters.py
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r "${{ matrix.requirements }}"
+      - run: python -m pip check
+      - name: Exercise actual SDK tools with local effects and no model calls
+        run: python -B "${{ matrix.runner }}" --output "${{ runner.temp }}/native-evidence-${{ matrix.batch }}.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: native-evidence-${{ matrix.batch }}
+          path: ${{ runner.temp }}/native-evidence-${{ matrix.batch }}.json
+
+  mastra-native-tools:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.16.0'
+      - name: Install isolated Mastra dependencies
+        shell: bash
+        run: |
+          mkdir -p "$RUNNER_TEMP/yxm-mastra-sdk"
+          cp yuanxingmu/adapters/mastra/package*.json "$RUNNER_TEMP/yxm-mastra-sdk/"
+          npm --prefix "$RUNNER_TEMP/yxm-mastra-sdk" ci --ignore-scripts --no-audit --no-fund
+      - name: Exercise actual Mastra tools and Unix transport with no model calls
+        shell: bash
+        run: python -B tests/run_mastra_native_adapter.py --node "$(command -v node)" --sdk-env "$RUNNER_TEMP/yxm-mastra-sdk" --output "$RUNNER_TEMP/mastra-evidence.json"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mastra-native-evidence
+          path: ${{ runner.temp }}/mastra-evidence.json

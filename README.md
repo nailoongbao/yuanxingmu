@@ -10,6 +10,8 @@ Let AI read a quote and draft an email. Review the recipient and full text, edit
 
 **Linux research prototype.** Verified with real bubblewrap, SQLite, isolated processes and an independent HTTP receiver using synthetic data. No attack-model evaluation or production protection rate. The repository and system are both named Yuanxingmu (元星木).
 
+The development tree now includes layered checks for external instructions, memory changes, task drift, dangerous commands, and selected skills; host approvals, persistent pause/recovery, and buffered response review; and an official Hermes integration. The [AgentWard feature comparison](docs/agentward-coverage.zh-CN.md) links the actual source, tests, observed failures, and remaining gaps. [Framework support](docs/framework-support.zh-CN.md) distinguishes SDK tool tests from complete native runs. These additions are not yet in the existing installer or older videos. Current small-model trials include false positives on legitimate local writes; they are not evidence of production readiness or overall superiority.
+
 ## Draft first. Review before sending.
 
 New workbench profiles support email drafts. Review and edit the recipient, subject and full text, then confirm that exact message. Repeated confirmation cannot create another submission attempt; interrupted sends are never retried automatically. Approval does not grant the agent general sending permission.
@@ -74,7 +76,7 @@ python -I -m yuanxingmu run --policy policy.json --state authority-state \
 
 Resume with the same state directory and task ID, omitting `--new-task`. See the [policy example and threat model](docs/yuanxingmu.md). Task creation, policies and mount selection are trusted host operations, not agent tools.
 
-The [OpenClaw native execution](examples/yuanxingmu/openclaw/README.md) and [Hermes native terminal environment](examples/yuanxingmu/hermes/README.md) examples have completed their respective integration demonstrations. The earlier OpenClaw example uses a scripted model; the newer genuine-model session is linked above. Hermes exercises native tools without a model conversation. Coverage is limited to the tools and configurations listed in each example.
+The [OpenClaw native execution](examples/yuanxingmu/openclaw/README.md) and [Hermes native terminal environment](examples/yuanxingmu/hermes/README.md) examples have completed their respective integration demonstrations. The earlier OpenClaw example uses a scripted model; the newer genuine-model session is linked above. The earlier Hermes example exercises tools without a model conversation. New official dashboard and genuine-model results, including failed normal tasks, are recorded in the [Hermes validation report](yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md). Coverage is limited to each record's versions, tools, and configuration.
 
 The [independent Linux CI report](examples/yuanxingmu/verified-hosted-report.json) records 33 passing tests and 19 core demonstration checks. This CI run covers the execution core, not framework WebUIs or autonomous model attacks.
 

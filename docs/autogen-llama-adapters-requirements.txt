@@ -1,0 +1,6 @@
+autogen-core==0.7.5
+autogen-agentchat==0.7.5
+llama-index-core==0.14.24
+llama-index-workflows==2.23.3
+llama-index-instrumentation==0.6.0
+pydantic==2.13.5

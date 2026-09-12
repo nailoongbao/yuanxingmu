@@ -274,6 +274,15 @@ class MailDraftTests(unittest.TestCase):
         self.assertEqual(rows[0], self.new("history-0"))
         self.assertEqual(rows[0], self.store.get(self.task, rows[0]["id"])["draft"])
 
+    def test_latest_drafts_follow_submission_order_when_host_clock_moves_back(self):
+        with patch("yuanxingmu.mail_drafts._now", side_effect=[
+                "2026-09-12T12:00:00+00:00", "2026-09-12T11:00:00+00:00"]):
+            first = self.new("before-clock-correction")
+            second = self.new("after-clock-correction")
+        reopened = MailDrafts(self.open_authority())
+        self.assertEqual([second["id"], first["id"]],
+                         [row["id"] for row in reopened.list(self.task)["drafts"]])
+
     def test_concurrent_submissions_and_confirmations_share_sqlite_order(self):
         stores = [self.store, MailDrafts(self.open_authority())]
         barrier = threading.Barrier(2)

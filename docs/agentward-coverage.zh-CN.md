@@ -1,0 +1,97 @@
+# 玄甲 AgentWard 功能对照与验收清单
+
+核查日期：**2026-09-12**。比较对象是 [FIND-Lab/AgentWard](https://github.com/FIND-Lab/AgentWard)，不是名字相近的其他产品。本次通过 GitHub API 确认其 `main` 为 [`46309333bdfdbcf4701000c1dad85b33b4a0e7ef`](https://github.com/FIND-Lab/AgentWard/tree/46309333bdfdbcf4701000c1dad85b33b4a0e7ef)，提交时间为 2026-06-04 11:47:33 UTC；下列玄甲链接固定在这个版本。核查包括 README、配置、主插件、五层实现、命令、警告和日志代码。
+
+元星木的目标是覆盖这些实际功能，再补上权限、隔离和真实发送的控制。**目前不能宣称已全面覆盖或效果超过玄甲**：功能已写入、组件检查通过、原生 Agent 确实触发并被拦截，是三种不同的证据。
+
+## 如何读这份表
+
+- **已实现**：有可调用代码，不表示已完成真实 Agent 验收。
+- **组件验证**：检查过真实函数、HTTP/Unix socket、文件系统或插件模块；测试中的裁判回答可能是预设响应。
+- **原生验证**：官方 Agent 在对应版本实际运行；只有观察到候选危险调用、拦截决策及下游结果，才算验证该次拦截。
+- **待完成**：接口、完整覆盖范围或证据仍有缺口；不会把“没有发生危险行为”当成拦截成功。
+
+这里的“语义偏移”是：用户请 AI 整理文件，AI 却准备向陌生人发资料；“危险指令阻断”是：在真正运行删文件、提权或下载执行代码之前停住。两者需要同时工作，不能只靠一个模型回答“安全”。
+
+新增核查记录：[输入、记忆与命令逐类别补漏](agentward-rule-audit-2026-09-12.md)、[OpenClaw 实机结果与误报](openclaw-layers-validation-2026-09-12.md)、[独立检查模型及其漏判](judge-configuration.zh-CN.md)。
+
+## 五层逐项对应
+
+| 玄甲实际功能 | 元星木实现和证据 | 当前缺口或边界 |
+|---|---|---|
+| **输入：识别外部内容伪造系统角色、模板标记、越狱、覆盖既有指令、索要凭证**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/input-sanitization.ts) | [`Guards.check_input`](../yuanxingmu/guards.py) 做规范化及规则检查；命中时以固定说明替代外部内容。Broker 与 OpenClaw/Hermes 工具路径有接入；[`test_yuanxingmu_guards.py`](../tests/test_yuanxingmu_guards.py) 覆盖规则及关闭/观察模式。 | 规则不穷尽所有提示注入。需要按网页、文件、消息、搜索结果等原生来源分别验证，不能以邮件案例代表全部。玄甲的警告类型定义也不等于所有类型都有实际检测器。 |
+| **输入：递归检查工具结果里的字符串、数组和对象**。 | Broker 对输入文本检查；原生插件整理工具结果后送主机检查，保留文本换行，避免重复 JSON 编码导致漏检。 | 新增钩子的模块测试不能代表所有官方工具结果类型；图片、音频、嵌入对象等未建立完整承诺。 |
+| **输入：按配置插入提醒、替换危险内容、暂时停用工具、覆盖受污染回答**。[主插件](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts) | 危险输入不交给 AI；[`quarantine.py`](../yuanxingmu/quarantine.py) 在主机暂停整项工作及分出的任务，作废未使用审批和待确认草稿；[`model_output.py`](../yuanxingmu/model_output.py) 收齐模型响应后检查，拒绝时只返回明确的主机提醒。暂停 16 项、当前响应协议与真实套接字 24 项测试通过。 | 暂停需本人恢复，不随下一条用户消息解除。回答检查覆盖所接入模型接口的正文、拒绝及思考文本；工具卡参数、图片、工具结果和旧聊天记录另有边界。原生界面新版整体验收仍在进行；详见[回答与暂停](response-and-quarantine.md)。 |
+| **记忆：检查 `write/edit/exec` 对 MEMORY.md、memory/、SOUL.md、IDENTITY.md、AGENTS.md、USER.md、TOOLS.md 的改写**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/cognition-protection.ts) | [`Guards.check_memory`](../yuanxingmu/guards.py) 识别受保护名字、写入/补丁工具及命令中的改写；规则对安全绕过等内容给出拦截。组件用例覆盖正常写入和恶意记忆修改。 | 通过任意编程语言或别名改写的情况不能仅靠文本规则穷尽。宿主只读挂载才承担不可改的边界；要验收 Hermes 原生 file 工具与 terminal 的真实执行路径。 |
+| **决策：用模型比较最近用户意图、上下文、助手行为，发现指令语义偏移**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/decision-alignment.ts) | [`Guards.check_alignment`](../yuanxingmu/guards.py) 对照主机固定目标检查完整工具候选；`check_response` 检查收齐后的模型文字。两者采用不同检查提示，严格解析 `allow/block/review`。强制模式下模型缺失、超时、非法判定或审计失败均不放行。组件测试实际走 HTTP，裁判文本为预设响应。 | 不能保证识别所有偏离或恶意内容。Hermes 本地真机已保留一次含内部底价外部邮件的模型阻止，也保留正常本地摘要被误判的失败；新提示词和回答缓冲的正常对照仍需验收。 |
+| **执行：阻止毁损、提权、远程代码执行、反向 shell**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/exec-control.ts) | [`Guards.check_command`](../yuanxingmu/guards.py) 检查命令分段、解释器包装、敏感操作与下载执行；OpenClaw 钩子与 Hermes terminal provider 在执行前调用。危险硬规则优先于模型的“需审批”。 | 解析器有明确支持范围；它不是任意 shell 或程序的形式化证明。还需用各原生入口实测，尤其是代码执行器和子 Agent。 |
+| **执行：敏感凭证/环境访问、资源耗尽、无限循环转人工审批**。 | 明确的凭证窃取、进程爆炸等直接阻止；需要核对的候选进入主机一次性审批，批准绑定完整参数与本次调用。主机审批的 4 项账本测试及 11 项真实 Broker 套接字测试通过。Hermes 适配已接入这条审批路径。 | 策略和玄甲不完全相同。当前没有 CPU/内存/磁盘配额。主机审批组件通过不等于 Hermes 官方网页的批准后执行已通过；该原生正常路径仍在验收。 |
+| **基础：检查 Gateway 暴露、认证、会话隔离、敏感工具配置**。[源码](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/foundation-scan.ts) | [`Guards.scan_foundation`](../yuanxingmu/guards.py) 检查显式配置快照：绑定地址、认证、工具清单、提权、直接联网、隔离执行、会话分离、凭证归属、技能固定。缺字段或无效字段不会当成正常。 | 这是对主机声明和选定文件的检查；不等于自动发现机器上全部暴露端口或所有插件。应与实际进程、挂载和网络验证共同验收。 |
+| **基础：技能清单、内容规则检查、模型检查及可信哈希缓存**。 | 现有扫描器在 Linux 逐级不跟随链接，限制文件大小、总量、深度，读取完整 UTF-8 文件后检查；拒绝硬链接、特殊文件和无法完整扫描的内容。[`skills.py`](../yuanxingmu/skills.py) 已实现显式选中技能的内容寻址只读快照、精确清单及启动前重验；28 项 Linux 组件测试通过，包括真实只读挂载。 | 固定扫描目录必须与 Agent 最终加载目录相同。Hermes 默认采用空技能库、显式选择后挂载；不能仅因源码目录只读就把 `skills_pinned` 写成 true。官方框架最终挂载与自动复制关闭仍需原生验收。 |
+
+这组新增检查在开发时完成了 **Linux/WSL 51 项组件测试**；Windows 完成 27 项，另外 24 项因依赖 Linux 的隔离或文件系统接口跳过。这些数量对应当时的 guards、Broker 与原生钩子组件，不是 51 次真实模型攻击，也不是当前所有模块的完整测试总数。
+
+技能快照另有 [`test_yuanxingmu_skills.py`](../tests/test_yuanxingmu_skills.py) 的 28 项 Linux 测试：来源修改、路径链接、硬链接、管道、非文本、超限和快照篡改都不静默跳过；同用户进程在实际 bubblewrap 只读挂载中写文件和改权限均被拒绝。默认选择为空；选中集默认上限为 32 文件、单文件 64 KiB、总量 512 KiB、深度 16。超限需显式调整快照与扫描器双方限制，不能只扩大其中一个。这里没有调用模型，也没有运行官方 Agent。
+
+另用安装的 OpenClaw 2026.9.4 真正加载器和工具执行包装器完成了 [`test_yuanxingmu_openclaw_hooks_sdk.mjs`](../tests/test_yuanxingmu_openclaw_hooks_sdk.mjs) 的 6 项检查。它复现并修正了只在 `full` 模式注册、导致实际 `discovery` 注册表没有防御钩子的缺陷；检查了正常允许、阻止、SDK 超时后晚到允许、取消和一次性审批。Unix socket 是真实的，裁判响应和下游实现是受控测试对象，**没有真实模型或 Agent 对话**。默认 SDK 钩子超时为 15 秒；插件显式设置 65 秒、主机通信限制 60 秒；更短的宿主超时仍会停止执行，但应记为检查失败，不能记为攻击识别成功。
+
+独立套件的 Linux/WSL 结果为：[暂停测试](../tests/test_yuanxingmu_quarantine.py) **16/16**、当前[回答协议与 Unix HTTP 测试](../tests/test_yuanxingmu_model_output.py) **24/24**（2026-09-12 复验，8 项协议加 16 项真实 Unix HTTP）、[审批账本](../tests/test_yuanxingmu_tool_reviews.py)与[主机审批套接字](../tests/test_yuanxingmu_tool_review_broker.py)合计 **15/15**。它们不追加到上面的历史 51 项数字。暂停测试检查跨子任务、重启、并发恢复及旧审批失效；回答测试确认首段文字在收齐并完成检查前不发送，拒绝和超时不会漏出原文。新增状态检查区分暂停、永久撤权及状态读写故障：发送前拒绝时上游和裁判请求均为零；请求发出后发生撤权只说返回内容暂不展示，不误称请求尚未发送；提示不泄露内部错误，也不把未检查说成检查失败。这些回复均为本地预设数据，没有运行真实模型。
+
+回答套件 **17/17 是历史结果**（7 项协议加 10 项 Unix HTTP）；当时 Windows 为 7 通过、10 跳过。当前 24 项已包含并扩展旧检查，两次结果不能相加，也不能把旧 Windows 数字写成当前套件的 Windows 验证。
+
+Hermes `v2026.9.11 / 0.21.2` 的本地 `native07-layers` 首轮记录了正常读取，以及输入、记忆、危险命令和语义偏移的真实候选命中；独立 `native08-badskill` 在启动前拒绝恶意技能，并确认清理完成。同一批记录也保留了良性基础配置和正常摘要的误报。加入暂停、回答缓冲后的 `native10` 验证了正常读取与完整回答，以及暂停后新聊天没有新增上游模型任务或工具结果；两次正常本地写入仍被语义模型误拦，另有不合法命令，不算防御成功。[Hermes 实测说明](../yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md)保留各次分类。审批正常路径及完整五层视频尚未完成。**这些记录不构成新版五层全通过，也没有运行冻结攻击集。**
+
+## 五层以外，也必须对齐
+
+| 功能 | 玄甲源码行为 | 元星木状态 |
+|---|---|---|
+| 人工审批 | OpenClaw `requireApproval`；展示候选操作；可配置超时。`allow-always` 只缓存本进程中**完全相同操作**的哈希。[主插件](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts) | 主机保存完整工具参数，工作台提供“只允许这一次/拒绝这一次”；5 分钟到期，重启作废未消费审批，消费回复丢失也不重新发许可。15/15 主机审批测试通过；邮件和其他动作仍有独立草稿确认。未提供永久放行；Hermes 官方界面正常批准后执行仍待验收。 |
+| 运行中配置 | 认证后的 `/agentward config get/set/reset`；无参数 `get` 列可写字段，按键读取可访问其他既有路径；`set` 仅允许 `layers.*` 和 `notifications.*` 现有叶子字段；`reset` 恢复启动时的这些字段。[命令](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/core/commands.ts#L109)和[回调](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts#L126)修改内存配置，未在此持久写回文件。 | 已有 `yuanxingmu defense get/set/reset`。带 `live_settings_v1` 的新实例可由工作台或 CLI 经主机审批入口修改运行中五层开关与全局模式；旧实例须确认停止。重置是五层全开、强制拦截，不是恢复创建时设置。修改作废未使用审批和草稿，不解除暂停，不改目标或权限；基础报告标旧、下次启动重查。真实管理 HTTP + Unix socket **4/4** 通过，框架运行状态为测试对象，原生验收待完成；没有同等聊天配置命令。[实现](../yuanxingmu/protection.py#L26) |
+| 独立开关与仅观察 | 每层检测与干预可分别开关；基础层还细分配置、技能、规则、语义检查，输入层有三项干预开关。通知可运行中修改，日志与审批等属于静态配置，不在命令写入范围内。[配置](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/config.ts#L9) | 五个独立启用位加一个全局 `enforce/observe`；检查事件以 `assessed/enforced/would_verdict` 区分关闭、仅观察与实际拦截。网页已解释全局只记录不拦截，但逐层摘要仍只写开启/未开启。尚不能只让一层观察、其他层继续拦截，基础扫描也未独立开关配置检查和技能语义检查。[策略](../yuanxingmu/guards.py#L119)、[界面](../yuanxingmu/dashboard/web/protection.js#L172) |
+| 主动通知 | 当前通道和目标存在时，可调用 `openclaw message send` 发送警告。 | 暂停卡片、页签计数和需保留网页的本机桌面提醒；另有主机[后台提醒](background-notifications.zh-CN.md)，可关闭浏览器，Workbench 进程须运行。固定通用 JSON 接收地址、持久队列、重启补投、稳定事件编号及失败/容量显示。当前队列 28/28、真实工作台 HTTP + 本机接收端 15/15；重试已覆盖时钟回拨与跨进程/系统重启，旧队列格式升级前须停止旧工作台。没有宣称第三方 IM/邮件提供商已验收，也没有复刻玄甲的当前聊天通道发送。 |
+| 事件记录 | 主机 logger 加 JSONL 文件日志，字段为时间、级别、消息。[日志](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/util/logger.ts) | 元星木记录层、候选哈希、判定、是否实际拦截、模型响应哈希和耗时；原始裁判文本留在主机审计。界面不直接展示原始敏感内容。日志不是防篡改远程审计系统。 |
+| 警告作用范围 | 单次、暂时、到下一条用户消息；源码中所谓 permanent 也会在下一次用户请求清除。[警告](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/core/warnings.ts) | 已有单次候选判定、整项工作及子任务暂停、本人核对后恢复、永久撤销。相同未处理告警去重，新告警使旧页面的恢复请求失效；重启及下一条聊天消息不自动解除暂停。生命周期与玄甲不同，尚未复刻其全部警告时长选项；恢复也不能撤销永久撤权。 |
+| 安装与平台 | README 标记 Linux 完整，macOS/Windows 进行中；OpenClaw 插件包，声明 peer 版本范围。 | 元星木执行隔离依赖 Linux/bubblewrap，Windows 通过 WSL；没有无隔离降级模式。支持特定 OpenClaw/Hermes 版本，不代表所有版本可装即用。 |
+| 演示与上手 | README 已有中文/英文五层视频。[README](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/README.md) | 已有 OpenClaw 原生运行和邮件案例。新五层须分别录制真实 WebUI 过程并附证据，不能用旧视频给新功能背书；完整五层视频尚未全部验收。 |
+
+## 配置与记录中值得优先补齐的五项
+
+以下是源码差距和建议，尚未实现的项目不计入覆盖。P1 直接影响持续使用，P2 改善恢复和日常操作。
+
+| 优先级与用户问题 | 玄甲实际能力 | 元星木现状与建议 |
+|---|---|---|
+| **P1：一层误报时，其余防护仍应拦截。** | 各层检测和干预独立；例如[记忆、决策、执行设置](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/config.ts#L32)，[执行干预检查](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts#L321)。 | [`GuardPolicy`](../yuanxingmu/guards.py#L129) 和 [`_finish`](../yuanxingmu/guards.py#L457) 只有全局观察。应提供每层“拦截／只记录／关闭”，逐层显示实际状态；保留现有全局快捷设置。现有事件已正确区分仅观察，不应描述为完全缺少状态提示。 |
+| **P1：看得懂哪项设置从什么改成什么。** | [`set`](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/core/commands.ts#L139) 记录旧值、新值及成功结果；`reset` 记录恢复动作和字段数，未逐项记录差异。 | [`apply_profile_settings`](../yuanxingmu/protection.py#L101) 已记录状态编号、审批作废数量、新策略哈希；工作台操作记录还可能保存结果策略。缺少 CLI 与网页统一的可读前后差异及操作入口。应仅记录允许修改的设置字段，区分修改与重置；不把凭证、任务正文塞入日志。 |
+| **P2：试调后能回到此前确认过的设置。** | [`reset`](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/core/commands.ts#L158) 恢复[首次初始化保存的启动快照](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts#L97)，不是恢复统一默认值。 | [`reset`](../yuanxingmu/protection.py#L43) 恢复全部开启；[网页按钮](../yuanxingmu/dashboard/web/protection.js#L48) 已准确命名，点击后仍须保存。可另存创建时或最近一次本人确认的设置，提供明确的还原入口；不能把“全部开启”伪称“撤销修改”。 |
+| **P2：调整技能检查时保留基础配置检查。** | [基础扫描](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/foundation-scan.ts#L911) 分别执行配置和技能检查，技能还有[规则／语义开关](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/layers/foundation-scan.ts#L824)。 | [`scan_foundation`](../yuanxingmu/guards.py#L892) 由同一个基础层开关控制配置规则、技能规则和两类模型检查。应能单独调技能语义检查，仍保留入口认证、权限暴露、隔离等检查；技能快照及只读挂载的要求继续独立成立。 |
+| **P2：在原生聊天页能找到当前防护和设置入口。** | [认证后的原生命令](https://github.com/FIND-Lab/AgentWard/blob/46309333bdfdbcf4701000c1dad85b33b4a0e7ef/index.ts#L126) 直接提供查看、修改及重置。 | 已有[CLI](../yuanxingmu/cli.py#L84) 和工作台；[OpenClaw 原生命令](../yuanxingmu/integrations/openclaw/plugin/commands.mjs#L5) 当前只有撤权。可先补本人可用的状态摘要和工作台入口，减少页面往返；设置写入仍走主机管理权限，不开放给模型工具。 |
+
+## 元星木另外承担的边界
+
+这些是不同的实现工作，不自动证明整体优于玄甲。
+
+| 工作 | 当前代码与证据 | 限制 |
+|---|---|---|
+| AI 进程不持有真实服务凭证，不能直接访问主机私有目录或直接联网 | [`sandbox.py`](../yuanxingmu/sandbox.py)、[`gateway_network.py`](../yuanxingmu/gateway_network.py)、[`authority.py`](../yuanxingmu/authority.py)；已有[原生 OpenClaw 报告](../examples/yuanxingmu/real_openclaw/evidence/REPORT.zh-CN.md)。 | Linux 共享内核；模型网络桥仍是特定受控路径。不能概括为硬件隔离或任意服务支持。 |
+| 任务换连接、重启后仍保留权限与撤销状态 | 主机 Broker/authority 保存任务家族与状态；原生 OpenClaw 旧记录含撤销后重启。 | 子 Agent、不同框架和新工具都要逐个验证身份绑定，不能靠框架名配置自动获得保证。 |
+| 真正发送之前核对用户批准的内容 | [`mail_drafts.py`](../yuanxingmu/mail_drafts.py)、[`mail_transport.py`](../yuanxingmu/mail_transport.py)；[邮件验收报告](../examples/yuanxingmu/email/evidence/report.md)。 | 精确草稿版本、目标和发送结果有边界；一次接收端回执不是任意邮箱服务的送达保证。 |
+| 不仅邮件：消息、上传、表单、覆盖文件、删除文件 | [`actions.py`](../yuanxingmu/actions.py)、[`test_yuanxingmu_actions.py`](../tests/test_yuanxingmu_actions.py)；主机保存候选并要求确认、固定目标与凭证、记录发送尝试，结果不明时不自动重试。 | 消息/上传/表单目前以本地接收端组件证据为主；文件操作限明确授权的小型既有 UTF-8 文件。未验证的真实提供商不能列为已送达。 |
+| 十一组常用 SDK 的原生工具接入 | LangChain/LangGraph、OpenAI Agents、PydanticAI、Google ADK、CrewAI、Agno、AutoGen、LlamaIndex、Microsoft Agent Framework、smolagents、Mastra 已通过真实 SDK 注册与调用，连接真实 Broker 套接字和本地接收端。[框架范围](framework-support.zh-CN.md)列出固定版本和五批证据。 | 这是原生工具适配，不是十一组完整 Agent 的隔离、模型循环或五层验收。smolagents 的 CodeAgent 执行边界未覆盖。旧 MCP 研究结果没有充作新适配证据。 |
+
+## 关于“超过玄甲”的证据
+
+源码中确有可直接核实的差异。例如玄甲的语义判断截断文本，缺少 `VERDICT` 时默认 OK，若上下文缺失、裁判错误则可能不生成警告；元星木固定完整目标、传完整候选，并在无法得到有效判断时停止。玄甲技能扫描也有缺少模型或文件不可读时跳过的路径。它们是具体实现差异，**不是一次阅读源码就能得出的整体安全胜负**。
+
+本地玄甲复现使用 OpenClaw 2026.9.4。安装兼容处理只移除了生成插件中一行裸类型导入，原始 23 个源码文件保留不变。正常原生任务有真实裁判 OK 与接收回执；危险原生任务中模型没有真正发起目标发送，所以不能算玄甲成功拦截或失败。单独向原始钩子提交候选时，观察到真实裁判 BLOCKED、`block:true` 和无接收回执；这属于组件证据。
+
+要作公开效果比较，至少要在双方同一官方框架版本、同一模型、同一正常任务与攻击输入、相同工具权限下，分别记录：模型实际请求、实际裁判/规则、审批、最终副作用、正常任务是否完成。超时、加载失败、模型自行拒绝、没有触发候选都要单独分类。当前没有可支持“整体胜出”的同条件攻击成功率数据。
+
+## 发布前尚需关闭的缺口
+
+1. 对已实现的默认空集、显式技能选择和只读快照，继续核对每个官方运行入口的实际加载目录；避免扫 A 用 B。
+2. 在 OpenClaw/Hermes 官方 WebUI 分别验证输入、记忆、语义偏移、危险命令和基础配置；每层保留一个正常对照及真实下游结果。
+3. 完成 Hermes 官方页面的人工审批后执行正常对照；用新实例验收暂停/恢复、回答缓冲与运行中设置。旧实例设置仍限停止后修改；后台通用 JSON 提醒已通过本机接收端验证，仍需验收第三方服务，没有玄甲同等聊天配置和当前聊天通道告警。
+4. 对消息、上传、表单与文件操作重复原生验收；产品界面只展示已验收的来源与动作。
+5. 录制每层实机视频并绑定版本、配置、事件及回执；展示实际生效层，不把关闭、观察或不可用状态标为“已保护”。
+
+框架逐个接入的进度与版本见[框架支持矩阵](framework-support.zh-CN.md)。

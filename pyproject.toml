@@ -20,5 +20,5 @@ yuanxingmu = "yuanxingmu.cli:main"
 include = ["defensecheck*", "yuanxingmu*"]
 
 [tool.setuptools.package-data]
-yuanxingmu = ["integrations/openclaw/plugin/*.mjs", "integrations/openclaw/plugin/*.json", "integrations/openclaw/plugin/*.md"]
+yuanxingmu = ["integrations/openclaw/plugin/*.mjs", "integrations/openclaw/plugin/*.json", "integrations/openclaw/plugin/*.md", "integrations/hermes/plugin/*.py", "integrations/hermes/plugin/*.yaml", "integrations/hermes/*.md", "adapters/mastra/*.mjs", "adapters/mastra/*.json"]
 "yuanxingmu.dashboard" = ["web/*"]

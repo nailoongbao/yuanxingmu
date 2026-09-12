@@ -1,0 +1,309 @@
+{
+  "schema_version": 1,
+  "time": "2026-09-12T05:57:19.556231+00:00",
+  "scope": "Task-local development wheel installation and native HTTP lifecycle checks; no model inference, real sending, browser interaction, or release publication. The new directory completed after three diagnosed failures and an explicit resume; no second clean-directory rebuild of the final installer was performed.",
+  "passed": true,
+  "installer": {
+    "version": "0.2.0a1",
+    "publishable": false,
+    "bundle": {
+      "bytes": 73804,
+      "sha256": "d7df0411423b938017fc265e4f06baa2845331459e5410163230298a1248d3fb"
+    },
+    "source_matches_validated_bundle": true,
+    "inputs": {
+      "yxm_setup/__init__.py": {
+        "bytes": 91,
+        "sha256": "e320cd23934ae94bbbd8163917969b67440da3fde49b82f7fcec67af0ed1caf6"
+      },
+      "yxm_setup/setup.py": {
+        "bytes": 38090,
+        "sha256": "8215e6ac42f86d31c1b11addcf1777805a9f1cb40972d9a5915200e46a499f3f"
+      },
+      "yxm_setup/launcher.py": {
+        "bytes": 20703,
+        "sha256": "86087a297e40f6de823d15b88f525c2bc4ca4c7786ee9b5988bdb423e24b2e9d"
+      },
+      "yxm_setup/hermes.py": {
+        "bytes": 10198,
+        "sha256": "b838ab322bb9e87fcdf89ecddfa18bed33819aee431d174d3aff0ffffe0e41c6"
+      },
+      "yxm_setup/pins.json": {
+        "bytes": 2350,
+        "sha256": "1bca50a372f9972eda8dd45be2eae6a49c0370eceed8e271699c4cc27f1eb8a6"
+      },
+      "yxm_setup/openclaw-package.json": {
+        "bytes": 97,
+        "sha256": "c0dc45fdbce44014d8dad1d7ac3dc7af867c22c9c8b7fb0805334646b59cd321"
+      },
+      "yxm_setup/openclaw-package-lock.json": {
+        "bytes": 167015,
+        "sha256": "de05af1a481b26c1fabb84390fe60db73e09863f7922334c14fdb8eeaffc4569"
+      },
+      "LICENSE": {
+        "bytes": 1089,
+        "sha256": "819e8ab676cfc741497764e7f0f96b6b0d0b4db7cf12d0c218124a0f1fe24e0e"
+      },
+      "NOTICE.md": {
+        "bytes": 1925,
+        "sha256": "0f6650a89fedbd9a93c11f05f20d82016edbe79c31388d781ffd026750b3411d"
+      },
+      "LICENSES/Invariant-Apache-2.0.txt": {
+        "bytes": 11347,
+        "sha256": "90154031b70befefac025106f493124530e13c608b876cc1418b5f65ba945f14"
+      }
+    }
+  },
+  "development_wheel": {
+    "name": "agent_defense_check-0.5.0a1-py3-none-any.whl",
+    "bytes": 320460,
+    "sha256": "95f6172b6f0d8a2ce76455f14b4190286314aca132c9d87ae588e10293285f0a",
+    "version": "0.5.0a1",
+    "url": "development:local"
+  },
+  "source_snapshot_manifest": {
+    "bytes": 9500,
+    "sha256": "57ec4e104afc7ca43c7c149fa0f76d4fd105e5bee8461143eb8991d9b2440df0"
+  },
+  "receipt": {
+    "status": "complete",
+    "components": {
+      "app": "complete",
+      "node": "complete",
+      "openclaw": "complete",
+      "hermes": "complete"
+    },
+    "features": [
+      "hermes"
+    ],
+    "runtime_files": 16983,
+    "record": {
+      "bytes": 3120980,
+      "sha256": "6b10492149e36e6f1edd5b1006f010bd9bcffe5849c8c2e5ce4eec5b75ee6693"
+    }
+  },
+  "hermes": {
+    "release": "v2026.9.11",
+    "version": "0.21.2",
+    "commit": "939e45c91d751fadd94dcd1b873ac3cb44846213",
+    "archive_sha256": "eb8e393dd403cc903949c877bb09624d8e961fc7097f097353b34349cdc7223d",
+    "archive_bytes": 70506408,
+    "dependency_locks": {
+      "pyproject.toml": {
+        "bytes": 33790,
+        "sha256": "c71aa5bc9e437bac3b662fd04a4a7e121735ebc898373019a366d91e217e58a8"
+      },
+      "uv.lock": {
+        "bytes": 722858,
+        "sha256": "69b130365c9077ac9880c167daa64e39afc5611bb563a79a2fb3c612949beae9"
+      },
+      "package.json": {
+        "bytes": 2320,
+        "sha256": "8b5b2ea9721e8d4bdedea457f5b5bab038e7f3e11ea4e1381bd43f2e87ce04cd"
+      },
+      "package-lock.json": {
+        "bytes": 721606,
+        "sha256": "6965ae1e1d1354557abc26bb3fb17d84e783673be21640bd03f5e5e10b4990d7"
+      }
+    },
+    "uv_version": "0.12.13",
+    "npm_version": "11.17.0",
+    "python": "3.12.3",
+    "npm_workspaces": [
+      "web",
+      "ui-tui"
+    ],
+    "build_constraints": "setuptools==83.0.0\nwheel==0.48.0\npackaging==26.0\n"
+  },
+  "targeted_regressions": {
+    "passed": true,
+    "tests": 48,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "log_sha256": "449fbe428a95cfa2dfb980a5c05824f29ac67e58e59669cb75abc9e0ee4593c4"
+  },
+  "native_acceptance": {
+    "schema_version": 1,
+    "time": "2026-09-12T05:53:30.093800+00:00",
+    "passed": true,
+    "scenario_completed": true,
+    "frameworks": [
+      "openclaw",
+      "hermes"
+    ],
+    "model_requests": 0,
+    "scope": "Fresh installed launcher, actual framework initialization, native WebUI HTTP, duplicate refusal, reopen, revoke and stop, reviewed-email feature, empty draft list and unconfigured sender; no model inference or message sending.",
+    "checks": [
+      {
+        "name": "installed runtime is available",
+        "passed": true
+      },
+      {
+        "name": "installed Hermes is available",
+        "passed": true
+      },
+      {
+        "name": "new workbench has no saved work",
+        "passed": true
+      },
+      {
+        "name": "real workbench page is served",
+        "passed": true
+      },
+      {
+        "name": "duplicate launcher is refused",
+        "passed": true
+      },
+      {
+        "name": "new installation has no sender account",
+        "passed": true
+      },
+      {
+        "name": "real openclaw profile is initialized",
+        "passed": true
+      },
+      {
+        "name": "openclaw profile exposes reviewed email",
+        "passed": true
+      },
+      {
+        "name": "openclaw reviewed email queue is empty",
+        "passed": true
+      },
+      {
+        "name": "native openclaw WebUI responds",
+        "passed": true
+      },
+      {
+        "name": "openclaw native agent stops",
+        "passed": true
+      },
+      {
+        "name": "real hermes profile is initialized",
+        "passed": true
+      },
+      {
+        "name": "hermes profile exposes reviewed email",
+        "passed": true
+      },
+      {
+        "name": "hermes reviewed email queue is empty",
+        "passed": true
+      },
+      {
+        "name": "native hermes WebUI responds",
+        "passed": true
+      },
+      {
+        "name": "hermes native agent stops",
+        "passed": true
+      },
+      {
+        "name": "launcher exits cleanly 1",
+        "passed": true
+      },
+      {
+        "name": "previous management token is refused",
+        "passed": true
+      },
+      {
+        "name": "same work survives reopening",
+        "passed": true
+      },
+      {
+        "name": "workbench storage identity is preserved",
+        "passed": true
+      },
+      {
+        "name": "openclaw native WebUI reopens",
+        "passed": true
+      },
+      {
+        "name": "openclaw authority is revoked",
+        "passed": true
+      },
+      {
+        "name": "openclaw final native state is stopped and revoked",
+        "passed": true
+      },
+      {
+        "name": "hermes native WebUI reopens",
+        "passed": true
+      },
+      {
+        "name": "hermes authority is revoked",
+        "passed": true
+      },
+      {
+        "name": "hermes final native state is stopped and revoked",
+        "passed": true
+      },
+      {
+        "name": "launcher exits cleanly 2",
+        "passed": true
+      },
+      {
+        "name": "no requests reached the synthetic model",
+        "passed": true
+      }
+    ],
+    "failures": []
+  },
+  "reuse_checks": [
+    {
+      "installation": "new development installation with both saved synthetic profiles",
+      "exit_code": 0,
+      "passed": true,
+      "saved_work_and_bound_runtime_unchanged": true
+    },
+    {
+      "installation": "existing public 0.5.0a1 OpenClaw installation",
+      "exit_code": 0,
+      "passed": true,
+      "saved_work_and_bound_runtime_unchanged": true
+    }
+  ],
+  "diagnosed_install_attempts": [
+    {
+      "bundle": "installer-dev-01.pyz",
+      "result": "uv sync does not accept --build-constraint; use explicit private uv.toml build-constraint-dependencies"
+    },
+    {
+      "bundle": "installer-dev-02.pyz",
+      "result": "official Hermes refuses npm 11.13.0; pin separate npm 11.17.0 without changing OpenClaw"
+    },
+    {
+      "bundle": "installer-dev-03.pyz",
+      "result": "uv creates env/.lock with mode 0666; verify ordinary owned file and set 0600 before final inventory"
+    },
+    {
+      "bundle": "installer-dev-04.pyz",
+      "result": "installed and verified successfully, preserving completed app, Node and OpenClaw components"
+    }
+  ],
+  "default_release": {
+    "runtime_features": [],
+    "wheel": {
+      "name": "agent_defense_check-0.5.0a1-py3-none-any.whl",
+      "bytes": 150831,
+      "sha256": "177d30cb0dedd329bc2751a1b134b8b08184978e07a06b0209f68680e8058954",
+      "url": "https://github.com/yh-l20/yuanxingmu/releases/download/v0.5.0a1/agent_defense_check-0.5.0a1-py3-none-any.whl"
+    },
+    "hermes_enabled": false
+  },
+  "verification_sources": {
+    "tests/test_yuanxingmu_installer.py": {
+      "bytes": 54794,
+      "sha256": "96a08e346389c00f767f7ead069e84011a0b66898abb5023e135a2507c8cbfe2"
+    },
+    "install/smoke_install.py": {
+      "bytes": 11953,
+      "sha256": "bd32ef89504543e357a6a37cb18abe235208612ec1c982985e8a9b7d79d26fa9"
+    },
+    "install/check_reuse.py": {
+      "bytes": 1921,
+      "sha256": "ffed1a758ddcdc2843c069b919bb17b0d2dc0ddcb6a93cc12cb4a2f4c6bfcf32"
+    }
+  }
+}

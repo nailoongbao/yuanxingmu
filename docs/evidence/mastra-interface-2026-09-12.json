@@ -1,0 +1,68 @@
+{
+  "scope": "Actual installed SDK interface probe with caller-supplied synthetic contexts only",
+  "adapter_implemented": false,
+  "broker_connected": false,
+  "model_loop_run": false,
+  "trusted_native_identity_injection_validated": false,
+  "node": "v24.16.0",
+  "platform": "win32",
+  "package": "1.66.0",
+  "source_hashes": {
+    "dist/tools/index.js": "b624f5c2e5dbf850546f669edd4abec6ff8c22447d9cc5bc4aebbf457264a5f7",
+    "dist/tools/types.d.ts": "f3b3d3a1b4e8bd238a3d39e066590ed18c3a0e4a92cbec0f44177be05c27aa79",
+    "dist/tool-CYfsCURf.js": "87501cc0fdf1aababed9fcd0a546ff6b7bdcf9f6d449c69a76a799d9129599f1"
+  },
+  "observations": [
+    {
+      "input": {
+        "value": "synthetic",
+        "nested": {
+          "note": "synthetic"
+        }
+      },
+      "agent_call_id": null,
+      "workflow_run_id": null
+    },
+    {
+      "input": {
+        "value": "synthetic",
+        "nested": {
+          "note": "synthetic"
+        }
+      },
+      "agent_call_id": "synthetic-caller-supplied-id",
+      "workflow_run_id": null
+    },
+    {
+      "input": {
+        "value": "synthetic",
+        "nested": {
+          "note": "synthetic"
+        },
+        "socket_path": "/synthetic/extra.sock"
+      },
+      "agent_call_id": "synthetic-caller-supplied-id",
+      "workflow_run_id": null
+    },
+    {
+      "input": {
+        "value": "synthetic",
+        "nested": {
+          "note": "synthetic"
+        }
+      },
+      "agent_call_id": null,
+      "workflow_run_id": "fixture-run"
+    }
+  ],
+  "assertions": [
+    "real_sdk_tool",
+    "direct_call_has_no_agent_identity",
+    "normal_dispatch_rejects_extra_fields_before_callback",
+    "flat_context_is_organized_into_agent_context",
+    "resume_context_skips_original_input_schema_validation",
+    "workflow_run_identity_is_not_agent_tool_call_identity"
+  ],
+  "prohibited_network_attempts": [],
+  "status": "interface_probe_passed"
+}
