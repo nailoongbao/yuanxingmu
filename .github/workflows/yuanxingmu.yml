@@ -6,12 +6,16 @@ on:
     paths:
       - 'yuanxingmu/**'
       - 'tests/test_yuanxingmu*'
+      - 'tests/test_smolagents*'
+      - 'docs/sdk-runtime-requirements.txt'
       - 'pyproject.toml'
       - '.github/workflows/yuanxingmu.yml'
   pull_request:
     paths:
       - 'yuanxingmu/**'
       - 'tests/test_yuanxingmu*'
+      - 'tests/test_smolagents*'
+      - 'docs/sdk-runtime-requirements.txt'
       - 'pyproject.toml'
       - '.github/workflows/yuanxingmu.yml'
 
@@ -67,7 +71,7 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}:${{ github.workspace }}/tests
         run: |
-          "$RUNNER_TEMP/yxm-smolagents/bin/python" -m unittest tests.test_smolagents_runtime tests.test_smolagents_automatic_runtime -v
+          "$RUNNER_TEMP/yxm-smolagents/bin/python" -m unittest tests.test_smolagents_runtime tests.test_smolagents_automatic_runtime tests.test_smolagents_runtime_timeouts -v
           YUANXINGMU_SMOLAGENTS_PYTHON="$RUNNER_TEMP/yxm-smolagents/bin/python" python -m unittest tests.test_yuanxingmu_sdk_runtime tests.test_yuanxingmu_sdk_model_store tests.test_yuanxingmu_sdk_boundary_failures -v
       - name: Verify authority, broker, command and process boundaries
         env:

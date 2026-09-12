@@ -1,5 +1,7 @@
 # 在隔离环境中运行 smolagents 任务
 
+这是 **main 开发源码新增的入口**，尚未包含在已发布的 runtime `0.7.0a2` 或 installer `0.4.0a2` 中。以下命令需要安装当前源码；旧安装包不会自动获得它。
+
 `yuanxingmu sdk-run` 把一个完整的 smolagents `ToolCallingAgent` 模型循环接到元星木已有的防护服务。它使用已停止的 OpenClaw 或 Hermes 工作实例，沿用原来的任务身份、资料、保护字段、操作对象和复核记录；另开一个 SDK 会话不会清除这些限制。
 
 这条入口固定使用 **smolagents 1.26.0**。它是一个有明确工具范围的运行入口，不会接管用户任意 Python Agent、既有自定义工具、`CodeAgent`、其他 Agent 或第三方插件。
@@ -7,6 +9,15 @@
 ## 开始运行
 
 准备一个已启用分层防护、保护字段和回答缓冲的工作实例，并在工作台确认它已经停止。需要 Linux 或 WSL、可用的 bubblewrap，以及单独安装 smolagents 1.26.0 和 pydantic 2.x 的虚拟环境；SDK 虚拟环境应位于工作实例目录之外。本入口复用工作实例已配置的模型，不在命令行或 worker 中传入模型密钥。
+
+在源码目录使用系统 Python 建立独立 SDK 环境：
+
+```bash
+/usr/bin/python3 -m venv ~/yuanxingmu-smolagents
+~/yuanxingmu-smolagents/bin/python -m pip install -r docs/sdk-runtime-requirements.txt
+```
+
+虚拟环境的解释器须来自 `/usr` 下的系统 Python。原实例若固定了与 SDK 不同的工具清单，基础检查会拒绝运行；不会自动修改原授权或关闭检查。
 
 将本次任务写入一个 UTF-8 文本文件，然后运行：
 
@@ -47,15 +58,19 @@ yuanxingmu sdk-run \
 
 整个 SDK 进程及其子进程位于 bubblewrap 隔离环境。宿主只挂入选定的只读程序、SDK 虚拟环境、只读启动配置、工作目录，以及单独的 Broker 和模型套接字。worker 没有直接对外网络或真实模型密钥。
 
+当前入口设有运行时间、模型步数、输出和模型记录容量上限；尚未限制整个进程组的 CPU、内存与工作目录磁盘用量，不能据此保证宿主免受资源耗尽影响。
+
 模型请求只能经过宿主固定的模型服务。宿主在返回模型响应之前执行现有回答检查，再为工具调用写入独立编号并持久保存。工具操作继续经过原 Broker；最终回答从 worker 返回后，宿主还会检查一次。这个接入复用了原有检查和权限限制，没有新增一种“保证模型意图正确”的判断。
 
 ## 中断与恢复
 
-宿主模型记录保存请求摘要与已检查响应，工具编号由宿主生成。worker 的 JSON 检查点只保存对话、当前步骤和已完成工具结果，不保存密钥、批准结果或可重新加载的 Python 对象。
+宿主模型记录保存请求摘要与已检查响应，工具编号由宿主生成。worker 的 JSON 检查点只保存对话、当前步骤和已完成工具结果，不保存密钥、可充当批准凭证的权限材料或可重新加载的 Python 对象。
 
 恢复未完成步骤时，worker 把原请求交回宿主，取得宿主重新核对当前权限后的同一响应。它不会直接执行检查点中缓存的工具指令。如果返回内容与原记录不一致，会保留原检查点并停止。
 
 已经完成并写入检查点的工具不会自动再派发。若 Broker 已接受提案或完成自动操作、worker 却来不及记录结果，恢复时会使用原调用编号提交相同请求，由 Broker 返回已有记录，避免再产生一次外部效果。这就是本入口开放可去重的 `request_action`、同时排除即时 `send` 的原因。无法确认的宿主模型请求不会自动重发到上游。
+
+自动操作返回“仍在执行”或“结果不确定”时，本轮也会停止；恢复时遇到同样的记录仍会停止。网络错误不等于内容尚未送达，不能据此让模型换个编号自动重发。
 
 每个会话的检查点绑定同一 `session_id`、`task_id`、模型和自动工具开关。其他会话不能直接拿它恢复；新会话仍共享原工作实例的任务与资料限制。检查点位于任务工作目录，可以包含资料正文；它是工作数据，不是授权凭证。
 
@@ -63,6 +78,8 @@ yuanxingmu sdk-run \
 
 新增的 [`test_smolagents_runtime.py`](../tests/test_smolagents_runtime.py) 在固定 SDK 环境中运行了 15 项测试、零跳过。测试实际执行 `Agent.run`、Unix HTTP 模型桥、Broker 和提案复核，并包含本机接收端收据、不同调用编号、参数拒绝、上下文退出、检查点绑定、批内中断、Broker 接受后丢失本地记录、恢复响应变化和步数上限。
 
-另有 [`test_smolagents_automatic_runtime.py`](../tests/test_smolagents_automatic_runtime.py) 的 8 项自动操作测试、零跳过，使用实际 Guards、固定自动范围及本机模型和检查服务。消息、上传、表单都产生了真实本地收据；越范围、危险文件操作、伪造参数、检查拦截和撤权均未产生外部效果。宿主已经执行、worker 尚未记录结果时中断，恢复后仍是一份收据、一次额度消耗。
+另有 [`test_smolagents_automatic_runtime.py`](../tests/test_smolagents_automatic_runtime.py) 的 11 项自动操作测试、零跳过，使用实际 Guards、固定自动范围及本机模型和检查服务。消息、上传、表单都产生了真实本地收据；越范围、危险文件操作、伪造参数、检查拦截和撤权均未产生外部效果。宿主已经执行、worker 尚未记录结果时中断，恢复后仍是一份收据、一次额度消耗。接收端收到内容后故意丢失回执的场景还验证了同批停止、恢复后仍停止，以及旧检查点不能越过不确定结果。
+
+[`test_smolagents_runtime_timeouts.py`](../tests/test_smolagents_runtime_timeouts.py) 的 4 项测试使用真实延迟检查服务和 Unix Broker，按比例缩短 15 秒与 120 秒等待期限，验证读取、待复核提案和自动发送不会因旧的短等待提前退出；恢复发送仍只有一份收据和一次额度消耗。它们没有用外部模型来测响应速度。
 
 这些测试使用定程模型服务，验证完整程序调用路径和故障恢复；它们不代表真实模型的攻击阻断率。宿主模型记录、整个隔离进程、固定套接字和撤权路径分别由 [`test_yuanxingmu_sdk_model_store.py`](../tests/test_yuanxingmu_sdk_model_store.py) 与 [`test_yuanxingmu_sdk_runtime.py`](../tests/test_yuanxingmu_sdk_runtime.py) 检查，实际运行时需要固定 SDK 环境和可用的 Linux 隔离条件。旧的十一组工具适配证据仍然只是各自当时的组件验证，不会自动升级成其他框架的完整防护结论。

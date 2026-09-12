@@ -34,6 +34,11 @@ from .smolagents import _inputs, build_tools
 
 
 SDK_VERSION = "1.26.0"
+# A profile judge may use 45 seconds; automatic actions then perform several
+# network phases with 8-second socket waits. Keep this worker's complete RPC
+# above that chain, within the client's 120-second ceiling. The host separately
+# enforces the overall run deadline. No model argument can change this value.
+SDK_RPC_TIMEOUT_SECONDS = 120
 MAX_JSON = 16 * 1024 * 1024
 MAX_CHECKPOINT = 16 * 1024 * 1024
 OPERATIONS = ("read", "describe", "action_targets", "propose_action", "draft_email")
@@ -65,6 +70,14 @@ def _text(value, maximum=MAX_JSON):
     if type(value) is not str or len(value.encode()) > maximum or "\x00" in value:
         raise ValueError("sdk_invalid_text")
     return value
+
+
+def _check_action_outcome(result):
+    value = _json(result.encode())
+    if type(value) is dict and any(value.get(field) in ("unconfirmed", "executing") for field in ("status", "outcome")):
+        # The receiver may already have acted. A model continuation could use
+        # another nonce and repeat that effect; only host review can resolve it.
+        raise RuntimeError("sdk_action_unconfirmed")
 
 
 def _config(config):
@@ -146,6 +159,19 @@ def _message(response: dict) -> ChatMessage:
         parsed = [ChatMessageToolCall(id="plain_text_answer", type="function",
             function=ChatMessageToolCallFunction(name="final_answer", arguments={"answer": content}))]
     return ChatMessage(role="assistant", content=content, tool_calls=parsed)
+
+
+class _RuntimeTools(NativeTools):
+    """Longer bounded RPCs for the defended loop, with unchanged proposal keys."""
+
+    def invoke(self, operation, arguments, *, framework, tool_call_id=None):
+        if framework != "smolagents" or operation not in OPERATIONS:
+            raise ValueError("invalid_native_operation")
+        fields = _arguments(operation, arguments)
+        if operation in {"propose_action", "draft_email"}:
+            fields["request_key"] = self.request_key(operation, framework, tool_call_id)
+        return request(operation, socket_path=self.socket_path,
+                       timeout_seconds=SDK_RPC_TIMEOUT_SECONDS, **fields)
 
 
 class BridgeModel(Model):
@@ -231,6 +257,7 @@ class _AutomaticActionTool(Tool):
         key = "smol_auto_v1_" + hashlib.sha256(_bytes(binding)).hexdigest()
         canonical = _arguments("propose_action", payload)["proposal"]
         return encode_result(request("request_action", socket_path=self._client.socket_path,
+                                     timeout_seconds=SDK_RPC_TIMEOUT_SECONDS,
                                      request_key=key, proposal=canonical))
 
 
@@ -245,6 +272,7 @@ class ProtectedToolCallingAgent(ToolCallingAgent):
         self.completed_tools = {}
         self.after_tool = None
         self.aborted = False
+        client = _RuntimeTools(client.socket_path, client.session_id)
         tools = [tool for tool in build_tools(client, invocations=self.invocations) if tool.name in BY_NAME]
         if automatic_actions:
             tools.append(_AutomaticActionTool(client, self.invocations))
@@ -272,6 +300,7 @@ class ProtectedToolCallingAgent(ToolCallingAgent):
         if previous is not None:
             if previous["signature"] != signature:
                 raise RuntimeError("sdk_host_nonce_conflict")
+            _check_action_outcome(previous["result"])
             return previous["result"]
         try:
             result = super().execute_tool_call(tool_name, arguments)
@@ -282,6 +311,7 @@ class ProtectedToolCallingAgent(ToolCallingAgent):
         if not isinstance(result, str):
             raise RuntimeError("sdk_tool_result_not_text")
         result = str(result)
+        _check_action_outcome(result)
         self.completed_tools[nonce] = {"signature": signature, "result": result}
         if self.after_tool is not None:
             self.after_tool()
@@ -420,6 +450,9 @@ class _Checkpoint:
                         or type(item["signature"]) is not str or len(item["signature"]) != 64):
                     raise ValueError("sdk_invalid_checkpoint")
                 _text(item["result"])
+                # Older workers may have saved this as a completed tool. Do
+                # not resume a batch or return a cached answer past that event.
+                _check_action_outcome(item["result"])
             if self.value["status"] == "running" and self.value["prompt"] != config["prompt"]:
                 raise ValueError("sdk_unfinished_prompt_changed")
             if self.value["status"] == "completed":

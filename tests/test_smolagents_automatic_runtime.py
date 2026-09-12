@@ -4,8 +4,11 @@ Both model and judge replies are deterministic local fixtures. This file tests
 the SDK/Broker execution boundary, not external inference or process isolation.
 """
 from copy import deepcopy
+from http.server import ThreadingHTTPServer
+import hashlib
 import json
 from pathlib import Path
+import socket
 import sys
 import unittest
 from unittest.mock import patch
@@ -24,11 +27,15 @@ from test_yuanxingmu_guards import _JudgeFixture, _answer
 class SmolagentsAutomaticRuntimeTests(unittest.TestCase):
     # Reuse setup helpers, without inheriting or importing another TestCase's
     # test methods into this module's discovery result.
-    start_server = fixtures.SmolagentsRuntimeTests.start_server
     actions = fixtures.SmolagentsRuntimeTests.actions
     sdk_message = staticmethod(fixtures.SmolagentsRuntimeTests.sdk_message)
     sdk_step = staticmethod(fixtures.SmolagentsRuntimeTests.sdk_step)
     dispatch = fixtures.SmolagentsRuntimeTests.dispatch
+
+    def start_server(self, server):
+        if isinstance(server, ThreadingHTTPServer):
+            self.effect_receiver = server
+        fixtures.SmolagentsRuntimeTests.start_server(self, server)
 
     def setUp(self):
         fixtures.SmolagentsRuntimeTests.setUp(self)
@@ -83,6 +90,55 @@ class SmolagentsAutomaticRuntimeTests(unittest.TestCase):
         self.assertEqual(result["status"], "completed")
         self.assertEqual(result["answer"], fixtures.COMPLETE)
         return result
+
+    def drop_receipt_after_body(self):
+        def receive_without_ack(handler):
+            body = handler.rfile.read(int(handler.headers["Content-Length"]))
+            self.receipts.append({"path": handler.path, "body": body.decode("utf-8")})
+            handler.close_connection = True
+            handler.connection.shutdown(socket.SHUT_RDWR)
+
+        receiver = patch.object(self.effect_receiver.RequestHandlerClass, "do_POST", receive_without_ack)
+        receiver.start()
+        self.addCleanup(receiver.stop)
+
+    def unconfirmed_calls(self):
+        return (
+            fixtures.tool_call("host-unconfirmed-first", "yuanxingmu_request_action", self.proposal()),
+            fixtures.tool_call("host-unconfirmed-later", "yuanxingmu_request_action",
+                               {"proposal": {"kind": "upload", "target_id": "upload",
+                                             "payload": {"filename": "later.txt", "content": "MUST-NOT-SEND"}}}),
+        )
+
+    def assert_one_unconfirmed_effect(self):
+        self.assertEqual(len(self.receipts), 1)
+        self.assertEqual(self.receipts[0]["path"], "/message")
+        self.assertIn("LOCAL-AUTOMATIC-PROGRESS", self.receipts[0]["body"])
+        actions = self.actions()
+        self.assertEqual(len(actions), 1)
+        self.assertEqual(actions[0]["status"], "unconfirmed")
+        self.assertEqual(len(self.judge.requests), 1)
+        self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 1)
+        return actions[0]["id"]
+
+    def run_unconfirmed(self, response, *, resume=False):
+        next_response = fixtures.final_response()
+        self.responses.extend([deepcopy(response), next_response])
+        model_calls = len(self.requests)
+        with self.assertRaisesRegex(RuntimeError, "^sdk_action_unconfirmed$"):
+            self.runtime.run_session({**self.config, "resume": resume})
+        self.assertEqual(len(self.requests), model_calls + 1)
+        self.assertEqual(list(self.responses), [next_response])
+        self.responses.clear()
+        self.assert_one_unconfirmed_effect()
+        saved = json.loads(Path(self.config["checkpoint"]).read_bytes())
+        self.assertEqual(saved["status"], "running")
+        self.assertIsNone(saved["answer"])
+        self.assertEqual(saved["turn_steps"], 0)
+        self.assertEqual(saved["completed_tools"], {})
+        self.assertEqual(saved["pending"]["request"], self.requests[-1]["body"])
+        self.assertEqual(saved["pending"]["response"], response)
+        return saved
 
     def test_automatic_tool_is_absent_by_default_and_when_explicitly_disabled(self):
         from smolagents.utils import AgentError
@@ -230,6 +286,66 @@ class SmolagentsAutomaticRuntimeTests(unittest.TestCase):
         self.assertEqual(self.actions()[0]["id"], first_id)
         self.assertEqual(len(self.judge.requests), judge_calls)
         self.assertEqual(self.broker.automation.describe(self.task)["attempts_used"], 1)
+
+    def test_unconfirmed_action_stops_batch_and_normal_resume(self):
+        self.drop_receipt_after_body()
+        response = fixtures.completion(*self.unconfirmed_calls())
+        saved = self.run_unconfirmed(response)
+        first_id = self.actions()[0]["id"]
+        resumed = self.run_unconfirmed(response, resume=True)
+        self.assertEqual(resumed, saved)
+        self.assertEqual(self.requests[0]["raw"], self.requests[1]["raw"])
+        self.assertEqual(self.assert_one_unconfirmed_effect(), first_id)
+
+    def test_unconfirmed_action_stops_after_worker_checkpoint_loss(self):
+        self.drop_receipt_after_body()
+        response = fixtures.completion(*self.unconfirmed_calls())
+        self.run_unconfirmed(response)
+        first_id = self.actions()[0]["id"]
+        # Rebuild only worker state. The host session and original call nonces
+        # remain intact; this does not model losing the host dispatch journal.
+        Path(self.config["checkpoint"]).unlink()
+        self.run_unconfirmed(response)
+        self.assertEqual(self.requests[0]["raw"], self.requests[1]["raw"])
+        self.assertEqual(self.assert_one_unconfirmed_effect(), first_id)
+
+    def test_old_uncertain_tool_cache_cannot_resume_or_return_a_saved_answer(self):
+        self.drop_receipt_after_body()
+        calls = self.unconfirmed_calls()
+        saved = self.run_unconfirmed(fixtures.completion(*calls))
+        first_id = self.actions()[0]["id"]
+        nonce, name = calls[0]["id"], calls[0]["function"]["name"]
+        arguments = json.loads(calls[0]["function"]["arguments"])
+        agent = self.agent()
+        # Obtain the actual deduplicated Broker reply without the runtime's
+        # outcome gate, then model a cache saved by an older worker.
+        with agent.invocations.bind(nonce):
+            broker_result = json.loads(agent.tools[name](**arguments))
+        self.assertEqual(broker_result["status"], "unconfirmed")
+        signature = hashlib.sha256(self.runtime._bytes([name, arguments])).hexdigest()
+        checkpoint = Path(self.config["checkpoint"])
+        for field in ("status", "outcome"):
+            for outcome in ("unconfirmed", "executing"):
+                cached_result = {key: value for key, value in broker_result.items()
+                                 if key not in {"status", "outcome"}}
+                cached_result[field] = outcome
+                completed = {nonce: {"signature": signature, "result": json.dumps(cached_result)}}
+                with self.subTest(field=field, outcome=outcome, recovery="agent_cache"):
+                    agent.completed_tools = deepcopy(completed)
+                    with self.assertRaisesRegex(RuntimeError, "^sdk_action_unconfirmed$"):
+                        self.dispatch(agent, *calls)
+                for status in ("running", "completed"):
+                    with self.subTest(field=field, outcome=outcome, recovery=status):
+                        old = {**deepcopy(saved), "completed_tools": deepcopy(completed), "status": status}
+                        if status == "completed":
+                            old.update(pending=None, answer=fixtures.COMPLETE, turn_steps=1)
+                        raw = json.dumps(old).encode("utf-8")
+                        checkpoint.write_bytes(raw)
+                        with self.assertRaisesRegex(RuntimeError, "^sdk_action_unconfirmed$"):
+                            self.runtime.run_session({**self.config, "resume": True})
+                        self.assertEqual(checkpoint.read_bytes(), raw)
+                        self.assertEqual(len(self.requests), 1)
+                        self.assertEqual(self.assert_one_unconfirmed_effect(), first_id)
 
 
 if __name__ == "__main__":

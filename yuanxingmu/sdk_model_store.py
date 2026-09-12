@@ -117,11 +117,16 @@ def _text(value, *, limit=256, empty=False):
     return type(value) is str and (empty or bool(value)) and len(value) <= limit
 
 
-def _tool_call(call, *, host_ids=False):
-    if (type(call) is not dict or set(call) != {"id", "type", "function"}
+def _tool_call(call, *, host_ids=False, expected_index=None):
+    fields = {"id", "type", "function"}
+    if expected_index is not None:
+        fields.add("index")
+    if (type(call) is not dict or set(call) != fields
             or call["type"] != "function" or not _text(call["id"])
             or (host_ids and _HOST_ID.fullmatch(call["id"]) is None)):
         _fail("sdk_model_invalid_tool_call")
+    if expected_index is not None and (type(call["index"]) is not int or call["index"] != expected_index):
+        _fail("sdk_model_invalid_tool_index")
     function = call["function"]
     if (type(function) is not dict or set(function) != {"name", "arguments"}
             or type(function["name"]) is not str or _NAME.fullmatch(function["name"]) is None
@@ -226,11 +231,11 @@ def _response(raw: bytes, content_type: str, *, host_ids=False):
     if type(content_type) is not str or content_type.split(";", 1)[0].strip().lower() != "application/json":
         _fail("sdk_model_unsupported_content_type")
     value = _json(raw, limit=MAX_BODY_BYTES)
-    allowed = {"id", "object", "created", "model", "choices", "usage", "system_fingerprint", "service_tier"}
+    allowed = {"id", "request_id", "object", "created", "model", "choices", "usage", "system_fingerprint", "service_tier"}
     if (type(value) is not dict or set(value) - allowed or type(value.get("choices")) is not list
             or len(value["choices"]) != 1):
         _fail("sdk_model_unsupported_response")
-    for key in ("id", "model"):
+    for key in ("id", "request_id", "model"):
         if key in value and not _text(value[key]):
             _fail("sdk_model_unsupported_response")
     if "object" in value and value["object"] != "chat.completion":
@@ -273,9 +278,16 @@ def _response(raw: bytes, content_type: str, *, host_ids=False):
     if calls:
         if choice["finish_reason"] != "tool_calls":
             _fail("sdk_model_incomplete_response")
+        # GLM's complete JSON includes the same exact 0..N-1 tool indexes used
+        # by its streaming format. Support only a complete, ordered index set,
+        # or no indexes at all. Saved/worker messages are always index-free.
+        indexes = [type(call) is dict and "index" in call for call in calls]
+        indexed = any(indexes)
+        if indexed and (host_ids or not all(indexes)):
+            _fail("sdk_model_invalid_tool_index")
         ids = set()
-        for call in calls:
-            _tool_call(call, host_ids=host_ids)
+        for position, call in enumerate(calls):
+            _tool_call(call, host_ids=host_ids, expected_index=position if indexed else None)
             if call["id"] in ids:
                 _fail("sdk_model_duplicate_tool_id")
             ids.add(call["id"])
@@ -578,6 +590,9 @@ class ModelStore:
                     _fail("sdk_model_nonce_unavailable")
                 identifiers.add(identifier)
                 call["id"] = identifier
+                # The checked positional index is redundant in complete JSON.
+                # Remove it only AFTER validation, before persistence/release.
+                call.pop("index", None)
             result = _dump(value)
             if len(result) > MAX_BODY_BYTES or total + len(result) > MAX_CACHE_BYTES:
                 _fail("sdk_model_capacity_exhausted")

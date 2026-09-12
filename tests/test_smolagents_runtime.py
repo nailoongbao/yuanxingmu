@@ -44,7 +44,7 @@ def final_response():
     return completion(tool_call("host_dispatch_final", "final_answer", {"answer": COMPLETE}))
 
 
-class UnixHTTPServer(socketserver.ThreadingMixIn, socketserver.UnixStreamServer):
+class UnixHTTPServer(socketserver.ThreadingMixIn, getattr(socketserver, "UnixStreamServer", socketserver.TCPServer)):
     daemon_threads = True
 
 
@@ -397,13 +397,13 @@ class SmolagentsRuntimeTests(unittest.TestCase):
         saved = json.loads(Path(self.config["checkpoint"]).read_bytes())
         self.assertEqual(set(saved["completed_tools"]), {"host_partial_one"})
         self.responses.extend([response, final_response()])
-        invoked, original_invoke = [], NativeTools.invoke
+        invoked, original_invoke = [], self.runtime._RuntimeTools.invoke
 
         def track(client, operation, arguments, **context):
             invoked.append(context.get("tool_call_id"))
             return original_invoke(client, operation, arguments, **context)
 
-        with patch.object(NativeTools, "invoke", track):
+        with patch.object(self.runtime._RuntimeTools, "invoke", track):
             result = self.runtime.run_session({**self.config, "resume": True})
         self.assertEqual(result["answer"], COMPLETE)
         self.assertEqual(invoked, ["host_partial_two"])

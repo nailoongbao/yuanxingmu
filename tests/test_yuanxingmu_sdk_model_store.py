@@ -37,6 +37,16 @@ def response(*, tools=0, text="synthetic answer"):
                     "usage": {"prompt_tokens": 1, "completion_tokens": 1, "total_tokens": 2}})
 
 
+# Exact response_utf8 from the preserved failed synthetic-data GLM run:
+# .research/sdk-glm-relay-20260913-01/exchanges/00002-main.json.
+# This is an offline format regression, not a new model run or a rewrite of
+# that run's failed result. No request body, provider key or headers are copied.
+GLM_NONSTREAM_RESPONSE = (
+    r'{"choices":[{"finish_reason":"tool_calls","index":0,"message":{"content":"我先读取 quote 报价资料，并查看已登记的操作对象和当前权限。","role":"assistant","tool_calls":[{"function":{"arguments":"{\"resource\": \"quote\"}","name":"yuanxingmu_read"},"id":"call_-7263702910662343394","index":0,"type":"function"},{"function":{"arguments":"{}","name":"yuanxingmu_action_targets"},"id":"call_-7263702910662343393","index":1,"type":"function"},{"function":{"arguments":"{}","name":"yuanxingmu_describe"},"id":"call_-7263702910662343392","index":2,"type":"function"}]}}],"created":1789239492,"id":"20260913025810940aeb8d5ddb4064","model":"glm-5.2","object":"chat.completion","request_id":"20260913025810940aeb8d5ddb4064","usage":{"completion_tokens":47,"completion_tokens_details":{"reasoning_tokens":0},"prompt_tokens":4567,"prompt_tokens_details":{"cached_tokens":0},"total_tokens":4614}}'
+).encode("utf-8")
+GLM_NONSTREAM_SHA256 = "a7609d68c20d382b5669f8f3328e5b8a2b65c4b79d715d61747d9e3f568a544f"
+
+
 class ModelSchemaTests(unittest.TestCase):
     def assert_blocked(self, operation, *args, reason=None, **kwargs):
         with self.assertRaises(storage.ModelStoreError) as caught:
@@ -106,6 +116,41 @@ class ModelSchemaTests(unittest.TestCase):
             candidate["choices"][0]["message"]["tool_calls"][0]["function"]["arguments"] = arguments
             self.assert_blocked(storage._response, encoded(candidate), "application/json")
 
+    def test_recorded_glm_nonstream_fields_are_supported_and_fixture_is_exact(self):
+        self.assertEqual(hashlib.sha256(GLM_NONSTREAM_RESPONSE).hexdigest(), GLM_NONSTREAM_SHA256)
+        value = storage._response(GLM_NONSTREAM_RESPONSE, "application/json")
+        self.assertEqual(value["request_id"], "20260913025810940aeb8d5ddb4064")
+        self.assertEqual([call["index"] for call in value["choices"][0]["message"]["tool_calls"]], [0, 1, 2])
+
+    def test_nonstream_indexes_must_be_complete_ordered_integers(self):
+        for indexes in ([-1, 1, 2], [False, 1, 2], [0, True, 2], [0, 1.0, 2], [0, "1", 2],
+                        [0, None, 2], [0, [], 2], [0, 0, 2], [1, 0, 2], [0, 2, 1], [0, 1, 3]):
+            with self.subTest(indexes=indexes):
+                value = json.loads(GLM_NONSTREAM_RESPONSE)
+                for call, index in zip(value["choices"][0]["message"]["tool_calls"], indexes):
+                    call["index"] = index
+                self.assert_blocked(storage._response, encoded(value), "application/json", reason="sdk_model_invalid_tool_index")
+        value = json.loads(GLM_NONSTREAM_RESPONSE)
+        del value["choices"][0]["message"]["tool_calls"][1]["index"]
+        self.assert_blocked(storage._response, encoded(value), "application/json", reason="sdk_model_invalid_tool_index")
+
+    def test_glm_compatibility_does_not_allow_unknown_fields_or_invalid_request_ids(self):
+        for request_id in (None, 0, True, [], {}, "", "x" * 257):
+            with self.subTest(request_id=request_id):
+                value = json.loads(GLM_NONSTREAM_RESPONSE)
+                value["request_id"] = request_id
+                self.assert_blocked(storage._response, encoded(value), "application/json", reason="sdk_model_unsupported_response")
+        value = json.loads(GLM_NONSTREAM_RESPONSE)
+        value["trace_id"] = "not supported"
+        self.assert_blocked(storage._response, encoded(value), "application/json", reason="sdk_model_unsupported_response")
+        value = json.loads(GLM_NONSTREAM_RESPONSE)
+        value["choices"][0]["message"]["tool_calls"][0]["extra"] = "not supported"
+        self.assert_blocked(storage._response, encoded(value), "application/json", reason="sdk_model_invalid_tool_call")
+        for before, after in ((b'"index":1', b'"index":1,"index":1'),
+                              (b'"request_id":', b'"request_id":"other","request_id":')):
+            duplicate = GLM_NONSTREAM_RESPONSE.replace(before, after, 1)
+            self.assert_blocked(storage._response, duplicate, "application/json", reason="sdk_model_duplicate_key")
+
 
 @unittest.skipUnless(os.name == "posix" and storage.fcntl is not None and hasattr(os, "O_NOFOLLOW"),
                      "requires POSIX secure directory-relative storage")
@@ -156,6 +201,38 @@ class ModelStoreTests(unittest.TestCase):
         self.assertEqual(ticket.replay, result)
         reopened.finish(ticket)
         self.assertEqual(len(self.state()["records"]), 1)
+
+    def test_recorded_glm_reply_drops_only_indexes_and_replays_identical_host_ids(self):
+        ticket = self.store.begin(request())
+        raw = self.store.complete(ticket, GLM_NONSTREAM_RESPONSE, "application/json")
+        self.store.finish(ticket)
+        original, normalized = json.loads(GLM_NONSTREAM_RESPONSE), json.loads(raw)
+        before = original["choices"][0]["message"]["tool_calls"]
+        after = normalized["choices"][0]["message"]["tool_calls"]
+        self.assertEqual(len({call["id"] for call in after}), 3)
+        restored = copy.deepcopy(normalized)
+        for position, (old, new) in enumerate(zip(before, after)):
+            self.assertEqual(set(new), {"id", "type", "function"})
+            self.assertRegex(new["id"], r"^yxm_[0-9a-f]{48}$")
+            self.assertNotEqual(new["id"], old["id"])
+            restored["choices"][0]["message"]["tool_calls"][position].update(id=old["id"], index=position)
+        self.assertEqual(restored, original, "normalization changed checked message content or function arguments")
+        self.assertEqual(storage._response(raw, "application/json", host_ids=True), normalized)
+        reopened = storage.ModelStore(self.path, "synthetic-session")
+        replay = reopened.begin(request())
+        self.assertEqual(replay.replay, raw)
+        reopened.finish(replay)
+
+    def test_invalid_indexes_are_not_stripped_into_an_accepted_reply_or_retried(self):
+        ticket = self.store.begin(request())
+        invalid = json.loads(GLM_NONSTREAM_RESPONSE)
+        invalid["choices"][0]["message"]["tool_calls"][1]["index"] = 0
+        self.assert_blocked(self.store.complete, ticket, encoded(invalid), "application/json", reason="sdk_model_invalid_tool_index")
+        self.store.finish(ticket)
+        self.assertEqual(self.state()["records"][0]["state"], "unknown")
+        self.assertEqual(list(self.path.glob("response-*.json")), [])
+        reopened = storage.ModelStore(self.path, "synthetic-session")
+        self.assert_blocked(reopened.begin, request(), reason="sdk_model_outcome_unknown")
 
     def test_json_whitespace_is_a_distinct_request_and_gets_fresh_nonce(self):
         first = self.committed()
