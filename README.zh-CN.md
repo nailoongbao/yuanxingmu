@@ -2,7 +2,7 @@
 
 **让 AI 多做事，权限始终有界。**
 
-**[0.7 运行包](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a1)与[配套 0.4 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)已发布，仍为预览版。** 安装器同时准备 Hermes 和 OpenClaw。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html)使用新的 `~/yuanxingmu-v07` 目录；旧安装和旧工作不会自动获得这次新增的保护。
+**[0.7.0a2 预览运行包](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a2)与[配套 0.4.0a2 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a2)已发布。** 安装器同时准备 Hermes 和 OpenClaw。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html)使用新的 `~/yuanxingmu-v07a2` 目录；旧安装和旧工作不会自动升级。
 
 先选好资料和可接收的固定对象，再让 AI 读报价、发消息、上传文本或填表。范围内且通过检查的操作可自动执行；你可以随时关闭工作或收回资料权限。你选用的模型服务仍会收到聊天和使用的资料。
 
@@ -79,7 +79,7 @@ AUTO17、AUTO18 均绑定 `e886607`。后续开发修改不会改变这两轮已
 
 ## 用自己的模型和资料
 
-[0.4 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)把 0.7 的首次安装收成一个文件。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html#install)装到 `~/yuanxingmu-v07` 后，在 Ubuntu 终端用 `"$HOME/yuanxingmu-v07/open-yuanxingmu"` 打开本机工作台。在页面选择 Hermes 或 OpenClaw、填写模型连接、导入短文本，创建工作后启动，再进入所选助手原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。旧安装保留原目录；原先手工安装的用户继续使用原来的 `yuanxingmu desk` 入口。
+0.4.0a2 安装器把 0.7.0a2 的首次安装收成一个文件。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html#install)装到 `~/yuanxingmu-v07a2` 后，在 Ubuntu 终端用 `"$HOME/yuanxingmu-v07a2/open-yuanxingmu"` 打开本机工作台。在页面选择 Hermes 或 OpenClaw、填写模型连接、导入短文本，创建工作后启动，再进入所选助手原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。旧安装保留原目录；原先手工安装的用户继续使用原来的 `yuanxingmu desk` 入口。
 
 每项工作独立保存资料和权限。聊天粘贴和工作产物从一开始就按私密资料处理；换会话或正常重启不清除权限。默认没有额外发送位置。**所选模型服务会看到聊天和使用的资料。**
 

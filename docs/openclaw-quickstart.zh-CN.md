@@ -8,7 +8,7 @@
 
 [官网使用页](https://yh-l20.github.io/yuanxingmu/start.html) · [更详细的实现与边界](yuanxingmu.md)
 
-本文保留手工安装流程。首次使用也可以按[官网安装步骤](https://yh-l20.github.io/yuanxingmu/start.html#install)安装已发布的 0.4 安装器，它会准备 0.7 运行包和 Hermes、OpenClaw 两套环境。已有安装继续使用原目录中的入口，不要混用下面的手工目录。
+本文保留手工安装流程。[配套 0.4.0a2 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a2)已发布，会安装 0.7.0a2 运行包和 Hermes、OpenClaw 两套环境；首次使用可按[官网安装步骤](https://yh-l20.github.io/yuanxingmu/start.html#install)安装到新的 `~/yuanxingmu-v07a2` 目录。已有安装继续使用原目录中的入口，不要混用下面的手工目录。
 
 ## 1. 安装到一个独立目录
 

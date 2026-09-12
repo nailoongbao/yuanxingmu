@@ -2,7 +2,7 @@
 
 **Give AI the files it needs. Keep control of its permissions.**
 
-**[0.7 runtime](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a1) and [0.4 installer](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1) released — preview.** The installer prepares Hermes and OpenClaw. Follow the [installation guide](https://yh-l20.github.io/yuanxingmu/start.html) to use a separate `~/yuanxingmu-v07` directory; existing installs and work items do not automatically gain the new protection.
+**[Runtime 0.7.0a2](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a2) and [installer 0.4.0a2](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a2) are released as a preview.** The installer prepares Hermes and OpenClaw. Follow the [installation guide](https://yh-l20.github.io/yuanxingmu/start.html) to use a separate `~/yuanxingmu-v07a2` directory; existing installs and work items do not automatically upgrade.
 
 Select the documents and fixed recipients once, then let AI send messages, upload text, or fill forms within that scope. Each action still passes permission, content, and budget checks. Yuanxingmu keeps each work item separate and lets you stop, reopen, or revoke its document access. Your selected model service still receives the conversation and documents used for the task.
 
@@ -81,7 +81,7 @@ The independent receiver recorded **one internal delivery and zero external deli
 
 ## Use your own model in Hermes or OpenClaw
 
-The [0.4 installer](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1) packages first-time setup for runtime 0.7 into one file. Follow the [installation steps](https://yh-l20.github.io/yuanxingmu/start.html#install) to install into `~/yuanxingmu-v07`, then run `"$HOME/yuanxingmu-v07/open-yuanxingmu"` in your Ubuntu terminal. Choose Hermes or OpenClaw, fill in your model connection, import short UTF-8 text files, and manage each work item in the browser. A successful start provides a link to the selected agent's native chat UI. The page also lets you stop a work item or permanently revoke its document permissions. Keep older installations in their existing directories; manual installations continue to use their original `yuanxingmu desk` entry.
+Installer 0.4.0a2 packages first-time setup for runtime 0.7.0a2 into one file. Follow the [installation steps](https://yh-l20.github.io/yuanxingmu/start.html#install) to install into `~/yuanxingmu-v07a2`, then run `"$HOME/yuanxingmu-v07a2/open-yuanxingmu"` in your Ubuntu terminal. Choose Hermes or OpenClaw, fill in your model connection, import short UTF-8 text files, and manage each work item in the browser. A successful start provides a link to the selected agent's native chat UI. The page also lets you stop a work item or permanently revoke its document permissions. Keep older installations in their existing directories; manual installations continue to use their original `yuanxingmu desk` entry.
 
 Each work item has its own persistent agent profile. Chat input and work products are private from creation, including pasted text. New sessions and clean restarts retain the same task authority; destinations are empty by default. **The selected model service receives the conversation and documents used for the task.**
 

@@ -8,7 +8,7 @@
 
 0.7 源码 `c83add3` 的 [AUTO19 原生实录](evidence/hermes-auto19-2026-09-12/REPORT.zh-CN.md)中，明确标出的内部底价在进入 AI 前被隐藏；供应商伪系统指令由输入规则扣留后，Hermes 继续完成消息、文本上传和表单。三个本机合成接收端各收到一次，没有逐项批准、人工恢复或操作者补参数。[104 秒视频](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-protected-fields)展示实际过程。
 
-**这次防护与实际提交检查通过，严格完整协议仍为 false。** 模型最终把“合成报价表”写成“合造报价表”；实际表单目标、字段和值正确。原回复与错字保留，未重跑。0.7 运行包和[配套 0.4 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)已发布；旧版 0.6 与旧工作不包含这项新保护。安装成功不等于本表所列防御效果全部通过，仍需分别阅读对应版本的实测记录。
+**这次防护与实际提交检查通过，严格完整协议仍为 false。** 模型最终把“合成报价表”写成“合造报价表”；实际表单目标、字段和值正确。原回复与错字保留，未重跑。当前版本与下载状态见[安装说明](https://yh-l20.github.io/yuanxingmu/start.html#install)；旧版 0.6 与旧工作不包含这项新保护，旧安装不会自动升级。安装成功不等于本表所列防御效果全部通过，仍需分别阅读对应版本的实测记录。
 
 <details>
 <summary>完整核验范围，以及不能据此宣称的能力</summary>
@@ -103,7 +103,7 @@ GLM14 五段实录：[外部资料 · 52 秒](../site/assets/videos/hermes-glm14
 
 | 工作 | 当前代码与证据 | 限制 |
 |---|---|---|
-| 明确敏感字段在进入 AI 前隐藏，后续输出与提交继续核对 | [`protected_fields.py`](../yuanxingmu/protected_fields.py)、[`protected_boundary.py`](../yuanxingmu/protected_boundary.py)；AUTO19 的完整模型/工具/接收记录未发现内部底价，三项正文各实际接收一次。 | 0.7 运行包已发布。只有明确标签与有限值写法；不识别任意秘密、编码或推断。最终回复仍有一处名称错字，严格完整协议 false。 |
+| 明确敏感字段在进入 AI 前隐藏，后续输出与提交继续核对 | [`protected_fields.py`](../yuanxingmu/protected_fields.py)、[`protected_boundary.py`](../yuanxingmu/protected_boundary.py)；AUTO19 的完整模型/工具/接收记录未发现内部底价，三项正文各实际接收一次。 | 这轮证据固定为 c83add3 / 0.7.0a1。只有明确标签与有限值写法；不识别任意秘密、编码或推断。最终回复仍有一处名称错字，严格完整协议 false。 |
 | AI 进程不持有真实服务凭证，不能直接访问主机私有目录或直接联网 | [`sandbox.py`](../yuanxingmu/sandbox.py)、[`gateway_network.py`](../yuanxingmu/gateway_network.py)、[`authority.py`](../yuanxingmu/authority.py)；已有[原生 OpenClaw 报告](../examples/yuanxingmu/real_openclaw/evidence/REPORT.zh-CN.md)。 | Linux 共享内核；模型网络桥仍是特定受控路径。不能概括为硬件隔离或任意服务支持。 |
 | 任务换连接、重启后仍保留权限与撤销状态 | 主机 Broker/authority 保存任务家族与状态；原生 OpenClaw 旧记录含撤销后重启。 | 子 Agent、不同框架和新工具都要逐个验证身份绑定，不能靠框架名配置自动获得保证。 |
 | 真正发送之前核对用户批准的内容 | [`mail_drafts.py`](../yuanxingmu/mail_drafts.py)、[`mail_transport.py`](../yuanxingmu/mail_transport.py)；[邮件验收报告](../examples/yuanxingmu/email/evidence/report.md)。 | 精确草稿版本、目标和发送结果有边界；一次接收端回执不是任意邮箱服务的送达保证。 |

@@ -1,6 +1,6 @@
 # 命令检查修复：看清真正要执行的操作
 
-0.7.0a2 源码修复了 Issues [7](https://github.com/yh-l20/yuanxingmu/issues/7)、[8](https://github.com/yh-l20/yuanxingmu/issues/8)、[9](https://github.com/yh-l20/yuanxingmu/issues/9) 报告的命令规则遗漏。已经发布的安装器 `0.4.0a1` 固定使用运行包 `0.7.0a1`，不包含这些修复，也不会自动更新。
+0.7.0a2 源码修复了 Issues [7](https://github.com/yh-l20/yuanxingmu/issues/7)、[8](https://github.com/yh-l20/yuanxingmu/issues/8)、[9](https://github.com/yh-l20/yuanxingmu/issues/9) 报告的命令规则遗漏。[配套 `0.4.0a2` 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a2)已发布；按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html#install)使用新的 `~/yuanxingmu-v07a2` 目录。已经发布的安装器 `0.4.0a1` 固定使用运行包 `0.7.0a1`，不包含这些修复，也不会自动更新。
 
 有些命令会先调整优先级、设置环境变量或等待一段时间，再运行真正的操作。原来的检查在读取部分选项时，可能把选项值当成程序名，让后面的危险操作漏过检查。另一个问题是把 `echo`、`printf` 一律当成打印文字，忽略了它们也能向文件写入内容。
 
