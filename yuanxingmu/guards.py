@@ -356,6 +356,7 @@ _SENSITIVE_COMMAND_PATH = re.compile(
     r"(?:/etc/(?:g?shadow|master\.passwd)|(?:^|[/~\s'\"])(?:\.ssh/|\.aws/|\.azure/|\.kube/|"
     r"\.gcp/credentials(?:\b|/)|\.config/gcloud/|\.docker/config\.json|\.pgpass|\.my\.cnf|"
     r"\.env(?:\b|/)|\.(?:bash|zsh|sh)_history\b|\.(?:token|apikey|secret|password|passwd)(?=$|[/\s'\"])))")
+_SENSITIVE_VARIABLE = re.compile(r"\$(?:env:|\{)?[A-Za-z_]*(?:TOKEN|SECRET|PASSWORD|API_KEY|PRIVATE_KEY)", re.I)
 
 
 def _wrapped_command(program: str, args: list[str]) -> tuple[str, bool, list[tuple[str, str]]] | None:
@@ -374,6 +375,7 @@ def _wrapped_command(program: str, args: list[str]) -> tuple[str, bool, list[tup
     replacement = None
     quote_parallel = False
     target_process = False
+    directory_changed = False
     index = 0
     while index < len(args):
         token = args[index]
@@ -396,7 +398,7 @@ def _wrapped_command(program: str, args: list[str]) -> tuple[str, bool, list[tup
         options = [long_name] if token.startswith("--") else list(token[1:])
         for offset, option in enumerate(options):
             if option in _WRAPPER_FLAGS[program]:
-                if has_equal:
+                if token.startswith("--") and has_equal:
                     return "", True, file_effects
                 quote_parallel |= program == "parallel" and option in {"q", "--quote"}
                 continue
@@ -410,11 +412,14 @@ def _wrapped_command(program: str, args: list[str]) -> tuple[str, bool, list[tup
                     return "", True, file_effects
                 value = args[index]
             uncertain |= "$" in value or "`" in value
+            if _SENSITIVE_VARIABLE.search(value):
+                file_effects.append(("environment", value))
             if option in _WRAPPER_FILES.get(program, set()):
                 mode = ("read" if program == "xargs" or option in {"a", "--arg-file", "--sshloginfile"}
                         else "write" if program == "time" or option in {"--joblog", "--results"} else "access")
                 file_effects.append((mode, value))
                 uncertain |= any(char in value for char in "$`*?[")
+            directory_changed |= program == "env" and option in {"C", "--chdir"}
             if program == "xargs":
                 if option in {"i", "I", "--replace"}:
                     replacement = "{}" if optional and not value and not has_equal else value
@@ -441,7 +446,13 @@ def _wrapped_command(program: str, args: list[str]) -> tuple[str, bool, list[tup
     nested = args[index:]
     if program == "env":
         while nested and re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", nested[0], re.S):
+            file_effects.append(("environment", nested[0]))
             nested = nested[1:]
+        # Relative paths in a child's arguments no longer refer to the fixed
+        # workspace after chdir. Only direct printing is independent of that
+        # unresolved path context; do not try to simulate a new filesystem.
+        printing = bool(nested) and nested[0].replace("\\", "/").rsplit("/", 1)[-1] in {"echo", "printf"}
+        uncertain |= directory_changed and not printing
     if program == "timeout":
         if not nested:
             return "", True, file_effects
@@ -473,14 +484,16 @@ def _command_programs(command: str, depth: int = 0) -> tuple[list[tuple[str, lis
     uncertain = False
     effects = []
     parts = _segments(command)
-    if any(isinstance(token, _Redirection) and token in {"<<", "<<-", "<<<"} for part in parts for token in part):
-        return [], True, []  # Do not reinterpret heredoc data as executable lines.
     for part in parts:
         argv = []
         index = 0
         while index < len(part):
             token = part[index]
             if isinstance(token, _Redirection):
+                if token in {"<<", "<<-", "<<<"}:
+                    uncertain = True  # Data expansion is not statically evaluated.
+                    index += 2 if index + 1 < len(part) and not isinstance(part[index + 1], _Redirection) else 1
+                    continue
                 if index + 1 == len(part) or isinstance(part[index + 1], _Redirection):
                     uncertain = True
                     index += 1
@@ -493,6 +506,10 @@ def _command_programs(command: str, depth: int = 0) -> tuple[list[tuple[str, lis
                 continue
             argv.append(token)
             index += 1
+        for token in argv:
+            if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*=.*", token, re.S) is None:
+                break
+            effects.append(("environment", token))
         program, args = _executable(argv)
         wrapped = _wrapped_command(program, args)
         if wrapped is None:
@@ -681,6 +698,7 @@ def _segments(command: str) -> list[list[str]]:
     # each active boundary also handles |&, ;\n and grouped punctuation.
     parts: list[list[str]] = [[]]
     continued = []
+    line_start_part = 0
     quote = ""
     start = index = 0
     while index < len(command):
@@ -713,6 +731,28 @@ def _segments(command: str) -> list[list[str]]:
             continued.clear()
             if parts[-1]:
                 parts.append([])
+            if char == "\n":
+                # Here-document bodies start after the command's newline.
+                # Skip only their literal lines; retain real commands before
+                # and after them. Expansion inside bodies still requires review.
+                documents = []
+                for part in parts[line_start_part:]:
+                    for offset, token in enumerate(part[:-1]):
+                        if isinstance(token, _Redirection) and token in {"<<", "<<-"} and not isinstance(part[offset + 1], _Redirection):
+                            documents.append((part[offset + 1], token == "<<-"))
+                index += 1
+                for delimiter, strip_tabs in documents:
+                    while index < len(command):
+                        end = command.find("\n", index)
+                        if end < 0:
+                            end = len(command)
+                        line = command[index:end]
+                        index = min(end + 1, len(command))
+                        if (line.lstrip("\t") if strip_tabs else line) == delimiter:
+                            break
+                start = index
+                line_start_part = len(parts) - 1
+                continue
             start = index + 1
         index += 1
     parts[-1].extend(shlex.split("".join(continued) + command[start:]))
@@ -1002,6 +1042,10 @@ class Guards:
             ("review", "indirect_execution", "命令的批量输入、包装选项或实际执行内容尚未确定，需要您先核对。")
             if unresolved else None)
         for mode, path in effects:
+            if mode == "environment":
+                if _SENSITIVE_VARIABLE.search(path):
+                    return "block", "sensitive_credentials", "命令试图取出敏感环境变量，已阻止执行。"
+                continue
             target = _normal(path).replace("\\", "/")
             if "/dev/tcp/" in target or "/dev/udp/" in target:
                 return "block", "reverse_shell", "命令试图把终端交给远端连接控制，已阻止执行。"
@@ -1056,7 +1100,7 @@ class Guards:
                 pending = ("review", "environment_disclosure", "列出全部环境变量可能包含密钥，需要您先核对。")
             if program == "printenv" and re.search(r"(?:TOKEN|SECRET|PASSWORD|API_KEY|PRIVATE_KEY)", joined, re.I):
                 return "block", "sensitive_credentials", "命令试图取出敏感环境变量，已阻止执行。"
-            if re.search(r"\$(?:env:|\{)?[A-Za-z_]*(?:TOKEN|SECRET|PASSWORD|API_KEY|PRIVATE_KEY)", joined, re.I):
+            if _SENSITIVE_VARIABLE.search(joined):
                 return "block", "sensitive_credentials", "命令试图取出敏感环境变量，已阻止执行。"
             if program in {"kill", "killall", "pkill"}:
                 if program == "kill" and any(a in {"-1", "1"} for a in args):
