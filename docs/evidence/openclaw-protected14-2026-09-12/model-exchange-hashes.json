@@ -1,0 +1,104 @@
+{
+  "scope": "Hashes and route/sequence only; original request/response bodies remain in the private archive.",
+  "counts": {
+    "main": 3,
+    "judge": 10
+  },
+  "includes_startup_judges": 2,
+  "upstream_hashes_verified": true,
+  "exchanges": [
+    {
+      "sequence": 217,
+      "route": "judge",
+      "upstream_body_sha256": "8aed4835492b6a2616b7c38c806247affa85feb34aa319789abb63d6ce26aab8",
+      "response_sha256": "7b1613d49e749796540d31fd558c853ad9fb96edba08b5ce1905a260b534ee93",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 218,
+      "route": "judge",
+      "upstream_body_sha256": "f73a5bb0de2b2d450cc4a8187a49e2369d56137a3efa610ccc0e46c509c4cf85",
+      "response_sha256": "5f2039adaa6ba6b04f873c163e6fef33db684a4ae24ccd72ec2b7788c962034e",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 219,
+      "route": "main",
+      "upstream_body_sha256": "0672c43d069c37395710899e4be45918b61d35d0ef777b45a85eeab1b916a950",
+      "response_sha256": "1021996e9ee8aa855ac83043a04d0596058008d37cd2186486758ea7aa37d302",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 220,
+      "route": "judge",
+      "upstream_body_sha256": "8bdd14ed22dd9b5e7ed921a8c701a20be92b95db052eaef3fc5eddc766971805",
+      "response_sha256": "39c1b51ee07c0a8674cf45fa4d40460facaf49ebcd74ca490f591c9c2c99d81e",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 221,
+      "route": "judge",
+      "upstream_body_sha256": "38a02cb7e25ac5c5f911396c2adab9248bf6bdbb23ed9d43988b181c4d16bcc8",
+      "response_sha256": "4eb8ff5915e2af273170b8d7154dc768266493a3d1b9b77e09efad076b90c3c3",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 222,
+      "route": "judge",
+      "upstream_body_sha256": "84f181aa9e2fc5db6b95b107f4b7c6381f68c815c2b4ed847bb4cebc047db4cc",
+      "response_sha256": "440941a2c30d882de9276f3c9ce9db48b092924d1c0f77aceb4ab3abc1de3b47",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 223,
+      "route": "main",
+      "upstream_body_sha256": "43cc120f5136a235b65b51e3340743539826f5c548267ab997cedd998ce0b0af",
+      "response_sha256": "4cc54a7732f6e7fac30044daf8d215ebdd5496b886e9495fab0b3dc3b22ac7c8",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 224,
+      "route": "judge",
+      "upstream_body_sha256": "c2d34b1369782525437a0a301f3f73d5c47aa2f9a329d16fc21bb2d8eec40541",
+      "response_sha256": "a2fe7f730c785737a9dccc7a585d993e550eeb3b8deea4fbef842821aae3bd61",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 225,
+      "route": "judge",
+      "upstream_body_sha256": "3e41aa4a5cf1ae3f6b52e3e37dbbc723f82c27948c7fed1e25cf64b91f7db6f4",
+      "response_sha256": "35c9320451cdd0c518d4c7502f37a5bfb417b8e52df1de613fafc4cd98c22742",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 226,
+      "route": "judge",
+      "upstream_body_sha256": "db4363152049317d21b7048417eba462baad7828c10bed8bd0071067f9c297ed",
+      "response_sha256": "fe445051ab867521cbd27a7f83faae711a1b8fde351d1206ee63a058646026de",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 227,
+      "route": "judge",
+      "upstream_body_sha256": "995426c77937ac225d3c2922b7306fded09e08706225257790b1ba0172805705",
+      "response_sha256": "1d09ea2c108b99d0758bf71a2628c1c68d8a0996c463f32914b9aea393993c21",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 228,
+      "route": "main",
+      "upstream_body_sha256": "fd047c7ebae32ae990fac126a767dee63ff3438afc16fef5ec76ff8ba6083162",
+      "response_sha256": "086bcaadb8b31b470432d1245d96512c32d2dc43ba41e217a0e2fd4fa92d4f98",
+      "upstream_status": 200
+    },
+    {
+      "sequence": 229,
+      "route": "judge",
+      "upstream_body_sha256": "fe23bf4338fb45f337af644d3eb55f9bb5494b445266fc5144a495dda9242beb",
+      "response_sha256": "23d1e959db8555300a0f2cc2c07bffc6fa5451718c11047504c1b7812a7cc9e0",
+      "upstream_status": 200
+    }
+  ],
+  "public_reproducibility_limit": "Without the retained original exchanges, readers cannot independently reconstruct these upstream hashes from this public package.",
+  "pre_relay_raw_bytes": "Not retained by the relay; no inspection claim."
+}

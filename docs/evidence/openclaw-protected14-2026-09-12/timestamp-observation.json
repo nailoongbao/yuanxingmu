@@ -1,0 +1,71 @@
+{
+  "finding": "Timestamp inversion is already present in the original action ledger, original native event_json and actual upstream tool-result context; the collector did not introduce it.",
+  "cause": "Uncertain. Source obtains these fields from separate UTC wall-clock reads in submit/begin/finish; available evidence does not identify a clock correction, process clock discrepancy or another original-runtime cause.",
+  "original_live_broker_rows_match_capture": true,
+  "original_native_event_json_matches_capture": true,
+  "action_times": [
+    {
+      "id": "3155aea48eee4d40aed3bfc9123812a3",
+      "target_id": "team",
+      "status": "acknowledged",
+      "attempt_id": "a00cc7f11e7f42f28fdecc86e6ca2300",
+      "created_at": "2026-09-12T14:44:54.570348+00:00",
+      "authorized_at": "2026-09-12T14:44:54.572541+00:00",
+      "finished_at": "2026-09-12T14:44:54.580633+00:00",
+      "creation_minus_authorization_seconds": -0.002193,
+      "creation_minus_finish_seconds": -0.010285
+    },
+    {
+      "id": "21c72a949ac944bb80a46a440cd87c65",
+      "target_id": "archive",
+      "status": "acknowledged",
+      "attempt_id": "88cabbdee340474cb28aa1319d362bb3",
+      "created_at": "2026-09-12T14:45:07.818187+00:00",
+      "authorized_at": "2026-09-12T14:44:56.224869+00:00",
+      "finished_at": "2026-09-12T14:44:56.230123+00:00",
+      "creation_minus_authorization_seconds": 11.593318,
+      "creation_minus_finish_seconds": 11.588064
+    },
+    {
+      "id": "73d916a3a01e4b32ad3059b96616d62d",
+      "target_id": "intake",
+      "status": "acknowledged",
+      "attempt_id": "0daa902fed5a416292c48dd7aa5d7d74",
+      "created_at": "2026-09-12T14:44:58.051371+00:00",
+      "authorized_at": "2026-09-12T14:44:58.053330+00:00",
+      "finished_at": "2026-09-12T14:44:58.060122+00:00",
+      "creation_minus_authorization_seconds": -0.001959,
+      "creation_minus_finish_seconds": -0.008751
+    }
+  ],
+  "source_references": [
+    {
+      "file": "yuanxingmu/actions.py",
+      "line": 55,
+      "text": "def _now():"
+    },
+    {
+      "file": "yuanxingmu/actions.py",
+      "line": 56,
+      "text": "return datetime.now(timezone.utc).isoformat()"
+    },
+    {
+      "file": "yuanxingmu/actions.py",
+      "line": 600,
+      "text": "identifier, now = uuid.uuid4().hex, _now()"
+    },
+    {
+      "file": "yuanxingmu/actions.py",
+      "line": 676,
+      "text": "now, attempt_id = _now(), uuid.uuid4().hex"
+    },
+    {
+      "file": "yuanxingmu/actions.py",
+      "line": 698,
+      "text": "def _finish(self, task_id, action_id, attempt_id, result):"
+    }
+  ],
+  "clock_log_probe_result": "No systemd-timesyncd journal entries in the bounded interval; this does not prove that no clock change occurred.",
+  "constraint": "Do not use these wall-clock fields to prove ordering, elapsed time or stable host clock. Preserve the inversion; do not correct original records.",
+  "delivery_evidence": "The exact action/attempt identifiers, unique receiver request bodies and hashes, acknowledged state and call/result transcript positions still match. The final reply makes no timing claim; its accuracy review does not certify clocks."
+}

@@ -1,0 +1,67 @@
+{
+  "recorded_at": "2026-09-12T15:05:36.094993+00:00",
+  "scope": "Explicit minimal public allowlist only",
+  "files": [
+    {
+      "file": "README.md",
+      "bytes": 3107,
+      "sha256": "d5bf41fde2e01cd38c21fe5be8a2d311670c4244f71ee99198a8a18412227362"
+    },
+    {
+      "file": "actions.json",
+      "bytes": 2624,
+      "sha256": "1e592c0c57fc79dbb04b488101eae0240c6baa4c990993ed41d2cb96212aee1e"
+    },
+    {
+      "file": "conversation.jsonl",
+      "bytes": 16702,
+      "sha256": "863f7b4a142866e8acf5de4cfa36143ea2384fe28cb0cbfc359a1061bfe5ae67"
+    },
+    {
+      "file": "final-reply-review.json",
+      "bytes": 2720,
+      "sha256": "35d402959f111cca66b501ca8239e03361610de4e08c360d077f2c5b7bb279da"
+    },
+    {
+      "file": "model-exchange-hashes.json",
+      "bytes": 4132,
+      "sha256": "522248beda6b01c7ede9037b27ff36d4fad6bab69633a46e8311589d31d838d7"
+    },
+    {
+      "file": "receipts.json",
+      "bytes": 2353,
+      "sha256": "c1ac7ea68acb17b182784728f31c921b753bd41ab9cf9a6bfecd632dc7fb8d2e"
+    },
+    {
+      "file": "scenario.json",
+      "bytes": 2803,
+      "sha256": "943e49dc0eee6d7772cf12e585a63568af6831375a56010d64cbe834d4980b70"
+    },
+    {
+      "file": "timestamp-observation.json",
+      "bytes": 3153,
+      "sha256": "e479d34f07a51876ed6913e544ab5544e8410bfa09c80aec63a2cb34ba233b32"
+    },
+    {
+      "file": "verification-summary.json",
+      "bytes": 3263,
+      "sha256": "72b459e2588f6357a926f007c53ceab743fc7c537389ec48989b019b8cd2b3dc"
+    },
+    {
+      "file": "verify_public.py",
+      "bytes": 2757,
+      "sha256": "9cc3f556888cc620b664a967d8dcfb5d675597d1944d1a414363a51fac40e977"
+    }
+  ],
+  "known_local_access_tokens_absent": true,
+  "provider_key_read": false,
+  "excluded": [
+    "Raw SQLite and other databases",
+    "Global/native configuration and session identities",
+    "Token-bearing URLs and all key files",
+    "Full model requests/responses and runtime/service logs",
+    "Original private browser snapshots",
+    "Original videos pending separate clip review"
+  ],
+  "timestamp_order_certified": false
+}

@@ -1,0 +1,85 @@
+{
+  "source_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+  "protocol_passed": true,
+  "privacy_passed": true,
+  "mechanical_checks": 968,
+  "failed_checks": [],
+  "private_evidence_verification_sha256": "77da455092a6201984755ca63d4a4a157d22d9f4a1a7bfbd770d2eb3614e903b",
+  "private_privacy_verification_sha256": "c4f422dab2ad15e8efb052ab1f3f8a7cdf5c287b589a73dbeb94f63f913dc262",
+  "native_event_rows": 15,
+  "canonical_native_messages": 10,
+  "conversation_export_scope": "Every canonical native message event; no raw SQLite, session database metadata, config or keys.",
+  "one_exact_native_chat_send": true,
+  "receiver_counts": {
+    "team": 1,
+    "archive": 1,
+    "intake": 1
+  },
+  "paused": false,
+  "operator_action_approvals": 0,
+  "supplemental_prompts": 0,
+  "final_message_id": "c9f56613-e508-40e0-b3eb-03e26edaa3cb",
+  "final_message_sha256": "14ca094cdbb1ee9e0c5b23e56e6031d1e44063a5aeb6185e7ab9030fea667a09",
+  "all_owned_services_and_browsers_closed": true,
+  "privacy_surfaces_checked": 78,
+  "original_recordings": [
+    {
+      "file": "00-workbench-create-consent.webm",
+      "bytes": 16748975,
+      "sha256": "f57b1d0ae079972a2a9021824b532a2c78119f2f95a7fcd1e2cfa293635f2a32",
+      "duration_seconds": 399.28,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "01-native-natural-task.webm",
+      "bytes": 11780772,
+      "sha256": "8a9da8cd3012b06e145b587426021bffdf1bb7a96102c28de7cba2de533b8f61",
+      "duration_seconds": 216.96,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    },
+    {
+      "file": "01-receiver-natural-task.webm",
+      "bytes": 6283129,
+      "sha256": "53e1b02f31e32976a866250905f8770714a8f0f50fdcbd7294f193c1c5d03ef0",
+      "duration_seconds": 168.12,
+      "width": 1440,
+      "height": 1000,
+      "fps": 25.0,
+      "full_decode_passed": true,
+      "original_unchanged": true
+    }
+  ],
+  "prior_attempts": [
+    {
+      "id": "PROTECTED11",
+      "result": "precreation CLI transport failure",
+      "natural_task_sent": false
+    },
+    {
+      "id": "PROTECTED12",
+      "result": "startup capture hung on an unrelated SQLite lock",
+      "natural_task_sent": false
+    },
+    {
+      "id": "PROTECTED13",
+      "result": "post-navigation driver failed because URL was undefined in CLI execution environment",
+      "natural_task_sent": false
+    }
+  ],
+  "limitations": [
+    "One local synthetic task; no scalable attack success rate or production reliability claim.",
+    "Finite literal/decimal-money/NFKC/zero-width and JSON-string decoding to depth 64; no arbitrary encoding, inference, unknown secrets or cross-message reconstruction guarantee.",
+    "Original model exchanges are retained privately; only their verified upstream/response hashes are public here.",
+    "The relay did not save pre-relay request bytes.",
+    "An original upload timestamp inversion remains unexplained. No clock stability, timing order or elapsed-time certification.",
+    "Video metadata checks are integrity checks; the public text package does not claim every original video frame was manually reviewed."
+  ]
+}
