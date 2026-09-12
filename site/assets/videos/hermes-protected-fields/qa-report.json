@@ -1,0 +1,133 @@
+{
+  "verified_at": "2026-09-12T13:37:38.797532+00:00",
+  "video_sha256": "b51aa8cfb5a04f807711e8f514080819958c94117d4c50d6b966e9015901f0e2",
+  "duration_seconds": 104,
+  "full_decode_passed": true,
+  "all_source_evidence_audio_hashes_unchanged": true,
+  "audio": {
+    "codec": "AAC",
+    "sample_rate": 24000,
+    "channels": 1,
+    "matched_segments": 7,
+    "minimum_pcm_correlation": 0.9999230889245381,
+    "all_original_narration_segments_complete": true
+  },
+  "video": {
+    "codec": "H264",
+    "width": 1440,
+    "height": 1140,
+    "fps": 25,
+    "source_frame_checks": 21,
+    "maximum_ui_pixel_mean_absolute_error": 0.47008796296296296,
+    "original_ui_unchanged": true
+  },
+  "subtitles": {
+    "formats": [
+      "VTT",
+      "SRT"
+    ],
+    "cue_count": 26,
+    "all_text_matches_original_narration": true,
+    "toggle_verified": true,
+    "timing": "Original WAV silence boundaries; received narration delayed within its unchanged source clip to follow the third visible receipt."
+  },
+  "browser": {
+    "desktop": {
+      "url": "http://127.0.0.1:18782/layers.html#hermes-protected-fields",
+      "actual_chapter_plays": 7,
+      "all_plays_decoded_audio_and_video": true,
+      "captions_enabled_disabled_restored": {
+        "on": [
+          "报告保留了最终回复中的一个中文名称错字。"
+        ],
+        "off": true,
+        "restored": true
+      },
+      "final_layout": {
+        "url": "http://127.0.0.1:18782/layers.html#hermes-protected-fields",
+        "width": 859.1640625,
+        "height": 680.1640625,
+        "aspectRatio": "1440 / 1140",
+        "expectedHeight": 680.1715494791666,
+        "naturalWidth": 1440,
+        "naturalHeight": 1140,
+        "duration": 104,
+        "currentTime": 86,
+        "captions": [
+          "报告保留了最终回复中的一个中文名称错字。"
+        ],
+        "overflow": false,
+        "viewport": {
+          "width": 1440,
+          "height": 1000
+        }
+      },
+      "session_closed": true
+    },
+    "mobile": {
+      "url": "http://127.0.0.1:18782/layers.html#hermes-protected-fields",
+      "actual_chapter_plays": 7,
+      "all_plays_decoded_audio_and_video": true,
+      "captions_enabled_disabled_restored": {
+        "on": [
+          "报告保留了最终回复中的一个中文名称错字。"
+        ],
+        "off": true,
+        "restored": true
+      },
+      "final_layout": {
+        "url": "http://127.0.0.1:18782/layers.html#hermes-protected-fields",
+        "width": 348,
+        "height": 275.5,
+        "aspectRatio": "1440 / 1140",
+        "expectedHeight": 275.5,
+        "naturalWidth": 1440,
+        "naturalHeight": 1140,
+        "duration": 104,
+        "currentTime": 86,
+        "captions": [
+          "报告保留了最终回复中的一个中文名称错字。"
+        ],
+        "overflow": false,
+        "viewport": {
+          "width": 390,
+          "height": 844
+        }
+      },
+      "session_closed": true
+    }
+  },
+  "mobile_test_scope": "Chrome touch/mobile emulation at 390x844, not a claim of physical-device testing.",
+  "visual_review": {
+    "reviewed_at": "2026-09-12T13:37:38.792531+00:00",
+    "contact_sheet": "media-qa-v2/final-contact.jpg",
+    "sampled_source_aligned_frames": 21,
+    "fullsize_frames": [
+      "media-qa-v2/06-limits-1-final.png"
+    ],
+    "browser_screenshots": [
+      "desktop-latest-captions-received.png",
+      "desktop-latest-captions-final.png",
+      "mobile-captions-final.png",
+      "mobile-ratio-final-received.png"
+    ],
+    "observations": [
+      "Actual native UI retained; the protected floor is not visible in reviewed frames.",
+      "Received chapter at output 62 seconds shows all three real receiver records while the caption says each was received once.",
+      "The actual final reply spelling error remains on screen, with the narration and captions explicitly acknowledging it.",
+      "Native subtitles display on desktop and the 390px touch viewport without horizontal page overflow.",
+      "No provider key or local access token observed in reviewed footage. No every-frame OCR is claimed."
+    ]
+  },
+  "originals_reused_from_auto18": false,
+  "strict_complete_protocol_passed": false,
+  "preserved_issue": "Final intake label is misspelled in the real assistant reply; actual destination and fields are correct.",
+  "production_helper_hashes": {
+    "render.py": "173c987878bfeff06b9ff7e6bae455a3bf4d611a70c6a6d561ee73806e5f3739",
+    "sync_received.py": "8dd1dd0883f5c0d41964d848dd7cb88f15112d33e66efdd5cf2487d9af5962f8",
+    "audit_film.py": "ccbe7a7531cf0ef225391d7745b2690888bf3c0e3db77a18582418e9e55efb36",
+    "browser_qa.py": "84f8e003cde801332bb535f90641de42a8b16efa257a319a5edd60fa2844334c"
+  },
+  "private_qa_bundle": ".research/hermes-auto19-film-20260912",
+  "preview_server_stopped_by_this_task": false
+}

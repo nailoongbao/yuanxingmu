@@ -2,7 +2,7 @@
 
 创建工作时，选择哪些固定对象可以接收这次工作的资料。之后，AI 发消息、上传文本或提交表单，只要在这个范围内、通过防护检查，就会直接执行。用户可以在工作台查看结果，不需要每一步再点批准。
 
-这项能力先接入本仓库开发版的 Hermes 和 OpenClaw。现有安装器与早期演示使用旧版本；更新源码不会给已创建的工作追加自动执行权限。
+这项能力已随 [0.7.0a1 预览运行包](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a1) 发布，支持 Hermes 和 OpenClaw；[配套 0.4 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)也已公开。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html)使用新的 `~/yuanxingmu-v07` 目录。旧安装和早期演示使用各自记录的版本；更新源码不会给已创建的工作追加自动执行权限。
 
 ## 怎样使用
 

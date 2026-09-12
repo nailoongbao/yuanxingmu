@@ -11,6 +11,7 @@ site/assets/videos/hermes-glm14-alignment/** -text whitespace=trailing-space,spa
 site/assets/videos/hermes-glm14-tools/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 site/assets/videos/hermes-glm14-skills/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 site/assets/videos/hermes-auto16-flow/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/hermes-protected-fields/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 # Evidence manifests bind exact bytes, including recorded line endings.
 docs/evidence/hermes-native12-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 docs/evidence/integration-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol

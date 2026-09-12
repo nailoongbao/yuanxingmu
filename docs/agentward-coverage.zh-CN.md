@@ -4,6 +4,21 @@
 
 元星木的目标是覆盖这些实际功能，再补上权限、隔离和真实发送的控制。**目前不能宣称已全面覆盖或效果超过玄甲**：功能已写入、组件检查通过、原生 Agent 确实触发并被拦截，是三种不同的证据。
 
+## 最新单次任务：AUTO19 的改进与边界
+
+0.7 源码 `c83add3` 的 [AUTO19 原生实录](evidence/hermes-auto19-2026-09-12/REPORT.zh-CN.md)中，明确标出的内部底价在进入 AI 前被隐藏；供应商伪系统指令由输入规则扣留后，Hermes 继续完成消息、文本上传和表单。三个本机合成接收端各收到一次，没有逐项批准、人工恢复或操作者补参数。[104 秒视频](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-protected-fields)展示实际过程。
+
+**这次防护与实际提交检查通过，严格完整协议仍为 false。** 模型最终把“合成报价表”写成“合造报价表”；实际表单目标、字段和值正确。原回复与错字保留，未重跑。0.7 运行包和[配套 0.4 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)已发布；旧版 0.6 与旧工作不包含这项新保护。安装成功不等于本表所列防御效果全部通过，仍需分别阅读对应版本的实测记录。
+
+<details>
+<summary>完整核验范围，以及不能据此宣称的能力</summary>
+
+独立检查覆盖全部模型请求、回复、官方工具消息及参数、接收正文，共 28 项；未发现底价或声明支持的等价金额写法。不是只核对最终回复。支持明确标签和有限值写法，不覆盖任意编码、推断、未知秘密或跨消息重组。伪系统指令未进入工作模型，不能称为模型抵抗了未看到的攻击。
+
+[AUTO18](evidence/hermes-auto18-2026-09-12/REPORT.zh-CN.md) 中的两次可见回复泄露和检查模型错误放行仍然保留；AUTO15–17 的误拦和未完成步骤也不改写。AUTO19 只是一轮固定 Hermes 任务，不能外推为 OpenClaw 或十一组 SDK 均完成原生保护验收，也不是与玄甲同条件的整体胜负比较。
+
+</details>
+
 ## 如何读这份表
 
 - **已实现**：有可调用代码，不表示已完成真实 Agent 验收。
@@ -88,10 +103,11 @@ GLM14 五段实录：[外部资料 · 52 秒](../site/assets/videos/hermes-glm14
 
 | 工作 | 当前代码与证据 | 限制 |
 |---|---|---|
+| 明确敏感字段在进入 AI 前隐藏，后续输出与提交继续核对 | [`protected_fields.py`](../yuanxingmu/protected_fields.py)、[`protected_boundary.py`](../yuanxingmu/protected_boundary.py)；AUTO19 的完整模型/工具/接收记录未发现内部底价，三项正文各实际接收一次。 | 0.7 运行包已发布。只有明确标签与有限值写法；不识别任意秘密、编码或推断。最终回复仍有一处名称错字，严格完整协议 false。 |
 | AI 进程不持有真实服务凭证，不能直接访问主机私有目录或直接联网 | [`sandbox.py`](../yuanxingmu/sandbox.py)、[`gateway_network.py`](../yuanxingmu/gateway_network.py)、[`authority.py`](../yuanxingmu/authority.py)；已有[原生 OpenClaw 报告](../examples/yuanxingmu/real_openclaw/evidence/REPORT.zh-CN.md)。 | Linux 共享内核；模型网络桥仍是特定受控路径。不能概括为硬件隔离或任意服务支持。 |
 | 任务换连接、重启后仍保留权限与撤销状态 | 主机 Broker/authority 保存任务家族与状态；原生 OpenClaw 旧记录含撤销后重启。 | 子 Agent、不同框架和新工具都要逐个验证身份绑定，不能靠框架名配置自动获得保证。 |
 | 真正发送之前核对用户批准的内容 | [`mail_drafts.py`](../yuanxingmu/mail_drafts.py)、[`mail_transport.py`](../yuanxingmu/mail_transport.py)；[邮件验收报告](../examples/yuanxingmu/email/evidence/report.md)。 | 精确草稿版本、目标和发送结果有边界；一次接收端回执不是任意邮箱服务的送达保证。 |
-| 不仅邮件：消息、上传、表单、覆盖文件、删除文件 | [`actions.py`](../yuanxingmu/actions.py)、[`test_yuanxingmu_actions.py`](../tests/test_yuanxingmu_actions.py)；主机保存候选并要求确认、固定目标与凭证、记录发送尝试，结果不明时不自动重试。 | OpenClaw native10 已有消息、表单和文件操作的真实确认与效果；Hermes AUTO15 只验证一条自动消息送达，连续流程因回答误拦失败，上传/表单未到达。文件操作限明确授权的小型既有 UTF-8 文件。未验证的真实提供商不能列为已送达。 |
+| 不仅邮件：消息、上传、表单、覆盖文件、删除文件 | [`actions.py`](../yuanxingmu/actions.py)、[`test_yuanxingmu_actions.py`](../tests/test_yuanxingmu_actions.py)；主机保存候选并要求确认、固定目标与凭证、记录发送尝试，结果不明时不自动重试。 | OpenClaw native10 已有消息、表单和文件操作的真实确认与效果；Hermes AUTO19 单次自然任务中消息、上传和表单各实际接收一次；最终名称错字保留。AUTO15 的回答误拦与后续未到达、AUTO18 的真实泄露也仍保留。文件操作限明确授权的小型既有 UTF-8 文件。未验证的真实提供商不能列为已送达。 |
 | 十一组常用 SDK 的原生工具接入 | LangChain/LangGraph、OpenAI Agents、PydanticAI、Google ADK、CrewAI、Agno、AutoGen、LlamaIndex、Microsoft Agent Framework、smolagents、Mastra 已通过真实 SDK 注册与调用，连接真实 Broker 套接字和本地接收端。[框架范围](framework-support.zh-CN.md)列出固定版本和五批证据。 | 这是原生工具适配，不是十一组完整 Agent 的隔离、模型循环或五层验收。smolagents 的 CodeAgent 执行边界未覆盖。旧 MCP 研究结果没有充作新适配证据。 |
 
 ## 关于“超过玄甲”的证据
@@ -107,7 +123,7 @@ GLM14 五段实录：[外部资料 · 52 秒](../site/assets/videos/hermes-glm14
 1. 对已实现的默认空集、显式技能选择和只读快照，继续核对每个官方运行入口的实际加载目录；避免扫 A 用 B。
 2. Hermes native13/GLM14 已补齐同源码五层固定案例；继续在 OpenClaw 及更多原生来源复验正常/危险配对，补正常记忆写入、不同工具结果和更多技能，不能把固定案例当成整层穷尽覆盖。
 3. Hermes 已完成官方写文件的真实人工批准，GLM14/native13 分别完成三次/五次真实工作台恢复。继续用新实例验收运行中设置、创建基线恢复、技能规则开关与用途对照。后台通用 JSON 提醒已有本机接收端证据，第三方服务仍未验收；聊天配置写入和当前聊天通道告警仍未实现。
-4. 对消息、上传、表单与文件操作重复原生验收。AUTO15 虽自动送达一条消息，但回答误拦使连续流程失败；后续未提交步骤不能计通过。产品界面只展示已验收的来源与动作。
+4. 对更多任务、输入与框架重复原生验收。AUTO19 已在同一自然任务中完成消息、上传和表单，防护与提交核验通过；最终名称错字使严格完整协议仍为 false。保留 AUTO15 的中途误拦及 AUTO18 的真实泄露；未执行步骤不能计通过，固定案例也不代表整层或全部框架覆盖。
 5. Hermes GLM14 五层视频已完成并绑定版本、配置和事件；继续补其他官方入口及新功能实录，不把关闭、观察、未触发或不可用状态标为“已保护”。
 
 框架逐个接入的进度与版本见[框架支持矩阵](framework-support.zh-CN.md)。

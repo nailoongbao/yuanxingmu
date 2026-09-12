@@ -1,0 +1,44 @@
+[
+  {
+    "start": 0,
+    "end": 9,
+    "label": "一次任务",
+    "key": "intro"
+  },
+  {
+    "start": 9,
+    "end": 24,
+    "label": "三项已授权工作",
+    "key": "task"
+  },
+  {
+    "start": 24,
+    "end": 38,
+    "label": "底价先隐藏",
+    "key": "mask"
+  },
+  {
+    "start": 38,
+    "end": 52,
+    "label": "可疑资料被扣留",
+    "key": "input"
+  },
+  {
+    "start": 52,
+    "end": 68,
+    "label": "核对真实接收记录",
+    "key": "received"
+  },
+  {
+    "start": 68,
+    "end": 84,
+    "label": "无需逐项批准",
+    "key": "automatic"
+  },
+  {
+    "start": 84,
+    "end": 104,
+    "label": "保留错字与测试边界",
+    "key": "limits"
+  }
+]

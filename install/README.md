@@ -1,10 +1,14 @@
 # 元星木安装器预览版
 
-把首次安装收成一个入口。装好以后，运行 `~/yuanxingmu-v06/open-yuanxingmu`，在网页中选择资料、连接自己的模型，再进入 OpenClaw 或 Hermes 聊天。
+把首次安装收成一个入口。装好以后，运行 `~/yuanxingmu-v07/open-yuanxingmu`，在网页中选择资料、连接自己的模型，再进入 OpenClaw 或 Hermes 聊天。
 
 [面向使用者的图文步骤](https://yh-l20.github.io/yuanxingmu/start.html) · [117 秒真实模型演示](https://yh-l20.github.io/yuanxingmu/workbench-demo.html)
 
-安装器 `0.3.0a1` 固定安装已发布的元星木 `0.6.0a1`、Node.js `24.16.0`、OpenClaw `2026.9.4` 和 Hermes `0.21.2`。**默认安装包含两个框架，无需开发 wheel。** 运行包绑定源码提交 `e886607d8f5b81d4674af3d5ed38f486b20c2aee`，下载地址、字节数和 SHA256 都固定在安装器中。
+**[0.4.0a1 安装器已公开，仍为预览版](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)。** 安装器固定安装元星木 `0.7.0a1`、Node.js `24.16.0`、OpenClaw `2026.9.4` 和 Hermes `0.21.2`。**默认安装包含两个框架，无需开发 wheel。** 运行包绑定源码提交 `c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425`，下载地址、字节数和 SHA256 都固定在安装器中。
+
+[下载安装器](https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/yuanxingmu-installer-0.4.0a1.pyz) · [安装与验收记录](https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/installer-manifest.json) · [SHA256SUMS](https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/SHA256SUMS)。三个公开下载文件的名称、字节数和 SHA256 已与审核版本核对。
+
+新建工作会先隐藏资料中明确标记的底价、密码和令牌，再交给模型；支持范围和限制见[敏感字段说明](../docs/protected-fields.zh-CN.md)。旧工作不会自动获得这个边界。
 
 这是预览版。请安装到新的目录；旧版继续使用原来的启动入口，已有安装与工作的权限记录不会被升级或接管。防御效果与已知失败以仓库公开实验记录为准，安装完成本身不证明模型不会越权或漏报。
 
@@ -12,20 +16,20 @@
 
 Ubuntu 24.04 或 WSL Ubuntu 24.04，x86_64，系统 `/usr/bin/python3` 3.12+，建议至少 4 GB 可用空间。安装器不负责安装 WSL。首次安装需要联网下载并构建两个框架的运行组件；模型地址、模型名称和密钥由使用者在工作台填写。
 
-将对应发行页下载的 `yuanxingmu-installer-0.3.0a1.pyz` 放入 Ubuntu 家目录后，在 Ubuntu 终端运行：
+将对应发行页下载的 `yuanxingmu-installer-0.4.0a1.pyz` 放入 Ubuntu 家目录后，在 Ubuntu 终端运行：
 
 ```bash
-/usr/bin/python3 -I ~/yuanxingmu-installer-0.3.0a1.pyz --install-root ~/yuanxingmu-v06 --system-deps
+/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.4.0a1.pyz" --install-root "$HOME/yuanxingmu-v07" --system-deps
 ```
 
 `--system-deps` 会在需要时通过系统 `sudo` 安装 bubblewrap、CA 证书与 AppArmor，并为 `/opt/yuanxingmu/bin/bwrap` 设置专用 AppArmor 配置。可能询问 Ubuntu 密码；不会关闭系统的全局用户命名空间限制。已有完整隔离环境可以省略这个参数。
 
-上面的命令安装到新的 `~/yuanxingmu-v06`。如果这个位置已经有旧安装或工作，请使用 `--install-root ~/另一个新目录`。不指定参数时仍默认使用 `~/yuanxingmu`，但不会接管已有旧版本。不支持 `/mnt/c`、符号链接位置或其他用户的目录。无需自行运行 pip、git 或 npm。
+上面的命令安装到新的 `~/yuanxingmu-v07`。如果这个位置已经有旧安装或工作，请使用 `--install-root ~/另一个新目录`。不指定参数时仍默认使用 `~/yuanxingmu`，但不会接管已有旧版本。不支持 `/mnt/c`、符号链接位置或其他用户的目录。无需自行运行 pip、git 或 npm。
 
 ## 日常打开
 
 ```bash
-~/yuanxingmu-v06/open-yuanxingmu
+"$HOME/yuanxingmu-v07/open-yuanxingmu"
 ```
 
 工作台会尝试打开浏览器，也会在终端显示完整的本机管理链接。自动打开失败时，复制链接到自己的浏览器。终端需保持运行。先在页面点击“暂时关闭”，再退出终端；关掉网页或管理终端不会停止已经运行的 AI。
@@ -79,12 +83,12 @@ Hermes、uv 和专用 npm 下载均核对固定大小与 SHA256。Hermes 源码�
 
 ```bash
 /usr/bin/python3 -I install/smoke_install.py \
-  --install-root ~/yuanxingmu-v06 --framework both \
-  --report /tmp/yuanxingmu-v06-acceptance.json
+  --install-root ~/yuanxingmu-v07 --framework both \
+  --report /tmp/yuanxingmu-v07-acceptance.json
 
 /usr/bin/python3 -I install/check_reuse.py \
-  --install-root ~/yuanxingmu-v06 \
-  --installer ~/yuanxingmu-installer-0.3.0a1.pyz
+  --install-root ~/yuanxingmu-v07 \
+  --installer ~/yuanxingmu-installer-0.4.0a1.pyz
 ```
 
 验收检查实际原生网页 HTTP 响应、停止、管理入口重开、原生网页重开、撤权和最终停止。临时模型入口只记录意外请求并拒绝执行；通过标准要求它收到零次请求。不启动真实模型，不发送邮件或其他外部消息。这是安装与网页启停验证，不是模型防御效果或浏览器交互的完整验证。第二条命令检查已有完整安装，比较其运行文件、保存的工作和权限记录是否保持原样。
@@ -95,12 +99,12 @@ Hermes、uv 和专用 npm 下载均核对固定大小与 SHA256。Hermes 源码�
 
 ```bash
 python -m build --wheel --outdir /tmp/yuanxingmu-dev-wheels
-sha256sum /tmp/yuanxingmu-dev-wheels/agent_defense_check-0.6.0a1-py3-none-any.whl
+sha256sum /tmp/yuanxingmu-dev-wheels/agent_defense_check-0.7.0a1-py3-none-any.whl
 /usr/bin/python3 install/build_zipapp.py --dev --output /tmp/yuanxingmu-hermes-dev.pyz
 
 /usr/bin/python3 -I /tmp/yuanxingmu-hermes-dev.pyz \
   --install-root ~/yuanxingmu-hermes-dev \
-  --development-wheel /tmp/yuanxingmu-dev-wheels/agent_defense_check-0.6.0a1-py3-none-any.whl \
+  --development-wheel /tmp/yuanxingmu-dev-wheels/agent_defense_check-0.7.0a1-py3-none-any.whl \
   --development-wheel-sha256 <上一步输出的完整小写SHA256> \
   --no-shortcut
 ```
