@@ -4,7 +4,7 @@ This package connects LangChain/LangGraph, the OpenAI Agents SDK, and Pydantic A
 
 **This is tool adaptation only.** The validation below invokes tools through installed SDKs and real Broker sockets. It does not run an LLM or demonstrate that a hostile agent process cannot bypass its tools. A common host supervisor must separately isolate the process, restrict other network and file access, protect credentials and review sockets, and control delegation. An ordinary Python tool list cannot provide those boundaries.
 
-The separate [LangGraph runtime](langgraph-runtime.zh-CN.md) now provides a fixed, complete model loop in a host-isolated process with native checkpoint recovery. Its tool scope, model evidence and limits are documented separately; it does not automatically protect arbitrary applications using the factories below.
+The separate [LangGraph runtime](langgraph-runtime.zh-CN.md) and [OpenAI Agents runtime](openai-agents-runtime.zh-CN.md) provide fixed, complete model loops in host-isolated processes with native checkpoint recovery. OpenAI Agents includes a fixed researcher-to-executor handoff. Their tool scopes, model evidence and limits are documented separately; these entries do not automatically protect arbitrary applications using the factories below.
 
 ## Bind a host session
 

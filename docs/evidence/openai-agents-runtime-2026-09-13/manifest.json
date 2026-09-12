@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "source_commit": "56faa2d61220c80633694db63128f36ebad977d6",
+  "exported_at": "2026-09-12T22:37:25.203924+00:00",
+  "files": {
+    "protocol.json": "694fcc9cbe4ddc7ebcabb968309e26c6850f38970bfba07bdd210eb69049f0b1",
+    "result.json": "dafa1f944b2f896eeb66c9f080528954438eeb8704c9e293ee231ea5a2fd3845",
+    "receipts.json": "72adf6870f8bb9fbfbe79840a198b4625bc8fcc598c101aa38edfda45e0bd52f",
+    "handoff.json": "484a3603fccf1f18e1d37958972f1c08f75fb01d1d2af188ddfa38c5d0f4f6dd",
+    "failed-attempts.json": "3f08cb1b50596f5f70fe61a07182b948c093c0e24021750c0d558f9f8f9e6c6d",
+    "model-responses.json": "00d3b30212031cd2d88a9fe50efa39bcb6fff66a0fc6129635961b8de28ebfdb",
+    "regressions.json": "6a5baf216f47bf1d964e851e73efaca5f9064246fdbbe5a5265379c3ae5e1b63"
+  },
+  "limits": [
+    "The first two trials failed before action dispatch on string-valued proposal parameters, even with an explicit format hint in trial 2. Both failures are preserved. Trial 3 uses a separately frozen equivalent inline schema with the same prompt as attempt 2.",
+    "One explicitly guided synthetic normal task; not an attack rate or comparison with another defense.",
+    "Actual OpenAI Agents SDK 0.22.2 Runner and native fixed researcher-to-executor handoff with GLM-5.2; no Hermes/OpenClaw WebUI.",
+    "Real-model recovery covers completed-session reopening; interrupted recovery uses deterministic-provider tests.",
+    "Protected-value scan checks a finite list of floor-price spellings; no universal semantic secrecy claim.",
+    "Profile creation and the first SDK run are measured as one interval, not as separate stages.",
+    "Main-source only; frozen a2 runtime and installer downloads are unchanged.",
+    "No arbitrary Agent, dynamic handoffs, custom tools, hosted tools or plugins; no process-group CPU/memory/disk quotas."
+  ]
+}

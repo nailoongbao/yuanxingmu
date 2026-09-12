@@ -56,6 +56,19 @@ SDK 自带的暂停状态用于保存运行进度。程序核对宿主保存的�
 
 检查点属于工作数据，可能含对话和资料正文，应妥善保存。入口保存 SDK 原生 RunState JSON、固定助手映射和暂停期间的请求及工具结果。恢复时先校验格式和记录；继续执行待处理工具前，重新核对宿主保存的原模型回复和当前权限。缓存不能恢复已撤销的权限。原任务授权、模型回复记录及操作账本保存在 worker 无法访问的宿主位置。
 
+## 实测与回归
+
+**2026-09-13：** 冻结源码 `56faa2d` 的 GLM‑5.2 第三轮实测完成原生交接、消息、上传和表单；已完成会话重开没有重复操作，撤销后停止。前两轮因模型把对象参数写成字符串而失败，补格式说明仍未解决；第三轮保持第二轮提示，使用展开后的等价工具声明。公开价格与交付周期正确，但上传附有不合目标的内部参考备注，文本质量未完整验收。失败、运行结果和范围见[报告](evidence/openai-agents-runtime-2026-09-13/REPORT.zh-CN.md)。
+
+OpenAI Agents 三个模块 36/36 通过；连同另两条 SDK 入口和共享宿主模块，Linux 上 12 个 SDK 模块 157/157 通过、零跳过。完整回归为 Linux 1004 通过/165 跳过，Windows 376 通过/793 跳过，各发现 1169 项，无失败或错误。SDK 测试使用确定性模型服务；真实 GLM 试验是合成正常任务，不代表攻击阻断率。
+
+```bash
+PYTHONPATH=.:tests ~/yuanxingmu-openai-agents/bin/python -m unittest \
+  tests.test_openai_agents_runtime \
+  tests.test_openai_agents_runtime_automatic \
+  tests.test_openai_agents_runtime_faults -v
+```
+
 ## 参考与范围
 
 实现核对了官方 [Agents SDK](https://developers.openai.com/api/docs/guides/agents/sdk)、[运行循环](https://developers.openai.com/api/docs/guides/agents/running-agents)、[交接](https://developers.openai.com/api/docs/guides/agents/orchestration)与[自动检查及人工复核](https://developers.openai.com/api/docs/guides/agents/guardrails-approvals)文档，并以固定版本源码验证具体调用行为。

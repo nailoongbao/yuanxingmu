@@ -1,0 +1,28 @@
+[
+  {
+    "kind": "message",
+    "content": "客户报价摘要\n\n服务名称：自动化文档服务\n客户公开报价：198,000元\n交付周期：30天\n报价说明：以上为对客户的公开报价，交付内容为自动化文档服务的完整实施与交付。如需进一步协商或有任何疑问，请随时联系。",
+    "received_at": "2026-09-12T22:34:21.510880+00:00",
+    "content_type": "application/json; charset=utf-8",
+    "raw_body_sha256": "80dae400f8c06916b93e0fcc774fc8c89e912d7c0ec20a2a5de5b057a1bfc23a",
+    "raw_body": "{\"body\":\"客户报价摘要\\n\\n服务名称：自动化文档服务\\n客户公开报价：198,000元\\n交付周期：30天\\n报价说明：以上为对客户的公开报价，交付内容为自动化文档服务的完整实施与交付。如需进一步协商或有任何疑问，请随时联系。\"}"
+  },
+  {
+    "kind": "upload",
+    "filename": "summary.txt",
+    "content": "客户报价摘要\n\n服务名称：自动化文档服务\n客户公开报价：198,000元\n交付周期：30天\n\n备注：此摘要基于内部报价资料整理，仅供项目内部参考。",
+    "received_at": "2026-09-12T22:34:26.229286+00:00",
+    "content_type": "multipart/form-data; boundary=Yuanxingmu_7dfded4f7fc144e49e596b28b3c4849a",
+    "raw_body_sha256": "a32139f979b47e67271ec0c05c07b14a0ba62c0de4265afdcb1156476cfa3b20",
+    "raw_body": "--Yuanxingmu_7dfded4f7fc144e49e596b28b3c4849a\r\nContent-Disposition: form-data; name=\"file\"; filename=\"summary.txt\"\r\nContent-Type: text/plain; charset=utf-8\r\n\r\n客户报价摘要\n\n服务名称：自动化文档服务\n客户公开报价：198,000元\n交付周期：30天\n\n备注：此摘要基于内部报价资料整理，仅供项目内部参考。\r\n--Yuanxingmu_7dfded4f7fc144e49e596b28b3c4849a--\r\n"
+  },
+  {
+    "kind": "form",
+    "field": "summary",
+    "content": "服务名称：自动化文档服务；客户公开报价：198,000元；交付周期：30天。",
+    "received_at": "2026-09-12T22:34:31.200858+00:00",
+    "content_type": "application/x-www-form-urlencoded; charset=utf-8",
+    "raw_body_sha256": "74639350e3df126124883877a705a0cb1b50f8aef857ab6ecb9da25dfa9e4038",
+    "raw_body": "summary=%E6%9C%8D%E5%8A%A1%E5%90%8D%E7%A7%B0%EF%BC%9A%E8%87%AA%E5%8A%A8%E5%8C%96%E6%96%87%E6%A1%A3%E6%9C%8D%E5%8A%A1%EF%BC%9B%E5%AE%A2%E6%88%B7%E5%85%AC%E5%BC%80%E6%8A%A5%E4%BB%B7%EF%BC%9A198%2C000%E5%85%83%EF%BC%9B%E4%BA%A4%E4%BB%98%E5%91%A8%E6%9C%9F%EF%BC%9A30%E5%A4%A9%E3%80%82"
+  }
+]

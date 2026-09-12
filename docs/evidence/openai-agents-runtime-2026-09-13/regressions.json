@@ -1,0 +1,199 @@
+{
+  "windows": {
+    "head": "56faa2d61220c80633694db63128f36ebad977d6",
+    "tests_run": 1169,
+    "passed_count": 376,
+    "skipped_count": 793,
+    "successful": true,
+    "valid": true,
+    "sources_unchanged": true,
+    "source_file_count": 470,
+    "duration_seconds": 18.5,
+    "started_at": "2026-09-12T22:33:45.528479+00:00",
+    "finished_at": "2026-09-12T22:34:04.034821+00:00",
+    "original_result_sha256": "0fd75ea2c8121b8deb86e7e0a5625426a7bd2e7c9bec0ad734f3e221c227d903",
+    "configuration_snapshot_hashes": {
+      ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+      ".github/workflows/yuanxingmu.yml": "fa0e14cc9fd925ff9a69a3915010568ee0be5cb1a4ca8bfed6fbe8bc1f5c6e2b"
+    },
+    "skip_reasons": {
+      "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 97,
+      "Windows symlink privilege unavailable (WinError 1314); local temporary paths omitted.": 1,
+      "Requires Linux and the pinned LangGraph SDK environment": 27,
+      "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+      "Real Broker native adapter checks require Linux": 32,
+      "Requires Linux and the pinned OpenAI Agents SDK environment": 36,
+      "Requires Linux and the pinned smolagents SDK environment": 31,
+      "Safe file targets require POSIX": 1,
+      "Safe file actions require POSIX no-follow directory descriptors": 6,
+      "Host scanner requires Linux private profiles": 15,
+      "Linux broker integration": 12,
+      "Linux broker only": 9,
+      "Linux workbench storage and authority only": 46,
+      "Linux Unix socket bridges only": 10,
+      "Linux broker sockets and persistent authority": 17,
+      "Optional native Hermes installation required": 3,
+      "Real Broker sockets require Linux": 5,
+      "Linux no-follow directory descriptor checks": 11,
+      "Linux Hermes profile only": 13,
+      "requires the optional real Hermes installation": 40,
+      "Safe skill file descriptors require Linux": 2,
+      "Linux Broker sockets and authority": 11,
+      "Linux installer filesystem and process boundaries": 48,
+      "Real protected profile management requires Linux": 11,
+      "Protected profile storage uses Linux descriptor-relative I/O": 21,
+      "Live host settings require Linux": 15,
+      "Linux broker and Unix socket boundaries": 14,
+      "Real Linux broker and Unix model socket": 17,
+      "Durable host queue uses Linux private directories": 26,
+      "Linux OpenClaw profile only": 28,
+      "Linux plugin and Unix socket contract": 1,
+      "OpenClaw live status requires Linux": 5,
+      "Linux broker and durable admission boundaries": 12,
+      "Real Linux Broker and durable pause": 2,
+      "real Linux profiles only": 14,
+      "Quarantine Broker integration requires Linux": 8,
+      "Real Workbench HTTP quarantine tests require Linux": 2,
+      "Real Linux Broker": 7,
+      "Linux execution only": 2,
+      "Linux bubblewrap only": 6,
+      "Linux subprocess collection": 1,
+      "Linux checked HTTP and durable journal": 2,
+      "Linux SDK host boundary": 4,
+      "requires POSIX secure directory-relative storage": 23,
+      "Set YUANXINGMU_LANGGRAPH_PYTHON to the pinned LangGraph Linux venv": 3,
+      "Set YUANXINGMU_OPENAI_AGENTS_PYTHON to the pinned OpenAI Agents Linux venv": 4,
+      "Set YUANXINGMU_SMOLAGENTS_PYTHON to an installed smolagents 1.26.0 Linux venv": 2,
+      "Linux SDK process boundary": 8,
+      "Linux checked model bridge": 3,
+      "Real Linux safe reads and fixed snapshots": 12,
+      "secure snapshots require Linux file descriptors": 26,
+      "Real Broker Unix sockets require Linux": 11
+    },
+    "sdk_modules": {
+      "test_smolagents_runtime": {
+        "passed": 0,
+        "skipped": 15
+      },
+      "test_smolagents_automatic_runtime": {
+        "passed": 0,
+        "skipped": 12
+      },
+      "test_smolagents_runtime_timeouts": {
+        "passed": 0,
+        "skipped": 4
+      },
+      "test_langgraph_runtime": {
+        "passed": 0,
+        "skipped": 10
+      },
+      "test_langgraph_automatic_runtime": {
+        "passed": 0,
+        "skipped": 8
+      },
+      "test_langgraph_runtime_faults": {
+        "passed": 0,
+        "skipped": 9
+      },
+      "test_openai_agents_runtime": {
+        "passed": 0,
+        "skipped": 14
+      },
+      "test_openai_agents_runtime_automatic": {
+        "passed": 0,
+        "skipped": 8
+      },
+      "test_openai_agents_runtime_faults": {
+        "passed": 0,
+        "skipped": 14
+      },
+      "test_yuanxingmu_sdk_runtime": {
+        "passed": 5,
+        "skipped": 20
+      },
+      "test_yuanxingmu_sdk_model_store": {
+        "passed": 8,
+        "skipped": 23
+      },
+      "test_yuanxingmu_sdk_boundary_failures": {
+        "passed": 0,
+        "skipped": 7
+      }
+    }
+  },
+  "linux": {
+    "head": "56faa2d61220c80633694db63128f36ebad977d6",
+    "tests_run": 1169,
+    "passed_count": 1004,
+    "skipped_count": 165,
+    "successful": true,
+    "valid": true,
+    "sources_unchanged": true,
+    "source_file_count": 470,
+    "duration_seconds": 161.106,
+    "started_at": "2026-09-12T22:33:36.278578+00:00",
+    "finished_at": "2026-09-12T22:36:02.905188+00:00",
+    "original_result_sha256": "01401df6a0b88f4748bb536a3e678bdaf35e479601350206df63d4c500a4e736",
+    "configuration_snapshot_hashes": {
+      ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+      ".github/workflows/yuanxingmu.yml": "fa0e14cc9fd925ff9a69a3915010568ee0be5cb1a4ca8bfed6fbe8bc1f5c6e2b"
+    },
+    "skip_reasons": {
+      "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 82,
+      "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+      "Install docs/native-adapters-requirements.txt for actual SDK checks": 10,
+      "Optional native Hermes installation required": 3,
+      "requires the optional real Hermes installation": 40
+    },
+    "sdk_modules": {
+      "test_smolagents_runtime": {
+        "passed": 15,
+        "skipped": 0
+      },
+      "test_smolagents_automatic_runtime": {
+        "passed": 12,
+        "skipped": 0
+      },
+      "test_smolagents_runtime_timeouts": {
+        "passed": 4,
+        "skipped": 0
+      },
+      "test_langgraph_runtime": {
+        "passed": 10,
+        "skipped": 0
+      },
+      "test_langgraph_automatic_runtime": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "test_langgraph_runtime_faults": {
+        "passed": 9,
+        "skipped": 0
+      },
+      "test_openai_agents_runtime": {
+        "passed": 14,
+        "skipped": 0
+      },
+      "test_openai_agents_runtime_automatic": {
+        "passed": 8,
+        "skipped": 0
+      },
+      "test_openai_agents_runtime_faults": {
+        "passed": 14,
+        "skipped": 0
+      },
+      "test_yuanxingmu_sdk_runtime": {
+        "passed": 25,
+        "skipped": 0
+      },
+      "test_yuanxingmu_sdk_model_store": {
+        "passed": 31,
+        "skipped": 0
+      },
+      "test_yuanxingmu_sdk_boundary_failures": {
+        "passed": 7,
+        "skipped": 0
+      }
+    }
+  }
+}
