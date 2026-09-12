@@ -37,7 +37,7 @@ def main():
     run.add_argument("worker_command", nargs=argparse.REMAINDER)
     sdk = commands.add_parser("sdk-run", help="在已有工作的防护内运行完整 SDK 会话；原生网页需先停止")
     sdk.add_argument("--profile", required=True, type=Path)
-    sdk.add_argument("--framework", choices=("smolagents", "langgraph", "openai_agents"), default="smolagents", help="使用固定版本的受保护运行入口")
+    sdk.add_argument("--framework", choices=("smolagents", "langgraph", "openai_agents", "pydantic_ai"), default="smolagents", help="使用固定版本的受保护运行入口")
     sdk.add_argument("--sdk-python", required=True, type=Path, help="选定框架独立 venv 的 bin/python")
     sdk.add_argument("--session", required=True, help="本工作内的会话名称；新会话沿用原权限")
     sdk.add_argument("--prompt-file", required=True, type=Path, help="本次任务的 UTF-8 文本文件")

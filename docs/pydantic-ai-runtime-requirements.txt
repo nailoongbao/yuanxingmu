@@ -1,0 +1,4 @@
+# Versions used by the isolated PydanticAI Agent runtime and its native tests.
+pydantic-ai-slim==2.43.0
+pydantic-graph==2.43.0
+pydantic==2.13.5

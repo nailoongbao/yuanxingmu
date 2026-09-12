@@ -62,6 +62,14 @@ _SDK_RUNTIMES = {
         "answer_tools": (),
         "handoff_tools": ("yuanxingmu_handoff_to_executor",),
     },
+    "pydantic_ai": {
+        "version": "2.43.0",
+        "packages": (("pydantic_ai_slim", "2.43.0"), ("pydantic_graph", "2.43.0"),
+                     ("pydantic", "2.13.5")),
+        "bootstrap": ("import sys; sys.path.insert(0, sys.argv.pop(1)); "
+                      "from yuanxingmu.adapters.pydantic_ai_runtime import main; raise SystemExit(main())"),
+        "answer_tools": (),
+    },
 }
 
 
