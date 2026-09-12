@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="3200" viewBox="0 0 2400 3200" fill="none">
+  <title>元星木五层防护 · 源码预览版</title>
+  <desc>让 AI 多做事，关键一步先把关。环境与技能、外部内容、长期记忆、任务目标、危险命令五个检查入口，配合单次审批和暂停。已有真实拦截样本，也有误报、超时和未完成项。本图为功能示意，不代表防护率或完整实机验收通过。</desc>
+  <defs>
+    <radialGradient id="lp-background" cx=".8" cy=".46" r=".7"><stop stop-color="#182e3d"/><stop offset=".63" stop-color="#0d1e2b"/><stop offset="1" stop-color="#091522"/></radialGradient>
+    <pattern id="lp-dots" width="38" height="38" patternUnits="userSpaceOnUse"><circle cx="1" cy="1" r="1" fill="#8ca7b3" opacity=".2"/></pattern>
+    <linearGradient id="lp-plane" x1="1650" y1="1370" x2="2180" y2="2170" gradientUnits="userSpaceOnUse"><stop stop-color="#c7f8b6" stop-opacity=".07"/><stop offset="1" stop-color="#94a7dc" stop-opacity=".02"/></linearGradient>
+    <linearGradient id="lp-line" x1="1500" y1="0" x2="2010" y2="0" gradientUnits="userSpaceOnUse"><stop stop-color="#b6d6b4" stop-opacity="0"/><stop offset="1" stop-color="#b6d6b4" stop-opacity=".5"/></linearGradient>
+  </defs>
+  <rect width="2400" height="3200" fill="url(#lp-background)"/>
+  <rect x="68" y="68" width="2264" height="3064" stroke="#90abb2" stroke-opacity=".14"/>
+  <path d="M170 309h2060M170 2740h2060M170 3035h2060" stroke="#7f9ba8" stroke-opacity=".28"/>
+  <g transform="translate(170 157) scale(1.7)" stroke="#c7f8b6"><path d="M24 3 43 14v21L24 46 5 35V14L24 3Z" stroke-width="1.4"/><path d="M24 35V13M24 25 14 19m10 6 10-6M24 31 14 25m10 6 10-6" stroke-width="2.4"/><path d="m20 16 4-3 4 3" stroke-width="1.6"/></g>
+  <g font-family="Segoe UI, PingFang SC, Microsoft YaHei, sans-serif">
+    <text x="282" y="201" font-size="58" font-weight="600" letter-spacing="7" fill="#edf5ee">元星木</text>
+    <text x="286" y="242" font-family="Consolas, monospace" font-size="18" letter-spacing="6" fill="#8da8b4">YUANXINGMU</text>
+    <rect x="1598" y="163" width="632" height="76" rx="5" stroke="#7b939d" stroke-opacity=".48"/>
+    <circle cx="1631" cy="201" r="5" fill="#c7f8b6"/>
+    <text x="1656" y="210" font-size="25" font-family="Consolas, Microsoft YaHei, monospace" letter-spacing="1.2" fill="#c1d3d4">SOURCE PREVIEW / 源码预览版</text>
+    <text x="172" y="434" font-family="Consolas, Microsoft YaHei, monospace" font-size="26" letter-spacing="4" fill="#91adbe">YUANXINGMU / 五层防护</text>
+    <text x="158" y="650" font-size="173" font-weight="700" letter-spacing="-5" fill="#eff6ef">让 AI 多做事，</text>
+    <text x="158" y="878" font-size="173" font-weight="700" letter-spacing="-5" fill="#c7f8b6">关键一步先把关。</text>
+    <text x="173" y="1002" font-size="41" letter-spacing="1.5" fill="#b2c5ce">从开始工作，到真正执行，留意五个关键入口。</text>
+    <text x="175" y="1063" font-size="28" letter-spacing="1" fill="#91aab9">能力向前，权限留在你手里。</text>
+
+    <rect x="170" y="1160" width="2060" height="1080" rx="8" fill="#0d202b" fill-opacity=".5" stroke="#7898a5" stroke-opacity=".34"/>
+    <rect x="1470" y="1180" width="730" height="1040" fill="url(#lp-dots)"/>
+    <text x="227" y="1232" font-family="Consolas, Microsoft YaHei, monospace" font-size="23" letter-spacing="2" fill="#84a1ad">01—05 / 工作过程示意</text>
+    <text x="1964" y="1232" font-size="23" letter-spacing="1" fill="#91abae">不执行操作</text>
+    <path d="M225 1272h1950" stroke="#8ba5ae" stroke-opacity=".23"/>
+
+    <g stroke="url(#lp-line)"><path d="M1450 1390h540M1450 1560h540M1450 1730h540M1450 1900h540M1450 2070h540"/></g>
+    <path d="M1940 1330v775" stroke="#badfb1" stroke-opacity=".36" stroke-dasharray="5 13"/>
+    <g fill="url(#lp-plane)" stroke-width="1.6">
+      <path d="m1940 1985 219 78-219 78-219-78Z" stroke="#86a7b9" stroke-opacity=".46"/>
+      <path d="m1940 1815 219 78-219 78-219-78Z" stroke="#90b0b7" stroke-opacity=".53"/>
+      <path d="m1940 1645 219 78-219 78-219-78Z" stroke="#a3c0ba" stroke-opacity=".62"/>
+      <path d="m1940 1475 219 78-219 78-219-78Z" stroke="#b4d6b6" stroke-opacity=".73"/>
+      <path d="m1940 1305 219 78-219 78-219-78Z" stroke="#c7f8b6" stroke-opacity=".83"/>
+    </g>
+    <g fill="#c7f8b6"><circle cx="1940" cy="1383" r="7"/><circle cx="1940" cy="1553" r="6" opacity=".8"/><circle cx="1940" cy="1723" r="6" opacity=".7"/><circle cx="1940" cy="1893" r="6" opacity=".6"/><circle cx="1940" cy="2063" r="6" opacity=".5"/></g>
+
+    <g transform="translate(230 1345)"><text y="44" font-family="Consolas, monospace" font-size="40" fill="#a7c99b">01</text><path d="M89 4v93" stroke="#9db4a0" stroke-opacity=".25"/><text x="130" y="42" font-size="53" font-weight="600" fill="#dcebdc">环境与技能</text><text x="131" y="103" font-size="30" fill="#9eb6bc">开始前，检查选定的技能和运行设置。</text></g>
+    <g transform="translate(230 1515)"><text y="44" font-family="Consolas, monospace" font-size="40" fill="#a7c99b">02</text><path d="M89 4v93" stroke="#9db4a0" stroke-opacity=".25"/><text x="130" y="42" font-size="53" font-weight="600" fill="#dcebdc">外部内容</text><text x="131" y="103" font-size="30" fill="#9eb6bc">读进来之前，识别材料里夹带的指令。</text></g>
+    <g transform="translate(230 1685)"><text y="44" font-family="Consolas, monospace" font-size="40" fill="#a7c99b">03</text><path d="M89 4v93" stroke="#9db4a0" stroke-opacity=".25"/><text x="130" y="42" font-size="53" font-weight="600" fill="#dcebdc">长期记忆</text><text x="131" y="103" font-size="30" fill="#9eb6bc">记下来之前，留意它是否在改写规矩。</text></g>
+    <g transform="translate(230 1855)"><text y="44" font-family="Consolas, monospace" font-size="40" fill="#a7c99b">04</text><path d="M89 4v93" stroke="#9db4a0" stroke-opacity=".25"/><text x="130" y="42" font-size="53" font-weight="600" fill="#dcebdc">任务目标</text><text x="131" y="103" font-size="30" fill="#9eb6bc">准备操作时，对照一开始约定的目标。</text></g>
+    <g transform="translate(230 2025)"><text y="44" font-family="Consolas, monospace" font-size="40" fill="#a7c99b">05</text><path d="M89 4v93" stroke="#9db4a0" stroke-opacity=".25"/><text x="130" y="42" font-size="53" font-weight="600" fill="#dcebdc">危险命令</text><text x="131" y="103" font-size="30" fill="#9eb6bc">真正执行前，检查删文件、提权等动作。</text></g>
+
+    <text x="170" y="2410" font-size="81" font-weight="600" letter-spacing="-1" fill="#c7f8b6">需要确认，就问你。</text>
+    <text x="174" y="2517" font-size="53" font-weight="500" letter-spacing=".5" fill="#d5e5dc">发现问题，整项工作先暂停。</text>
+    <text x="175" y="2600" font-size="30" letter-spacing=".4" fill="#9db3bc">单次审批与工作恢复分别核对；已经执行的动作不会被撤回。</text>
+    <path d="m2008 2390 80 47-80 47-80-47Z" stroke="#97b99c" stroke-opacity=".6" stroke-width="2"/>
+    <path d="m2008 2465 80 47-80 47-80-47Z" stroke="#97b99c" stroke-opacity=".35" stroke-width="2"/>
+
+    <text x="174" y="2819" font-size="31" font-weight="600" letter-spacing="1.5" fill="#c5deb8">源码预览版 · 2026.09</text>
+    <text x="174" y="2888" font-size="30" fill="#acbec5">已有真实拦截样本，也有误报、超时和未完成项。</text>
+    <text x="174" y="2947" font-size="29" fill="#91aab5">特定版本 OpenClaw / Hermes · Linux / WSL · 不代表防护率或完整实机验收通过</text>
+    <text x="174" y="3093" font-family="Consolas, monospace" font-size="28" letter-spacing=".7" fill="#b5cbc9">github.com/yh-l20/yuanxingmu</text>
+    <text x="1675" y="3093" font-size="23" fill="#88a5b1">功能示意 · 以实测记录为准</text>
+  </g>
+</svg>

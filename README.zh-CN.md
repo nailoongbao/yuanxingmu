@@ -6,7 +6,7 @@
 
 让 AI 读报价、写邮件，你来核对收件人和全文，再决定是否发送。元星木把每项工作单独保存，让你随时关闭、继续，或收回资料权限。AI 不能用起草工具替你确认发送；你选用的模型服务仍会收到聊天和使用的资料。
 
-[English](README.md) · [官网](https://yh-l20.github.io/yuanxingmu/) · [看实机演示](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
+[English](README.md) · [官网](https://yh-l20.github.io/yuanxingmu/) · [五层功能介绍](https://yh-l20.github.io/yuanxingmu/layers.html) · [看实机演示](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 
 ![元星木：让 AI 做事，资料别乱发](site/assets/yuanxingmu-public-v03-poster.svg)
 
