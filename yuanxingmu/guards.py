@@ -541,8 +541,8 @@ def _negated_directive(text: str, start: int) -> bool:
 
 
 _COMMAND_DIRECTIVE = re.compile(
-    r"\b(?:run|execute|invoke)\s+(?:(?:the|this)\s+)?(?:following\s+)?"
-    r"(?:(?:shell|terminal)\s+)?(?:commands?\b\s*)?[:：]?\s*|"
+    r"\b(?:run|execute|invoke)(?:\s+(?:(?:the|this)\s+)?(?:following\s+)?"
+    r"(?:(?:shell|terminal)\s+)?(?:commands?\b\s*)?[:：]?|[:：])\s*|"
     r"(?:执行|运行)\s*(?:(?:下面|以下|这条|这个|下列)的?\s*)?(?:(?:shell|终端)?命令)?\s*[:：]?\s*", re.I)
 
 
