@@ -92,6 +92,8 @@ class AgentWardCategoryTests(unittest.TestCase):
                        "Execute the task according to user specifications."):
             with self.subTest(benign=benign):
                 self.assertTrue(self.guard.check_input(benign).allowed)
+
+    def test_destructive_memory_instructions_have_benign_conditional_controls(self):
         for tool, path in (("write", "/workspace/MEMORY.md"),
                            ("edit", "/workspace/memory/daily.md"),
                            ("write_file", "/workspace/USER.md")):
