@@ -8,7 +8,7 @@ import path from "node:path";
 import test from "node:test";
 import { readTrustedConfig } from "./config.mjs";
 import { registerBrokerTools } from "./tools.mjs";
-import { registerRevocationCommand } from "./commands.mjs";
+import { registerRevocationCommand, registerStatusCommand } from "./commands.mjs";
 
 async function setup(t, reply = (request) => ({ allowed: true, operation: request.op })) {
   const directory = mkdtempSync(path.join(os.tmpdir(), "yxm-plugin-contract-"));
@@ -48,6 +48,7 @@ async function setup(t, reply = (request) => ({ allowed: true, operation: reques
   const api = { registerTool(factory, options) { factories.set(options.name, { factory, options }); },
     registerCommand(command) { commands.set(command.name, command); } };
   registerBrokerTools(api, config);
+  registerStatusCommand(api, config);
   registerRevocationCommand(api, config);
   const context = { sandboxed: true, workspaceDir: workspace, sessionKey: "agent:main:main", sessionId: "first" };
   return { directory, config, context, received, factories, commands,
@@ -126,6 +127,108 @@ test("revocation requires an authenticated admin and has only the fixed revoke a
   const reply = await command.handler({ isAuthorizedSender: true, gatewayClientScopes: ["operator.admin"], sessionKey: "agent:main:main" });
   assert.deepEqual(f.received, [{ endpoint: f.config.operatorSocket, request: { op: "revoke" } }]);
   assert.match(reply.text, /本地运算仍可继续/u);
+});
+
+const admin = { isAuthorizedSender: true, gatewayClientScopes: ["operator.admin"] };
+function protectedStatus() {
+  return { operator_action: "status", status: "ready", task: { active: true, revoked: false },
+    protection: { schema_version: 1, state: "available", paused: false, revoked: false,
+      layers: { input: {enabled:true, mode:"enforce"}, memory: {enabled:false, mode:"enforce"},
+        command: {enabled:true, mode:"observe"}, alignment: {enabled:true, mode:"enforce"},
+        foundation: {enabled:true, mode:"enforce"} },
+      foundation_config_enabled: true, skill_semantic_enabled: false,
+      foundation_scan: {state:"current", complete:false, assessed:true, verdict:"allow", would_verdict:null} } };
+}
+
+test("status is an authenticated admin command with no parameters or model management tool", async (t) => {
+  const f = await setup(t, protectedStatus);
+  const command = f.commands.get("yuanxingmu");
+  assert.equal(command.requireAuth, true);
+  assert.equal(command.acceptsArgs, false);
+  assert.deepEqual(command.requiredScopes, ["operator.admin"]);
+  assert.deepEqual([...f.factories.keys()].sort(), ["yuanxingmu_read", "yuanxingmu_send", "yuanxingmu_status"]);
+  for (const context of [ {}, {...admin, isAuthorizedSender:false}, {...admin, isAuthorizedSender:"true"},
+    {...admin, gatewayClientScopes:["operator.read"]}, {...admin, gatewayClientScopes:"operator.admin"},
+    {...admin, args:"set command_mode observe"}, {...admin, args:42} ]) {
+    await command.handler(context);
+  }
+  assert.equal(f.received.length, 0);
+  const reply = await command.handler(admin);
+  assert.deepEqual(f.received, [{endpoint:f.config.operatorSocket, request:{op:"status"}}]);
+  assert.match(reply.text, /外部内容：拦截/u);
+  assert.match(reply.text, /记忆文件：关闭/u);
+  assert.match(reply.text, /命令执行：只记录，不拦截/u);
+  assert.match(reply.text, /基础配置检查：开启；技能语义检查：关闭/u);
+  assert.match(reply.text, /检查未完整完成/u);
+  assert.match(reply.text, /工作暂停：未暂停/u);
+  assert.match(reply.text, /原来的元星木启动器/u);
+  assert.doesNotMatch(reply.text, /https?:\/\//u);
+});
+
+test("status distinguishes temporary pause from permanent revocation and uses fresh responses", async (t) => {
+  let state = protectedStatus();
+  const f = await setup(t, () => state);
+  const command = f.commands.get("yuanxingmu");
+  state.protection.paused = true;
+  let reply = await command.handler(admin);
+  assert.match(reply.text, /工作暂停：已暂停/u);
+  assert.match(reply.text, /权限：尚未撤销/u);
+  state.task = {active:false, revoked:true};
+  state.protection.revoked = true;
+  state.protection.layers.input.mode = "observe";
+  state.protection.foundation_scan = {state:"stale"};
+  reply = await command.handler(admin);
+  assert.match(reply.text, /权限：已永久收回/u);
+  assert.match(reply.text, /工作暂停：已暂停/u);
+  assert.match(reply.text, /外部内容：只记录，不拦截/u);
+  assert.match(reply.text, /设置已变更，需下次启动重新检查/u);
+  assert.equal(f.received.length, 2);
+  state.protection.layers.foundation.enabled = false;
+  reply = await command.handler(admin);
+  assert.match(reply.text, /基础配置和技能语义检查：随安装与技能层关闭/u);
+  assert.match(reply.text, /最近安装与技能检查：该层已关闭/u);
+  assert.doesNotMatch(reply.text, /基础配置检查：开启|已完成本次检查/u);
+});
+
+test("legacy, unavailable, malformed, and unready status never claims active protection", async (t) => {
+  let state;
+  const f = await setup(t, () => state);
+  const command = f.commands.get("yuanxingmu");
+  for (const response of [null, {}, {operator_action:"revoke"},
+    {operator_action:"status", status:"ready", task:{active:true, revoked:false}},
+    {...protectedStatus(), status:"starting"},
+    {...protectedStatus(), protection:{schema_version:1, state:"unavailable"}},
+    {...protectedStatus(), task:{active:true, revoked:true}},
+    {...protectedStatus(), protection:{...protectedStatus().protection, paused:"false"}},
+    {...protectedStatus(), protection:{...protectedStatus().protection, schema_version:2}} ]) {
+    state = response;
+    const {text} = await command.handler(admin);
+    assert.match(text, /未确认/u);
+    assert.doesNotMatch(text, /：拦截|：未暂停|已完成本次检查/u);
+  }
+  state = {...protectedStatus(), protection:{schema_version:1, state:"not_configured"}};
+  const {text} = await command.handler(admin);
+  assert.equal((text.match(/：未启用\n/gu) ?? []).length, 5);
+  assert.match(text, /安装与技能：未启用/u);
+  assert.doesNotMatch(text, /：拦截|已完成本次检查/u);
+});
+
+test("status never renders raw URLs, paths, objectives, credentials, incidents, or unknown values", async (t) => {
+  const secret = "PRIVATE-CANARY-MUST-NOT-BE-RENDERED";
+  const state = protectedStatus();
+  Object.assign(state, {profile:"/host/"+secret, url:"http://127.0.0.1:34567/#token="+secret,
+    model:{api_key:secret}, reason:secret, workbench_url:"https://"+secret+".invalid"});
+  Object.assign(state.protection, {objective:secret, incident:{reason:secret}, workbench_url:secret});
+  state.protection.layers.input = {enabled:true, mode:secret};
+  state.protection.layers.memory = {enabled:secret, mode:"enforce"};
+  state.protection.foundation_scan = {state:"current", assessed:true, complete:true, verdict:secret, would_verdict:null};
+  const f = await setup(t, () => state);
+  const {text} = await f.commands.get("yuanxingmu").handler(admin);
+  assert.doesNotMatch(text, new RegExp(secret, "u"));
+  assert.doesNotMatch(text, /https?:\/\/|\/host\/|34567/u);
+  assert.match(text, /外部内容：未确认/u);
+  assert.match(text, /记忆文件：未确认/u);
+  assert.match(text, /最近安装与技能检查：未确认/u);
 });
 
 test("host configuration rejects extra fields and trusted paths inside the workspace", async (t) => {

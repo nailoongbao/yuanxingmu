@@ -343,6 +343,24 @@ class ModelOutputTransportTests(unittest.TestCase):
         self.assertTrue(late_done.wait(2))
         self.assertEqual(connection.recv(4096), b"")
 
+    def test_alignment_observation_releases_reviewed_bytes_but_not_revoked_requests(self):
+        raw = _completion("SYNTHETIC_OBSERVED_RESPONSE")
+        self.start(lambda h: _send(h, raw), verdict="block", policy=replace(self.policy, alignment_mode="observe"))
+        status, _, delivered = self.response(self.connect())
+        self.assertEqual(status, 200)
+        self.assertEqual(delivered, raw)
+        event = next(event for event in self.events if event.get("code") == "judge_block")
+        self.assertEqual(event["mode"], "observe")
+        self.assertFalse(event["enforced"])
+        self.assertEqual(event["would_verdict"], "block")
+        self.assertFalse(self.broker.quarantine.status(self.task)["paused"])
+        self.assertFalse(self.broker.guards.check_command("sudo true").allowed)
+        provider_count = len(self.provider.receipts)
+        self.broker.revoke(self.task)
+        _, _, after_revoke = self.response(self.connect())
+        self.assertNotIn(b"SYNTHETIC_OBSERVED_RESPONSE", after_revoke)
+        self.assertEqual(len(self.provider.receipts), provider_count)
+
     def assert_preflight_notice(self, state_text):
         for stream in (False, True):
             with self.subTest(stream=stream):

@@ -83,13 +83,20 @@ def main():
         hermes_actions.add_parser(name).add_argument("--profile", required=True, type=Path)
     defense = commands.add_parser("defense", help="查看或修改每层防护设置；新版本支持运行中修改")
     defense_actions = defense.add_subparsers(dest="action", required=True)
-    for name in ("get", "set", "reset"):
+    for name in ("get", "set", "reset", "restore"):
         command = defense_actions.add_parser(name)
         command.add_argument("--profile", required=True, type=Path)
+        if name == "restore":
+            command.add_argument("--baseline-sha256", required=True, help="从 defense get 核对的创建时设置摘要")
+            command.add_argument("--expected-policy-sha256", required=True, help="从 defense get 核对的当前设置摘要；过期时拒绝恢复")
         if name == "set":
             for layer in ("input", "memory", "command", "alignment", "foundation"):
                 command.add_argument("--" + layer, dest="layer_" + layer, choices=("on", "off"))
-            command.add_argument("--mode", choices=("enforce", "observe"))
+                command.add_argument("--" + layer + "-mode", choices=("inherit", "enforce", "observe"), help="这一层的处理方式；inherit 跟随默认方式")
+            command.add_argument("--mode", choices=("enforce", "observe"), help="未单独设置的层采用的默认处理方式")
+            command.add_argument("--foundation-config", choices=("on", "off"), help="基础配置规则与配置语义检查")
+            command.add_argument("--skill-semantic", choices=("on", "off"), help="技能语义与用途对照；安全快照仍保留")
+            command.add_argument("--skill-rules", choices=("on", "off"), help="技能规则检查；安全快照仍保留")
     args = parser.parse_args()
     try:
         def selected_skills():
@@ -107,7 +114,16 @@ def main():
                 changes = {layer + "_enabled": getattr(args, "layer_" + layer) == "on" for layer in ("input", "memory", "command", "alignment", "foundation") if getattr(args, "layer_" + layer) is not None}
                 if args.mode is not None:
                     changes["mode"] = args.mode
-            result = configure_profile(args.profile, changes, reset=args.action == "reset")
+                for layer in ("input", "memory", "command", "alignment", "foundation"):
+                    selected = getattr(args, layer + "_mode")
+                    if selected is not None:
+                        changes[layer + "_mode"] = selected
+                for name in ("foundation_config", "skill_semantic", "skill_rules"):
+                    if getattr(args, name) is not None:
+                        changes[name + "_enabled"] = getattr(args, name) == "on"
+            options = {"intent": "restore_creation", "baseline_sha256": args.baseline_sha256,
+                       "expected_policy_sha256": args.expected_policy_sha256} if args.action == "restore" else {}
+            result = configure_profile(args.profile, changes, reset=args.action == "reset", **options)
             print(json.dumps(result, ensure_ascii=False, indent=2))
             return 0
         if args.command == "desk":

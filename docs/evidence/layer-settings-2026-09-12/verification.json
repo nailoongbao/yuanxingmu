@@ -1,0 +1,48 @@
+{
+  "scope": "Layer settings component checkpoint before subsequent baseline/audit work. No model/native Agent session.",
+  "wsl": {
+    "run": 160,
+    "passed": 160,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "module_pass_counts": {
+      "test_yuanxingmu_guards": 48,
+      "test_yuanxingmu_guard_broker": 17,
+      "test_yuanxingmu_live_settings": 7,
+      "test_yuanxingmu_dashboard": 42,
+      "test_yuanxingmu_model_output": 25,
+      "test_yuanxingmu_openclaw": 21
+    }
+  },
+  "windows_guards": {
+    "run": 48,
+    "passed": 37,
+    "skipped": 11,
+    "skip_reason": "Linux no-follow directory descriptor checks"
+  },
+  "browser": {
+    "layer_settings": 12,
+    "tool_review": 23,
+    "quarantine": 37
+  },
+  "log_sha256": "ecc82d56ded7e491a37feb2b2819e26b2217c64cb5d929096303728d42f190fa",
+  "hash_scope": "Source hashes captured after successful verification and before next settings work; not a before/after stability proof.",
+  "source_sha256": {
+    "yuanxingmu/guards.py": "87084198dcf89602430552771cfa8cec2970fac1d79dfb96082fab6b8305c0c1",
+    "yuanxingmu/broker.py": "bf2f96507973b3078400c4d15099a1624cf298a5d04d2bacc6ce288cb752743e",
+    "yuanxingmu/protection.py": "2e4de6077a46961f4b93c2fe7a06f9a12603a168555e1f6f766c9b73ec1f4a36",
+    "yuanxingmu/cli.py": "bffa9a146d874e61009bcded0977e8ae4d9fac202dc378562a04a985534c138c",
+    "yuanxingmu/dashboard/server.py": "4fa4175c328afb5d1aa7ac1e4ea71986778221b36f1769c62be00918037055b7",
+    "yuanxingmu/dashboard/web/protection.js": "62a222e76cc10c106d26d5e6349272b47b937d6ff7c7c1a02f8dbde04d196058",
+    "yuanxingmu/openclaw.py": "f4ef7512e9a919f40707c9f3f5ccbd1f96ef0977771fc09e58af9f79d779a539",
+    "yuanxingmu/hermes.py": "a3a840b5da33cd5459d646e06abaecc6918a883935f60367ef864f86f2db16f7",
+    "tests/test_yuanxingmu_guards.py": "8f30d7cc40fda0fccc5197165d1c948cd367d2271134581510c3aacaad23d315",
+    "tests/test_yuanxingmu_guard_broker.py": "f52908aba608278dfb49cfe754bcf228d80ca2ad2037c27d0d8c4097a941b475",
+    "tests/test_yuanxingmu_live_settings.py": "84dff8b4cdf3779d8c90ee0e9f453e69cf0d5ca223ee2db931cbb04529d481a1",
+    "tests/test_yuanxingmu_dashboard.py": "f9ff3c2fddc6aaecfedffd842db08e488dedaee1c46cec43e763975de3fead22",
+    "tests/test_yuanxingmu_model_output.py": "cd48dbfd3ef2fcd0fa7e35aa90b80b962f964d2858b1f5f950f8019423baa988",
+    "tests/test_yuanxingmu_openclaw.py": "2b994a1c9d7f7b4e0ee8c0b562ecf695dd5a9e6a01fbd327779cccf3d02ac71c",
+    "tests/test_yuanxingmu_layer_settings_ui.mjs": "ce0183ff7c23892dccaaa807847477fea6a899caab8b0cc7802e9f74e51e5ed8"
+  }
+}

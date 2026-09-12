@@ -1,0 +1,72 @@
+{
+  "scope": "Independent skill rules control, fixed skill purpose/file binding, legacy baseline and feature compatibility. Component verification, no real model or native Agent.",
+  "recorded_at": "2026-09-12T07:41:41.442974+00:00",
+  "wsl": {
+    "run": 225,
+    "passed": 225,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "duration_seconds": 32.258,
+    "module_pass_counts": {
+      "test_yuanxingmu_dashboard": 43,
+      "test_yuanxingmu_guard_broker": 17,
+      "test_yuanxingmu_guards": 48,
+      "test_yuanxingmu_hermes": 11,
+      "test_yuanxingmu_live_settings": 15,
+      "test_yuanxingmu_model_output": 25,
+      "test_yuanxingmu_openclaw": 26,
+      "test_yuanxingmu_skill_purpose": 12,
+      "test_yuanxingmu_skills": 28
+    }
+  },
+  "browser": {
+    "layer_settings": 22,
+    "tool_review": 36,
+    "quarantine": 37,
+    "scope": "Real browser and protection.js with fixture API. Not native Agent validation.",
+    "session": "yxm-skill-settings",
+    "session_closed": true
+  },
+  "features": [
+    "skill_rules_v1",
+    "skill_purpose_v1"
+  ],
+  "baseline": {
+    "new_schema_version": 2,
+    "legacy_schema_version": 1,
+    "legacy_read_restore": "Original exact field set and bytes retained; new skill field rejected before mutation."
+  },
+  "independent_review": {
+    "status": "passed_read_only_review",
+    "reviewer": "/root/defense_gap",
+    "scope": "Reviewed shared snapshot ownership, nested/parent/sibling descriptor isolation, overlapping inode rejection, missing-purpose no-model behavior, safe reading with rules disabled, feature-based legacy protocol, and baseline v1/v2 validation. No blocking issue found.",
+    "test_execution": "Reviewer inspected the 12 purpose tests and did not rerun the 225-test suite; execution counts remain supported by the recorded run."
+  },
+  "log_sha256": "1174490e642381574cd6f28c8157dd5763d8f1542e3504f598ea0e5c07f20d8a",
+  "hash_scope": "Source hashes captured after verification; not a before/after source stability proof.",
+  "source_sha256": {
+    "yuanxingmu/guards.py": "de1561eeaa88368e9fe8011cb38b90fb2ec3e72340db35fe4e34466e29af7ad4",
+    "yuanxingmu/protection.py": "249c58c9dbc1e7d798b620097bcf76c6d7fb9b0976d1b8c9f3696ea2abbd2893",
+    "yuanxingmu/cli.py": "1a6e2be62b1bd1e6f3a79818130f95bfcf1222203217d4e6ad76d78d77e99668",
+    "yuanxingmu/dashboard/server.py": "d27c0e978a876a7dbe0ea5ab2218b7f6fffe1e63a20f5925c1c049b1f5cdda46",
+    "yuanxingmu/dashboard/web/protection.js": "e2f1863a64107343f8e49c6c4d57920a059cea6c21f5fc35bba514f8262f9724",
+    "yuanxingmu/openclaw.py": "2425cf33842b5d51513930d6ffc2a39c6ecad2b790a59e22c0fc2efd80d15e1d",
+    "yuanxingmu/hermes.py": "830074cbb3239f6a3c514123ef897b61f945b675d86da53e1f5062a4cdb34186",
+    "tests/test_yuanxingmu_skill_purpose.py": "ca83648dca90a58742e51d43c2ad2fe848adcddec59d32925d2c27dd6a2c73ff",
+    "tests/test_yuanxingmu_openclaw.py": "9f042f4b2c2191050259a90ca5baf1c4d255e41390d584d293660565ea5ee17f",
+    "tests/test_yuanxingmu_live_settings.py": "762a883e5f266483130a547c3a23ec6bd5df735cd598238392f775f8b84eaebc",
+    "tests/test_yuanxingmu_layer_settings_ui.mjs": "adb4cbb5d81acbbcf822eaeb00026b46eb241032bc85600a3f18ba955c127c66"
+  },
+  "additional_verification": {
+    "module": "test_yuanxingmu_judge_integration",
+    "run": 11,
+    "passed": 11,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "duration_seconds": 2.653,
+    "scope": "Updated existing management test to GET the actual policy hash before POST; independent judge key, pins, task identity, restart and no-model-call checks retained. Product validation unchanged.",
+    "source_sha256": "0af1aff0d4df332b63180be42fefb79caaa1d352dffb540bbec5db3db3a1e916"
+  }
+}

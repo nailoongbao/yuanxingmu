@@ -132,6 +132,67 @@ def _public(profile: Path, manifest: dict):
             "features": manifest.get("features", [])}
 
 
+def _operator_protection_status(profile: Path, manifest: dict, broker: Broker):
+    """Read live settings for the authenticated chat command, without a judge call.
+
+    Only fixed enums and booleans leave this view. In particular, neither the
+    objective, incident contents, credentials nor any host paths belong here.
+    The native Gateway URL in _public is not a Workbench management URL.
+    """
+    with broker._lock:
+        try:
+            broker._require_healthy()
+            configured = "layered_defense_v1" in manifest.get("features", [])
+            if not configured and broker.guards is None:
+                return {"schema_version": 1, "state": "not_configured"}
+            if not configured or broker.guards is None or broker.quarantine is None:
+                raise RuntimeError("incomplete_live_defense")
+            quarantine = broker.quarantine.status(manifest["task_id"])
+            policy = broker.guards.policy
+            result = {"schema_version": 1, "state": "available",
+                      "paused": quarantine["paused"], "revoked": quarantine["revoked"],
+                      "layers": {layer: {"enabled": getattr(policy, layer + "_enabled"),
+                                         "mode": policy.effective_mode(layer)}
+                                 for layer in ("input", "memory", "command", "alignment", "foundation")},
+                      "foundation_config_enabled": policy.foundation_config_enabled,
+                      "skill_semantic_enabled": policy.skill_semantic_enabled}
+            if not policy.foundation_enabled:
+                result["foundation_scan"] = {"state": "disabled"}
+                return result
+            # Settings are replaced under the same lock. A report from an old
+            # policy must never look like a completed check of the new policy.
+            scan = {"state": "unavailable"}
+            try:
+                with (profile / "foundation-report.json").open("rb") as stream:
+                    raw = stream.read(MAX_MESSAGE + 1)
+                if len(raw) > MAX_MESSAGE:
+                    raise ValueError("oversized_foundation_report")
+                report = json.loads(raw)
+                if not isinstance(report, dict):
+                    raise ValueError("invalid_foundation_report")
+                pinned = manifest.get("files", {}).get("defense-policy.json")
+                if not isinstance(pinned, str) or not pinned or not isinstance(report.get("policy_sha256"), str):
+                    raise ValueError("unbound_foundation_report")
+                if report["policy_sha256"] != pinned:
+                    scan = {"state": "stale"}
+                elif (report.get("layer") == "foundation"
+                      and type(report.get("complete")) is bool
+                      and type(report.get("assessed")) is bool
+                      and report.get("verdict") in {"allow", "block", "review"}
+                      and report.get("would_verdict") in {None, "allow", "block", "review"}):
+                    scan = {"state": "current", "complete": report["complete"],
+                            "assessed": report["assessed"], "verdict": report["verdict"],
+                            "would_verdict": report.get("would_verdict")}
+            except FileNotFoundError:
+                scan = {"state": "missing"}
+            except (OSError, ValueError, TypeError, RecursionError):
+                pass
+            result["foundation_scan"] = scan
+            return result
+        except (OSError, ValueError, RuntimeError, TypeError, KeyError, sqlite3.Error):
+            return {"schema_version": 1, "state": "unavailable"}
+
+
 def _process_identity(pid: int):
     try:
         fields = Path(f"/proc/{pid}/stat").read_text().rsplit(")", 1)[1].split()
@@ -234,8 +295,9 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
     guards = None
     if defense_policy is not None:
         _save(profile / "defense-policy.json", defense_policy)
-        from .protection import load_guards
+        from .protection import load_guards, save_settings_baseline
         guards = load_guards(profile, {"url": model_url, "id": model_id})
+        save_settings_baseline(profile, guards.policy)
     targets = None
     if reviewed_actions:
         _save(profile / "action-targets.json", action_targets or {})
@@ -295,6 +357,7 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
                  profile / "broker-state" / "bindings.json", profile / "broker-state" / "workspaces.json"]
     if defense_policy is not None:
         immutable.append(profile / "defense-policy.json")
+        immutable.append(profile / "defense-baseline.json")
     immutable.extend(judge_files)
     if reviewed_actions:
         immutable.append(profile / "action-targets.json")
@@ -304,7 +367,7 @@ def init_profile(profile: Path, *, node: Path, openclaw_package: Path, bwrap: Pa
         ".", "workspace", "documents", "trusted-core", "plugin", "host-home", "openclaw-state",
         "broker-state", "broker-state/authority.sqlite3", "gateway-audit", "runtime-etc")}
     manifest = {"version": 2, "framework": "openclaw", "profile": str(profile), "profile_id": profile_id, "task_id": task, "family_id": family,
-                "features": (["reviewed_email_v1"] if reviewed_mail else []) + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1"] if defense_policy is not None else []) + (["reviewed_actions_v1"] if reviewed_actions else []),
+                "features": (["reviewed_email_v1"] if reviewed_mail else []) + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1", "per_layer_settings_v1", "settings_history_v1", "defense_baseline_v1", "skill_rules_v1", "skill_purpose_v1"] if defense_policy is not None else []) + (["reviewed_actions_v1"] if reviewed_actions else []),
                 "node": str(node), "openclaw_package": str(openclaw_package), "bwrap": str(bwrap), "python": str(Path(sys.executable).resolve()),
                 "runtime": str(sockets), "port": port, "model": {"url": model_url, "id": model_id},
                 "documents": sorted(resources), "destinations": sorted(destinations),
@@ -611,7 +674,7 @@ def serve_profile(profile: Path):
             from .protection import profile_services, foundation_config
             with Broker(profile / "broker-state", resources, destinations, **profile_services(profile, manifest)) as broker:
                 from .protection import apply_profile_settings
-                broker.configure_callback = lambda settings: apply_profile_settings(profile, manifest, broker, settings)
+                broker.configure_callback = lambda settings, **metadata: apply_profile_settings(profile, manifest, broker, settings, **metadata)
                 if broker.guards is not None:
                     snapshot = manifest.get("skills_snapshot")
                     roots = [Path(value) for value in snapshot["scan_paths"]] if snapshot else []
@@ -638,9 +701,12 @@ def serve_profile(profile: Path):
                             action = request["op"]
                             if action == "revoke":
                                 broker.revoke(manifest["task_id"])
-                            task = broker.authority.describe(manifest["task_id"])
-                            result = {"status": "stopping" if action == "stop" else lifecycle["status"],
-                                      "operator_action": action, "task": task, **_public(profile, manifest)}
+                            with broker._lock:
+                                task = broker.authority.describe(manifest["task_id"])
+                                result = {"status": "stopping" if action == "stop" else lifecycle["status"],
+                                          "operator_action": action, "task": task, **_public(profile, manifest)}
+                                if action == "status":
+                                    result["protection"] = _operator_protection_status(profile, manifest, broker)
                             self.wfile.write(json.dumps(result).encode() + b"\n")
                             self.wfile.flush()
                             if action == "stop":

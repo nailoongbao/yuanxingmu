@@ -142,8 +142,11 @@ class JudgeIntegrationTests(unittest.TestCase):
         before = core.validate_profile(profile)
         before_tasks = self.task_ids(profile)
         before_files = {name: (profile / name).read_bytes() for name in ("judge-config.json", "judge-key")}
+        view = self.protection(identifier)
+        self.assertEqual(view["policy_sha256"], before["files"]["defense-policy.json"])
         status, _, accepted = self.request("POST", f"/api/profiles/{identifier}/protection",
-                                           {"settings": {"command_enabled": False}})
+                                           {"settings": {"command_enabled": False},
+                                            "expected_policy_sha256": view["policy_sha256"]})
         self.assertEqual(status, 202, accepted)
         self.assert_public(accepted)
         self.assert_public(self.wait_job(accepted))

@@ -201,7 +201,8 @@ class DashboardTests(unittest.TestCase):
         payload = {**self.payload, "objective": "读取报价，生成摘要，不得外发。"}
         identifier, profile, _ = self.create(payload)
         before = self.task_ids(profile)
-        status, _, accepted = self.request("POST", f"/api/profiles/{identifier}/protection", {"settings": {"command_enabled": False}})
+        read_version = self.request("GET", f"/api/profiles/{identifier}/protection")[2]["policy_sha256"]
+        status, _, accepted = self.request("POST", f"/api/profiles/{identifier}/protection", {"settings": {"command_enabled": False}, "expected_policy_sha256": read_version})
         self.assertEqual(status, 202)
         self.wait_job(accepted)
         manifest = core.validate_profile(profile)
@@ -221,6 +222,60 @@ class DashboardTests(unittest.TestCase):
         self.assertEqual(status, 200, value)
         self.assertEqual(len(value["events"]), 1)
         self.assertEqual(value["events"][0]["evidence"], {})
+
+    def test_protection_history_projects_only_valid_setting_values(self):
+        identifier, profile, _ = self.create({**self.payload, "objective": "整理报价"})
+        event = {"code": "operator_settings_changed", "layer": "foundation", "reason": "合成设置记录", "evidence": {
+            "source": "workbench", "intent": "set", "changes": {
+                "command_enabled": {"before": True, "after": False},
+                "objective": {"before": "PRIVATE-OBJECTIVE", "after": "PRIVATE-NEW-OBJECTIVE"},
+                "alignment_mode": {"before": "inherit", "after": "PRIVATE-INVALID-VALUE"},
+                "api_key": {"before": "PRIVATE-KEY", "after": "PRIVATE-NEW-KEY"}}}}
+        (profile / "defense-events.jsonl").write_text(json.dumps(event) + "\n")
+        status, _, value = self.request("GET", f"/api/profiles/{identifier}/protection")
+        self.assertEqual(status, 200, value)
+        self.assertEqual(value["events"][0]["settings_history"]["changes"], {"command_enabled": {"before": True, "after": False}})
+        self.assertNotIn("PRIVATE-", json.dumps(value))
+
+    def test_creation_and_reset_preserve_mode_semantics_and_restore_recommended_scans(self):
+        from yuanxingmu.protection import configure_profile
+        identifier, profile, _ = self.create({**self.payload, "objective": "整理报价", "defense": {
+            "mode": "observe", "command_mode": "enforce", "skill_semantic_enabled": False}})
+        view = self.request("GET", f"/api/profiles/{identifier}/protection")[2]
+        self.assertEqual(view["effective_modes"]["command"], "enforce")
+        self.assertEqual(view["effective_modes"]["input"], "observe")
+        self.assertFalse(view["foundation_scans"]["skill_semantic"])
+        from yuanxingmu.guards import GuardPolicy
+        status, _, accepted = self.request("POST", f"/api/profiles/{identifier}/protection", {"settings": GuardPolicy("recommended").settings(), "expected_policy_sha256": view["policy_sha256"]})
+        self.assertEqual(status, 202, accepted)
+        reset = self.wait_job(accepted)["result"]
+        self.assertEqual(reset["policy"]["mode"], "enforce")
+        self.assertEqual(reset["policy"]["command_mode"], "inherit")
+        current = configure_profile(profile)["policy"]
+        self.assertEqual(current["mode"], "enforce")
+        self.assertTrue(current["foundation_config_enabled"])
+        self.assertTrue(current["skill_semantic_enabled"])
+        self.assertTrue(all(current[name + "_enabled"] for name in ("input", "memory", "command", "alignment", "foundation")))
+        view = self.request("GET", f"/api/profiles/{identifier}/protection")[2]
+        self.assertEqual(set(view["effective_modes"].values()), {"enforce"})
+        core.validate_profile(profile)
+        for bad in ({"input_mode": "off"}, {"skill_semantic_enabled": 1}, {"foundation_config_enabled": "off"}):
+            self.assertEqual(self.request("POST", f"/api/profiles/{identifier}/protection", {"settings": bad})[0], 400)
+            self.assertEqual(self.request("POST", "/api/profiles", {**self.payload, "objective": "整理报价", "defense": bad})[0], 400)
+
+    def test_cli_cannot_desynchronize_a_workbench_managed_profile(self):
+        from yuanxingmu.protection import configure_profile
+        identifier, profile, _ = self.create({**self.payload, "objective": "整理报价"})
+        files = ("profile.json", "defense-policy.json", "broker-state/bindings.json", "broker-state/authority.sqlite3")
+        before = {name: (profile / name).read_bytes() for name in files}
+        for changes in ({"command_mode": "observe"}, {"mode": "observe"}, None):
+            with self.subTest(changes=changes), self.assertRaisesRegex(ValueError, "workbench_managed_profile"):
+                configure_profile(profile, changes, reset=changes is None)
+        for name, original in before.items():
+            self.assertEqual((profile / name).read_bytes(), original)
+        self.assertFalse((profile / "broker-state" / "guard-session.dirty").exists())
+        self.assertEqual(configure_profile(profile)["policy"]["mode"], "enforce")
+        self.assertEqual(self.request("GET", f"/api/profiles/{identifier}/protection")[0], 200)
 
     def test_selected_skill_uses_fixed_copy_and_rejects_unregistered_directory(self):
         skill = self.base / "selected-skill"

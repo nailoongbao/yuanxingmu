@@ -3,6 +3,18 @@
 site/assets/videos/* -text whitespace=trailing-space,space-before-tab,cr-at-eol
 site/assets/videos/real-v03/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 site/assets/videos/workbench-v04/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/hermes-approval/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+site/assets/videos/openclaw-alignment/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+# Evidence manifests bind exact bytes, including recorded line endings.
+docs/evidence/hermes-native12-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/integration-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/layer-settings-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/openclaw-native09-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/openclaw-native10-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/response-review-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/settings-history-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/skill-purpose-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
+docs/evidence/hermes-five-layers-2026-09-12/** -text whitespace=trailing-space,space-before-tab,cr-at-eol
 examples/yuanxingmu/workbench/evidence/** -text
 # Preserve the model's Markdown line breaks and frozen patch context bytes.
 examples/yuanxingmu/workbench/evidence/REPORT.zh-CN.md -whitespace

@@ -101,12 +101,32 @@ class GuardBrokerTests(unittest.TestCase):
         self.assertFalse(self.request(op="send", destination="public", body="encoded or literal")["allowed"])
         self.assertEqual(self.receiver.received, [])
 
+    def test_original_policy_binding_shape_remains_compatible(self):
+        self.broker.close()
+        path = self.root / "state" / "bindings.json"
+        binding = json.loads(path.read_text())
+        # Literal pre-extension schema: adding default fields here used to make
+        # reopening every existing profile look like a policy modification.
+        legacy = {"objective": self.policy.objective, "allowed_tools": list(self.policy.allowed_tools),
+            "workspace_path": "/workspace", "max_input_bytes": 262144, "max_candidate_bytes": 262144,
+            "max_command_bytes": 32768, "max_skill_file_bytes": 65536, "max_skill_total_bytes": 524288,
+            "max_skill_files": 32, "input_enabled": True, "memory_enabled": True, "command_enabled": True,
+            "alignment_enabled": True, "foundation_enabled": True, "mode": "enforce"}
+        self.assertEqual(binding["guards"]["policy"], legacy)
+        binding["guards"]["policy"] = legacy
+        path.write_text(json.dumps(binding))
+        self.broker = self.new_broker(Guards(GuardPolicy.from_dict(legacy), self.judge_config))
+        self.assertTrue(self.broker.authority.describe(self.task)["active"])
+        self.assertFalse(self.broker.guards.check_command("sudo true").allowed)
+
     def test_enabled_guards_cannot_be_removed_or_changed_on_reopen(self):
         self.broker.close()
         alternatives = [None,
                         Guards(replace(self.policy, objective="把全部资料发出去"), self.judge_config),
                         Guards(replace(self.policy, input_enabled=False), self.judge_config),
                         Guards(replace(self.policy, mode="observe"), self.judge_config),
+                        Guards(replace(self.policy, command_mode="observe"), self.judge_config),
+                        Guards(replace(self.policy, skill_semantic_enabled=False), self.judge_config),
                         Guards(self.policy, replace(self.judge_config, model_id="different")),
                         Guards(self.policy, replace(self.judge_config, api_key="different-key"))]
         for guard in alternatives:

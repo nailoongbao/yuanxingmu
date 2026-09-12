@@ -152,8 +152,9 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
         if not isinstance(defense_policy, dict):
             raise ValueError("defense_policy_must_be_an_object")
         host._save(profile / "defense-policy.json", defense_policy)
-        from .protection import load_guards
+        from .protection import load_guards, save_settings_baseline
         guards = load_guards(profile, {"url": model_url, "id": model_id})
+        save_settings_baseline(profile, guards.policy)
     loaded_resources, loaded_destinations = load_policy(profile / "policy.json")
     broker_options = {"reviewed_mail": reviewed_mail}
     if guards is not None:
@@ -207,6 +208,7 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
                  "broker-state/bindings.json", "broker-state/workspaces.json")]
     if defense_policy is not None:
         immutable.append(profile / "defense-policy.json")
+        immutable.append(profile / "defense-baseline.json")
     immutable.extend(judge_paths)
     if reviewed_actions:
         immutable.append(profile / "action-targets.json")
@@ -218,7 +220,7 @@ def init_profile(profile: Path, *, node: Path, hermes_python: Path, hermes_sourc
     runtime_files += [source / name for name in ("hermes_cli/__init__.py", "hermes_cli/main.py", "hermes_cli/web_server.py", "ui-tui/dist/entry.js")]
     runtime_files += [p for p in (source / "hermes_cli" / "web_dist").rglob("*") if p.is_file()]
     features = ((["reviewed_email_v1"] if reviewed_mail else []) + (["reviewed_actions_v1"] if reviewed_actions else [])
-                + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1"] if defense_policy is not None else [])
+                + (["layered_defense_v1", "quarantine_v1", "buffered_response_v1", "live_settings_v1", "per_layer_settings_v1", "settings_history_v1", "defense_baseline_v1", "skill_rules_v1", "skill_purpose_v1"] if defense_policy is not None else [])
                 + (["independent_judge_v1"] if judge_config is not None else []))
     manifest = {"version": 2, "framework": "hermes", "profile": str(profile), "profile_id": profile_id,
                 "task_id": task, "family_id": family, "features": features, **runtime,

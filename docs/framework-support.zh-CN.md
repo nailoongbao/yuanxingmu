@@ -11,7 +11,7 @@
 | 官方仓库 | 星数 | 参考版本 | 现有证据；新元星木状态 |
 |---|---:|---|---|
 | [OpenClaw](https://github.com/openclaw/openclaw) | 389,463 | `v2026.9.4` | 专用插件、外层 Gateway 隔离和工具执行边界。已有真实模型原生运行、撤销/重启和邮件证据；新增五层仍需逐项原生验收。 |
-| [Hermes Agent](https://github.com/NousResearch/hermes-agent) | 244,644 | `v2026.9.11`，当前固定 distribution `0.21.2` | 专用 terminal provider、插件、官方 dashboard、一次性审批接线已实现。旧 v2026.9.7 / 0.21.1 工具探针没有模型；新 native07/08 本地样本有真实候选命中，也保留正常摘要误报。加入暂停和回答缓冲的新实例仍在验收，不列为新版五层全部通过的公开端到端证据。 |
+| [Hermes Agent](https://github.com/NousResearch/hermes-agent) | 244,644 | `v2026.9.11`，当前固定 distribution `0.21.2` | 专用 terminal provider、官方执行中间件、插件与 dashboard 已接入。[native12 原生核心链](evidence/hermes-native12-2026-09-12/REPORT.zh-CN.md)使用真实网页和 Agent、4B 工作模型及独立 8B 检查模型，完成正常读取、真实工作台批准后精确写入一次、`true`/`sudo true` 配对和暂停后新聊天。它与下列十一组无模型 SDK 测试是不同证据。旧 native07/08 的恶意样本和误报分别保留；新版五层恶意样本、恢复按钮及后续设置变化仍未全量验收。 |
 | [LangChain](https://github.com/langchain-ai/langchain) / [LangGraph](https://github.com/langchain-ai/langgraph) | 146,150 / 41,490 | Python `langchain 1.4.0` / `langgraph 1.2.11` | 新 SDK 工具适配已验证：实际使用 `langchain-core 1.6.2`、`langgraph 1.2.11`，通过原生工具及编译图中的 `ToolNode` 调用 Broker；没有 LLM。完整进程、checkpoint 恢复和五层防御仍未验收。 |
 | [AutoGen](https://github.com/microsoft/autogen) | 60,941 | `autogen-core 0.7.5` / `autogen-agentchat 0.7.5` | 新 `BaseTool` 适配已验证，使用实际 `AssistantAgent` 单次工具派发和 `ToolAgent` runtime，绑定原生 `call_id`。没有 Team 或完整模型循环、代码执行器隔离验收；旧 MCP 实验单独保留。 |
 | [CrewAI](https://github.com/crewAIInc/crewAI) | 58,383 | `1.15.21` | 新 SDK 工具适配已验证，覆盖 `BaseTool` / `CrewStructuredTool` 同步和异步派发。每次派发的稳定编号由主机保存和绑定；不是框架自动提供的调用 ID。没有 Crew/Flow 模型循环或进程隔离验收。 |
@@ -49,7 +49,7 @@ LangGraph 最新 GitHub release 名为 `sdk==0.4.4`，不是上表 Python 图运
 | 框架 | 要接入的实际位置 | 必须补做的原生验收 |
 |---|---|---|
 | OpenClaw | 插件消息/工具钩子、sandbox provider、会话与 supervisor 生命周期；现有 [`integrations/openclaw`](../yuanxingmu/integrations/openclaw/plugin/CONTRACT.md)。 | 官方 WebUI 每层候选调用；用户审批恢复；工具返回不同结构；所有启用插件的副作用入口；重启与撤销。 |
-| Hermes | 官方 terminal environment provider、原生工具 dispatcher、插件与 dashboard 生命周期；[`hermes_backend.py`](../yuanxingmu/hermes_backend.py)、[`hermes.py`](../yuanxingmu/hermes.py)。 | 实际 file 工具是否经过同一 executor；固定 skills 和持久记忆；官方 WebUI/Agent 循环；审批恢复；禁用工具不能经 CLI/代码另开路。 |
+| Hermes | 官方 terminal environment provider、执行中间件、原生工具 dispatcher、插件与 dashboard 生命周期；[`hermes_backend.py`](../yuanxingmu/hermes_backend.py)、[`hermes.py`](../yuanxingmu/hermes.py)。 | native12 已验证官方网页/Agent 中一次真实 file 写入经同一执行边界并由工作台批准。仍须在同一新快照补齐五层恶意样本、工作台恢复、持久记忆和额外工具/CLI/代码副作用入口，不能由核心样本推断全部入口受控。 |
 | LangChain / LangGraph | 工具 wrapper / `ToolNode` 前后；`StateGraph`、checkpoint/thread 身份；子图与并行节点。 | 真正运行图和模型；从 checkpoint 恢复、重连、分叉后权限保持；检查点不能由 Agent 改写授权状态；非 MCP 工具同样受控。 |
 | OpenAI Agents | Function tool guardrails 和 `needs_approval`，`Runner` 的暂停状态、恢复、handoff、session；真实执行仍在主机边界。 | input guardrail 只覆盖首个 Agent，output guardrail 只覆盖最终输出；不能据此覆盖全部中间工具。用真实 Runner 验证审批中断、同一 state 恢复和 handoff 后权限。 |
 | PydanticAI | 已有原生 toolset 与 `RunContext` 适配；继续接准备/审批入口和持久化运行身份。 | 已建立固定版本工具环境；还需验证模型循环、延迟审批及整个运行的恢复。 |

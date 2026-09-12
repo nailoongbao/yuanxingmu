@@ -34,6 +34,7 @@ The allowed tool list is exactly `exec`, `yuanxingmu_read`, `yuanxingmu_send` an
 - `init` creates a new directory, snapshots UTF-8 documents up to 256 KiB each, and binds the model, task, configuration and runtime. It refuses to overwrite an existing directory.
 - `start` checks immutable file hashes, directory/ledger identity and the original authority family. Missing state or changed bindings fail; they do not create a new task. Readiness requires an authenticated Gateway health RPC with this instance's token.
 - `status` reports persisted authority and service status without returning model credentials or the Gateway token.
+- `/yuanxingmu` in the native chat requires authenticated `operator.admin` and shows live per-layer settings, pause/revocation state, and directions to the authenticated Workbench. It accepts no arguments and is not a model tool. Missing or unready status stays unknown; an outdated foundation report is marked for a new scan at the next start. The command does not probe the model or print private paths, tokens, or a guessed Workbench URL.
 - `revoke` permanently denies subsequent broker reads and sends. The owner can also use `/yuanxingmu-revoke` in the native UI. It requires authenticated `operator.admin`; it is not a model tool. Local computation can continue.
 - `stop` closes the supervised Gateway and worker process tree, then records confirmed cleanup. A cleanly stopped, active task can resume. Loss of contact after a crash is reported as `interrupted` or `unconfirmed`, never assumed to be a clean stop.
 

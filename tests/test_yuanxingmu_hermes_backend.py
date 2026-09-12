@@ -38,9 +38,9 @@ class HermesBackendTests(unittest.TestCase):
         prior = self.api._INVOCATION.set(None)
         tokens = set_current_observability_context(session_id="native-session", tool_call_id=call)
         try:
-            self.api._bind_invocation(self.binding, name, arguments or {},
-                                      {"session_id": "native-session", "tool_call_id": call})
-            yield
+            with self.api._invocation_scope(self.binding, name, arguments or {},
+                                            {"session_id": "native-session", "tool_call_id": call}):
+                yield
         finally:
             reset_current_observability_context(tokens)
             self.api._INVOCATION.reset(prior)
@@ -101,13 +101,13 @@ class HermesBackendTests(unittest.TestCase):
             with mock.patch.object(self.api, "sandbox_available", return_value={"available": True}):
                 self.api.register(ctx)
             hooks = {call.args[0]: call.args[1] for call in ctx.register_hook.call_args_list}
-            with self.invocation(), mock.patch.object(self.api, "request", return_value={"allowed": False, "verdict": "block"}) as rpc:
+            with self.invocation(arguments={"command": "sudo true"}), mock.patch.object(self.api, "request", return_value={"allowed": False, "verdict": "block"}) as rpc:
                 result = hooks["pre_tool_call"](tool_name="terminal", args={"command": "sudo true"},
                                                 session_id="native-session", tool_call_id="native-tool-call")
             self.assertEqual(result["action"], "block")
             rpc.assert_called_once_with("guard_rules", socket_path=self.binding["broker_socket"], timeout_seconds=60,
                                         tool="terminal", arguments={"command": "sudo true"})
-            with self.invocation(), mock.patch.object(self.api, "request", return_value={"allowed": False, "verdict": "review"}):
+            with self.invocation(arguments={"command": "python3 report.py"}), mock.patch.object(self.api, "request", return_value={"allowed": False, "verdict": "review"}):
                 self.assertIsNone(hooks["pre_tool_call"](tool_name="terminal", args={"command": "python3 report.py"},
                                                        session_id="native-session", tool_call_id="native-tool-call"))
 

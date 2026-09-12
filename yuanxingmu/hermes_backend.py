@@ -5,6 +5,7 @@ Every new chat, resume and delegated task retains the same host-owned authority.
 """
 from __future__ import annotations
 
+from contextlib import contextmanager
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 import hashlib
@@ -19,7 +20,7 @@ import time
 from agent.terminal_env_provider import TerminalEnvironmentProvider
 from tools.environments.base import BaseEnvironment, EnvironmentConnectionError
 from tools.environments.base_output import _pipe_stdin
-from tools.interrupt import is_interrupted
+from tools.interrupt import is_interrupted, is_thread_interrupted
 
 from .client import request
 from .sandbox import sandbox_available
@@ -42,35 +43,59 @@ class _Invocation:
     task_id: str
     session_id: str
     tool_call_id: str
-    source_tool: dict
+    source_json: str
+    owner_thread: int = field(default_factory=threading.get_ident)
     counter: int = 0
-    lock: object = field(default_factory=threading.Lock)
+    closed: bool = False
+    lock: object = field(default_factory=threading.RLock)
+
+    @property
+    def source_tool(self) -> dict:
+        # Every consumer receives a fresh copy of the source fixed at entry.
+        return json.loads(self.source_json)
+
+    def active(self) -> bool:
+        with self.lock:
+            return not self.closed and not is_interrupted() and not is_thread_interrupted(self.owner_thread)
+
+    def close(self) -> None:
+        with self.lock:
+            self.closed = True
 
     def request_key(self, arguments: dict) -> str:
         with self.lock:
+            if not self.active():
+                raise RuntimeError("yuanxingmu_invocation_closed")
             index = self.counter
             self.counter += 1
         return hashlib.sha256(_canonical(["hermes-execute-v1", self.task_id, self.session_id,
                                          self.tool_call_id, index, arguments]).encode()).hexdigest()
 
 
-def _bind_invocation(binding: dict, tool_name: str, arguments: dict, context: dict) -> None:
-    _INVOCATION.set(None)
+@contextmanager
+def _invocation_scope(binding: dict, tool_name: str, arguments: dict, context: dict):
     session, call = context.get("session_id"), context.get("tool_call_id")
-    if not isinstance(session, str) or not session or not isinstance(call, str) or not call:
-        return
+    if (not isinstance(arguments, dict) or not isinstance(session, str) or not session
+            or not isinstance(call, str) or not call):
+        raise ValueError("yuanxingmu_invocation_identity_unavailable")
     tool = ("file_write" if tool_name in {"write_file", "patch"} else
             "terminal" if tool_name in {"terminal", "process_manage"} else "file_read")
     # Copy before waiting: no mutable model/plugin argument can change the
     # exact source displayed for a final executable candidate.
-    copied = json.loads(_canonical(arguments))
-    _INVOCATION.set(_Invocation(binding["task_id"], session, call,
-                               {"tool": tool, "name": tool_name, "arguments": copied}))
+    invocation = _Invocation(binding["task_id"], session, call,
+                             _canonical({"tool": tool, "name": tool_name, "arguments": arguments}))
+    token = _INVOCATION.set(invocation)
+    try:
+        yield invocation
+    finally:
+        # A reset alone leaves copied contexts live after a hook/tool timeout.
+        invocation.close()
+        _INVOCATION.reset(token)
 
 
 def _current_invocation(binding: dict):
     invocation = _INVOCATION.get()
-    if invocation is None or invocation.task_id != binding["task_id"]:
+    if invocation is None or invocation.task_id != binding["task_id"] or not invocation.active():
         return None
     from tools.approval_context import _approval_tool_call_id, _approval_session_id
     if (_approval_tool_call_id.get() != invocation.tool_call_id
@@ -85,29 +110,29 @@ def _tool_review(binding: dict, invocation: _Invocation, arguments: dict, *, can
     Hermes's YOLO, session approvals, permanent allowlist and approval callback
     are deliberately not consulted. A lost consumption reply never retries.
     """
-    if cancelled():
+    if cancelled() or not invocation.active():
         return False
-    request_key = invocation.request_key(arguments)
     try:
+        request_key = invocation.request_key(arguments)
         result = request("request_tool_review", socket_path=binding["broker_socket"], timeout_seconds=60,
                          request_key=request_key, tool="terminal", arguments=arguments)
         # This is the single semantic decision for this final executable
         # candidate. Pending reviews only poll/consume this stored decision.
         if result.get("allowed") is True:
-            return result.get("verdict") == "allow" and not cancelled()
+            return result.get("verdict") == "allow" and not cancelled() and invocation.active()
         review_id, digest = result.get("review_id"), result.get("digest")
         if (result.get("status") not in {"pending", "approved"}
                 or not isinstance(review_id, str) or re.fullmatch(r"[0-9a-f]{32}", review_id) is None
                 or not isinstance(digest, str) or re.fullmatch(r"[0-9a-f]{64}", digest) is None):
             return False
         deadline = time.monotonic() + _REVIEW_WAIT_SECONDS
-        while not cancelled() and time.monotonic() < deadline:
+        while not cancelled() and invocation.active() and time.monotonic() < deadline:
             result = request("consume_tool_review", socket_path=binding["broker_socket"],
                              review_id=review_id, digest=digest, tool="terminal", arguments=arguments)
             if result.get("review_id") != review_id or result.get("digest") != digest:
                 return False
             if result.get("allowed") is True:
-                return result.get("status") == "consumed" and not cancelled()
+                return result.get("status") == "consumed" and not cancelled() and invocation.active()
             if result.get("status") != "pending":
                 return False
             time.sleep(_REVIEW_POLL_SECONDS)
@@ -177,8 +202,8 @@ class YuanxingmuEnvironment(BaseEnvironment):
             except (ValueError, TypeError):
                 return {"output": _BLOCKED_COMMAND, "returncode": 126}
             allowed = _tool_review(self.binding, invocation, arguments,
-                                   cancelled=lambda: self._closed or is_interrupted())
-            if not allowed or self._closed or is_interrupted():
+                                   cancelled=lambda: self._closed or not invocation.active())
+            if not allowed or self._closed or not invocation.active():
                 return {"output": _BLOCKED_COMMAND, "returncode": 126}
         # The approved command is not subsequently rewritten into a different
         # background command by BaseEnvironment. Its fixed cwd wrapper remains.
@@ -190,18 +215,22 @@ class YuanxingmuEnvironment(BaseEnvironment):
 
     def _run_bash(self, cmd_string, *, login=False, timeout=120, stdin_data=None):
         with self._process_lock:
-            if self._closed:
+            invocation = _current_invocation(self.binding) if self.binding.get("defense_enabled") else None
+            if self._closed or (self.binding.get("defense_enabled") and invocation is None):
                 raise EnvironmentConnectionError("yuanxingmu_environment_closed")
-            process = start(
-                command=["/bin/bash", "--noprofile", "--norc", "-c", cmd_string],
-                workspace=Path(self.binding["workspace"]), broker_socket=Path(self.binding["broker_socket"]),
-                readonly_paths=[Path(self.binding["core_root"]), *([Path(self.binding["skill_dir"])] if self.binding.get("skill_dir") else [])],
-                env={}, bwrap=Path(self.binding["bwrap"]),
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                stdin=subprocess.PIPE if stdin_data is not None else subprocess.DEVNULL,
-                text=True, encoding="utf-8", errors="replace",
-            )
-            self._processes.append(process)
+            with invocation.lock if invocation else self._process_lock:
+                if invocation is not None and not invocation.active():
+                    raise EnvironmentConnectionError("yuanxingmu_invocation_closed")
+                process = start(
+                    command=["/bin/bash", "--noprofile", "--norc", "-c", cmd_string],
+                    workspace=Path(self.binding["workspace"]), broker_socket=Path(self.binding["broker_socket"]),
+                    readonly_paths=[Path(self.binding["core_root"]), *([Path(self.binding["skill_dir"])] if self.binding.get("skill_dir") else [])],
+                    env={}, bwrap=Path(self.binding["bwrap"]),
+                    stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                    stdin=subprocess.PIPE if stdin_data is not None else subprocess.DEVNULL,
+                    text=True, encoding="utf-8", errors="replace",
+                )
+                self._processes.append(process)
         if stdin_data is not None:
             _pipe_stdin(process, stdin_data)
         return process
@@ -358,15 +387,52 @@ def register(ctx):
                           handler=_tool_handler(binding, operation), description=description)
     allowed = _LOCAL_TOOLS | {item[0] for item in declarations}
 
+    def around_tool(tool_name="", args=None, next_call=None, **kwargs):
+        # Execution middleware runs on the actual caller. Bounded pre-tool
+        # hooks instead receive a copied Context in a separate worker thread.
+        # Middleware exceptions before next_call are skipped by Hermes, so all
+        # rejected identities/arguments must produce an explicit blocked result.
+        blocked = json.dumps({"error": _BLOCKED_COMMAND, "allowed": False}, ensure_ascii=False)
+        if tool_name not in allowed or not isinstance(args, dict):
+            return blocked
+        if tool_name not in _LOCAL_TOOLS or not binding.get("defense_enabled"):
+            return next_call(args)
+        entered = False
+        try:
+            with _invocation_scope(binding, tool_name, args, kwargs) as invocation:
+                if not invocation.active():
+                    return blocked
+                # Process-control handlers can act without execute(). Their
+                # direct guard belongs here, outside the optional hook worker.
+                if tool_name == "process_manage" and not _guard(
+                        binding, "guard_tool", tool="terminal", arguments=invocation.source_tool["arguments"]):
+                    return blocked
+                if not invocation.active():
+                    return blocked
+                entered = True
+                return next_call(args)
+        except Exception:
+            if entered:
+                raise
+            return blocked
+
+    ctx.register_middleware("tool_execution", around_tool)
+
     def before_tool(tool_name="", args=None, **kwargs):
-        _INVOCATION.set(None)
         if tool_name not in allowed:
             return {"action": "block", "message": "此配置没有开放这个工具；请使用已配置的资料、终端或发送工具。"}
         if tool_name in _LOCAL_TOOLS:
             try:
                 if not isinstance(args, dict):
                     raise ValueError("invalid_native_arguments")
-                _bind_invocation(binding, tool_name, args, kwargs)
+                invocation = _INVOCATION.get()
+                if invocation is not None and (not invocation.active()
+                        or invocation.task_id != binding["task_id"]
+                        or invocation.session_id != kwargs.get("session_id")
+                        or invocation.tool_call_id != kwargs.get("tool_call_id")
+                        or invocation.source_tool["name"] != tool_name
+                        or _canonical(invocation.source_tool["arguments"]) != _canonical(args)):
+                    raise ValueError("yuanxingmu_invocation_mismatch")
             except (ValueError, TypeError):
                 return {"action": "block", "message": _BLOCKED_COMMAND}
             if binding.get("defense_enabled") and tool_name != "process_manage":
@@ -381,20 +447,11 @@ def register(ctx):
                     verdict = {}
                 if verdict.get("allowed") is not True and verdict.get("verdict") != "review":
                     return {"action": "block", "message": _BLOCKED_COMMAND}
-            # Registry process-control actions can complete without calling
-            # execute(), so keep their direct check as well as provider checks.
-            if tool_name == "process_manage" and not _guard(binding, "guard_tool", tool="terminal", arguments=args):
-                return {"action": "block", "message": _BLOCKED_COMMAND}
         return None
 
     # Convenience gate only. Socket-bound Broker decisions and the process
     # network namespace remain effective even if a hook is skipped or fails.
     ctx.register_hook("pre_tool_call", before_tool)
-
-    def after_tool(**kwargs):
-        _INVOCATION.set(None)
-
-    ctx.register_hook("post_tool_call", after_tool)
 
     def transform_result(tool_name="", result=None, **kwargs):
         if tool_name in _LOCAL_TOOLS and not _guard(binding, "inspect_input", text=result):

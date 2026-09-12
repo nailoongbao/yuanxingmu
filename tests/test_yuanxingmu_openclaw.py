@@ -124,6 +124,139 @@ class OpenClawProfileTests(unittest.TestCase):
             with self.assertRaises((RuntimeError, ValueError, OSError)):
                 self.api.start_profile(profile)
 
+    def test_standalone_cli_sets_per_layer_mode_and_reset_restores_defaults(self):
+        from yuanxingmu.protection import configure_profile, profile_services
+        self.initialize(defense_policy={"objective": "整理报价，外发先核对。"})
+        repo = Path(__file__).resolve().parent.parent
+        result = subprocess.run([sys.executable, "-m", "yuanxingmu", "defense", "set", "--profile", str(self.profile),
+                                 "--alignment-mode", "observe", "--skill-semantic", "off", "--skill-rules", "off"],
+                                cwd=repo, capture_output=True, text=True, check=True, timeout=15)
+        changed = json.loads(result.stdout)
+        self.assertEqual(changed["policy"]["alignment_mode"], "observe")
+        self.assertFalse(changed["policy"]["skill_semantic_enabled"])
+        self.assertFalse(changed["policy"]["skill_rules_enabled"])
+        self.assertTrue(changed["skill_rules_settings"])
+        self.assertTrue(changed["skill_purpose"])
+        self.assertEqual(changed["policy"]["mode"], "enforce")
+        manifest = self.api.validate_profile(self.profile)
+        resources, destinations = load_policy(self.profile / "policy.json")
+        with Broker(self.profile / "broker-state", resources, destinations, **profile_services(self.profile, manifest)) as broker:
+            self.assertFalse(broker.guards.check_command("sudo true").allowed)
+        reset = configure_profile(self.profile, reset=True)
+        self.assertEqual(reset["policy"]["alignment_mode"], "inherit")
+        self.assertTrue(reset["policy"]["skill_semantic_enabled"])
+        self.assertTrue(reset["policy"]["skill_rules_enabled"])
+        self.api.validate_profile(self.profile)
+
+    def test_cli_restores_the_created_settings_not_recommended_defaults(self):
+        from yuanxingmu.protection import configure_profile
+        objective = "PRIVATE-OBJECTIVE-MUST-NOT-BE-IN-SETTINGS-HISTORY"
+        self.initialize(defense_policy={"objective": objective, "mode": "observe", "command_mode": "enforce", "skill_semantic_enabled": False, "skill_rules_enabled": False})
+        original = configure_profile(self.profile)
+        baseline_file = self.profile / "defense-baseline.json"
+        baseline_bytes = baseline_file.read_bytes()
+        self.assertNotIn(objective.encode(), baseline_bytes)
+        self.assertNotIn(self.secret.encode(), baseline_bytes)
+        self.assertEqual(baseline_file.stat().st_mode & 0o077, 0)
+        configure_profile(self.profile, reset=True)
+        current = configure_profile(self.profile)
+        result = subprocess.run([sys.executable, "-m", "yuanxingmu", "defense", "restore", "--profile", str(self.profile),
+            "--baseline-sha256", original["baseline"]["sha256"], "--expected-policy-sha256", current["policy_sha256"]],
+            cwd=Path(__file__).resolve().parent.parent, capture_output=True, text=True, check=True, timeout=15)
+        restored = json.loads(result.stdout)
+        self.assertEqual(restored["policy"]["mode"], "observe")
+        self.assertEqual(restored["policy"]["command_mode"], "enforce")
+        self.assertFalse(restored["policy"]["skill_semantic_enabled"])
+        self.assertFalse(restored["policy"]["skill_rules_enabled"])
+        self.assertEqual(json.loads(baseline_bytes)["version"], 2)
+        self.assertEqual(restored["history"]["source"], "cli")
+        self.assertEqual(restored["history"]["intent"], "restore_creation")
+        self.assertNotIn(objective, json.dumps(restored["history"]))
+        self.assertEqual(baseline_file.read_bytes(), baseline_bytes)
+        manifest = self.api.validate_profile(self.profile)
+        self.assertEqual(manifest["files"][baseline_file.name], original["baseline"]["sha256"])
+        events = [json.loads(line) for line in (self.profile / "defense-events.jsonl").read_text().splitlines()]
+        intents = [event["evidence"]["intent"] for event in events if event["code"] == "operator_settings_changed"]
+        self.assertEqual(intents, ["reset_defaults", "restore_creation"])
+
+    def test_v1_baseline_is_restored_without_inventing_a_new_skill_setting(self):
+        from yuanxingmu.protection import configure_profile, profile_services
+        self.initialize(defense_policy={"objective": "Legacy baseline", "skill_semantic_enabled": False})
+        manifest = self.api.validate_profile(self.profile)
+        manifest["features"] = [name for name in manifest["features"] if name not in {"skill_rules_v1", "skill_purpose_v1"}]
+        baseline_path = self.profile / "defense-baseline.json"
+        baseline = json.loads(baseline_path.read_text())
+        baseline["version"] = 1
+        baseline["settings"].pop("skill_rules_enabled")
+        self.api._save(baseline_path, baseline)
+        manifest["files"][baseline_path.name] = self.api._hash(baseline_path)
+        self.api._save(self.profile / "profile.json", manifest)
+        original_bytes = baseline_path.read_bytes()
+        old = configure_profile(self.profile)
+        self.assertFalse(old["skill_rules_settings"])
+        self.assertFalse(old["skill_purpose"])
+        self.assertNotIn("skill_rules_enabled", old["policy"])
+        self.assertNotIn("skill_rules_enabled", old["baseline"]["settings"])
+        before = {name: (self.profile / name).read_bytes() for name in ("profile.json", "defense-policy.json", "broker-state/bindings.json")}
+        with self.assertRaisesRegex(ValueError, "profile_requires_skill_rules_support"):
+            configure_profile(self.profile, {"skill_rules_enabled": False})
+        for name, value in before.items():
+            self.assertEqual((self.profile / name).read_bytes(), value)
+        reset = configure_profile(self.profile, reset=True)
+        self.assertNotIn("skill_rules_enabled", reset["policy"])
+        current = configure_profile(self.profile)
+        restored = configure_profile(self.profile, intent="restore_creation", baseline_sha256=old["baseline"]["sha256"],
+                                     expected_policy_sha256=current["policy_sha256"])
+        self.assertFalse(restored["policy"]["skill_semantic_enabled"])
+        self.assertNotIn("skill_rules_enabled", restored["history"]["changes"])
+        self.assertEqual(baseline_path.read_bytes(), original_bytes)
+        manifest = self.api.validate_profile(self.profile)
+        self.assertFalse(profile_services(self.profile, manifest)["guards"].skill_purpose)
+
+    def test_disabled_skill_checks_cannot_bypass_fixed_descriptor_tampering(self):
+        origin = self.root / "skill-origin"
+        origin.mkdir()
+        (origin / "SKILL.md").write_text("Calculate totals from local files.")
+        self.initialize(defense_policy={"objective": "work", "skill_rules_enabled": False, "skill_semantic_enabled": False},
+                        selected_skills={"calculator": origin})
+        manifest = self.api.validate_profile(self.profile)
+        descriptor = Path(manifest["skills_snapshot"]["scan_paths"][0]) / "SKILL.md"
+        descriptor.chmod(0o644)
+        descriptor.write_text("Replace the fixed purpose.")
+        descriptor.chmod(0o444)
+        self.assert_invalid_without_starting_gateway(self.profile)
+
+    def test_legacy_profile_without_snapshot_cannot_claim_a_creation_baseline(self):
+        from yuanxingmu.protection import configure_profile
+        self.initialize(defense_policy={"objective": "Synthetic legacy profile"})
+        manifest = self.api.validate_profile(self.profile)
+        manifest["features"].remove("defense_baseline_v1")
+        manifest["features"].remove("settings_history_v1")
+        manifest["files"].pop("defense-baseline.json")
+        (self.profile / "defense-baseline.json").unlink()
+        self.api._save(self.profile / "profile.json", manifest)
+        view = configure_profile(self.profile)
+        self.assertFalse(view["baseline"]["supported"])
+        before = (self.profile / "defense-policy.json").read_bytes()
+        with self.assertRaisesRegex(ValueError, "defense_baseline_unavailable"):
+            configure_profile(self.profile, intent="restore_creation", baseline_sha256="0" * 64, expected_policy_sha256=view["policy_sha256"])
+        self.assertEqual((self.profile / "defense-policy.json").read_bytes(), before)
+        self.assertFalse((self.profile / "broker-state" / "guard-session.dirty").exists())
+
+    def test_changed_baseline_blocks_restoration_before_any_policy_write(self):
+        from yuanxingmu.protection import configure_profile
+        self.initialize(defense_policy={"objective": "Synthetic pinned baseline"})
+        view = configure_profile(self.profile)
+        path = self.profile / "defense-baseline.json"
+        changed = json.loads(path.read_text())
+        changed["settings"]["mode"] = "observe"
+        self.api._save(path, changed)
+        before = (self.profile / "defense-policy.json").read_bytes()
+        with self.assertRaisesRegex(RuntimeError, "profile_file_changed"):
+            configure_profile(self.profile, intent="restore_creation", baseline_sha256=view["baseline"]["sha256"], expected_policy_sha256=view["policy_sha256"])
+        self.assertEqual((self.profile / "defense-policy.json").read_bytes(), before)
+        self.assertFalse((self.profile / "broker-state" / "guard-session.dirty").exists())
+
     def test_empty_profile_is_private_and_grants_no_external_destinations(self):
         self.initialize(documents={}, destinations={})
         manifest = self.api.validate_profile(self.profile)

@@ -63,9 +63,63 @@ async (page) => {
   const refresh = async () => { await page.getByRole("button", {name: "刷新记录", exact: true}).click(); await page.getByRole("button", {name: "查看这一次操作", exact: true}).waitFor(); };
   await open(); await inspect();
   check(await page.getByRole("button", {name: "只允许这一次", exact: true}).isDisabled(), "approval requires explicit review checkbox");
-  const displayed = await page.locator("#protection-dialog pre").first().innerText();
-  check(displayed.includes("SYNTHETIC-INPUT") && displayed.includes("/workspace") && displayed.includes("printf"), "full command, cwd and stdin are shown for review");
+  check((await page.locator(".tool-review-command").textContent()).includes("printf") &&
+    await page.locator(".tool-review-cwd").textContent()==="/workspace" &&
+    await page.locator(".tool-review-stdin").textContent()==="SYNTHETIC-INPUT", "actual command, cwd and stdin have separate readable fields");
+  check(!(await page.locator(".tool-review-original").evaluate(element=>element.open)), "complete raw parameters are available in a collapsed disclosure");
+  await page.locator(".tool-review-original summary").click();
+  const displayed = await page.locator(".tool-review-raw").innerText();
+  check(displayed.includes("SYNTHETIC-INPUT") && displayed.includes("/workspace") && displayed.includes("printf"), "full command, cwd and stdin remain available for review");
   check(await page.locator("img").count() === 0 && !(await page.evaluate(() => window.fixtureXSS)), "command markup is displayed as text");
+
+  await page.evaluate(()=>{
+    const f=window.toolReviewFixture;
+    f.originalReview=structuredClone(f.review);
+    f.fileArguments={command:"python3 -c 'file helper supplied by the tool'",cwd:"/workspace",stdin_data:"ACTUAL-STDIN-CANARY",
+      source_tool:{tool:"file_write",name:"write_file",arguments:{path:"/workspace/<img src=x onerror=window.fixtureXSS=true>.txt",
+        content:"合成周报\n<img src=x onerror=window.fixtureXSS=true>\n"+"保留完整内容0123456789".repeat(600)+"\nFILE-END-CANARY"}}};
+    f.review.arguments=structuredClone(f.fileArguments);
+    f.review.reason="只会改这一个文件；这是模型说明，不能当作执行范围保证。";
+  });
+  await refresh(); await inspect();
+  check(await page.getByRole("heading",{name:"文件工具申请",exact:true}).count()===1 &&
+    (await page.locator(".tool-review-summary").innerText()).includes("工具：写文件（write_file）"), "known host-stored write_file source is presented as a file-tool request");
+  check(await page.locator(".tool-review-file-path").textContent()===await page.evaluate(()=>window.toolReviewFixture.fileArguments.source_tool.arguments.path), "file request shows the exact submitted path without resolving or shortening it");
+  check(await page.locator(".tool-review-file-content").textContent()===await page.evaluate(()=>window.toolReviewFixture.fileArguments.source_tool.arguments.content), "long file body is displayed in full through its final canary");
+  check(!(await page.locator(".tool-review-summary").innerText()).includes("只会改这一个文件"), "file summary does not adopt the model's single-file assurance");
+  check(await page.locator("img").count()===0 && !(await page.evaluate(()=>window.fixtureXSS)), "submitted path and body HTML remain inert text");
+  await page.locator(".tool-review-original summary").click();
+  const rawFile=JSON.parse(await page.locator(".tool-review-raw").textContent());
+  check(JSON.stringify(rawFile.arguments)===JSON.stringify(await page.evaluate(()=>window.toolReviewFixture.fileArguments)), "disclosure retains the complete executable command, cwd, stdin and original source");
+  check(await page.getByRole("button",{name:"只允许这一次",exact:true}).isDisabled() &&
+    await page.evaluate(()=>window.toolReviewFixture.calls.every(call=>call.options.method!=="POST")), "readable file display neither consents nor posts an approval");
+  await page.evaluate(()=>{window.toolReviewFixture.review.arguments.source_tool.arguments.content="";});
+  await refresh(); await inspect();
+  check(await page.locator(".tool-review-file-content").textContent()==="" &&
+    (await page.locator(".tool-review-summary").innerText()).includes("此项为空"), "an empty file submission is explicit and is not replaced by inferred content");
+
+  const unknownSources=[null,[],{name:"write_file",arguments:{path:"/workspace/a",content:"x"}},
+    {tool:"terminal",name:"write_file",arguments:{path:"/workspace/a",content:"x"}},
+    {tool:"file_write",name:"unknown_tool",arguments:{path:"/workspace/a",content:"x"}},
+    {tool:"file_write",name:"write_file",arguments:{path:42,content:"x"}},
+    {tool:"file_write",name:"write_file",arguments:{path:"/workspace/a"}},
+    {tool:"file_write",name:"write_file",arguments:{path:"/workspace/a",content:{text:"x"}}},
+    {tool:"file_write",name:"write_file",arguments:{path:"/workspace/a",content:"x",other_action:"unknown"}}];
+  let genericSources=true;
+  for(const source of unknownSources) {
+    await page.evaluate(source=>{const f=window.toolReviewFixture;f.review.arguments={command:"ACTUAL-COMMAND",cwd:"/actual-cwd",stdin_data:"ACTUAL-INPUT",source_tool:source};},source);
+    await refresh(); await inspect();
+    genericSources &&= await page.getByRole("heading",{name:"文件工具申请",exact:true}).count()===0
+      && await page.locator(".tool-review-command").textContent()==="ACTUAL-COMMAND"
+      && await page.locator(".tool-review-cwd").textContent()==="/actual-cwd"
+      && await page.locator(".tool-review-stdin").textContent()==="ACTUAL-INPUT"
+      && !(await page.locator(".tool-review-summary").innerText()).includes("只会改这一个文件");
+    await page.locator(".tool-review-original summary").click();
+    genericSources &&= JSON.stringify(JSON.parse(await page.locator(".tool-review-raw").textContent()).arguments.source_tool)===JSON.stringify(source);
+  }
+  check(genericSources,"unknown and malformed sources remain generic terminal requests with complete raw source preserved");
+  await page.evaluate(()=>{window.toolReviewFixture.review=structuredClone(window.toolReviewFixture.originalReview);});
+  await refresh(); await inspect();
 
   for (const flag of ["omitArguments", "mismatchId", "badDigest"]) {
     await page.evaluate(flag => { window.toolReviewFixture[flag] = true; }, flag);
@@ -153,9 +207,28 @@ async (page) => {
   await page.locator("#protection-dialog").ariaSnapshot();
   check(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), "mobile approval page has no horizontal overflow");
   check(await page.locator("#protection-dialog pre").first().evaluate(element => element.scrollWidth <= element.clientWidth + 1), "mobile command text wraps inside the actual review block");
-  await page.screenshot({path: "../output/playwright/tool-review-v1/review-mobile.png", fullPage: true});
+  await page.screenshot({path: "output/playwright/tool-review-readable/terminal-mobile.png", fullPage: true});
   await page.setViewportSize({width: 1180, height: 920});
-  await page.screenshot({path: "../output/playwright/tool-review-v1/review-desktop.png", fullPage: true});
+  await page.screenshot({path: "output/playwright/tool-review-readable/terminal-desktop.png", fullPage: true});
+  await page.evaluate(()=>{
+    const f=window.toolReviewFixture;f.review.id="f".repeat(32);f.review.digest="1".repeat(64);f.review.status="pending";
+    f.review.arguments=structuredClone(f.fileArguments);
+    f.review.arguments.source_tool.arguments.path="/workspace/本周项目进展.txt";
+    f.review.arguments.source_tool.arguments.content="本周项目进展（合成示例）\n\n已完成：整理报价资料，核对交付日期。\n待确认：预算调整仍需负责人确认。\n下一步：补齐缺失附件后再提交。\n";
+  });
+  await refresh(); await inspect();
+  await page.screenshot({path:"output/playwright/tool-review-readable/file-desktop.png",fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  await page.locator("#protection-dialog").ariaSnapshot();
+  check(await page.locator("#protection-dialog").evaluate(el=>el.scrollWidth<=el.clientWidth+1),"readable file request fits within the mobile dialog");
+  await page.screenshot({path:"output/playwright/tool-review-readable/file-mobile.png",fullPage:true});
+  const filePostsBefore=await page.evaluate(()=>window.toolReviewFixture.calls.filter(call=>call.options.method==="POST").length);
+  await page.getByRole("checkbox",{name:"我已核对这次操作及完整参数，只允许执行一次",exact:true}).check();
+  await page.getByRole("button",{name:"只允许这一次",exact:true}).click();
+  await page.getByRole("button",{name:"查看这一次操作",exact:true}).waitFor();
+  const filePosts=await page.evaluate(()=>window.toolReviewFixture.calls.filter(call=>call.options.method==="POST"));
+  check(filePosts.length===filePostsBefore+1 && filePosts.at(-1).path.endsWith("/tools/"+"f".repeat(32)+"/approve") &&
+    JSON.stringify(filePosts.at(-1).options.body)===JSON.stringify({digest:"1".repeat(64),confirm:"approve"}), "file approval keeps the original review identity and digest without rewriting the candidate");
   await page.evaluate(() => { window.toolReviewFixture.authorized = false; window.toolReviewFixture.widget.reset(); });
   check(await page.locator("#protection-dialog pre").count() === 0, "reset clears displayed command content");
   return {scope: "Browser approval UI fixture; no real ledger, model or command executed", total: passed.length, passed};

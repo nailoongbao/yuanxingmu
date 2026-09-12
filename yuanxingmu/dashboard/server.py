@@ -68,6 +68,12 @@ def _fault(exc: Exception):
         "task_paused": "这份工作已暂停，请查看最新防护记录并由你确认恢复。",
         "defense_storage_fault": "防护状态写入失败，后续操作已停止。请保留记录、检查存储并重启服务。",
         "quarantine_incident_changed": "暂停原因已更新，请重新读取并核对，旧确认没有恢复工作。",
+        "defense_baseline_unavailable": "这份旧工作没有保存创建时设置，不能恢复。当前设置未改变。",
+        "defense_settings_preview_expired": "当前设置已变化，请刷新并重新核对。本次没有修改设置。",
+        "defense_settings_preview_required": "请刷新防护记录，再核对并保存最新设置。本次没有修改设置。",
+        "defense_baseline_preview_changed": "创建时设置的预览不匹配，请刷新后重新核对。本次没有修改设置。",
+        "defense_reset_preview_changed": "恢复全部开启的预览已改动，请按普通修改保存。本次没有修改设置。",
+        "profile_requires_skill_rules_support": "这份旧工作不支持独立技能规则开关。请保留原工作并新建工作；本次没有修改设置。",
     }
     if reason in mail_errors:
         return {"code": reason, "message": mail_errors[reason]}
@@ -156,11 +162,13 @@ def validate_create(value):
                                   or len(value["objective"].encode("utf-8")) > 8192 or "\x00" in value["objective"]):
         raise APIError(400, "invalid_objective", "请写明这份工作要完成什么，以及不能做什么；最多 8 KB。")
     if "defense" in value:
-        fields = {name + "_enabled" for name in ("foundation", "input", "memory", "alignment", "command")} | {"mode"}
-        if (not value.get("objective") or type(value["defense"]) is not dict or set(value["defense"]) - fields
-                or any(type(item) is not bool for key, item in value["defense"].items() if key != "mode")
-                or value["defense"].get("mode", "enforce") not in {"enforce", "observe"}):
-            raise APIError(400, "invalid_defense_settings", "防护设置无效。")
+        from ..guards import validate_defense_settings
+        try:
+            if not value.get("objective"):
+                raise ValueError
+            validate_defense_settings(value["defense"])
+        except (ValueError, TypeError):
+            raise APIError(400, "invalid_defense_settings", "防护设置无效。") from None
     if "judge" in value:
         from ..judge_profile import normalize_judge_config
         try:
@@ -554,12 +562,14 @@ class Workbench:
             lock.release()
 
     def protection_view(self, identifier):
+        from ..protection import public_settings_history, settings_baseline, settings_diff
         with self.mutex:
             path = self._profile_path(self._entry(identifier))
         manifest = core.validate_profile(path)
         if "layered_defense_v1" not in manifest.get("features", []):
             return {"supported": False, "events": [], "message": "这项工作保留原有权限和隔离；没有启用新增的五层检查。"}
-        policy = json.loads((path / "defense-policy.json").read_text())
+        from ..guards import GuardPolicy
+        policy = GuardPolicy.from_dict(json.loads((path / "defense-policy.json").read_text()))
         events = []
         event_path = path / "defense-events.jsonl"
         if event_path.exists():
@@ -580,6 +590,10 @@ class Workbench:
                     if not isinstance(evidence, dict):
                         evidence = {}
                     event["evidence"] = {key: evidence.get(key) for key in ("elapsed_ms", "judge_valid", "raw_verdict_sha256", "input_sha256", "candidate_sha256") if key in evidence}
+                    if event.get("code") == "operator_settings_changed":
+                        history = public_settings_history(evidence)
+                        if history is not None:
+                            event["settings_history"] = history
                     events.append(event)
                 except (ValueError, TypeError):
                     continue
@@ -592,13 +606,25 @@ class Workbench:
         judge = judge_profile_report(path, manifest["model"], pins=manifest["files"])
         stopped = core._offline_lifecycle(path) == "stopped"
         live_settings = "live_settings_v1" in manifest.get("features", [])
+        baseline = settings_baseline(path, manifest)
+        if baseline["supported"]:
+            baseline["changes"] = settings_diff(policy.settings(), baseline["settings"])
         return {"supported": True, "framework": manifest.get("framework", "openclaw"),
                 "editable": (stopped or live_settings) and not (quarantine or {}).get("storage_fault", False),
                 "live_settings": live_settings and not stopped,
                 "judge": judge,
                 "skills": {"names": list(manifest.get("skills_snapshot", {}).get("source_paths", {})), "files": manifest.get("skills_snapshot", {}).get("file_count", 0)},
-                "objective": policy["objective"], "mode": policy.get("mode", "enforce"),
-                "layers": {name: policy.get(name + "_enabled", True) for name in ("foundation", "input", "memory", "alignment", "command")},
+                "objective": policy.objective, "mode": policy.mode,
+                "per_layer_settings": "per_layer_settings_v1" in manifest.get("features", []),
+                "skill_rules_settings": "skill_rules_v1" in manifest.get("features", []),
+                "skill_purpose": "skill_purpose_v1" in manifest.get("features", []),
+                "settings_history": "settings_history_v1" in manifest.get("features", []),
+                "policy_sha256": manifest["files"]["defense-policy.json"], "baseline": baseline,
+                "layers": {name: getattr(policy, name + "_enabled") for name in ("foundation", "input", "memory", "alignment", "command")},
+                "layer_modes": {name: getattr(policy, name + "_mode") for name in ("foundation", "input", "memory", "alignment", "command")},
+                "effective_modes": {name: policy.effective_mode(name) if getattr(policy, name + "_enabled") else "disabled" for name in ("foundation", "input", "memory", "alignment", "command")},
+                "foundation_scans": {"configuration": policy.foundation_config_enabled, "skill_semantic": policy.skill_semantic_enabled,
+                                     **({"skill_rules": policy.skill_rules_enabled} if "skill_rules_v1" in manifest.get("features", []) else {})},
                 "buffered_response": "buffered_response_v1" in manifest.get("features", []),
                 "quarantine": quarantine, "foundation": foundation, "events": list(reversed(events))}
 
@@ -723,11 +749,27 @@ class Workbench:
                 raise APIError(400, "invalid_fields", "操作参数无效；收回权限需要明确确认。")
             payload = None
         elif action == "defense_set":
-            fields = {name + "_enabled" for name in ("foundation", "input", "memory", "alignment", "command")} | {"mode"}
-            if (type(value) is not dict or set(value) != {"settings"} or type(value["settings"]) is not dict
-                    or set(value["settings"]) - fields or any(type(item) is not bool for key, item in value["settings"].items() if key != "mode")
-                    or value["settings"].get("mode", "enforce") not in {"enforce", "observe"}):
-                raise APIError(400, "invalid_defense_settings", "防护设置无效。")
+            from ..guards import validate_defense_settings
+            try:
+                if (type(value) is not dict or "settings" not in value
+                        or set(value) - {"settings", "intent", "baseline_sha256", "expected_policy_sha256"}):
+                    raise ValueError
+                validate_defense_settings(value["settings"])
+                intent = value.get("intent", "set")
+                if type(intent) is not str or intent not in {"set", "reset_defaults", "restore_creation"}:
+                    raise ValueError
+                preview_keys = {"baseline_sha256", "expected_policy_sha256"}
+                if intent == "restore_creation":
+                    if any(type(value.get(key)) is not str or not re.fullmatch(r"[0-9a-f]{64}", value[key]) for key in preview_keys):
+                        raise ValueError
+                else:
+                    if "baseline_sha256" in value:
+                        raise ValueError
+                    if "expected_policy_sha256" in value and (type(value["expected_policy_sha256"]) is not str
+                            or not re.fullmatch(r"[0-9a-f]{64}", value["expected_policy_sha256"])):
+                        raise ValueError
+            except (ValueError, TypeError):
+                raise APIError(400, "invalid_defense_settings", "防护设置无效。") from None
             payload = copy.deepcopy(value)
         elif action == "quarantine_resume":
             if (type(value) is not dict or set(value) != {"epoch", "incident_id", "confirm"}
@@ -900,7 +942,9 @@ class Workbench:
                     path = self._profile_path(entry)
                 if job["action"] == "defense_set":
                     from ..protection import configure_profile
-                    extra = configure_profile(path, payload["settings"])
+                    extra = configure_profile(path, payload["settings"], _workbench=True,
+                                              intent=payload.get("intent", "set"), baseline_sha256=payload.get("baseline_sha256"),
+                                              expected_policy_sha256=payload.get("expected_policy_sha256"))
                     with self.mutex:
                         entry["manifest_sha256"] = hashlib.sha256((path / "profile.json").read_bytes()).hexdigest()
                         self._save_jobs()

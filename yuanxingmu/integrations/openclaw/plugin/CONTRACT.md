@@ -26,7 +26,13 @@
 
 结果位于原生 `AgentToolResult.details`，正常响应保留实际 broker 对象；`content` 含中文解释和该 JSON。参数/上下文校验失败返回 `allowed:false`，且不会访问 socket。IPC 错误返回 `allowed:null, outcome:"unknown", reason:"broker_response_unavailable"`，不能把断线或超时解释成“没有发送”。只有实际 `outcome:"acknowledged"` 才说明接收服务返回成功确认。
 
-用户命令 `/yuanxingmu-revoke` 由 `registerCommand` 注册，要求认证管理者及 `operator.admin`，不接受参数，只向固定管理 socket 发送 `{"op":"revoke"}`。期待 `operator_action="revoke"`、`task.active=false`、`task.revoked=true`。它撤销读取和发送权限，不停止本地计算或 Gateway；停止服务由可信启动器负责。
+用户命令 `/yuanxingmu` 与 `/yuanxingmu-revoke` 由 `registerCommand` 仅在 `full` 模式注册，均要求认证管理者及 `operator.admin`，不接受参数，也不成为模型工具。
+
+`/yuanxingmu` 只向固定管理 socket 发送 `{"op":"status"}`。主机持锁读取当前五层的启用位和实际处理方式、暂停与撤权状态，并核对安装检查报告是否对应当前策略。聊天只显示白名单中的状态，不显示目标正文、事件原文、凭证、内部路径或服务返回的 URL。关闭、只记录、拦截分别显示；服务未就绪、旧服务缺少摘要、字段不完整或读取故障均明确写为未确认。状态查询不会调用模型或重新扫描。
+
+工作台说明引导本人回到元星木工作台的“防护记录”；网页已关闭时，用原启动器和终端显示的管理链接打开。命令不猜测工作台端口，也不把原生聊天地址当成管理地址。设置修改和暂停恢复仍通过已认证的工作台执行。
+
+`/yuanxingmu-revoke` 只发送 `{"op":"revoke"}`，期待 `operator_action="revoke"`、`task.active=false`、`task.revoked=true`。它撤销读取和发送权限，不停止本地计算或 Gateway；停止服务由可信启动器负责。
 
 可信启动器负责保存任务和初始标签、限制模型选择、隔离 profile/state/config/history、启动 broker、禁止其他插件工具和外部消息通道。模型服务和持久会话存储属于获准资料处理方。原生 exec 沿用隔离 worker 和可信 `python -I` 引导；模型传入的 exec 环境不会成为启动器环境或权限来源。当前范围为前台 exec；不给予 process 工具，PTY 不受支持。此契约不声称覆盖未知插件、其他 harness、后台进程或内核漏洞。
 

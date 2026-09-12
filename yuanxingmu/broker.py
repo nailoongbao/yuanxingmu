@@ -185,10 +185,11 @@ class Broker:
         if self.reviewed_mail:
             binding["reviewed_mail"] = 1
         if self.guards is not None:
-            # Changing the objective, enabled layers or judge requires a new
-            # profile. Credentials are represented by a digest only.
+            # Settings changes must rewrite this binding under the host lock.
+            # Credentials are represented by a digest only. Newly introduced
+            # defaults are omitted to preserve old persisted profile bindings.
             judge = asdict(self.guards.judge) if self.guards.judge is not None else None
-            binding["guards"] = {"policy": asdict(self.guards.policy),
+            binding["guards"] = {"policy": self.guards.policy.to_dict(),
                                  "judge_sha256": _digest(json.dumps(judge, sort_keys=True).encode())}
         if self.action_targets is not None:
             binding["reviewed_actions"] = {name: target.binding() for name, target in sorted(self.action_targets.items())}
@@ -273,8 +274,12 @@ class Broker:
         outcome = outcome or next((check for check in checks if check.verdict == "review"), None)
         if outcome is not None:
             return {"allowed": False, "verdict": outcome.verdict, "reason": outcome.code, "message": outcome.reason,
-                    "mode": self.guards.policy.mode, "check": outcome.to_dict()}
-        return {"allowed": True, "verdict": "allow", "reason": "candidate_checks_completed", "mode": self.guards.policy.mode}
+                    "mode": self.guards.policy.effective_mode(outcome.layer), "check": outcome.to_dict()}
+        modes = {check.layer: self.guards.policy.effective_mode(check.layer) for check in checks if check.assessed}
+        effective = set(modes.values())
+        return {"allowed": True, "verdict": "allow", "reason": "candidate_checks_completed",
+                "mode": next(iter(effective)) if len(effective) == 1 else "mixed" if effective else "disabled",
+                "layer_modes": modes}
 
     def create_task(self, *, task_id: str | None = None, initial_labels: list[str] | None = None) -> str:
         with self._lock:
@@ -399,7 +404,7 @@ class Broker:
                     else:
                         check = self.guards.check_input(request["text"])
                         self._guard_result(task_id, check)
-                        result = {"allowed": True, "reason": "input_check_completed", "mode": self.guards.policy.mode}
+                        result = {"allowed": True, "reason": "input_check_completed", "mode": self.guards.policy.effective_mode("input")}
                 elif operation == "describe":
                     state = self.authority.describe(task_id)
                     if not state["active"]:
@@ -464,9 +469,14 @@ class Broker:
                 return self.review_quarantine(task_id, request)
             if isinstance(request, dict) and str(request.get("op", "")).startswith("protection_"):
                 self._require_healthy()
-                if set(request) != {"op", "settings"} or request["op"] != "protection_set" or not callable(self.configure_callback):
+                if (set(request) not in ({"op", "settings"}, {"op", "settings", "metadata"})
+                        or request["op"] != "protection_set" or not callable(self.configure_callback)):
                     raise AuthorizationError("live_defense_settings_unavailable")
-                return self.configure_callback(request["settings"])
+                metadata = request.get("metadata", {})
+                if (type(metadata) is not dict or ("metadata" in request and set(metadata) != {
+                        "source", "intent", "baseline_sha256", "expected_policy_sha256"})):
+                    raise AuthorizationError("invalid_settings_metadata")
+                return self.configure_callback(request["settings"], **metadata)
             if isinstance(request, dict) and str(request.get("op", "")).startswith("tool_"):
                 return self.review_tool(task_id, request)
             if isinstance(request, dict) and str(request.get("op", "")).startswith("action_"):

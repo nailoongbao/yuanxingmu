@@ -60,6 +60,23 @@ class HermesProfileTests(unittest.TestCase):
         with Broker(self.profile / "broker-state", resources, destinations) as broker:
             self.assertEqual(broker.authority._db.execute("SELECT count(*) FROM authority_tasks").fetchone()[0], before)
 
+    def test_created_settings_baseline_is_host_only_and_hash_bound(self):
+        from yuanxingmu.protection import configure_profile
+        objective = "PRIVATE-BASELINE-OBJECTIVE"
+        self.initialize(model_url="http://127.0.0.1:18181/v1", defense_policy={"objective": objective, "alignment_mode": "observe"})
+        manifest = openclaw.validate_profile(self.profile)
+        self.assertIn("defense_baseline_v1", manifest["features"])
+        self.assertIn("settings_history_v1", manifest["features"])
+        baseline = configure_profile(self.profile)["baseline"]
+        self.assertEqual(baseline["settings"]["alignment_mode"], "observe")
+        path = self.profile / "defense-baseline.json"
+        self.assertEqual(baseline["sha256"], manifest["files"][path.name])
+        self.assertEqual(path.stat().st_mode & 0o077, 0)
+        self.assertNotIn(objective, path.read_text())
+        self.assertNotIn(self.secret, path.read_text())
+        command = openclaw.gateway_command(self.profile, manifest)
+        self.assertNotIn(str(path), command)
+
     def test_credentials_and_inherited_overrides_do_not_enter_hermes(self):
         self.initialize()
         manifest = openclaw.validate_profile(self.profile)
