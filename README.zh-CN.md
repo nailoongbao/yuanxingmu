@@ -2,7 +2,7 @@
 
 **让 AI 多做事，权限始终有界。**
 
-**[0.7 运行包已发布，仍为预览版](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a1)。** 配套安装器待验证。旧 0.3 安装器绑定 0.6，仍未公开；旧安装和旧工作不会自动获得这次新增的保护。
+**[0.7 运行包](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a1)与[配套 0.4 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)已发布，仍为预览版。** 安装器同时准备 Hermes 和 OpenClaw。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html)使用新的 `~/yuanxingmu-v07` 目录；旧安装和旧工作不会自动获得这次新增的保护。
 
 先选好资料和可接收的固定对象，再让 AI 读报价、发消息、上传文本或填表。范围内且通过检查的操作可自动执行；你可以随时关闭工作或收回资料权限。你选用的模型服务仍会收到聊天和使用的资料。
 
@@ -49,7 +49,9 @@ AUTO17、AUTO18 均绑定 `e886607`。后续开发修改不会改变这两轮已
 
 [English](README.md) · [官网](https://yh-l20.github.io/yuanxingmu/) · [五层功能介绍](https://yh-l20.github.io/yuanxingmu/layers.html) · [看实机演示](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 
-[查看 0.6 历史版五层概览海报](site/assets/yuanxingmu-public-v06-poster.svg)
+[![元星木 0.7 海报：先定范围，敏感字段先隐藏，五层检查](site/assets/yuanxingmu-public-v07-poster.svg)](site/assets/yuanxingmu-public-v07-poster.png)
+
+[下载 0.7 海报 PNG](site/assets/yuanxingmu-public-v07-poster.png) · [SVG](site/assets/yuanxingmu-public-v07-poster.svg) · [查看 0.6 历史海报](site/assets/yuanxingmu-public-v06-poster.svg)
 
 这是一个 **Linux 本地研究原型**。使用真实 bubblewrap、SQLite、独立 HTTP 接收进程和合成资料验证；没有调用攻击模型，没有生产防御率，也没有完整的企业权限接入。公开仓库与系统名称已统一为元星木（Yuanxingmu）。
 
@@ -69,11 +71,11 @@ AUTO17、AUTO18 均绑定 `e886607`。后续开发修改不会改变这两轮已
 
 ## 用自己的模型和资料
 
-0.7 配套安装器待验证，安装页将在可用后开放入口。以下介绍已有工作台的使用方式：早期安装器把首次安装收成一个文件，装好后用 `~/yuanxingmu/open-yuanxingmu` 打开本机工作台。在页面填写模型连接、导入短文本，创建工作后启动，再进入 OpenClaw 原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。原先手工安装的用户继续使用 `yuanxingmu desk`。
+[0.4 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)把 0.7 的首次安装收成一个文件。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html#install)装到 `~/yuanxingmu-v07` 后，在 Ubuntu 终端用 `"$HOME/yuanxingmu-v07/open-yuanxingmu"` 打开本机工作台。在页面选择 Hermes 或 OpenClaw、填写模型连接、导入短文本，创建工作后启动，再进入所选助手原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。旧安装保留原目录；原先手工安装的用户继续使用原来的 `yuanxingmu desk` 入口。
 
 每项工作独立保存资料和权限。聊天粘贴和工作产物从一开始就按私密资料处理；换会话或正常重启不清除权限。默认没有额外发送位置。**所选模型服务会看到聊天和使用的资料。**
 
-[看 117 秒上手演示](https://yh-l20.github.io/yuanxingmu/workbench-demo.html) · [安装并使用工作台](https://yh-l20.github.io/yuanxingmu/start.html) · [安装器说明](install/README.md) · [高级命令行指南](docs/openclaw-quickstart.zh-CN.md)。安装器适用于 Ubuntu 24.04 / WSL Ubuntu 24.04 x86_64，首次需要终端。关闭网页或工作台不会停止运行中的 AI。目前工作台支持 OpenClaw 2026.9.4。
+[看早期 117 秒上手演示](https://yh-l20.github.io/yuanxingmu/workbench-demo.html) · [安装并使用工作台](https://yh-l20.github.io/yuanxingmu/start.html) · [安装器说明](install/README.md) · [高级命令行指南](docs/openclaw-quickstart.zh-CN.md)。安装器适用于 Ubuntu 24.04 / WSL Ubuntu 24.04 x86_64，首次需要终端。关闭网页或工作台不会停止运行中的 AI。目前工作台支持 OpenClaw 2026.9.4 和 Hermes 0.21.2 / v2026.9.11。
 
 除了隔离工具执行，新入口也把整个 OpenClaw 服务放进单独的网络环境。模型请求只能经过固定模型通道，资料读取和发送经过权限服务；框架自动下载远程媒体的动作也不能直接连接外部网络。模型密钥与授权数据库留在宿主侧。
 

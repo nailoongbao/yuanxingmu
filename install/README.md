@@ -4,7 +4,9 @@
 
 [面向使用者的图文步骤](https://yh-l20.github.io/yuanxingmu/start.html) · [117 秒真实模型演示](https://yh-l20.github.io/yuanxingmu/workbench-demo.html)
 
-**0.4 安装器正在验证，尚未发布。** 以下为这版的安装方式。安装器 `0.4.0a1` 固定安装已发布的元星木 `0.7.0a1`、Node.js `24.16.0`、OpenClaw `2026.9.4` 和 Hermes `0.21.2`。**默认安装包含两个框架，无需开发 wheel。** 运行包绑定源码提交 `c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425`，下载地址、字节数和 SHA256 都固定在安装器中。
+**[0.4.0a1 安装器已公开，仍为预览版](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)。** 安装器固定安装元星木 `0.7.0a1`、Node.js `24.16.0`、OpenClaw `2026.9.4` 和 Hermes `0.21.2`。**默认安装包含两个框架，无需开发 wheel。** 运行包绑定源码提交 `c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425`，下载地址、字节数和 SHA256 都固定在安装器中。
+
+[下载安装器](https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/yuanxingmu-installer-0.4.0a1.pyz) · [安装与验收记录](https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/installer-manifest.json) · [SHA256SUMS](https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/SHA256SUMS)。三个公开下载文件的名称、字节数和 SHA256 已与审核版本核对。
 
 新建工作会先隐藏资料中明确标记的底价、密码和令牌，再交给模型；支持范围和限制见[敏感字段说明](../docs/protected-fields.zh-CN.md)。旧工作不会自动获得这个边界。
 
@@ -17,7 +19,7 @@ Ubuntu 24.04 或 WSL Ubuntu 24.04，x86_64，系统 `/usr/bin/python3` 3.12+，�
 将对应发行页下载的 `yuanxingmu-installer-0.4.0a1.pyz` 放入 Ubuntu 家目录后，在 Ubuntu 终端运行：
 
 ```bash
-/usr/bin/python3 -I ~/yuanxingmu-installer-0.4.0a1.pyz --install-root ~/yuanxingmu-v07 --system-deps
+/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.4.0a1.pyz" --install-root "$HOME/yuanxingmu-v07" --system-deps
 ```
 
 `--system-deps` 会在需要时通过系统 `sudo` 安装 bubblewrap、CA 证书与 AppArmor，并为 `/opt/yuanxingmu/bin/bwrap` 设置专用 AppArmor 配置。可能询问 Ubuntu 密码；不会关闭系统的全局用户命名空间限制。已有完整隔离环境可以省略这个参数。
@@ -27,7 +29,7 @@ Ubuntu 24.04 或 WSL Ubuntu 24.04，x86_64，系统 `/usr/bin/python3` 3.12+，�
 ## 日常打开
 
 ```bash
-~/yuanxingmu-v07/open-yuanxingmu
+"$HOME/yuanxingmu-v07/open-yuanxingmu"
 ```
 
 工作台会尝试打开浏览器，也会在终端显示完整的本机管理链接。自动打开失败时，复制链接到自己的浏览器。终端需保持运行。先在页面点击“暂时关闭”，再退出终端；关掉网页或管理终端不会停止已经运行的 AI。

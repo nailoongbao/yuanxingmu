@@ -4,11 +4,19 @@
 
 **你选择的模型会看到聊天和使用的资料。** 云端模型会接收这些内容；元星木限制的是额外的资料读取和发送。默认不向其他位置自动发送。创建时可授权固定的消息、上传和表单对象，检查通过后自动完成；邮件仍需逐封核对并确认。明确标记的敏感字段会先隐藏，具体范围见下文。
 
-这是 Linux / WSL 预览版，首次安装仍需要终端。安装完成后，连接模型、导入资料、打开和关闭工作都可以在页面中完成。**`0.7.0a1` 预览运行包已发布，包含 Hermes、五层检查、授权内自动操作和敏感字段保护；配套的 `0.4` 安装器仍在验证。** 下载状态以[官网安装页](https://yh-l20.github.io/yuanxingmu/start.html)为准。当前版本固定接入 OpenClaw 2026.9.4、Hermes v2026.9.11 / 0.21.2；真实运行结果及未通过项分别见 [OpenClaw](openclaw-layers-validation-2026-09-12.md) 和 [Hermes](../yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md)。
+这是 Linux / WSL 预览版，首次安装仍需要终端。安装完成后，连接模型、导入资料、打开和关闭工作都可以在页面中完成。**`0.7.0a1` 运行包与[配套 `0.4.0a1` 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1)已发布，包含 Hermes、五层检查、授权内自动操作和敏感字段保护。** 按[官网安装步骤](https://yh-l20.github.io/yuanxingmu/start.html)装到独立的新目录。当前版本固定接入 OpenClaw 2026.9.4、Hermes v2026.9.11 / 0.21.2；真实运行结果及未通过项分别见 [OpenClaw](openclaw-layers-validation-2026-09-12.md) 和 [Hermes](../yuanxingmu/integrations/hermes/VALIDATION.zh-CN.md)。
 
 ## 第一次打开
 
-先完成[安装说明的第 1 步](openclaw-quickstart.zh-CN.md#1-安装到一个独立目录)。默认安装位置是 Linux 的 `~/yuanxingmu`。然后在同一个 Ubuntu 终端运行：
+先按[官网安装步骤](https://yh-l20.github.io/yuanxingmu/start.html#install)使用 0.4 安装器，明确指定新的 `~/yuanxingmu-v07` 目录。装好后，在同一个 Ubuntu 终端运行：
+
+```bash
+"$HOME/yuanxingmu-v07/open-yuanxingmu"
+```
+
+如果安装时改过目录，请使用那个目录中的 `open-yuanxingmu`。安装器在不传 `--install-root` 时仍默认使用 `~/yuanxingmu`；本文步骤明确指定 `~/yuanxingmu-v07`，以便保留旧安装。
+
+以前按[手工安装说明](openclaw-quickstart.zh-CN.md#1-安装到一个独立目录)安装的，继续使用原入口。原来装在 `~/yuanxingmu` 时，命令是：
 
 ```bash
 "$HOME/yuanxingmu/.venv/bin/python" -I -m yuanxingmu desk
@@ -117,7 +125,7 @@
 
 ## 文件保存在哪里
 
-按本文手工安装时，默认保存在 Linux 的 `~/yuanxingmu/workbench` 下。其他安装位置使用对应目录；以启动时的设置为准：
+按本文安装器步骤安装时，保存在 Linux 的 `~/yuanxingmu-v07/workbench` 下。旧版或手工安装在 `~/yuanxingmu` 时，仍使用 `~/yuanxingmu/workbench`。其他安装位置使用对应目录；以启动时的设置为准：
 
 - `profiles/`：每项工作的资料副本、聊天、模型密钥和权限记录。
 - `catalog.json`：工作名称和操作记录，不包含模型密钥和资料正文。

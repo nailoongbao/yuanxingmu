@@ -7,7 +7,7 @@
   <meta name="description" content="元星木 0.7 使用说明：选择 Hermes 或 OpenClaw，连接自己的模型，约定资料与消息、上传和表单的范围，查看五层防护记录。适用于 Ubuntu 24.04 / WSL。">
   <title>开始使用 · 元星木 Yuanxingmu</title>
   <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="styles.css?v=20260912-auto19">
+  <link rel="stylesheet" href="styles.css?v=20260912-installer04">
   <style>
     .quickstart-page .start-nav{display:flex;gap:28px;align-items:center;font-size:13px;color:#c4cdd2}
     .quickstart-page .start-nav a:hover{color:var(--green)}
@@ -97,15 +97,15 @@
         <div class="start-content">
           <section id="install" aria-labelledby="install-title">
             <p class="eyebrow">01 / 首次安装</p><h2 id="install-title">把工作台装在自己的电脑上。</h2>
-            <p>0.7 运行包已发布，配套安装器待验证。新的安装步骤和下载入口会在验收完成后开放。已安装相应版本的用户，可继续查看下方工作台使用说明；旧版请保留原目录与工作记录。</p>
+            <p>0.4 安装器已发布，一次准备元星木 0.7、Hermes 和 OpenClaw。按下方步骤安装到新目录；已经装好这一版，可以直接查看工作台使用说明。</p>
             <details><summary>Windows 用户：先准备 Ubuntu / WSL</summary><p>安装器在 Ubuntu 中运行，不会替你安装 WSL。在 PowerShell 中运行下面的命令，按屏幕提示完成系统安装，再打开 Ubuntu 24.04。后续命令都在 Ubuntu 终端中运行；已有合适环境可以跳过。</p><pre><code>wsl --install -d Ubuntu-24.04</code></pre></details>
-            <div class="installer-preview" id="installer-preview" data-installer-status="pending">
-              <span class="installer-status" id="installer-release-status">0.4 安装器 / 0.7 运行包 · 待验证</span>
+            <div class="installer-preview" id="installer-preview" data-installer-status="released">
+              <span class="installer-status" id="installer-release-status">0.4 安装器 / 0.7 运行包 · 预览版已发布</span>
               <h3>一次安装，准备两种助手。</h3>
-              <p id="installer-release-note">元星木 0.7 运行包已发布；配套 0.4 安装器待验证，下载暂未开放。以下是验收并发布后的安装方式，请等下载入口开放后再操作。</p>
+              <p id="installer-release-note">配套安装器已公开，下载文件已与审核版本核对。适用于 Ubuntu 24.04 / WSL Ubuntu 24.04、x86_64 电脑，首次安装需要终端。</p>
               <p>安装器准备 Hermes 和 OpenClaw，创建工作时选择一种。新版使用独立目录，已有旧安装和旧工作不会自动升级。</p>
-              <div class="installer-links"><a class="installer-download" id="installer-download" aria-disabled="true" href="#installer-release-note" data-release-href="https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/yuanxingmu-installer-0.4.0a1.pyz">配套安装器待验证</a><a id="installer-version-link" href="https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a1" target="_blank" rel="noopener noreferrer">0.7 运行包说明 ↗</a></div>
-              <details id="installer-preview-steps"><summary>下载开放后，按这一步安装 0.7</summary><p>配套安装器待验证；现在不要执行下面的安装命令。</p>
+              <div class="installer-links"><a class="installer-download" id="installer-download" href="https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.4.0a1/yuanxingmu-installer-0.4.0a1.pyz">下载 0.4 安装器 <span aria-hidden="true">↓</span></a><a id="installer-version-link" href="https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a1" target="_blank" rel="noopener noreferrer">安装器与核验文件 ↗</a></div>
+              <details id="installer-preview-steps"><summary>下载后，按这一步安装 0.7</summary>
                 <p>把下载的 <code>yuanxingmu-installer-0.4.0a1.pyz</code> 放到 Ubuntu 的主目录（<code>~</code>），然后在 Ubuntu 终端运行：</p>
                 <pre><code>/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.4.0a1.pyz" --install-root "$HOME/yuanxingmu-v07" --system-deps</code></pre>
                 <p>Windows / WSL 用户可以先在 Ubuntu 终端运行 <code>cd ~</code>，再运行 <code>explorer.exe .</code>，把下载的文件拖进打开的文件夹。</p>
@@ -116,7 +116,7 @@
                 <p>安装器不提供模型账号。装好以后，仍需要填写自己的模型接口，并选择这份工作能用的资料。</p>
               </details>
               <details id="installer-existing-install"><summary>已经装过旧版，怎样保留它？</summary>
-                <p>新版安装器将 0.7 装到新的 <code>~/yuanxingmu-v07</code>。如果这个目录已被其他版本占用，请把命令中的目录改成另一个空位置，后续也从那个位置启动。</p>
+                <p>上面的命令将 0.7 装到新的 <code>~/yuanxingmu-v07</code>。如果这个目录已被其他版本占用，请把命令中的目录改成另一个空位置，后续也从那个位置启动。</p>
                 <pre><code>"$HOME/yuanxingmu-v07/open-yuanxingmu"</code></pre>
                 <p>旧资料和聊天保留在旧版中；新版请重新填写模型连接、放入资料并新建工作。先关闭旧版中的工作、退出旧工作台，再打开新版。本版不做原地升级。</p>
               </details>
@@ -205,13 +205,13 @@
           <section id="help" aria-labelledby="help-title">
             <p class="eyebrow">预览版说明</p><h2 id="help-title">遇到问题，先看程序的实际状态。</h2>
             <details><summary>安装器提示隔离检查没通过</summary><p>确认在 Ubuntu / WSL 内使用系统 Python。允许安装系统依赖时，可使用带 <code>--system-deps</code> 的命令。完成后仍失败，请保留提示并请管理员检查；程序不会跳过隔离继续运行。手工安装可查看 <code>doctor</code> 输出中的 <code>reason</code>。</p></details>
-            <details><summary>找不到 open-yuanxingmu 启动入口</summary><p>这个入口由安装器在完成安装后提供。先确认安装是否成功、是否使用默认目录；以前按手工指南安装的，请使用上方保留的手工启动命令。</p></details>
+            <details><summary>找不到 open-yuanxingmu 启动入口</summary><p>这个入口由安装器在完成安装后提供。先确认安装是否成功，以及启动命令是否使用了实际安装目录；以前按手工指南安装的，请使用上方保留的手工启动命令。</p></details>
             <details><summary>工作台打不开，或提示访问凭证失效</summary><p>确认启动工作台的 Ubuntu 终端仍在运行，再从该终端打开完整管理链接。工作台重启后需要使用新链接。不要把这个管理链接当作助手的聊天入口。</p></details>
             <details><summary>模型连接失败，或没有读取资料</summary><p>模型报 401、404 或无法调用工具时，核对密钥、接口地址、模型名称及工具调用支持。资料太长时，先用短文本重新建立工作。本版没有编辑已建工作模型配置的表单，需改配置时请建立新工作。</p></details>
             <details><summary>启动失败、端口被占用或服务异常中断</summary><p>先刷新页面查看实际状态。按本页安装时，每项工作的目录位于 <code>~/yuanxingmu-v07/workbench/profiles/</code>，可查看其中的 <code>supervisor.log</code> 和 <code>gateway.stderr.log</code>；具体排错见下方命令行指南。</p><p>如果状态是“运行中断”或“状态待确认”，表示异常退出后的清理还没有确认。保留日志与 <code>lifecycle.json</code>，先检查记录中的进程，不要删除权限库或改状态绕过检查。</p></details>
             <details><summary>更换版本或直接修改实例配置后不能启动</summary><p>当前实例保留创建时的资料副本与校验记录。请保留安装器准备的 Hermes 0.21.2 / OpenClaw 2026.9.4，不要直接修改生成的配置或替换运行文件。本版暂未提供原地升级与恢复撤销权限的流程。</p></details>
             <details><summary>怎样让 AI 写邮件，由我确认发送？</summary><p>新版支持先让 AI 起草，再由你核对或修改收件人、主题和全文，最后明确确认发送。在工作台设置自己的发件邮箱，再新建一份工作；旧工作不会自动获得邮件功能。按<a href="email-demo.html">邮件演示中的四步</a>操作，或查看<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/email.zh-CN.md" target="_blank" rel="noopener noreferrer">完整邮件指南 ↗</a>。目前每封只支持一个收件人和纯文本正文，暂不支持附件。消息、上传和表单另按上方“操作范围”设置。</p></details>
-            <details><summary>工作台支持哪些聊天界面？</summary><p>0.7 工作台支持 OpenClaw 2026.9.4 和 Hermes 0.21.2 / v2026.9.11 的原生网页，创建工作时选择。配套 0.4 安装器准备两套环境，目前待验证；旧安装和旧工作不会自动升级。</p></details>
+            <details><summary>工作台支持哪些聊天界面？</summary><p>0.7 工作台支持 OpenClaw 2026.9.4 和 Hermes 0.21.2 / v2026.9.11 的原生网页，创建工作时选择。已发布的 0.4 安装器准备两套环境；旧安装和旧工作不会自动升级。</p></details>
             <p>这是一个需要实际环境验证的预览版，没有通用防护率承诺。继续查看<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台完整指南 ↗</a>；高级参数与排错仍见<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">命令行指南 ↗</a>。</p>
           </section>
           <p id="copy-feedback" class="start-feedback" role="status" aria-live="polite"></p>
