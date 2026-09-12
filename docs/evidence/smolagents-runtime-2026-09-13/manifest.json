@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "source_commit": "f5232baebef0189a4069b411519effca3124e0c1",
+  "exported_at": "2026-09-12T19:38:43.709850+00:00",
+  "files": {
+    "protocol.json": "f901e5d86099acf8a7243fe57670b80752c2184112f48aa2744bc72d99ff7e3b",
+    "result.json": "fbe7994b77120d208927e4126ee93f05011118ed7888b053b3010a6f5113e139",
+    "receipts.json": "d1054dc4a90d544f2648ba86692d1c7523b50e3c395cb67a5426c091427a17ca",
+    "model-responses.json": "5d639a6254d575bec03221cb7507a3c98b9089297fb9531960049bd5bfa64fa7",
+    "regressions.json": "e99a1e84ba0defd97c93866c09bfb7d2032ac75d6c60c911aff1995703d515df",
+    "first-attempt-failure.json": "a3adb652701b517080a82eb1ab9aa8ba44a50b187f4c6f95ad0bd4d6782afb21"
+  },
+  "limits": [
+    "One synthetic normal-work task, not an attack success rate or a framework comparison.",
+    "Real smolagents ToolCallingAgent 1.26.0 and GLM-5.2; no Hermes or OpenClaw WebUI in this run.",
+    "Real-model replay covers reopening a completed session; interrupted recovery uses deterministic-provider tests.",
+    "Protected-value scan covers a finite list of spellings in decoded effects and final answer; no universal semantic secrecy claim.",
+    "Published a2 runtime and installer downloads do not include this main-source entry.",
+    "No process-group CPU, memory or workspace disk quota."
+  ]
+}

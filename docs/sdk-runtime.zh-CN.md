@@ -76,6 +76,8 @@ yuanxingmu sdk-run \
 
 ## 当前验证范围
 
+**2026-09-13 GLM‑5.2 实测：** 冻结源码 `f5232ba` 上，真实 `ToolCallingAgent` 一次完成消息、文本上传和表单三种自动操作，每处一份正确接收记录；已完成会话重开没有再次调用工作模型或发送，撤销后拒绝继续。首轮失败和验证限制一并保留在[实测报告](evidence/smolagents-runtime-2026-09-13/REPORT.zh-CN.md)。这是 CLI 入口的合成正常任务，未启动 Hermes/OpenClaw WebUI，不能替代攻击测试或中途恢复的故障测试。
+
 新增的 [`test_smolagents_runtime.py`](../tests/test_smolagents_runtime.py) 在固定 SDK 环境中运行了 15 项测试、零跳过。测试实际执行 `Agent.run`、Unix HTTP 模型桥、Broker 和提案复核，并包含本机接收端收据、不同调用编号、参数拒绝、上下文退出、检查点绑定、批内中断、Broker 接受后丢失本地记录、恢复响应变化和步数上限。
 
 另有 [`test_smolagents_automatic_runtime.py`](../tests/test_smolagents_automatic_runtime.py) 的 11 项自动操作测试、零跳过，使用实际 Guards、固定自动范围及本机模型和检查服务。消息、上传、表单都产生了真实本地收据；越范围、危险文件操作、伪造参数、检查拦截和撤权均未产生外部效果。宿主已经执行、worker 尚未记录结果时中断，恢复后仍是一份收据、一次额度消耗。接收端收到内容后故意丢失回执的场景还验证了同批停止、恢复后仍停止，以及旧检查点不能越过不确定结果。
@@ -83,3 +85,5 @@ yuanxingmu sdk-run \
 [`test_smolagents_runtime_timeouts.py`](../tests/test_smolagents_runtime_timeouts.py) 的 4 项测试使用真实延迟检查服务和 Unix Broker，按比例缩短 15 秒与 120 秒等待期限，验证读取、待复核提案和自动发送不会因旧的短等待提前退出；恢复发送仍只有一份收据和一次额度消耗。它们没有用外部模型来测响应速度。
 
 这些测试使用定程模型服务，验证完整程序调用路径和故障恢复；它们不代表真实模型的攻击阻断率。宿主模型记录、整个隔离进程、固定套接字和撤权路径分别由 [`test_yuanxingmu_sdk_model_store.py`](../tests/test_yuanxingmu_sdk_model_store.py) 与 [`test_yuanxingmu_sdk_runtime.py`](../tests/test_yuanxingmu_sdk_runtime.py) 检查，实际运行时需要固定 SDK 环境和可用的 Linux 隔离条件。旧的十一组工具适配证据仍然只是各自当时的组件验证，不会自动升级成其他框架的完整防护结论。
+
+“不确定结果后停止”由此受控 SDK 入口落实。它不代表宿主能够识别所有换编号的重复业务；任意修改过的 worker 仍可能提出新请求，宿主按原有目标、内容限制和总额度检查。

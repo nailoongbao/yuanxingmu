@@ -1,0 +1,36 @@
+{
+  "windows": {
+    "head": "f5232baebef0189a4069b411519effca3124e0c1",
+    "tests_run": 1090,
+    "passed_count": 372,
+    "skipped_count": 718,
+    "successful": true,
+    "valid": true,
+    "sources_unchanged": true,
+    "duration_seconds": 18.39,
+    "started_at": "2026-09-12T19:32:42.950792+00:00",
+    "finished_at": "2026-09-12T19:33:01.353754+00:00",
+    "original_result_sha256": "b44c17e280e9990a28747ff58224b851b12bea9d4f4854a51b25db81ad435000",
+    "configuration_snapshot_hashes": {
+      ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+      ".github/workflows/yuanxingmu.yml": "bbb8eb0d38d086d4e310b12359ad3da5332335c32a8e2e61efc487c235800324"
+    }
+  },
+  "linux": {
+    "head": "f5232baebef0189a4069b411519effca3124e0c1",
+    "tests_run": 1090,
+    "passed_count": 918,
+    "skipped_count": 172,
+    "successful": true,
+    "valid": true,
+    "sources_unchanged": true,
+    "duration_seconds": 111.566,
+    "started_at": "2026-09-12T19:32:33.706755+00:00",
+    "finished_at": "2026-09-12T19:34:15.284349+00:00",
+    "original_result_sha256": "6216a4229f48f9d12581851fd2c93d77a67bb31de004cff7c4397c44a383b617",
+    "configuration_snapshot_hashes": {
+      ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+      ".github/workflows/yuanxingmu.yml": "bbb8eb0d38d086d4e310b12359ad3da5332335c32a8e2e61efc487c235800324"
+    }
+  }
+}

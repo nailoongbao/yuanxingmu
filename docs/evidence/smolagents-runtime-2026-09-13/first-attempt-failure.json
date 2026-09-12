@@ -1,0 +1,16 @@
+{
+  "passed": false,
+  "source_commit": "b3ab992d90e35d9028946457b5f3f036d6b8a727",
+  "model": "glm-5.2",
+  "failure_type": "RuntimeError",
+  "failure_code": "sdk_worker_failed",
+  "sources_unchanged": true,
+  "cleanup_confirmed": true,
+  "sockets_closed": true,
+  "finished_at": "2026-09-12T18:58:14.601110+00:00",
+  "external_receipts": 0,
+  "original_summary_sha256": "53d09bf1f2adb5baa62e07fa72649bbd87970f6b6b446f69bad50f979a808a95",
+  "cause": "Valid GLM request_id and per-tool contiguous index fields were rejected by the initial strict response validator.",
+  "response_sha256": "a7609d68c20d382b5669f8f3328e5b8a2b65c4b79d715d61747d9e3f568a544f",
+  "preserved_without_retry": true
+}
