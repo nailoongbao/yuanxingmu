@@ -28,6 +28,7 @@ from openai.types.responses import ResponseFunctionToolCall, ResponseOutputMessa
 
 from ..client import request
 from ._openai_agents_checkpoint import Checkpoint
+from ._openai_agents_schema import inline_model_schema
 from ._runtime_support import checked_config, checked_text, json_bytes, load_json, model_request, read_json
 from ._schemas import ClosedModel, EmptyArgs, FormProposal, MessageProposal, SCHEMAS, UploadProposal
 from .client import DESCRIPTIONS, NativeTools, PROPOSALS, TOOL_NAMES, _arguments, decode_arguments, encode_result
@@ -143,7 +144,7 @@ class _Loop:
         for agent, names in self.names.items():
             self.schemas[agent] = [{"type": "function", "function": {
                 "name": name, "description": HANDOFF_DESCRIPTION if name == HANDOFF_TOOL else self.function_tools[name].description,
-                "parameters": deepcopy(transfer.input_json_schema if name == HANDOFF_TOOL else self.function_tools[name].params_json_schema),
+                "parameters": inline_model_schema(transfer.input_json_schema if name == HANDOFF_TOOL else self.function_tools[name].params_json_schema),
                 "strict": True}} for name in names]
         self.run_config = RunConfig(tracing_disabled=True, trace_include_sensitive_data=False,
                                     tool_execution=ToolExecutionConfig(max_function_tool_concurrency=1),

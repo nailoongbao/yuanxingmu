@@ -389,6 +389,82 @@ class OpenaiAgentsRuntimeTests(OpenaiAgentsFixture, unittest.TestCase):
         self.assertIn("FIRST-ANSWER", json.dumps(self.upstream_requests[-1]["body"]["messages"]))
         self.assertEqual(self.actions(), [])
 
+    def test_model_schema_inlining_preserves_action_contract(self):
+        config = {**self.config, "automatic_actions": True}
+        loop = self.runtime._Loop(config, self.runtime.Checkpoint(config))
+        name = self.runtime.AUTOMATIC_TOOL
+        native = deepcopy(loop.function_tools[name].params_json_schema)
+        parameters = next(tool["function"]["parameters"] for tool in loop.schemas[self.runtime.EXECUTOR]
+                          if tool["function"]["name"] == name)
+        self.assertIn("$defs", native)
+        self.assertNotIn("$defs", parameters)
+        self.assertEqual(parameters["required"], ["proposal"])
+        self.assertIs(parameters["additionalProperties"], False)
+        branches = {branch["properties"]["kind"]["const"]: branch
+                    for branch in parameters["properties"]["proposal"]["anyOf"]}
+        self.assertEqual(set(branches), {"message", "upload", "form"})
+        for kind, payload_fields in (("message", {"body"}), ("upload", {"filename", "content"}),
+                                     ("form", {"fields"})):
+            branch = branches[kind]
+            self.assertEqual(branch["type"], "object")
+            self.assertEqual(set(branch["required"]), {"kind", "target_id", "payload"})
+            self.assertIs(branch["additionalProperties"], False)
+            payload = branch["properties"]["payload"]
+            self.assertEqual(payload["type"], "object")
+            self.assertEqual(set(payload["required"]), payload_fields)
+            self.assertEqual(set(payload["properties"]), payload_fields)
+            self.assertIs(payload["additionalProperties"], False)
+        fields = branches["form"]["properties"]["payload"]["properties"]["fields"]
+        self.assertEqual(fields["maxItems"], 64)
+        self.assertEqual(set(fields["items"]["required"]), {"name", "value"})
+        self.assertIs(fields["items"]["additionalProperties"], False)
+        valid = [self.proposal("message"),
+                 {"proposal": {"kind": "upload", "target_id": "upload",
+                               "payload": {"filename": "report.txt", "content": "report"}}},
+                 {"proposal": {"kind": "form", "target_id": "form",
+                               "payload": {"fields": [{"name": "note", "value": "report"}]}}}]
+        for index, arguments in enumerate(valid):
+            with self.subTest(valid=index):
+                message = completion(tool_call("host-schema-" + str(index), name, arguments))["choices"][0]["message"]
+                self.assertEqual(loop.calls(message, self.runtime.EXECUTOR)[0]["arguments"], arguments)
+        extra = deepcopy(valid[0])
+        extra["proposal"]["approved"] = True
+        missing = deepcopy(valid[0])
+        del missing["proposal"]["target_id"]
+        too_many = deepcopy(valid[2])
+        too_many["proposal"]["payload"]["fields"] = [{"name": str(index), "value": "report"} for index in range(65)]
+        invalid = [{"proposal": json.dumps(valid[0]["proposal"])}, extra, missing, too_many,
+                   {**valid[0], "request_key": "forged"},
+                   {"proposal": {"kind": "overwrite", "target_id": "replace", "payload": {"content": "changed"}}},
+                   {"proposal": {"kind": "delete", "target_id": "remove", "payload": {}}}]
+        for index, arguments in enumerate(invalid):
+            with self.subTest(invalid=index):
+                message = completion(tool_call("host-invalid-schema-" + str(index), name, arguments))["choices"][0]["message"]
+                with self.assertRaises(ValueError):
+                    loop.calls(message, self.runtime.EXECUTOR)
+        inline = self.runtime.inline_model_schema
+        literal = {"title": "literal data", "$ref": "literal data"}
+        example = {"$defs": {"A/B": {"type": "string", "minLength": 3}}, "type": "object",
+                   "properties": {"title": {"$ref": "#/$defs/A~1B", "minLength": 1},
+                                  "$ref": {"const": literal}}, "required": ["title", "$ref"],
+                   "additionalProperties": False}
+        expanded = inline(example)
+        self.assertEqual(expanded["properties"]["title"],
+                         {"allOf": [{"type": "string", "minLength": 3}, {"minLength": 1}]})
+        self.assertEqual(expanded["properties"]["$ref"]["const"], literal)
+        for unsupported in ({"$ref": "https://example.invalid/schema"}, {"$ref": "#/$defs/missing"},
+                            {"$defs": {"A": {"$ref": "#/$defs/A"}}, "$ref": "#/$defs/A"},
+                            {"$defs": {"A": {"type": "object", "properties": {"a": {"type": "string"}}}},
+                             "$ref": "#/$defs/A", "unevaluatedProperties": False},
+                            {"$defs": {"A": {"type": "array", "prefixItems": [{"type": "string"}]}},
+                             "$ref": "#/$defs/A", "unevaluatedItems": False}):
+            with self.subTest(unsupported=unsupported):
+                with self.assertRaises(ValueError):
+                    inline(unsupported)
+        self.assertEqual(loop.function_tools[name].params_json_schema, native)
+        self.assertEqual(self.requests, [])
+        self.assertEqual(self.actions(), [])
+
     def test_new_turn_restarts_researcher_with_complete_history_and_identical_final_response(self):
         self.responses.extend([
             completion(tool_call("host-first-turn-read", "yuanxingmu_read", {"resource": "note"})),
