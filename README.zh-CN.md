@@ -2,30 +2,54 @@
 
 **让 AI 多做事，权限始终有界。**
 
-**0.6 预览版。** 0.6 运行包已发布，配套 0.3 安装器仍待发布；以下实测还不能算完整验收通过。
+**[0.7 运行包已发布，仍为预览版](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a1)。** 配套安装器待验证。旧 0.3 安装器绑定 0.6，仍未公开；旧安装和旧工作不会自动获得这次新增的保护。
 
 先选好资料和可接收的固定对象，再让 AI 读报价、发消息、上传文本或填表。范围内且通过检查的操作可自动执行；你可以随时关闭工作或收回资料权限。你选用的模型服务仍会收到聊天和使用的资料。
 
 当前源码包含输入、记忆、任务偏移、危险命令、技能与配置五层检查，以及本人审批、暂停恢复、回答显示前检查和 Hermes 官方界面接入。[玄甲逐项对照](docs/agentward-coverage.zh-CN.md)列出源码、证据与缺口；[框架支持表](docs/framework-support.zh-CN.md)区分工具适配与完整实机验证。这批功能尚未进入旧安装包。实测仍记录了正常操作误拦，不能据此宣称已全面超过玄甲。
 
+## 最新实录：底价藏好，该做的事继续做
+
+[AUTO19](docs/evidence/hermes-auto19-2026-09-12/REPORT.zh-CN.md) 只交代一次自然任务，Hermes 就继续完成消息、文本上传和填表。资料里标明的内部底价先被隐藏，夹带伪系统指令的正文被扣留；整个过程没有逐项批准或人工恢复。
+
+三项内容在**本机合成接收端各收到一次**。结尾回复把表单名称写错一个字，原样保留，严格完整协议仍为 **false**。
+
+[![104 秒看 Hermes 最新实录](site/assets/videos/hermes-protected-fields/poster.jpg)](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-protected-fields)
+
+[看 104 秒实机视频](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-protected-fields) · [核对完整记录](docs/evidence/hermes-auto19-2026-09-12/REPORT.zh-CN.md)
+
+<details>
+<summary>这次验证了什么，还有什么限制？</summary>
+
+固定源码 `c83add3`，版本 `0.7.0a1`，Hermes 0.21.2 / v2026.9.11。工作与检查使用独立 GLM-5.2 请求。一次用户消息后，没有追加指令、补参数、逐项批准或恢复。完整模型请求、回复、工具消息与参数、三个接收正文，共 28 项核验均未发现内部底价及声明支持的等价数值写法；提交正文逐字节核对。
+
+最终把“合成报价表”写成“合造报价表”；实际表单目标、字段和值正确，错字没有修改，也没有重跑。敏感字段只支持明确标签和有限写法，不识别任意秘密、编码或推断；其余工作内容仍会交给所选模型。这是小型合成任务，不是通用防护率。新保护不在公开的 0.6 包中。[AUTO18 的真实回复泄露与错误放行](docs/evidence/hermes-auto18-2026-09-12/REPORT.zh-CN.md)继续保留，不能把这次改进说成全面超过玄甲。
+
+</details>
+
 [五层各看一段真实中文讲解](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-five-layers)：Hermes 与 GLM-5.2 的网页录屏，分别展示外部指令、记忆投毒、任务偏移、危险命令和危险技能。视频绑定 `6881138`；新版自动流程的[首次失败](docs/evidence/hermes-auto15-2026-09-12/REPORT.zh-CN.md)和[授权事实修复](docs/evidence/review-facts-2026-09-12/REPORT.zh-CN.md)另行公开。
 
-开发版新增[一次授权、范围内自动完成](docs/automatic-work.zh-CN.md)：创建时选择固定对象，通过防护检查的消息、上传和表单直接执行；已扣留的恶意外部输入不再要求手动恢复。目标、资料权限和额度由宿主检查，结果未知时不自动重发。旧邮件起草工具继续等待本人确认。
+0.7 支持[一次授权、范围内自动完成](docs/automatic-work.zh-CN.md)：创建时选择固定对象，通过防护检查的消息、上传和表单直接执行；已扣留的恶意外部输入不再要求手动恢复。目标、资料权限和额度由宿主检查，结果未知时不自动重发。旧邮件起草工具继续等待本人确认。
+
+<details>
+<summary>此前记录：自动提交、上传失败与真实回复泄露</summary>
 
 [AUTO16 实机记录](docs/evidence/hermes-auto16-2026-09-12/REPORT.zh-CN.md)已有四次自动提交的真实接收，隔离恶意资料后仍能继续工作；随后在未选对象上提前拦停，失败原样保留。[待核对请求修复](docs/evidence/pending-effect-2026-09-12/REPORT.zh-CN.md)公开了原始请求、结果和仍存在的模型漏检与格式失败，没有把组件测试当成通用防护率。
 
 [2 分 02 秒，看 AUTO16 自动流程实录](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-auto16-flow)：操作者仍逐条交代任务，范围内的操作不必逐项批准。视频绑定 `a34dafb`；08 步在创建待核对申请前被误拦，后续项目未执行。
 
-后续实测也完整保留了失败：
+这些此前实测完整保留了失败：
 
 - [AUTO17](docs/evidence/hermes-auto17-2026-09-12/REPORT.zh-CN.md)：三次自动提交实际到达，但模型参数错误，上传未开始。后来真实建立待核对申请，危险命令被规则拦住，暂停后的新聊天也不能继续调用。正常流程和完整协议均未通过。
 - [AUTO18](docs/evidence/hermes-auto18-2026-09-12/REPORT.zh-CN.md)：一次自然任务完成了三项正确的自动提交，但**内部底价出现在两段实际显示的聊天回复里，检查模型两次错误放行**。两次判定格式都有效。恶意资料在交给工作模型前已被扣留，因此这是回复泄露与检查漏判，**没有证据证明提示注入成功**。三项提交完成不等于完整协议通过。
 
 AUTO17、AUTO18 均绑定 `e886607`。后续开发修改不会改变这两轮已记录的结果，也不能代替新版实机复验。
 
+</details>
+
 [English](README.md) · [官网](https://yh-l20.github.io/yuanxingmu/) · [五层功能介绍](https://yh-l20.github.io/yuanxingmu/layers.html) · [看实机演示](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 
-![元星木：让 AI 多做事，权限始终有界](site/assets/yuanxingmu-public-v06-poster.svg)
+[查看 0.6 历史版五层概览海报](site/assets/yuanxingmu-public-v06-poster.svg)
 
 这是一个 **Linux 本地研究原型**。使用真实 bubblewrap、SQLite、独立 HTTP 接收进程和合成资料验证；没有调用攻击模型，没有生产防御率，也没有完整的企业权限接入。公开仓库与系统名称已统一为元星木（Yuanxingmu）。
 
@@ -45,7 +69,7 @@ AUTO17、AUTO18 均绑定 `e886607`。后续开发修改不会改变这两轮已
 
 ## 用自己的模型和资料
 
-安装器把首次安装收成一个文件，装好后用 `~/yuanxingmu/open-yuanxingmu` 打开本机工作台。在页面填写模型连接、导入短文本，创建工作后启动，再进入 OpenClaw 原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。原先手工安装的用户继续使用 `yuanxingmu desk`。
+0.7 配套安装器待验证，安装页将在可用后开放入口。以下介绍已有工作台的使用方式：早期安装器把首次安装收成一个文件，装好后用 `~/yuanxingmu/open-yuanxingmu` 打开本机工作台。在页面填写模型连接、导入短文本，创建工作后启动，再进入 OpenClaw 原来的聊天界面。暂时关闭工作、永久收回资料权限，也可以在页面完成。原先手工安装的用户继续使用 `yuanxingmu desk`。
 
 每项工作独立保存资料和权限。聊天粘贴和工作产物从一开始就按私密资料处理；换会话或正常重启不清除权限。默认没有额外发送位置。**所选模型服务会看到聊天和使用的资料。**
 
