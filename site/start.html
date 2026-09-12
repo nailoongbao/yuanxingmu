@@ -73,7 +73,7 @@
   <div class="topbar">
     <header class="site-header wrap">
       <a class="brand" href="index.html" aria-label="元星木首页"><img src="assets/mark.svg" width="38" height="38" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a>
-      <nav class="start-nav" aria-label="主导航"><a href="index.html">首页</a><a href="https://github.com/yh-l20/agent-defense-check" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
+      <nav class="start-nav" aria-label="主导航"><a href="index.html">首页</a><a href="https://github.com/yh-l20/yuanxingmu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></nav>
     </header>
   </div>
   <main id="main">
@@ -91,7 +91,7 @@
     <div class="section-light start-document">
       <div class="wrap start-layout">
         <nav class="start-toc" aria-label="使用步骤">
-          <p>跟着做一次</p><a href="#install">1. 安装工作台</a><a href="#workbench">2. 打开本机工作台</a><a href="#model">3. 填写模型连接</a><a href="#document">4. 导入短文本</a><a href="#chat">5. 进入 OpenClaw</a><a href="#daily">日常打开与关闭</a><a href="#revoke">永久收回权限</a><a href="#help">遇到问题</a><a class="start-doc-link" href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台完整指南 ↗</a>
+          <p>跟着做一次</p><a href="#install">1. 安装工作台</a><a href="#workbench">2. 打开本机工作台</a><a href="#model">3. 填写模型连接</a><a href="#document">4. 导入短文本</a><a href="#chat">5. 进入 OpenClaw</a><a href="#daily">日常打开与关闭</a><a href="#revoke">永久收回权限</a><a href="#help">遇到问题</a><a class="start-doc-link" href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台完整指南 ↗</a>
         </nav>
         <div class="start-content">
           <section id="install" aria-labelledby="install-title">
@@ -102,7 +102,7 @@
               <span class="installer-status" id="installer-release-status">Ubuntu / WSL 安装预览 · 0.2.0a1</span>
               <h3>下载一个文件，准备所需程序。</h3>
               <p id="installer-release-note">安装器已发布。新目录安装、关闭后重开和收回权限，已在 Ubuntu 与 WSL 检查通过。首次需要在 Ubuntu 终端运行下面的一条命令。</p>
-              <p>带邮件核对功能的新版安装器。已经有旧版时，请使用新的安装目录；旧资料和聊天继续保留。</p><div class="installer-links"><a class="installer-download" id="installer-download" href="https://github.com/yh-l20/agent-defense-check/releases/download/installer-0.2.0a1/yuanxingmu-installer-0.2.0a1.pyz">下载安装器（约 67 KB） ↓</a><a href="https://github.com/yh-l20/agent-defense-check/releases/tag/installer-0.2.0a1" target="_blank" rel="noopener noreferrer">版本与核验记录 ↗</a></div>
+              <p>带邮件核对功能的新版安装器。已经有旧版时，请使用新的安装目录；旧资料和聊天继续保留。</p><div class="installer-links"><a class="installer-download" id="installer-download" href="https://github.com/yh-l20/yuanxingmu/releases/download/installer-0.2.0a1/yuanxingmu-installer-0.2.0a1.pyz">下载安装器（约 67 KB） ↓</a><a href="https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.2.0a1" target="_blank" rel="noopener noreferrer">版本与核验记录 ↗</a></div>
               <details id="installer-preview-steps" open><summary>下载后，按这一步安装</summary>
                 <p>把下载的 <code>yuanxingmu-installer-0.2.0a1.pyz</code> 放到 Ubuntu 的主目录（<code>~</code>），然后在 Ubuntu 终端运行：</p>
                 <pre><code>/usr/bin/python3 -I "$HOME/yuanxingmu-installer-0.2.0a1.pyz" --system-deps</code></pre>
@@ -144,9 +144,9 @@ export PATH="$YXM_DIR/tools/node-v24.16.0-linux-x64/bin:$PATH"
 node --version</code></pre>
             <p>文件校验应显示 <code>OK</code>，Node 版本应为 <code>v24.16.0</code>。这里下载的是 Linux x86_64 版本，ARM 电脑不能直接使用这个压缩包。</p>
             <h3>安装元星木和 OpenClaw</h3>
-            <pre><code>git clone https://github.com/yh-l20/agent-defense-check.git "$YXM_DIR/agent-defense-check"
+            <pre><code>git clone https://github.com/yh-l20/yuanxingmu.git "$YXM_DIR/yuanxingmu"
 /usr/bin/python3 -m venv "$YXM_DIR/.venv"
-"$YXM_DIR/.venv/bin/python" -m pip install "$YXM_DIR/agent-defense-check"
+"$YXM_DIR/.venv/bin/python" -m pip install "$YXM_DIR/yuanxingmu"
 npm install --prefix "$YXM_DIR/openclaw" openclaw@2026.9.4
 "$YXM_DIR/.venv/bin/python" -I -m yuanxingmu doctor --bwrap /usr/bin/bwrap</code></pre>
             <div class="start-note">看到 <code>"available": true</code> 后继续。这表示基础隔离可用；首次启动还会检查配置、运行文件和服务响应。隔离不可用时程序会停止，不会直接在宿主上继续运行。</div>
@@ -162,7 +162,7 @@ npm install --prefix "$YXM_DIR/openclaw" openclaw@2026.9.4
             <p>程序会尝试打开浏览器。如果没有自动打开，请把终端中完整的 <code>http://127.0.0.1:18910/#access=…</code> 链接复制到这台电脑的浏览器。</p>
             <div class="start-note"><strong>使用期间请保留这个终端，管理链接请只供自己使用。</strong>工作台重启后会给出新链接，已有工作和权限仍保留。它与稍后打开的 OpenClaw 聊天入口不同。</div>
             <p>工作台会自动建立 <code>~/yuanxingmu/workbench</code>，保存各项工作的资料副本、聊天、密钥和权限记录。请保留这个目录；首次使用前不要手动创建一个空目录。</p>
-            <p>安装器不会覆盖或接管原有手工安装。已有工作请继续按<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台指南</a>或<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">命令行指南</a>管理，不要删除权限记录来重新安装。</p>
+            <p>安装器不会覆盖或接管原有手工安装。已有工作请继续按<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台指南</a>或<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">命令行指南</a>管理，不要删除权限记录来重新安装。</p>
           </section>
           <section id="model" aria-labelledby="model-title">
             <p class="eyebrow">03 / 填写模型</p><h2 id="model-title">在页面填写自己的模型连接。</h2>
@@ -216,16 +216,16 @@ npm install --prefix "$YXM_DIR/openclaw" openclaw@2026.9.4
             <details><summary>模型连接失败，或没有读取资料</summary><p>模型报 401、404 或无法调用工具时，核对密钥、接口地址、模型名称及工具调用支持。资料太长时，先用短文本重新建立工作。本版没有编辑已建工作模型配置的表单，需改配置时请建立新工作。</p></details>
             <details><summary>启动失败、端口被占用或服务异常中断</summary><p>先刷新页面查看实际状态。每项工作的目录位于 <code>~/yuanxingmu/workbench/profiles/</code>，可查看其中的 <code>supervisor.log</code> 和 <code>gateway.stderr.log</code>；具体排错见下方命令行指南。</p><p>如果状态是“运行中断”或“状态待确认”，表示异常退出后的清理还没有确认。保留日志与 <code>lifecycle.json</code>，先检查记录中的进程，不要删除权限库或改状态绕过检查。</p></details>
             <details><summary>更换版本或直接修改实例配置后不能启动</summary><p>当前实例保留创建时的资料副本与校验记录。请使用指定的 OpenClaw 2026.9.4，不要直接修改生成的配置或替换运行文件。本版暂未提供原地升级与恢复撤销权限的流程。</p></details>
-            <details><summary>怎样让 AI 写邮件，由我确认发送？</summary><p>新版支持先让 AI 起草，再由你核对或修改收件人、主题和全文，最后明确确认发送。在工作台设置自己的发件邮箱，再新建一份工作；旧工作不会自动获得邮件功能。按<a href="email-demo.html">邮件演示中的四步</a>操作，或查看<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/email.zh-CN.md" target="_blank" rel="noopener noreferrer">完整邮件指南 ↗</a>。目前每封只支持一个收件人和纯文本正文，暂不支持附件。飞书和 Slack 的直接连接尚未提供。</p></details>
+            <details><summary>怎样让 AI 写邮件，由我确认发送？</summary><p>新版支持先让 AI 起草，再由你核对或修改收件人、主题和全文，最后明确确认发送。在工作台设置自己的发件邮箱，再新建一份工作；旧工作不会自动获得邮件功能。按<a href="email-demo.html">邮件演示中的四步</a>操作，或查看<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/email.zh-CN.md" target="_blank" rel="noopener noreferrer">完整邮件指南 ↗</a>。目前每封只支持一个收件人和纯文本正文，暂不支持附件。飞书和 Slack 的直接连接尚未提供。</p></details>
             <details><summary>工作台支持哪些聊天界面？</summary><p>目前支持 OpenClaw 2026.9.4。仓库中的 Hermes 终端接入实验是另一项验证，不代表工作台已经提供 Hermes 聊天界面。</p></details>
-            <p>这是一个需要实际环境验证的预览版，没有通用防护率承诺。继续查看<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台完整指南 ↗</a>；高级参数与排错仍见<a href="https://github.com/yh-l20/agent-defense-check/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">命令行指南 ↗</a>。</p>
+            <p>这是一个需要实际环境验证的预览版，没有通用防护率承诺。继续查看<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/workbench.zh-CN.md" target="_blank" rel="noopener noreferrer">工作台完整指南 ↗</a>；高级参数与排错仍见<a href="https://github.com/yh-l20/yuanxingmu/blob/main/docs/openclaw-quickstart.zh-CN.md" target="_blank" rel="noopener noreferrer">命令行指南 ↗</a>。</p>
           </section>
           <p id="copy-feedback" class="start-feedback" role="status" aria-live="polite"></p>
         </div>
       </div>
     </div>
   </main>
-  <footer class="site-footer"><div class="wrap footer-content"><a class="brand" href="index.html" aria-label="返回元星木首页"><img src="assets/mark.svg" width="32" height="32" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a><span class="footer-tagline">让能力增长，权限有界。</span><div><span>RESEARCH PREVIEW / 2026</span><a href="https://github.com/yh-l20/agent-defense-check" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
+  <footer class="site-footer"><div class="wrap footer-content"><a class="brand" href="index.html" aria-label="返回元星木首页"><img src="assets/mark.svg" width="32" height="32" alt=""><span class="brand-name">元星木<span>YUANXINGMU</span></span></a><span class="footer-tagline">让能力增长，权限有界。</span><div><span>RESEARCH PREVIEW / 2026</span><a href="https://github.com/yh-l20/yuanxingmu" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></footer>
   <script>
     for (const code of document.querySelectorAll('.start-content pre > code')) {
       const block = document.createElement('div');

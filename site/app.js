@@ -51,7 +51,7 @@ document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && 
 
 document.getElementById('copy-repo').addEventListener('click', async () => {
   const feedback = document.getElementById('copy-feedback');
-  const url = 'https://github.com/yh-l20/agent-defense-check';
+  const url = 'https://github.com/yh-l20/yuanxingmu';
   try { await navigator.clipboard.writeText(url); feedback.textContent = '已复制公开仓库地址。'; }
   catch { feedback.textContent = url; }
 });

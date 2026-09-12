@@ -4,17 +4,17 @@
 
 让 AI 读报价、写邮件，你来核对收件人和全文，再决定是否发送。元星木把每项工作单独保存，让你随时关闭、继续，或收回资料权限。AI 不能用起草工具替你确认发送；你选用的模型服务仍会收到聊天和使用的资料。
 
-[English](README.md) · [官网](https://yh-l20.github.io/agent-defense-check/) · [看实机演示](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
+[English](README.md) · [官网](https://yh-l20.github.io/yuanxingmu/) · [看实机演示](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [运行说明与边界](docs/yuanxingmu.md) · [真实运行记录](examples/yuanxingmu/verified-core-report.json)
 
 ![元星木：让 AI 做事，资料别乱发](site/assets/yuanxingmu-public-v03-poster.svg)
 
-这是一个 **Linux 本地研究原型**。使用真实 bubblewrap、SQLite、独立 HTTP 接收进程和合成资料验证；没有调用攻击模型，没有生产防御率，也没有完整的企业权限接入。当前公开仓库地址保留 `agent-defense-check`，系统名称为元星木。
+这是一个 **Linux 本地研究原型**。使用真实 bubblewrap、SQLite、独立 HTTP 接收进程和合成资料验证；没有调用攻击模型，没有生产防御率，也没有完整的企业权限接入。公开仓库与系统名称已统一为元星木（Yuanxingmu）。
 
 ## 先起草，再由你确认发送
 
 新版工作台支持邮件草稿。AI 提交草稿后，你可以修改收件地址、主题和全文，保存并重新核对，再确认发送这一封。重复点击不会产生第二次提交，发送中断也不会自动重发。确认一封邮件不会给 AI 永久的发信权限。
 
-[看邮件实机演示](https://yh-l20.github.io/agent-defense-check/email-demo.html) · [按步骤发第一封邮件](docs/email.zh-CN.md)。目前只支持一个收件人、纯文本和加密邮箱连接。邮箱服务接收不代表已送达；发送结果不明时先到邮箱核对。旧工作不会自动启用新功能。
+[看邮件实机演示](https://yh-l20.github.io/yuanxingmu/email-demo.html) · [按步骤发第一封邮件](docs/email.zh-CN.md)。目前只支持一个收件人、纯文本和加密邮箱连接。邮箱服务接收不代表已送达；发送结果不明时先到邮箱核对。旧工作不会自动启用新功能。
 
 ## 看早期的资料权限演示
 
@@ -22,7 +22,7 @@
 
 这次演示里，内部实际收到 **1 条**消息，外部收到 **0 条**。AI 也读错过文件、答错金额和日期；这个过程没有删掉。收回权限后，它实际发起的读取和发送都被拒绝。
 
-[看中文解说视频](https://yh-l20.github.io/agent-defense-check/real-demo.html) · [核对结果和局限](docs/real-openclaw-demo.zh-CN.md)。使用演示资料和测试收件服务；这是一次运行记录，不是通用防护率。较早的[脚本模型演示](https://yh-l20.github.io/agent-defense-check/demo.html)单独保留。
+[看中文解说视频](https://yh-l20.github.io/yuanxingmu/real-demo.html) · [核对结果和局限](docs/real-openclaw-demo.zh-CN.md)。使用演示资料和测试收件服务；这是一次运行记录，不是通用防护率。较早的[脚本模型演示](https://yh-l20.github.io/yuanxingmu/demo.html)单独保留。
 
 ## 用自己的模型和资料
 
@@ -30,7 +30,7 @@
 
 每项工作独立保存资料和权限。聊天粘贴和工作产物从一开始就按私密资料处理；换会话或正常重启不清除权限。默认没有额外发送位置。**所选模型服务会看到聊天和使用的资料。**
 
-[看 117 秒上手演示](https://yh-l20.github.io/agent-defense-check/workbench-demo.html) · [安装并使用工作台](https://yh-l20.github.io/agent-defense-check/start.html) · [安装器说明](install/README.md) · [高级命令行指南](docs/openclaw-quickstart.zh-CN.md)。安装器适用于 Ubuntu 24.04 / WSL Ubuntu 24.04 x86_64，首次需要终端。关闭网页或工作台不会停止运行中的 AI。目前工作台支持 OpenClaw 2026.9.4。
+[看 117 秒上手演示](https://yh-l20.github.io/yuanxingmu/workbench-demo.html) · [安装并使用工作台](https://yh-l20.github.io/yuanxingmu/start.html) · [安装器说明](install/README.md) · [高级命令行指南](docs/openclaw-quickstart.zh-CN.md)。安装器适用于 Ubuntu 24.04 / WSL Ubuntu 24.04 x86_64，首次需要终端。关闭网页或工作台不会停止运行中的 AI。目前工作台支持 OpenClaw 2026.9.4。
 
 除了隔离工具执行，新入口也把整个 OpenClaw 服务放进单独的网络环境。模型请求只能经过固定模型通道，资料读取和发送经过权限服务；框架自动下载远程媒体的动作也不能直接连接外部网络。模型密钥与授权数据库留在宿主侧。
 

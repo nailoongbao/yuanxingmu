@@ -2,7 +2,7 @@
 
 把首次安装收成一个入口。装好以后，运行 `~/yuanxingmu-mail/open-yuanxingmu`，在网页中选择资料、连接自己的模型，再进入 OpenClaw 聊天。
 
-[面向使用者的图文步骤](https://yh-l20.github.io/agent-defense-check/start.html) · [117 秒真实模型演示](https://yh-l20.github.io/agent-defense-check/workbench-demo.html)
+[面向使用者的图文步骤](https://yh-l20.github.io/yuanxingmu/start.html) · [117 秒真实模型演示](https://yh-l20.github.io/yuanxingmu/workbench-demo.html)
 
 安装器 `0.2.0a1` 固定安装已发布的元星木 `0.5.0a1`、Node.js `24.16.0` 和 OpenClaw `2026.9.4`。新版支持 AI 起草、本人核对并确认邮件。请安装到新的目录；它不会升级、接管或替换旧安装及旧工作的权限记录。旧版继续使用原来的启动入口。
 
@@ -54,4 +54,4 @@ OpenClaw 使用内置的精确 npm lock 执行 `npm ci`；生命周期脚本正�
 
 `smoke_install.py` 只接受还没有工作台的新安装。它启动实际安装的工作台，创建一项合成工作，检查原生 OpenClaw 网页、重复启动拒绝、关闭后重开、资料权限撤回和停止；同时核对邮件功能已经安装、新工作的草稿列表为空、尚未设置发件邮箱。最后保留记录并关闭自己创建的服务。它不做模型推理或发送消息。`.github/workflows/installer.yml` 在原生 Ubuntu 24.04 上运行这套安装与验收，另在 WSL 实机验证。单元测试明确区分真实文件/进程检查与替代的网络/npm操作。
 
-[新版邮件实机演示](https://yh-l20.github.io/agent-defense-check/email-demo.html) 展示模型起草、工作台核对与确认发送。原有 117 秒视频和旧安装器发行继续保留；它们展示旧版的资料读取与权限撤回。上述演示均不是本安装器的安装过程录像。
+[新版邮件实机演示](https://yh-l20.github.io/yuanxingmu/email-demo.html) 展示模型起草、工作台核对与确认发送。原有 117 秒视频和旧安装器发行继续保留；它们展示旧版的资料读取与权限撤回。上述演示均不是本安装器的安装过程录像。
