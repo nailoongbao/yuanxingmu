@@ -1,0 +1,22 @@
+{
+  "checked_at": "2026-09-13T12:21:47.458671+00:00",
+  "tested_source_sha256": {
+    "LauncherCore.cs": "bc09a1715454912a845b9e9eda565eeab89bdbf734552aea75118bed565abbfd",
+    "Program.cs": "3ca236280a9e365597652f085c6ba25a897ac23381a00920f288f40b4f8f9680",
+    "bridge.py": "e182ca74f01287455a9e5d87bf16ca79d5262291b0260b94d6a6bcce65427b38"
+  },
+  "native_core_checks": 29,
+  "native_core_passed": true,
+  "windows_offline_checks": 50,
+  "linux_bridge_checks": 19,
+  "windows_bridge_passed": 6,
+  "windows_bridge_skipped_posix": 13,
+  "gui_component_checks": 8,
+  "gui_visual_check": true,
+  "default_browser_click_flow_tested": false,
+  "real_model_calls": 0,
+  "external_messages": 0,
+  "installation_version": "0.4.0a2",
+  "runtime_version": "0.7.0a2",
+  "source_binding": "File hashes identify tested program sources; release manifest binds final commit and all build inputs."
+}
