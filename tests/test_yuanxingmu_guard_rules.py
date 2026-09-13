@@ -77,6 +77,21 @@ class GuardRulesSocketTests(unittest.TestCase):
         self.assertTrue(self.broker.quarantine.status(self.task)["paused"])
         self.assertEqual(self.judge.requests, [])
 
+    def test_package_source_review_survives_final_judge_allow_without_execution_receipt(self):
+        candidate = {"tool": "terminal", "arguments": {
+            "command": "npm install --registry=https://packages.example.invalid demo"}}
+        initial = self.request(op="guard_rules", **candidate)
+        self.assertFalse(initial["allowed"])
+        self.assertEqual((initial["verdict"], initial["reason"]), ("review", "package_source_override"))
+        self.assertEqual(self.judge.requests, [])
+        final = self.request(op="guard_tool", **candidate)
+        self.assertFalse(final["allowed"])
+        self.assertEqual((final["verdict"], final["reason"]), ("review", "package_source_override"))
+        self.assertNotIn("review_id", final)
+        self.assertEqual(self.approval_statuses(), [])
+        self.assertEqual(len(self.judge.requests), 1)  # Local synthetic allow cannot erase rule review.
+        self.assertEqual(self.receiver.received, [])
+
     def test_rules_rpc_rejects_task_rebinding_extra_fields_and_invalid_arguments(self):
         base = {"op": "guard_rules", "tool": "terminal", "arguments": {"command": "printf synthetic-rules"}}
         cases = [{**base, "task_id": "another-task"}, {**base, "final_execution_check_required": False},

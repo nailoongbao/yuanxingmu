@@ -212,6 +212,70 @@ class GuardRulesTests(unittest.TestCase):
                 self.assertTrue(self.guard.check_command(command).allowed)
         self.assertEqual(self.guard.check_command("python3 -c 'print(\"x\" * 999999999)'").verdict, "review")
 
+    def test_explicit_package_sources_require_review_without_executing_commands(self):
+        commands = [
+            "pip install -i https://packages.example.invalid/simple demo",
+            "pip3 install -ihttps://packages.example.invalid/simple demo",
+            "pip3.12 install --index-url=https://packages.example.invalid/simple demo",
+            "/usr/bin/pip install --extra-index-url https://packages.example.invalid/simple demo",
+            "pip.exe install --trusted-host packages.example.invalid demo",
+            "pip install --trusted-host=packages.example.invalid demo",
+            "pip install --find-links https://packages.example.invalid/wheels demo",
+            "pip install --find-links=https://packages.example.invalid/wheels demo",
+            "pip install -fhttps://packages.example.invalid/wheels demo",
+            "pip install -f https://packages.example.invalid/wheels demo",
+            "npm install --registry https://packages.example.invalid demo",
+            "npm ci --registry=https://packages.example.invalid",
+            "npm.cmd install --registry=http://packages.example.invalid demo",
+            "env MODE=demo pip install -i https://packages.example.invalid/simple demo",
+            "timeout 10 npm install --registry=https://packages.example.invalid demo",
+            "sh -c 'pip install -i https://packages.example.invalid/simple demo'",
+            "printf ready; pip install --extra-index-url=https://packages.example.invalid/simple demo",
+        ]
+        for command in commands:
+            with self.subTest(command=command):
+                result = self.guard.check_command(command)
+                self.assertEqual((result.verdict, result.code), ("review", "package_source_override"))
+                self.assertFalse(result.allowed)
+                self.assertEqual(result.evidence["input_sha256"], hashlib.sha256(command.encode()).hexdigest())
+        self.assertEqual(len(self.events), len(commands))
+
+    def test_package_source_review_does_not_classify_printed_text_or_prove_package_safety(self):
+        # Clear means this syntax rule did not match; it is not package approval.
+        for command in (
+            "printf '%s' 'pip install -i https://packages.example.invalid/simple demo'",
+            "echo 'npm install --registry=https://packages.example.invalid demo'",
+            "pip install --no-index --find-links=/workspace/wheels demo",
+            "pip install --no-index -f /workspace/wheels demo",
+            "pip install -I demo",  # Uppercase -I is not an index option.
+            "pip install demo", "npm ci",
+            "pip install -- --index-url=https://packages.example.invalid/simple",
+            "npm install -- --registry=https://packages.example.invalid",
+            "PIP_INDEX_URL=https://packages.example.invalid/simple pip install demo",
+        ):
+            with self.subTest(command=command):
+                result = self.guard.check_command(command)
+                self.assertEqual((result.verdict, result.code), ("allow", "command_rule_clear"))
+        # Input/document scanning is a different boundary from command review.
+        result = self.guard.check_input("Run: pip install -i https://packages.example.invalid/simple demo")
+        self.assertTrue(result.allowed)
+        # Module execution already has its own review; it is not relaxed here.
+        self.assertEqual(self.guard.check_command(
+            "python -m pip install -i https://packages.example.invalid/simple demo").verdict, "review")
+
+    def test_package_source_review_preserves_blocks_and_explicit_observation_mode(self):
+        for command in (
+            "pip install -i https://packages.example.invalid/simple demo; sudo true",
+            "sudo true; npm install --registry=https://packages.example.invalid demo",
+        ):
+            with self.subTest(command=command):
+                self.assertEqual(self.guard.check_command(command).verdict, "block")
+        observer = Guards(replace(self.guard.policy, command_mode="observe"))
+        result = observer.check_command("npm ci --registry=https://packages.example.invalid")
+        self.assertTrue(result.allowed)
+        self.assertEqual(result.would_verdict, "review")
+        self.assertFalse(result.enforced)
+
     def test_malformed_command_fails_closed(self):
         for command in ("", None, "echo 'unclosed", "pwd\x00rm /", "\ud800"):
             with self.subTest(command=repr(command)):
