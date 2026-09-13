@@ -489,6 +489,7 @@ finally:
             listener.bind(("127.0.0.1", network.MODEL_PORT))
 
 
+@unittest.skipUnless(sys.platform.startswith("linux"), "HostModel Unix socket requires Linux")
 class _AuditMetadataTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
