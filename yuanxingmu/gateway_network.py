@@ -16,6 +16,8 @@ from http.server import BaseHTTPRequestHandler
 import ipaddress
 import os
 from pathlib import Path
+import re
+import secrets
 import select
 import signal
 import socket
@@ -31,10 +33,47 @@ from urllib.parse import urlsplit
 MODEL_PORT = 18701
 MODEL_RESPONSE_TIMEOUT = 180
 MAX_MODEL_REQUEST = 16 * 1024 * 1024
+
+_ALLOWED_AUDIT_HEADERS = frozenset({
+    "X-YXM-Audit-Correlation-ID",
+    "X-YXM-Audit-Protocol-Version",
+})
+_AUDIT_CORRELATION_PATTERN = re.compile(r"corr-[0-9a-f]{32}")
+_AUDIT_PROTOCOL_VERSION = "1.0"
 INNER_BOOTSTRAP = (
     "import sys; sys.path.insert(0, sys.argv.pop(1)); "
     "from yuanxingmu.gateway_network import inner; raise SystemExit(inner())"
 )
+
+
+def new_audit_metadata():
+    """Generate optional host-side correlation fields without task or data labels."""
+    return {
+        "X-YXM-Audit-Correlation-ID": "corr-" + secrets.token_hex(16),
+        "X-YXM-Audit-Protocol-Version": _AUDIT_PROTOCOL_VERSION,
+    }
+
+
+def _audit_headers(provider):
+    if provider is None:
+        return {}
+    if not callable(provider):
+        raise ValueError("audit_metadata_provider_invalid")
+    try:
+        metadata = provider()
+    except Exception:
+        raise ValueError("audit_metadata_generation_failed") from None
+    if type(metadata) is not dict:
+        raise ValueError("audit_metadata_must_be_dict")
+    metadata = metadata.copy()
+    if any(type(key) is not str for key in metadata) or set(metadata) != _ALLOWED_AUDIT_HEADERS:
+        raise ValueError("audit_metadata_fields_invalid")
+    correlation = metadata["X-YXM-Audit-Correlation-ID"]
+    version = metadata["X-YXM-Audit-Protocol-Version"]
+    if (type(correlation) is not str or not _AUDIT_CORRELATION_PATTERN.fullmatch(correlation)
+            or type(version) is not str or version != _AUDIT_PROTOCOL_VERSION):
+        raise ValueError("audit_metadata_value_invalid")
+    return metadata
 _CHILD_BOOTSTRAP = """
 import ctypes, os, signal, sys
 expected_parent = int(sys.argv.pop(1))
@@ -242,28 +281,37 @@ class _ModelHandler(BaseHTTPRequestHandler):
                 ticket = None
 
         self._finish_model = finish_model
+
+        def preflight_reply():
+            nonlocal response_started
+            if output_guard is None or not hasattr(output_guard, "preflight"):
+                return False
+            notice = output_guard.preflight(body)
+            if notice is None:
+                return False
+            if replay_only:
+                self._error(403, "model_replay_currently_denied")
+            else:
+                kind, checked = notice
+                self.send_response_only(200)
+                self.send_header("Content-Type", kind)
+                self.send_header("Content-Length", str(len(checked)))
+                self.send_header("Cache-Control", "no-store")
+                self.send_header("Connection", "close")
+                self.end_headers()
+                response_started = True
+                self.wfile.write(checked)
+            return True
+
         try:
             body = self.rfile.read(length)
             if len(body) != length:
                 self._error(400, "incomplete_request")
                 return
             output_guard = getattr(self.server, "output_guard", None)
-            if output_guard is not None and hasattr(output_guard, "preflight"):
-                notice = output_guard.preflight(body)
-                if notice is not None:
-                    if replay_only:
-                        self._error(403, "model_replay_currently_denied")
-                        return
-                    kind, checked = notice
-                    self.send_response_only(200)
-                    self.send_header("Content-Type", kind)
-                    self.send_header("Content-Length", str(len(checked)))
-                    self.send_header("Cache-Control", "no-store")
-                    self.send_header("Connection", "close")
-                    self.end_headers()
-                    response_started = True
-                    self.wfile.write(checked)
-                    return
+            if preflight_reply():
+                return
+            audit_headers = {}
             model_store = getattr(self.server, "model_store", None)
             if model_store is not None:
                 if replay_only:
@@ -284,6 +332,16 @@ class _ModelHandler(BaseHTTPRequestHandler):
                     self.end_headers()
                     response_started = True
                     self.wfile.write(checked)
+                    return
+                audit_provider = getattr(self.server, "audit_metadata_provider", None)
+                try:
+                    audit_headers = _audit_headers(audit_provider)
+                except ValueError as exc:
+                    self._error(500, str(exc))
+                    return
+                # The optional host callback may take time. Recheck admission
+                # after it returns, before reserving a request or connecting.
+                if audit_provider is not None and preflight_reply():
                     return
                 try:
                     ticket = model_store.begin(body)
@@ -309,6 +367,15 @@ class _ModelHandler(BaseHTTPRequestHandler):
                     response_started = True
                     self.wfile.write(checked)
                     return
+            # No inbound headers, caller-supplied destination, redirects, proxy
+            # environment, or inbound Authorization participate in this request.
+            outbound_headers = {
+                "Authorization": "Bearer " + self.server.api_key,
+                "Content-Type": "application/json",
+                "Accept": "application/json, text/event-stream",
+                "Connection": "close",
+            }
+            outbound_headers.update(audit_headers)
             scheme, hostname, port, path = self.server.upstream
             cls = http.client.HTTPSConnection if scheme == "https" else http.client.HTTPConnection
             connection = cls(hostname, port, timeout=10)
@@ -316,14 +383,7 @@ class _ModelHandler(BaseHTTPRequestHandler):
             tracked = connection.sock
             self.server.track(tracked)
             tracked.settimeout(180)
-            # No inbound headers, caller-supplied destination, redirects, proxy
-            # environment, or inbound Authorization participate in this request.
-            connection.request("POST", path, body=body, headers={
-                "Authorization": "Bearer " + self.server.api_key,
-                "Content-Type": "application/json",
-                "Accept": "application/json, text/event-stream",
-                "Connection": "close",
-            })
+            connection.request("POST", path, body=body, headers=outbound_headers)
             response = connection.getresponse()
             if response.status < 200 or 300 <= response.status < 400:
                 self._error(502, "model_upstream_redirect_or_upgrade_refused")
@@ -525,9 +585,12 @@ class HostModel:
 
     Output checks and durable request registration are required. Only this
     socket's inode is granted to the worker; the private store stays outside.
+    Optional audit metadata is generated by the trusted host and validated
+    before journal registration or network activity; it is disabled by default.
     """
 
-    def __init__(self, runtime: Path, *, model_url: str, api_key: str, output_guard, model_store):
+    def __init__(self, runtime: Path, *, model_url: str, api_key: str, output_guard, model_store,
+                 audit_metadata_provider=None):
         self.runtime = Path(runtime).absolute()
         self.upstream = _upstream(model_url)
         if (type(api_key) is not str or not api_key
@@ -537,7 +600,10 @@ class HostModel:
             raise ValueError("sdk_model_guard_required")
         if any(not callable(getattr(model_store, name, None)) for name in ("begin", "complete", "finish", "lookup")):
             raise ValueError("sdk_model_store_required")
+        if audit_metadata_provider is not None and not callable(audit_metadata_provider):
+            raise ValueError("invalid_audit_metadata_provider")
         self.api_key, self.output_guard, self.model_store = api_key, output_guard, model_store
+        self.audit_metadata_provider = audit_metadata_provider
         self._serving = None
 
     def __enter__(self):
@@ -549,6 +615,7 @@ class HostModel:
         server, path = _listen(socket.AF_UNIX, str(self.runtime / "model.sock"), _ModelHandler)
         server.upstream, server.api_key = self.upstream, self.api_key
         server.output_guard, server.model_store = self.output_guard, self.model_store
+        server.audit_metadata_provider = self.audit_metadata_provider
         self._serving = _Serving(server, path)
         return self
 
