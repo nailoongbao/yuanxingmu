@@ -8,9 +8,9 @@
 
 先选好资料和可接收的固定对象，再让 AI 读报价、发消息、上传文本或填表。范围内且通过检查的操作可自动执行；你可以随时关闭工作或收回资料权限。你选用的模型服务仍会收到聊天和使用的资料。
 
-当前源码包含输入、记忆、任务偏移、危险命令、技能与配置五层检查，以及本人审批、暂停恢复、回答显示前检查和 Hermes 官方界面接入。[玄甲逐项对照](docs/agentward-coverage.zh-CN.md)列出源码、证据与缺口；[框架支持表](docs/framework-support.zh-CN.md)区分工具适配与完整实机验证。这批功能尚未进入旧安装包。实测仍记录了正常操作误拦，不能据此宣称已全面超过玄甲。
+当前源码包含输入、记忆、任务偏移、危险命令、技能与配置五层检查，以及本人审批、暂停恢复、回答显示前检查和 Hermes 官方界面接入。[功能覆盖与缺口](docs/agentward-coverage.zh-CN.md)列出源码、证据与边界；[框架支持表](docs/framework-support.zh-CN.md)区分工具适配与完整实机验证。实测仍记录了正常操作误拦，重点在于明确展示防护生效范围与已知边界。
 
-## 最新 OpenClaw 实录：交代一次，三件事自动完成
+## OpenClaw 实录：交代一次，三件事自动完成
 
 [PROTECTED14](docs/evidence/openclaw-protected14-2026-09-12/README.md) 使用 OpenClaw 2026.9.4、元星木 0.7 和 GLM-5.2。只发送一条自然任务，消息、文本上传、表单各到达一次，中途没有追加提示或逐项审批。明确标记的底价先隐藏，供应商资料夹带的伪系统指令被扣留；最终回复与实际接收内容一致。
 
@@ -24,7 +24,7 @@
 
 三项内容在**本机合成接收端各收到一次**。结尾回复把表单名称写错一个字，原样保留，严格完整协议仍为 **false**。
 
-[![104 秒看 Hermes 最新实录](site/assets/videos/hermes-protected-fields/poster.jpg)](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-protected-fields)
+[![104 秒看 Hermes 实录](site/assets/videos/hermes-protected-fields/poster.jpg)](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-protected-fields)
 
 [看 104 秒实机视频](https://yh-l20.github.io/yuanxingmu/layers.html#hermes-protected-fields) · [核对完整记录](docs/evidence/hermes-auto19-2026-09-12/REPORT.zh-CN.md)
 
@@ -33,7 +33,7 @@
 
 固定源码 `c83add3`，版本 `0.7.0a1`，Hermes 0.21.2 / v2026.9.11。工作与检查使用独立 GLM-5.2 请求。一次用户消息后，没有追加指令、补参数、逐项批准或恢复。完整模型请求、回复、工具消息与参数、三个接收正文，共 28 项核验均未发现内部底价及声明支持的等价数值写法；提交正文逐字节核对。
 
-最终把“合成报价表”写成“合造报价表”；实际表单目标、字段和值正确，错字没有修改，也没有重跑。敏感字段只支持明确标签和有限写法，不识别任意秘密、编码或推断；其余工作内容仍会交给所选模型。这是小型合成任务，不是通用防护率。新保护不在公开的 0.6 包中。[AUTO18 的真实回复泄露与错误放行](docs/evidence/hermes-auto18-2026-09-12/REPORT.zh-CN.md)继续保留，不能把这次改进说成全面超过玄甲。
+最终把“合成报价表”写成“合造报价表”；实际表单目标、字段和值正确，错字没有修改，也没有重跑。敏感字段只支持明确标签和有限写法，不识别任意秘密、编码或推断；其余工作内容仍会交给所选模型。这是小型合成任务，不是通用防护率。[AUTO18 的真实回复泄露与错误放行](docs/evidence/hermes-auto18-2026-09-12/REPORT.zh-CN.md)继续保留，客观展示保护边界。
 
 </details>
 
@@ -135,8 +135,6 @@ python -I -m yuanxingmu run --policy policy.json --state authority-state \
 
 ## 为什么做它
 
-模型能力增长后，攻击者更容易组合合法工具、寻找检查遗漏、并行重试。元星木选择把“能不能真的做成”放到模型之外，建设可接入现有 Agent 的执行权限边界。bubblewrap、凭证代理和信息流控制都有成熟先例；这里尝试做的是把任务身份、持久读取限制和实际执行连接起来。
+模型能力增长后，攻击者更容易组合合法工具、寻找检查遗漏、并行重试。元星木选择把“能不能真的做成”放到模型之外，建设可接入现有 Agent 的执行权限边界。bubblewrap、凭证代理和信息流控制都有成熟先例；这里尝试做的是把任务身份、持久读取限制和实际执行连接起来，提供系统级的硬核约束与隔离能力，详见[实现架构与产品定位](docs/positioning.md)。
 
-我们没有证明整体超过 [AgentWard / 玄甲](https://github.com/FIND-Lab/AgentWard)。它已经提供 OpenClaw 检测、审批与会话干预；元星木目前验证的是另一层的执行约束，详见[实现对比与产品判断](docs/positioning.md)。
-
-原有 MCP 接入验收工具和已发布 `v0.1.0a1` 保留：[旧版说明](LEGACY-MCP.zh-CN.md)。新版没有覆盖旧 release，也不把旧实验算作新核心的验证。
+原有 MCP 接入验收工具和已发布 `v0.1.0a1` 保留：[MCP 历史说明](LEGACY-MCP.zh-CN.md)。没有覆盖旧 release，也不把旧实验算作新核心的验证。

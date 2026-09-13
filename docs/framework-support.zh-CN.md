@@ -107,4 +107,4 @@ OpenAI 接入判断同时核对了官方[Agents SDK](https://developers.openai.c
 
 主机能力的独立组件证据包括暂停/恢复 16 项、一次性审批账本与主机套接字合计 15 项、早期运行中设置管理接口 4 项。回答协议及真实 Unix HTTP 最初为 17 项；当前套件为 25 项，包括逐层观察不能绕过撤权的检查。这些数字不是新的框架端到端通过次数。回答缓冲只检查正文、拒绝和思考文本；带 `live_settings_v1` 的新实例支持主机运行中改设置，旧实例仍须确认停止，新入口待官方框架验收。浏览器桌面提醒需要页面开启；另有[主机后台提醒](background-notifications.zh-CN.md)，关闭浏览器后仍可由运行中的 Workbench 向固定 JSON 接收端投递。通用协议已通过本机接收端验证，没有宣称第三方 IM 或邮件提供商已验收。详见[回答显示前检查与暂停恢复](response-and-quarantine.md)。
 
-玄甲逐功能对照见[功能覆盖与缺口](agentward-coverage.zh-CN.md)。
+各框架逐功能覆盖情况见[功能覆盖与缺口](agentward-coverage.zh-CN.md)。
