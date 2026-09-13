@@ -1,0 +1,712 @@
+{
+  "source_commit": "4d16f78a96b81a2766856f9f2b9be8606882c115",
+  "sdk_expected": {
+    "format": "source-sdk-test-ids-v1",
+    "method": "AST with local TestCase inheritance, before execution",
+    "modules": {
+      "test_langgraph_automatic_runtime": {
+        "count": 8,
+        "ids": [
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_automatic_tool_is_absent_when_omitted_or_explicitly_disabled",
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_files_and_forged_host_arguments_are_rejected_before_broker",
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_guard_block_and_revocation_override_automatic_runtime",
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_lost_receipt_stops_batch_resume_and_worker_checkpoint_rebuild",
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_outside_scope_remains_pending_without_receipt_or_budget_use",
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_prior_unknown_with_new_nonce_stops_remaining_batch_on_each_resume",
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_review_and_automatic_request_have_separate_nonce_namespaces",
+          "test_langgraph_automatic_runtime.LanggraphAutomaticRuntimeTests.test_three_native_singleton_calls_use_real_receipts_and_frozen_scope"
+        ]
+      },
+      "test_langgraph_runtime": {
+        "count": 10,
+        "ids": [
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_checkpoint_rejects_overwrite_or_different_authority_binding",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_completed_checkpoint_resumes_without_model_or_duplicate_actions",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_empty_native_record_set_cannot_restart_model_during_resume",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_invalid_member_rejects_the_entire_tool_batch_before_broker",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_missing_or_corrupt_checkpoint_fails_before_model_and_broker",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_multiple_model_choices_fail_before_tool_dispatch",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_native_graph_and_singleton_tool_nodes_reach_model_and_broker",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_new_turn_keeps_history_and_uses_new_answer",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_step_limit_has_no_extra_model_summary_or_resume_retry",
+          "test_langgraph_runtime.LanggraphRuntimeTests.test_worker_error_output_hides_prompt_and_upstream_body"
+        ]
+      },
+      "test_langgraph_runtime_faults": {
+        "count": 9,
+        "ids": [
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_changed_host_response_blocks_recovery_and_retains_original_pending_response",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_checkpointed_first_call_is_not_dispatched_when_second_call_resumes",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_crash_after_broker_acceptance_replays_nonce_without_duplicate_effect",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_extended_rpc_deadline_waits_for_real_judge_for_all_tool_paths",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_forged_native_pending_writes_cannot_dispatch_a_changed_host_response",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_host_recheck_failure_prevents_tool_dispatch_then_allows_safe_resume",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_native_tool_rpc_error_stops_without_model_retry_or_later_call",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_old_uncertain_tool_messages_in_checkpoints_or_writes_block_reopening",
+          "test_langgraph_runtime_faults.LanggraphRuntimeFaultTests.test_unfinished_graph_resumes_with_none_and_rechecks_original_request"
+        ]
+      },
+      "test_openai_agents_runtime": {
+        "count": 14,
+        "ids": [
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_checkpoint_rejects_overwrite_or_different_authority_binding",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_completed_checkpoint_resumes_without_model_or_duplicate_actions",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_executor_cannot_read_or_handoff_back",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_invalid_member_rejects_entire_executor_tool_batch_before_broker",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_missing_or_corrupt_checkpoint_fails_before_model_and_broker",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_model_schema_inlining_preserves_action_contract",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_multiple_model_choices_fail_before_tool_dispatch",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_native_handoff_and_serial_approvals_preserve_host_call_ids",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_native_runner_reads_registered_resource_before_answer",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_new_turn_keeps_history_and_uses_new_answer",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_new_turn_restarts_researcher_with_complete_history_and_identical_final_response",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_researcher_cannot_invoke_executor_actions_or_forged_handoff",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_step_limit_has_no_extra_model_summary_or_resume_retry",
+          "test_openai_agents_runtime.OpenaiAgentsRuntimeTests.test_worker_error_output_hides_prompt_and_upstream_body"
+        ]
+      },
+      "test_openai_agents_runtime_automatic": {
+        "count": 8,
+        "ids": [
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_automatic_tool_is_absent_when_omitted_or_explicitly_disabled",
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_files_and_forged_host_arguments_are_rejected_before_broker",
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_guard_block_and_revocation_override_automatic_runtime",
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_lost_receipt_stops_batch_resume_and_worker_checkpoint_rebuild",
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_outside_scope_remains_pending_without_receipt_or_budget_use",
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_review_and_automatic_request_have_separate_nonce_namespaces",
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_three_budget_denials_return_to_model_and_allow_final_answer",
+          "test_openai_agents_runtime_automatic.OpenaiAgentsAutomaticRuntimeTests.test_three_native_approved_calls_use_real_receipts_and_frozen_scope"
+        ]
+      },
+      "test_openai_agents_runtime_faults": {
+        "count": 14,
+        "ids": [
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_action_replay_retains_original_result_and_committed_model_request",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_changed_host_response_blocks_recovery_and_keeps_original_pending_response",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_changed_resource_after_read_cannot_reuse_earlier_allowed_result",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_crash_after_broker_acceptance_replays_nonce_without_duplicate_effect",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_extended_rpc_deadline_waits_for_real_judge_for_all_tool_paths",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_forged_native_approvals_and_agent_identity_fail_before_dispatch",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_forged_native_calls_and_saved_response_cannot_override_host_journal",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_host_recheck_failure_prevents_dispatch_then_allows_safe_resume",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_host_stop_outcomes_prevent_later_call_and_model_continuation",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_lost_executor_response_after_handoff_recovers_the_committed_host_response",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_native_tool_rpc_error_stops_without_model_retry_or_later_call",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_partial_native_checkpoint_does_not_dispatch_completed_first_call",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_pending_native_state_restores_executor_and_rechecks_original_request",
+          "test_openai_agents_runtime_faults.OpenaiAgentsRuntimeFaultTests.test_uncertain_native_outputs_or_request_history_block_completed_resume"
+        ]
+      },
+      "test_pydantic_ai_runtime": {
+        "count": 14,
+        "ids": [
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_checkpoint_unknown_fields_native_provider_content_and_bindings_are_rejected",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_cli_failure_redacts_configuration_and_sdk_errors",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_duplicate_json_keys_and_repeated_batch_nonces_fail_closed",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_max_steps_stops_before_an_extra_model_request_and_allows_larger_resume",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_native_agent_reads_and_automatically_resumes_deferred_tool",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_native_bridge_has_no_internet_client_or_global_tracing",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_native_completed_checkpoint_reopen_is_exact_without_model_or_tool",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_native_email_tool_saves_draft_without_sending_or_requesting_approval",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_native_history_new_user_turn_retains_first_answer_and_task",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_native_tools_strictly_validate_closed_models_and_keep_host_ids",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_plain_text_that_looks_like_a_tool_call_stays_text",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_reused_host_nonce_in_a_later_model_round_stops_before_second_dispatch",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_unregistered_tools_and_host_parameters_are_not_exposed",
+          "test_pydantic_ai_runtime.PydanticAiRuntimeTests.test_whole_batch_rejects_bad_later_arguments_before_first_proposal"
+        ]
+      },
+      "test_pydantic_ai_runtime_automatic": {
+        "count": 8,
+        "ids": [
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_automatic_tool_is_absent_when_omitted_or_explicitly_disabled",
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_files_and_forged_host_arguments_are_rejected_before_broker",
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_guard_block_and_revocation_override_automatic_runtime",
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_lost_receipt_stops_batch_resume_and_worker_checkpoint_rebuild",
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_outside_scope_remains_pending_without_receipt_or_budget_use",
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_review_and_automatic_request_have_separate_nonce_namespaces",
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_three_budget_denials_return_to_model_and_allow_final_answer",
+          "test_pydantic_ai_runtime_automatic.PydanticAiAutomaticRuntimeTests.test_three_native_approved_calls_use_real_receipts_and_frozen_scope"
+        ]
+      },
+      "test_pydantic_ai_runtime_faults": {
+        "count": 16,
+        "ids": [
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_batch_crash_after_first_effect_replays_exact_result_without_duplicate_effect",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_changed_host_response_blocks_recovery_and_preserves_original_pause",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_changed_resource_after_read_stops_replay_before_later_action",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_checkpoint_storage_failure_after_receipt_stops_then_replays_host_nonce",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_consistently_forged_native_call_and_saved_response_cannot_override_host",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_extended_rpc_timeout_applies_to_read_reviewed_and_automatic_paths",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_host_recheck_failure_stops_before_dispatch_then_can_resume",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_host_stop_outcomes_prevent_later_call_and_model_continuation",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_lost_initial_model_response_recovers_host_response_without_new_generation",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_lost_model_reply_after_read_reuses_exact_tool_history",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_lost_model_reply_on_new_user_turn_restores_that_prompt_exactly",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_native_pending_history_restores_original_ids_and_rechecks_host",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_prior_uncertain_action_new_nonce_stops_repeated_worker_resume",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_rpc_error_stops_later_tools_and_model_without_retry",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_second_call_failure_recovery_keeps_first_result_and_serial_order",
+          "test_pydantic_ai_runtime_faults.PydanticAiRuntimeFaultTests.test_uncertain_native_or_journal_result_blocks_completed_resume"
+        ]
+      },
+      "test_smolagents_automatic_runtime": {
+        "count": 12,
+        "ids": [
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_automatic_tool_is_absent_by_default_and_when_explicitly_disabled",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_enabled_agent_run_sends_once_under_frozen_scope_and_real_guard",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_file_actions_and_forged_host_fields_are_rejected_before_broker",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_guard_block_and_revocation_override_enabled_runtime",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_old_uncertain_tool_cache_cannot_resume_or_return_a_saved_answer",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_outside_scope_stays_pending_without_a_receipt_or_budget_use",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_prior_unknown_with_new_nonce_stops_remaining_batch_on_each_resume",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_resume_after_host_execution_before_checkpoint_does_not_repeat_effect",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_review_only_proposal_and_automatic_request_have_separate_nonce_namespaces",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_unconfirmed_action_stops_after_worker_checkpoint_loss",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_unconfirmed_action_stops_batch_and_normal_resume",
+          "test_smolagents_automatic_runtime.SmolagentsAutomaticRuntimeTests.test_upload_and_form_use_registered_targets_and_real_local_receipts"
+        ]
+      },
+      "test_smolagents_runtime": {
+        "count": 15,
+        "ids": [
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_agent_run_reaches_model_and_broker_and_preserves_each_proposal_identity",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_changed_pending_host_response_does_not_overwrite_recovery_record",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_checkpoint_refuses_new_run_overwrite_and_other_session_or_task",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_completed_call_in_pending_batch_is_not_dispatched_again",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_completed_checkpoint_resumes_without_model_or_duplicate_effects",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_crash_after_broker_acceptance_before_checkpoint_does_not_duplicate_proposal",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_model_bridge_rejects_multiple_choices_before_any_tool_dispatch",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_new_turn_keeps_history_and_uses_a_new_plain_text_answer",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_pending_response_is_rechecked_before_recovering_native_dispatch",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_rebuilt_agent_replays_same_host_nonce_without_another_proposal",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_resume_rejects_missing_and_corrupt_checkpoint_before_model_or_broker",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_single_dispatch_binding_does_not_escape_generator_yields",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_step_limit_stops_without_extra_model_summarization_or_resume_retry",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_unknown_tools_and_forged_host_arguments_fail_before_broker",
+          "test_smolagents_runtime.SmolagentsRuntimeTests.test_worker_failure_keeps_prompt_and_model_error_body_out_of_stdout_and_stderr"
+        ]
+      },
+      "test_smolagents_runtime_timeouts": {
+        "count": 4,
+        "ids": [
+          "test_smolagents_runtime_timeouts.SmolagentsRuntimeTimeoutTests.test_automatic_action_recovers_from_old_budget_without_repeating_delivery",
+          "test_smolagents_runtime_timeouts.SmolagentsRuntimeTimeoutTests.test_model_arguments_cannot_override_deadline_socket_or_request_identity",
+          "test_smolagents_runtime_timeouts.SmolagentsRuntimeTimeoutTests.test_runtime_proposal_keeps_public_request_key_after_a_short_budget_timeout",
+          "test_smolagents_runtime_timeouts.SmolagentsRuntimeTimeoutTests.test_runtime_read_waits_for_judge_after_public_default_times_out"
+        ]
+      },
+      "test_yuanxingmu_sdk_boundary_failures": {
+        "count": 7,
+        "ids": [
+          "test_yuanxingmu_sdk_boundary_failures.SdkCollectorFailureTests.test_failed_stop_still_closes_both_pipes_and_selector",
+          "test_yuanxingmu_sdk_boundary_failures.SdkModelInFlightFailureTests.test_bridge_stop_preserves_unknown_inflight_without_an_automatic_retry",
+          "test_yuanxingmu_sdk_boundary_failures.SdkModelInFlightFailureTests.test_revocation_during_inference_withholds_returned_tool_calls",
+          "test_yuanxingmu_sdk_boundary_failures.SdkSupervisorFailureTests.test_missing_response_directory_or_state_cannot_be_recreated_on_resume",
+          "test_yuanxingmu_sdk_boundary_failures.SdkSupervisorFailureTests.test_operator_stop_preserves_authority_and_revoke_removes_it_for_children",
+          "test_yuanxingmu_sdk_boundary_failures.SdkSupervisorFailureTests.test_service_close_failure_never_certifies_cleanup_or_allows_resume",
+          "test_yuanxingmu_sdk_boundary_failures.SdkSupervisorFailureTests.test_supervisor_socket_blocks_raw_send_despite_existing_destination_grant"
+        ]
+      },
+      "test_yuanxingmu_sdk_model_store": {
+        "count": 31,
+        "ids": [
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_duplicate_keys_nonfinite_unicode_depth_and_size_are_rejected",
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_duplicate_provider_ids_and_nonobject_tool_arguments_are_rejected",
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_glm_compatibility_does_not_allow_unknown_fields_or_invalid_request_ids",
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_nonstream_indexes_must_be_complete_ordered_integers",
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_recorded_glm_nonstream_fields_are_supported_and_fixture_is_exact",
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_standard_smolagents_text_messages_and_function_schema_are_supported",
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_stream_multi_choice_credentials_and_unknown_request_fields_fail_closed",
+          "test_yuanxingmu_sdk_model_store.ModelSchemaTests.test_unknown_or_incomplete_responses_do_not_become_replayable",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_begin_durably_records_pending_without_storing_request_text",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_changed_response_hash_cannot_replay",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_complete_rewrites_every_tool_id_and_restart_replays_exact_bytes",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_crashed_pending_cannot_retry_or_make_a_second_flight_in_another_process",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_finish_of_failed_request_preserves_unknown_and_does_not_refund_capacity",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_finish_that_cannot_acquire_method_lock_does_not_release_inflight",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_foreign_owner_fifo_and_extra_files_fail_before_content_read",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_group_readable_file_and_directory_permissions_are_rejected",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_invalid_indexes_are_not_stripped_into_an_accepted_reply_or_retried",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_invalid_reply_becomes_unknown_when_finished",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_json_whitespace_is_a_distinct_request_and_gets_fresh_nonce",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_pending_is_fsynced_before_begin_and_response_before_completion_record",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_private_modes_and_bounded_state_loading",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_recorded_glm_reply_drops_only_indexes_and_replays_identical_host_ids",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_replaced_directory_and_lock_cannot_change_session_identity",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_request_count_and_total_response_budget_are_durable",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_response_symlink_or_hardlink_is_not_replayed",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_session_mismatch_missing_state_and_existing_empty_directory_fail_closed",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_singleflight_does_not_hold_file_lock_across_upstream_wait",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_stale_foreign_and_replay_tickets_cannot_finalize_or_release_new_flight",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_symlink_in_any_parent_or_final_directory_is_rejected",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_unrecognized_or_interrupted_temporary_files_stop_new_work",
+          "test_yuanxingmu_sdk_model_store.ModelStoreTests.test_write_failure_does_not_return_reply_or_retry_the_pending_request"
+        ]
+      },
+      "test_yuanxingmu_sdk_runtime": {
+        "count": 31,
+        "ids": [
+          "test_yuanxingmu_sdk_runtime.LangGraphFullLoopTests.test_automatic_message_upload_and_form_once_then_resume_without_duplicates",
+          "test_yuanxingmu_sdk_runtime.LangGraphFullLoopTests.test_full_loop_is_isolated_resumable_and_revocation_survives",
+          "test_yuanxingmu_sdk_runtime.LangGraphFullLoopTests.test_new_session_on_another_framework_keeps_original_automatic_budget",
+          "test_yuanxingmu_sdk_runtime.OpenAIAgentsFullLoopTests.test_automatic_message_upload_and_form_once_then_resume_without_duplicates",
+          "test_yuanxingmu_sdk_runtime.OpenAIAgentsFullLoopTests.test_full_loop_is_isolated_resumable_and_revocation_survives",
+          "test_yuanxingmu_sdk_runtime.OpenAIAgentsFullLoopTests.test_new_openai_agents_session_reports_exhausted_budget_without_more_effects",
+          "test_yuanxingmu_sdk_runtime.OpenAIAgentsFullLoopTests.test_new_session_on_another_framework_keeps_original_automatic_budget",
+          "test_yuanxingmu_sdk_runtime.PydanticAiFullLoopTests.test_automatic_message_upload_and_form_once_then_resume_without_duplicates",
+          "test_yuanxingmu_sdk_runtime.PydanticAiFullLoopTests.test_full_loop_is_isolated_resumable_and_revocation_survives",
+          "test_yuanxingmu_sdk_runtime.PydanticAiFullLoopTests.test_new_pydantic_ai_session_cannot_reset_the_automatic_budget",
+          "test_yuanxingmu_sdk_runtime.PydanticAiFullLoopTests.test_new_session_on_another_framework_keeps_original_automatic_budget",
+          "test_yuanxingmu_sdk_runtime.SdkConfigurationTests.test_invalid_limits_never_touch_profile_or_launch",
+          "test_yuanxingmu_sdk_runtime.SdkConfigurationTests.test_langgraph_model_inventory_does_not_grant_the_smolagents_answer_tool",
+          "test_yuanxingmu_sdk_runtime.SdkConfigurationTests.test_openai_agents_allows_only_the_fixed_handoff_inventory",
+          "test_yuanxingmu_sdk_runtime.SdkConfigurationTests.test_pydantic_ai_inventory_requires_explicit_automatic_scope",
+          "test_yuanxingmu_sdk_runtime.SdkConfigurationTests.test_request_policy_rejects_model_switch_and_remote_tools",
+          "test_yuanxingmu_sdk_runtime.SdkConfigurationTests.test_unknown_framework_never_opens_profile_or_imports_a_worker",
+          "test_yuanxingmu_sdk_runtime.SdkFullLoopTests.test_automatic_message_upload_and_form_once_then_resume_without_duplicates",
+          "test_yuanxingmu_sdk_runtime.SdkFullLoopTests.test_full_loop_is_isolated_resumable_and_revocation_survives",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_bounded_pipe_collection_stops_noisy_worker_and_timeout",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_cancellation_remains_prompt_after_worker_closes_both_pipes",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_framework_switch_cannot_rebind_a_session_or_create_new_task_authority",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_langgraph_runtime_checks_every_pinned_package_without_executing_sdk",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_openai_agents_binding_and_runtime_cannot_replace_existing_authority",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_private_session_resume_retains_identity_and_rejects_reset",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_pydantic_ai_pins_and_session_binding_are_checked_without_importing_sdk",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_python_and_child_cannot_read_host_or_directly_connect",
+          "test_yuanxingmu_sdk_runtime.SdkHostTests.test_raw_rpc_cannot_bypass_the_sdk_operation_subset",
+          "test_yuanxingmu_sdk_runtime.SdkModelBridgeTests.test_journal_finish_fault_does_not_skip_connection_cleanup",
+          "test_yuanxingmu_sdk_runtime.SdkModelBridgeTests.test_replay_keeps_host_nonce_and_current_revocation_is_checked",
+          "test_yuanxingmu_sdk_runtime.SdkModelBridgeTests.test_unknown_upstream_outcome_cannot_be_retried"
+        ]
+      }
+    },
+    "source_sha256": {
+      "tests/test_langgraph_automatic_runtime.py": "1565083233af77c720e6e22d7670077bb776021d8235a09b65f7f9b345b96f95",
+      "tests/test_langgraph_runtime.py": "3684b646a033a3c09a53abf57898210c629e0a8aefaac174ae09e9ecb2a2e8d2",
+      "tests/test_langgraph_runtime_faults.py": "d74ef17c276df1ee7dd839e7f2e4a9ea137d63f5cd3f99e116ea97c2ecf80d45",
+      "tests/test_openai_agents_runtime.py": "3f9704c6298292dc3c559b9806596d113e07f65510ce347c545b3211756d5eab",
+      "tests/test_openai_agents_runtime_automatic.py": "8b53176af92862e021e819891e082a83b67b0c79f31b28a202130351ad225fd7",
+      "tests/test_openai_agents_runtime_faults.py": "334008fa164fa456b0aa68a725d2985c561a568518e6c9deb400080bf46cac91",
+      "tests/test_pydantic_ai_runtime.py": "9cfa2d57ed492786916d3713defdc8672a83df48ebb65c441c87f9aa3a42a122",
+      "tests/test_pydantic_ai_runtime_automatic.py": "0f630a1d983f317f1d51a1f3f1086a0ef8a56e186f087ad38298a800204308a4",
+      "tests/test_pydantic_ai_runtime_faults.py": "3027720db8d1f779837dc612d70ff00062f745877244cee760483a789465afc9",
+      "tests/test_smolagents_automatic_runtime.py": "1e8f12496e32330d6e9837996a81701cad93da0d882af7936ceacdcb3cc3f563",
+      "tests/test_smolagents_runtime.py": "99c930ff22d3d1dd67d8b52aa09667db15934e3dbb6a80facafbffe5c1246862",
+      "tests/test_smolagents_runtime_timeouts.py": "06554cea27819ed001e6a7c4ccdb3165d7cbe8eeab8b0fbbd0a727ddced8e163",
+      "tests/test_yuanxingmu_sdk_boundary_failures.py": "b38f50053be25623045a58b817b71d9ca3845f15408a6ac58cb5c6d3fecb0c45",
+      "tests/test_yuanxingmu_sdk_model_store.py": "ba5ef6416da4dfcb5d0350ea196203b8f277f395e9b97adee5356f069b69809e",
+      "tests/test_yuanxingmu_sdk_runtime.py": "599f1397d31df09e2c3d4e15c6a3b5e9f12d9fd4a63440d60e9d7f8d7833c707"
+    },
+    "total": 201
+  },
+  "platforms": {
+    "linux": {
+      "head": "4d16f78a96b81a2766856f9f2b9be8606882c115",
+      "tests_run": 1213,
+      "passed_count": 1058,
+      "skipped_count": 155,
+      "successful": true,
+      "valid": true,
+      "sources_unchanged": true,
+      "source_file_count": 477,
+      "duration_seconds": 182.12,
+      "started_at": "2026-09-12T23:35:36.273941+00:00",
+      "finished_at": "2026-09-12T23:38:21.914293+00:00",
+      "configuration_snapshot_hashes": {
+        ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+        ".github/workflows/yuanxingmu.yml": "21c36249980dd342750e41f86f5ebad5a45b688557ad9836b7949bddd3847207"
+      },
+      "harness_source_hashes": {
+        "audit_results.py": "ef281b2082dc85ed37f2317f65468eb2c5b5dd733537767a69a4f7d732293a2c",
+        "environment/prepare_environment.py": "8730b995e54393928973b1b6a0c6d7af2c8530e6c68593cbf1721ed348351365",
+        "environment/verify_environment.py": "9b27bde7a17ff85b1d2f4724066cd8ef4251848f47b16fd918ef6bec3c9087f2",
+        "expected_tests.py": "1b5280b8cc03adab5ac29b47a9cbd107d1dc939e3d23a5c4d564511c9a9c489a",
+        "run_full_regression.py": "bf71bd7af04571016a31fd5dbcf0a9725a52d485e61fbf6be7c0c8faab0f1cf3"
+      },
+      "original_result_sha256": "d113cd40ae9b3ae70715edd05c1b51df4f136b6998de33c2a51d80786d97405c",
+      "skip_reasons": {
+        "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 82,
+        "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+        "Optional native Hermes installation required": 3,
+        "requires the optional real Hermes installation": 40
+      },
+      "sdk_modules": {
+        "test_langgraph_automatic_runtime": {
+          "passed": 8,
+          "skipped": 0
+        },
+        "test_langgraph_runtime": {
+          "passed": 10,
+          "skipped": 0
+        },
+        "test_langgraph_runtime_faults": {
+          "passed": 9,
+          "skipped": 0
+        },
+        "test_openai_agents_runtime": {
+          "passed": 14,
+          "skipped": 0
+        },
+        "test_openai_agents_runtime_automatic": {
+          "passed": 8,
+          "skipped": 0
+        },
+        "test_openai_agents_runtime_faults": {
+          "passed": 14,
+          "skipped": 0
+        },
+        "test_pydantic_ai_runtime": {
+          "passed": 14,
+          "skipped": 0
+        },
+        "test_pydantic_ai_runtime_automatic": {
+          "passed": 8,
+          "skipped": 0
+        },
+        "test_pydantic_ai_runtime_faults": {
+          "passed": 16,
+          "skipped": 0
+        },
+        "test_smolagents_automatic_runtime": {
+          "passed": 12,
+          "skipped": 0
+        },
+        "test_smolagents_runtime": {
+          "passed": 15,
+          "skipped": 0
+        },
+        "test_smolagents_runtime_timeouts": {
+          "passed": 4,
+          "skipped": 0
+        },
+        "test_yuanxingmu_sdk_boundary_failures": {
+          "passed": 7,
+          "skipped": 0
+        },
+        "test_yuanxingmu_sdk_model_store": {
+          "passed": 31,
+          "skipped": 0
+        },
+        "test_yuanxingmu_sdk_runtime": {
+          "passed": 31,
+          "skipped": 0
+        }
+      }
+    },
+    "windows": {
+      "head": "4d16f78a96b81a2766856f9f2b9be8606882c115",
+      "tests_run": 1213,
+      "passed_count": 377,
+      "skipped_count": 836,
+      "successful": true,
+      "valid": true,
+      "sources_unchanged": true,
+      "source_file_count": 477,
+      "duration_seconds": 18.453,
+      "started_at": "2026-09-12T23:35:45.820489+00:00",
+      "finished_at": "2026-09-12T23:36:04.264394+00:00",
+      "configuration_snapshot_hashes": {
+        ".github/workflows/checks.yml": "a9a45333a40ba1afcbbe9f934692c9d870168e45a139f780ceea642eb6d711e2",
+        ".github/workflows/yuanxingmu.yml": "21c36249980dd342750e41f86f5ebad5a45b688557ad9836b7949bddd3847207"
+      },
+      "harness_source_hashes": {
+        "audit_results.py": "ef281b2082dc85ed37f2317f65468eb2c5b5dd733537767a69a4f7d732293a2c",
+        "environment/prepare_environment.py": "8730b995e54393928973b1b6a0c6d7af2c8530e6c68593cbf1721ed348351365",
+        "environment/verify_environment.py": "9b27bde7a17ff85b1d2f4724066cd8ef4251848f47b16fd918ef6bec3c9087f2",
+        "expected_tests.py": "1b5280b8cc03adab5ac29b47a9cbd107d1dc939e3d23a5c4d564511c9a9c489a",
+        "run_full_regression.py": "bf71bd7af04571016a31fd5dbcf0a9725a52d485e61fbf6be7c0c8faab0f1cf3"
+      },
+      "original_result_sha256": "038067dd00435477c0fef750b68e1c218708757780563b5b30999737a1429608",
+      "skip_reasons": {
+        "Install docs/additional-native-adapters-requirements.txt for these SDK checks": 97,
+        "Windows symlink privilege unavailable (WinError 1314); local paths omitted.": 1,
+        "Requires Linux and the pinned LangGraph SDK environment": 27,
+        "Use run_mastra_native_adapter.py with an independent Node SDK environment": 30,
+        "Real Broker native adapter checks require Linux": 32,
+        "Requires Linux and the pinned OpenAI Agents SDK environment": 36,
+        "Requires Linux and the pinned PydanticAI SDK environment": 38,
+        "Requires Linux and the pinned smolagents SDK environment": 31,
+        "Safe file targets require POSIX": 1,
+        "Safe file actions require POSIX no-follow directory descriptors": 6,
+        "Host scanner requires Linux private profiles": 15,
+        "Linux broker integration": 12,
+        "Linux broker only": 9,
+        "Linux workbench storage and authority only": 46,
+        "Linux Unix socket bridges only": 10,
+        "Linux broker sockets and persistent authority": 17,
+        "Optional native Hermes installation required": 3,
+        "Real Broker sockets require Linux": 5,
+        "Linux no-follow directory descriptor checks": 11,
+        "Linux Hermes profile only": 13,
+        "requires the optional real Hermes installation": 40,
+        "Safe skill file descriptors require Linux": 2,
+        "Linux Broker sockets and authority": 11,
+        "Linux installer filesystem and process boundaries": 48,
+        "Real protected profile management requires Linux": 11,
+        "Protected profile storage uses Linux descriptor-relative I/O": 21,
+        "Live host settings require Linux": 15,
+        "Linux broker and Unix socket boundaries": 14,
+        "Real Linux broker and Unix model socket": 17,
+        "Durable host queue uses Linux private directories": 26,
+        "Linux OpenClaw profile only": 28,
+        "Linux plugin and Unix socket contract": 1,
+        "OpenClaw live status requires Linux": 5,
+        "Linux broker and durable admission boundaries": 12,
+        "Real Linux Broker and durable pause": 2,
+        "real Linux profiles only": 14,
+        "Quarantine Broker integration requires Linux": 8,
+        "Real Workbench HTTP quarantine tests require Linux": 2,
+        "Real Linux Broker": 7,
+        "Linux execution only": 2,
+        "Linux bubblewrap only": 6,
+        "Linux subprocess collection": 1,
+        "Linux checked HTTP and durable journal": 2,
+        "Linux SDK host boundary": 4,
+        "requires POSIX secure directory-relative storage": 23,
+        "Set YUANXINGMU_LANGGRAPH_PYTHON to the pinned LangGraph Linux venv": 3,
+        "Set YUANXINGMU_OPENAI_AGENTS_PYTHON to the pinned OpenAI Agents Linux venv": 4,
+        "Set YUANXINGMU_PYDANTIC_AI_PYTHON to the pinned PydanticAI Linux venv": 4,
+        "Set YUANXINGMU_SMOLAGENTS_PYTHON to an installed smolagents 1.26.0 Linux venv": 2,
+        "Linux SDK process boundary": 9,
+        "Linux checked model bridge": 3,
+        "Real Linux safe reads and fixed snapshots": 12,
+        "secure snapshots require Linux file descriptors": 26,
+        "Real Broker Unix sockets require Linux": 11
+      },
+      "sdk_modules": {
+        "test_langgraph_automatic_runtime": {
+          "passed": 0,
+          "skipped": 8
+        },
+        "test_langgraph_runtime": {
+          "passed": 0,
+          "skipped": 10
+        },
+        "test_langgraph_runtime_faults": {
+          "passed": 0,
+          "skipped": 9
+        },
+        "test_openai_agents_runtime": {
+          "passed": 0,
+          "skipped": 14
+        },
+        "test_openai_agents_runtime_automatic": {
+          "passed": 0,
+          "skipped": 8
+        },
+        "test_openai_agents_runtime_faults": {
+          "passed": 0,
+          "skipped": 14
+        },
+        "test_pydantic_ai_runtime": {
+          "passed": 0,
+          "skipped": 14
+        },
+        "test_pydantic_ai_runtime_automatic": {
+          "passed": 0,
+          "skipped": 8
+        },
+        "test_pydantic_ai_runtime_faults": {
+          "passed": 0,
+          "skipped": 16
+        },
+        "test_smolagents_automatic_runtime": {
+          "passed": 0,
+          "skipped": 12
+        },
+        "test_smolagents_runtime": {
+          "passed": 0,
+          "skipped": 15
+        },
+        "test_smolagents_runtime_timeouts": {
+          "passed": 0,
+          "skipped": 4
+        },
+        "test_yuanxingmu_sdk_boundary_failures": {
+          "passed": 0,
+          "skipped": 7
+        },
+        "test_yuanxingmu_sdk_model_store": {
+          "passed": 8,
+          "skipped": 23
+        },
+        "test_yuanxingmu_sdk_runtime": {
+          "passed": 6,
+          "skipped": 25
+        }
+      }
+    }
+  },
+  "audit": {
+    "sha256": "308eb5db389f13db9e42cec2ce06bb10243ac2972dc879b2fe77f41b2f84031c",
+    "checks": {
+      "all_environment_pins_match": true,
+      "all_four_framework_pins_recorded": true,
+      "all_four_requirements_recorded": true,
+      "all_four_sdk_interpreters_match_environment": true,
+      "dependency_install_and_check_success": true,
+      "environment_freeze_unchanged": true,
+      "environment_isolation_rechecked": true,
+      "environment_versions_match_current_requirement_pins": true,
+      "exactly_fifteen_sdk_modules": true,
+      "fresh_environment_ready": true,
+      "frozen_head_observed_before": true,
+      "functional_sources_still_current": true,
+      "head_unchanged_after": true,
+      "initial_environment_record_preserved": true,
+      "installed_requirement_docs/langgraph-runtime-requirements.txt": true,
+      "installed_requirement_docs/openai-agents-runtime-requirements.txt": true,
+      "installed_requirement_docs/pydantic-ai-runtime-requirements.txt": true,
+      "installed_requirement_docs/sdk-runtime-requirements.txt": true,
+      "linux_all_discovered_tests_accounted": true,
+      "linux_counts": true,
+      "linux_discovery_ids_test_langgraph_automatic_runtime": true,
+      "linux_discovery_ids_test_langgraph_runtime": true,
+      "linux_discovery_ids_test_langgraph_runtime_faults": true,
+      "linux_discovery_ids_test_openai_agents_runtime": true,
+      "linux_discovery_ids_test_openai_agents_runtime_automatic": true,
+      "linux_discovery_ids_test_openai_agents_runtime_faults": true,
+      "linux_discovery_ids_test_pydantic_ai_runtime": true,
+      "linux_discovery_ids_test_pydantic_ai_runtime_automatic": true,
+      "linux_discovery_ids_test_pydantic_ai_runtime_faults": true,
+      "linux_discovery_ids_test_smolagents_automatic_runtime": true,
+      "linux_discovery_ids_test_smolagents_runtime": true,
+      "linux_discovery_ids_test_smolagents_runtime_timeouts": true,
+      "linux_discovery_ids_test_yuanxingmu_sdk_boundary_failures": true,
+      "linux_discovery_ids_test_yuanxingmu_sdk_model_store": true,
+      "linux_discovery_ids_test_yuanxingmu_sdk_runtime": true,
+      "linux_harness": true,
+      "linux_head": true,
+      "linux_head_unchanged": true,
+      "linux_ids_test_langgraph_automatic_runtime": true,
+      "linux_ids_test_langgraph_runtime": true,
+      "linux_ids_test_langgraph_runtime_faults": true,
+      "linux_ids_test_openai_agents_runtime": true,
+      "linux_ids_test_openai_agents_runtime_automatic": true,
+      "linux_ids_test_openai_agents_runtime_faults": true,
+      "linux_ids_test_pydantic_ai_runtime": true,
+      "linux_ids_test_pydantic_ai_runtime_automatic": true,
+      "linux_ids_test_pydantic_ai_runtime_faults": true,
+      "linux_ids_test_smolagents_automatic_runtime": true,
+      "linux_ids_test_smolagents_runtime": true,
+      "linux_ids_test_smolagents_runtime_timeouts": true,
+      "linux_ids_test_yuanxingmu_sdk_boundary_failures": true,
+      "linux_ids_test_yuanxingmu_sdk_model_store": true,
+      "linux_ids_test_yuanxingmu_sdk_runtime": true,
+      "linux_independent_expected_ids": true,
+      "linux_module_record_test_langgraph_automatic_runtime": true,
+      "linux_module_record_test_langgraph_runtime": true,
+      "linux_module_record_test_langgraph_runtime_faults": true,
+      "linux_module_record_test_openai_agents_runtime": true,
+      "linux_module_record_test_openai_agents_runtime_automatic": true,
+      "linux_module_record_test_openai_agents_runtime_faults": true,
+      "linux_module_record_test_pydantic_ai_runtime": true,
+      "linux_module_record_test_pydantic_ai_runtime_automatic": true,
+      "linux_module_record_test_pydantic_ai_runtime_faults": true,
+      "linux_module_record_test_smolagents_automatic_runtime": true,
+      "linux_module_record_test_smolagents_runtime": true,
+      "linux_module_record_test_smolagents_runtime_timeouts": true,
+      "linux_module_record_test_yuanxingmu_sdk_boundary_failures": true,
+      "linux_module_record_test_yuanxingmu_sdk_model_store": true,
+      "linux_module_record_test_yuanxingmu_sdk_runtime": true,
+      "linux_no_errors": true,
+      "linux_no_skips_test_langgraph_automatic_runtime": true,
+      "linux_no_skips_test_langgraph_runtime": true,
+      "linux_no_skips_test_langgraph_runtime_faults": true,
+      "linux_no_skips_test_openai_agents_runtime": true,
+      "linux_no_skips_test_openai_agents_runtime_automatic": true,
+      "linux_no_skips_test_openai_agents_runtime_faults": true,
+      "linux_no_skips_test_pydantic_ai_runtime": true,
+      "linux_no_skips_test_pydantic_ai_runtime_automatic": true,
+      "linux_no_skips_test_pydantic_ai_runtime_faults": true,
+      "linux_no_skips_test_smolagents_automatic_runtime": true,
+      "linux_no_skips_test_smolagents_runtime": true,
+      "linux_no_skips_test_smolagents_runtime_timeouts": true,
+      "linux_no_skips_test_yuanxingmu_sdk_boundary_failures": true,
+      "linux_no_skips_test_yuanxingmu_sdk_model_store": true,
+      "linux_no_skips_test_yuanxingmu_sdk_runtime": true,
+      "linux_passed_count": true,
+      "linux_sdk_module_set": true,
+      "linux_sdk_modules_present": true,
+      "linux_sdk_skip_assertion": true,
+      "linux_skipped_count": true,
+      "linux_source_discovery": true,
+      "linux_sources": true,
+      "linux_successful": true,
+      "linux_unique_test_results": true,
+      "linux_workflow_checks.yml": true,
+      "linux_workflow_yuanxingmu.yml": true,
+      "runtime_interpreter_assertion": true,
+      "same_discovery_count": true,
+      "same_discovery_ids": true,
+      "same_sources_on_both_platforms": true,
+      "sdk_interpreter_environment_variables": true,
+      "tracked_clean_before": true,
+      "windows_all_discovered_tests_accounted": true,
+      "windows_counts": true,
+      "windows_discovery_ids_test_langgraph_automatic_runtime": true,
+      "windows_discovery_ids_test_langgraph_runtime": true,
+      "windows_discovery_ids_test_langgraph_runtime_faults": true,
+      "windows_discovery_ids_test_openai_agents_runtime": true,
+      "windows_discovery_ids_test_openai_agents_runtime_automatic": true,
+      "windows_discovery_ids_test_openai_agents_runtime_faults": true,
+      "windows_discovery_ids_test_pydantic_ai_runtime": true,
+      "windows_discovery_ids_test_pydantic_ai_runtime_automatic": true,
+      "windows_discovery_ids_test_pydantic_ai_runtime_faults": true,
+      "windows_discovery_ids_test_smolagents_automatic_runtime": true,
+      "windows_discovery_ids_test_smolagents_runtime": true,
+      "windows_discovery_ids_test_smolagents_runtime_timeouts": true,
+      "windows_discovery_ids_test_yuanxingmu_sdk_boundary_failures": true,
+      "windows_discovery_ids_test_yuanxingmu_sdk_model_store": true,
+      "windows_discovery_ids_test_yuanxingmu_sdk_runtime": true,
+      "windows_harness": true,
+      "windows_head": true,
+      "windows_head_unchanged": true,
+      "windows_ids_test_langgraph_automatic_runtime": true,
+      "windows_ids_test_langgraph_runtime": true,
+      "windows_ids_test_langgraph_runtime_faults": true,
+      "windows_ids_test_openai_agents_runtime": true,
+      "windows_ids_test_openai_agents_runtime_automatic": true,
+      "windows_ids_test_openai_agents_runtime_faults": true,
+      "windows_ids_test_pydantic_ai_runtime": true,
+      "windows_ids_test_pydantic_ai_runtime_automatic": true,
+      "windows_ids_test_pydantic_ai_runtime_faults": true,
+      "windows_ids_test_smolagents_automatic_runtime": true,
+      "windows_ids_test_smolagents_runtime": true,
+      "windows_ids_test_smolagents_runtime_timeouts": true,
+      "windows_ids_test_yuanxingmu_sdk_boundary_failures": true,
+      "windows_ids_test_yuanxingmu_sdk_model_store": true,
+      "windows_ids_test_yuanxingmu_sdk_runtime": true,
+      "windows_independent_expected_ids": true,
+      "windows_module_record_test_langgraph_automatic_runtime": true,
+      "windows_module_record_test_langgraph_runtime": true,
+      "windows_module_record_test_langgraph_runtime_faults": true,
+      "windows_module_record_test_openai_agents_runtime": true,
+      "windows_module_record_test_openai_agents_runtime_automatic": true,
+      "windows_module_record_test_openai_agents_runtime_faults": true,
+      "windows_module_record_test_pydantic_ai_runtime": true,
+      "windows_module_record_test_pydantic_ai_runtime_automatic": true,
+      "windows_module_record_test_pydantic_ai_runtime_faults": true,
+      "windows_module_record_test_smolagents_automatic_runtime": true,
+      "windows_module_record_test_smolagents_runtime": true,
+      "windows_module_record_test_smolagents_runtime_timeouts": true,
+      "windows_module_record_test_yuanxingmu_sdk_boundary_failures": true,
+      "windows_module_record_test_yuanxingmu_sdk_model_store": true,
+      "windows_module_record_test_yuanxingmu_sdk_runtime": true,
+      "windows_no_errors": true,
+      "windows_passed_count": true,
+      "windows_sdk_module_set": true,
+      "windows_sdk_modules_present": true,
+      "windows_sdk_skip_assertion": true,
+      "windows_skipped_count": true,
+      "windows_source_discovery": true,
+      "windows_sources": true,
+      "windows_successful": true,
+      "windows_unique_test_results": true,
+      "windows_workflow_checks.yml": true,
+      "windows_workflow_yuanxingmu.yml": true
+    },
+    "passed": true
+  }
+}

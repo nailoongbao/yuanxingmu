@@ -6,7 +6,7 @@
 
 这条入口固定使用 **smolagents 1.26.0**。它是一个有明确工具范围的运行入口，不会接管用户任意 Python Agent、既有自定义工具、`CodeAgent`、其他 Agent 或第三方插件。
 
-`sdk-run` 省略 `--framework` 时仍使用本页入口；另有 [`--framework langgraph`](langgraph-runtime.zh-CN.md) 的固定图入口，以及 [`--framework openai_agents`](openai-agents-runtime.zh-CN.md) 的固定助手交接入口。各入口按自身固定依赖建立 SDK 环境，同一会话名不能跨框架恢复。
+`sdk-run` 省略 `--framework` 时仍使用本页入口；另有 [`--framework langgraph`](langgraph-runtime.zh-CN.md) 的固定图入口、[`--framework openai_agents`](openai-agents-runtime.zh-CN.md) 的固定助手交接入口，以及 [`--framework pydantic_ai`](pydantic-ai-runtime.zh-CN.md) 的原生延迟工具入口。各入口按自身固定依赖建立 SDK 环境，同一会话名不能跨框架恢复。
 
 启动时会按本次 SDK 的实际工具清单重新做基础配置检查。原工作实例若把 `allowed_tools` 固定为原生 Hermes/OpenClaw 工具名，清单不匹配会阻止启动，入口不会自动放宽限制。应在受信任的工作配置中核对本入口的工具清单，必要时为 SDK 建立独立工作实例。
 

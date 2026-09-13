@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "source_commit": "4d16f78a96b81a2766856f9f2b9be8606882c115",
+  "exported_at": "2026-09-13T00:07:36.799979+00:00",
+  "exporter_sha256": "c8b4fd37b520f2d301d9a41a6882f5d5636a01f2164bcda730bdf4b50f8468bf",
+  "files": {
+    "protocol.json": {
+      "sha256": "9a323675095c813fbbbd6405d27cc9109dfc77fe133b3d40dd7ba43a70a3b027",
+      "bytes": 12244
+    },
+    "failed-attempts.json": {
+      "sha256": "fdd460f052f1f32536a570f005ba4a70974ef2291c09f62045811e49e6a160d2",
+      "bytes": 28472
+    },
+    "receipts.json": {
+      "sha256": "819a5ad38db9b2b7716535831f4fd69b3620945554fb2fdec4acbdd872c6ea62",
+      "bytes": 1930
+    },
+    "result.json": {
+      "sha256": "090b4eb21fa987dc849e7709121aaac25b35a047d1d4a31af844d5c175805378",
+      "bytes": 3551
+    },
+    "model-responses.json": {
+      "sha256": "24312fa4cfd8a83a99b4d999d76257b36ff4d1590edf30ab0479dd1656c2a90b",
+      "bytes": 47476
+    },
+    "native-recovery.json": {
+      "sha256": "52290266d8fb4b43efb72ae83717790155fdad78462975383b8393da2420d8a9",
+      "bytes": 9941
+    },
+    "regressions.json": {
+      "sha256": "1d1a2d9d1b0b6d0acf5c2dcdd611836001def6b89e486acb33329c390e2fbd25",
+      "bytes": 49234
+    }
+  },
+  "limits": [
+    "Same explicit synthetic normal task, two fresh profiles; first failed, second passed protocol. No general success-rate estimate.",
+    "Actual PydanticAI 2.43.0 Agent; not an arbitrary existing PydanticAI application. No Hermes/OpenClaw UI or new video.",
+    "Work and judge both GLM-5.2 with separate request contexts; thinking disabled. Not independent models.",
+    "Real trial tests completed-session reopen. Mid-batch interruption recovery comes from deterministic-model tests.",
+    "Final operator answer retains technical language/internal-placeholder row; no full prose acceptance.",
+    "Finite secret-spelling checks do not prove universal semantic non-disclosure.",
+    "Receipt timestamps invert within arrival order; cause not established. Cross-host wall clocks not used to order requests.",
+    "Profile creation and first run share a measured request interval. No performance comparison.",
+    "Source main only; runtime0.7.0a2 and installer0.4.0a2 unchanged. No arbitrary apps, custom tools or total process CPU/memory/disk quotas."
+  ]
+}
