@@ -10,8 +10,6 @@ import json
 import os
 from pathlib import Path
 import queue
-import re
-import secrets
 import signal
 import socket
 import subprocess
@@ -60,8 +58,15 @@ def _json_reply(handler):
 
 @contextmanager
 def _provider(reply=_json_reply):
-    server = ThreadingHTTPServer(("127.0.0.1", 0), _ProviderHandler)
+    class ProviderServer(ThreadingHTTPServer):
+        def get_request(self):
+            accepted = super().get_request()
+            self.connections.put(accepted[1])
+            return accepted
+
+    server = ProviderServer(("127.0.0.1", 0), _ProviderHandler)
     server.receipts = queue.Queue()
+    server.connections = queue.Queue()
     server.reply = reply
     thread = threading.Thread(target=server.serve_forever, kwargs={"poll_interval": 0.05}, daemon=True)
     thread.start()
@@ -489,8 +494,41 @@ finally:
             listener.bind(("127.0.0.1", network.MODEL_PORT))
 
 
-@unittest.skipUnless(sys.platform.startswith("linux"), "HostModel Unix socket requires Linux")
-class _AuditMetadataTests(unittest.TestCase):
+class AuditMetadataConfigurationTests(unittest.TestCase):
+    def test_default_and_host_factory_have_explicit_schema(self):
+        self.assertEqual(network._audit_headers(None), {})
+        first = network._audit_headers(network.new_audit_metadata)
+        second = network._audit_headers(network.new_audit_metadata)
+        self.assertEqual(set(first), {"X-YXM-Audit-Correlation-ID", "X-YXM-Audit-Protocol-Version"})
+        self.assertEqual(first["X-YXM-Audit-Protocol-Version"], "1.0")
+        self.assertRegex(first["X-YXM-Audit-Correlation-ID"], r"^corr-[0-9a-f]{32}$")
+        self.assertNotEqual(first["X-YXM-Audit-Correlation-ID"], second["X-YXM-Audit-Correlation-ID"])
+
+    def test_invalid_provider_and_metadata_fail_without_transport(self):
+        valid = network.new_audit_metadata()
+        cases = [None, [], {}, {"X-YXM-Audit-Correlation-ID": valid["X-YXM-Audit-Correlation-ID"]},
+                 {**valid, "Authorization": "replace-host-key"},
+                 {**valid, "X-YXM-Audit-Protocol-Version": "sales-v2"},
+                 {**valid, "X-YXM-Audit-Correlation-ID": "bad\r\nHeader: injected"},
+                 {**valid, "X-YXM-Audit-Correlation-ID": "corr-" + "a" * 65},
+                 {**valid, "X-YXM-Audit-Correlation-ID": "业务标签"}]
+        for value in cases:
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                network._audit_headers(lambda: value)
+        with self.assertRaisesRegex(ValueError, "provider_invalid"):
+            network._audit_headers("not-callable")
+        with self.assertRaisesRegex(ValueError, "generation_failed"):
+            network._audit_headers(mock.Mock(side_effect=RuntimeError("private provider detail")))
+
+    def test_validated_metadata_does_not_alias_host_mapping(self):
+        metadata = network.new_audit_metadata()
+        result = network._audit_headers(lambda: metadata)
+        metadata["X-YXM-Audit-Protocol-Version"] = "changed"
+        self.assertEqual(result["X-YXM-Audit-Protocol-Version"], "1.0")
+
+
+@unittest.skipUnless(sys.platform.startswith("linux"), "Linux Unix socket bridges only")
+class AuditMetadataTransportTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
         self.runtime = Path(self.tmp.name)
@@ -499,19 +537,28 @@ class _AuditMetadataTests(unittest.TestCase):
         self.tmp.cleanup()
 
     def _guard(self):
-        guard = unittest.mock.Mock(side_effect=lambda data, ct: data)
-        guard.preflight = unittest.mock.Mock(return_value=None)
+        guard = mock.Mock(side_effect=lambda data, ct: data)
+        guard.preflight = mock.Mock(return_value=None)
         return guard
 
     def _store(self):
-        store = unittest.mock.Mock()
-        ticket = unittest.mock.Mock()
+        store = mock.Mock()
+        ticket = mock.Mock()
         ticket.replay = None
-        store.begin = unittest.mock.Mock(return_value=ticket)
-        store.complete = unittest.mock.Mock(side_effect=lambda t, data, ct: data)
-        store.finish = unittest.mock.Mock()
-        store.lookup = unittest.mock.Mock(return_value=None)
+        store.begin = mock.Mock(return_value=ticket)
+        store.complete = mock.Mock(side_effect=lambda t, data, ct: data)
+        store.finish = mock.Mock()
+        store.lookup = mock.Mock(return_value=None)
         return store
+
+    def _post(self, headers=None):
+        conn = _UnixHTTP(self.runtime / "model.sock")
+        try:
+            conn.request("POST", "/v1/chat/completions", body=b'{"model":"test"}', headers=headers or {})
+            response = conn.getresponse()
+            return response.status, response.read()
+        finally:
+            conn.close()
 
     def test_worker_inbound_headers_are_stripped_and_default_has_no_audit_headers(self):
         with _provider() as upstream:
@@ -519,78 +566,80 @@ class _AuditMetadataTests(unittest.TestCase):
             host_model = network.HostModel(
                 self.runtime,
                 model_url=f"http://127.0.0.1:{port}/v1/chat/completions",
-                api_key="sk-test-secret-key",
+                api_key="SYNTHETIC-HOST-SECRET",
                 output_guard=self._guard(),
                 model_store=self._store(),
             )
             with host_model:
-                conn = _UnixHTTP(self.runtime / "model.sock")
-                conn.connect()
                 # Worker attempts to inject spoofed headers and custom audit headers
-                conn.request("POST", "/v1/chat/completions", body=b'{"model":"test"}', headers={
+                status, _ = self._post(headers={
                     "X-YXM-Audit-Correlation-ID": "spoofed-by-worker",
                     "X-Custom-Injected-Header": "malicious",
                     "Authorization": "Bearer worker-fake-token",
                 })
-                resp = conn.getresponse()
-                self.assertEqual(resp.status, 200)
+                self.assertEqual(status, 200)
                 cmd, path, headers, body = upstream.receipts.get(timeout=2)
                 # Verify worker headers did not enter upstream
                 self.assertNotIn("x-custom-injected-header", {k.lower() for k in headers})
                 self.assertNotIn("x-yxm-audit-correlation-id", {k.lower() for k in headers})
-                self.assertEqual(headers["Authorization"], "Bearer sk-test-secret-key")
+                self.assertEqual(headers["Authorization"], "Bearer SYNTHETIC-HOST-SECRET")
 
     def test_host_audit_metadata_provider_injects_permitted_headers(self):
         with _provider() as upstream:
             port = upstream.server_address[1]
-            correlation_id = "corr-" + secrets.token_hex(8)
             host_model = network.HostModel(
                 self.runtime,
                 model_url=f"http://127.0.0.1:{port}/v1/chat/completions",
-                api_key="sk-test-secret-key",
+                api_key="SYNTHETIC-HOST-SECRET",
                 output_guard=self._guard(),
                 model_store=self._store(),
-                audit_metadata_provider=lambda: {
-                    "X-YXM-Audit-Correlation-ID": correlation_id,
-                    "X-YXM-Audit-Protocol-Version": "1.0",
-                }
+                audit_metadata_provider=network.new_audit_metadata,
             )
             with host_model:
-                conn = _UnixHTTP(self.runtime / "model.sock")
-                conn.connect()
-                conn.request("POST", "/v1/chat/completions", body=b'{"model":"test"}')
-                resp = conn.getresponse()
-                self.assertEqual(resp.status, 200)
-                cmd, path, headers, body = upstream.receipts.get(timeout=2)
-                self.assertEqual(headers.get("X-YXM-Audit-Correlation-ID"), correlation_id)
-                self.assertEqual(headers.get("X-YXM-Audit-Protocol-Version"), "1.0")
-                self.assertEqual(headers.get("Authorization"), "Bearer sk-test-secret-key")
+                identifiers = []
+                for _ in range(2):
+                    status, _ = self._post({"X-YXM-Audit-Correlation-ID": "worker-spoof"})
+                    self.assertEqual(status, 200)
+                    cmd, path, headers, body = upstream.receipts.get(timeout=2)
+                    identifiers.append(headers["X-YXM-Audit-Correlation-ID"])
+                    self.assertRegex(identifiers[-1], r"^corr-[0-9a-f]{32}$")
+                    self.assertEqual(headers["X-YXM-Audit-Protocol-Version"], "1.0")
+                    self.assertEqual(headers["Authorization"], "Bearer SYNTHETIC-HOST-SECRET")
+                    self.assertEqual({k for k in headers if k.startswith("X-YXM-Audit-")},
+                                     {"X-YXM-Audit-Correlation-ID", "X-YXM-Audit-Protocol-Version"})
+                self.assertNotEqual(*identifiers)
+                self.assertEqual(upstream.connections.qsize(), 2)
 
     def test_disallowed_or_invalid_audit_metadata_aborts_before_upstream(self):
-        cases = [
-            ("disallowed_key", {"X-YXM-Audit-Task-ID": "task-123"}),
-            ("invalid_chars", {"X-YXM-Audit-Correlation-ID": "bad value with spaces!"}),
-            ("too_long", {"X-YXM-Audit-Correlation-ID": "a" * 65}),
-        ]
-        for name, bad_meta in cases:
-            with self.subTest(case=name):
+        valid = network.new_audit_metadata()
+        providers = [lambda: {}, lambda: {"X-YXM-Audit-Task-ID": "task-123"},
+                     lambda: {**valid, "X-YXM-Audit-Correlation-ID": "bad\r\nX-Injected: yes"},
+                     lambda: {**valid, "X-YXM-Audit-Correlation-ID": "a" * 65},
+                     lambda: {**valid, "X-YXM-Audit-Protocol-Version": "unrecognized"},
+                     mock.Mock(side_effect=RuntimeError("private provider detail"))]
+        actual_connect = http.client.HTTPConnection.connect
+        for index, provider in enumerate(providers):
+            with self.subTest(case=index):
                 with _provider() as upstream:
                     port = upstream.server_address[1]
+                    store = self._store()
                     host_model = network.HostModel(
                         self.runtime,
                         model_url=f"http://127.0.0.1:{port}/v1/chat/completions",
-                        api_key="sk-test-secret-key",
+                        api_key="SYNTHETIC-HOST-SECRET",
                         output_guard=self._guard(),
-                        model_store=self._store(),
-                        audit_metadata_provider=lambda: bad_meta
+                        model_store=store,
+                        audit_metadata_provider=provider,
                     )
-                    with host_model:
-                        conn = _UnixHTTP(self.runtime / "model.sock")
-                        conn.connect()
-                        conn.request("POST", "/v1/chat/completions", body=b'{"model":"test"}')
-                        resp = conn.getresponse()
-                        self.assertEqual(resp.status, 500)
-                        # Zero requests reached upstream
+                    with host_model, patch.object(http.client.HTTPConnection, "connect", autospec=True,
+                                                  side_effect=actual_connect) as connect:
+                        status, response = self._post()
+                        self.assertEqual(status, 500)
+                        self.assertNotIn(b"private provider detail", response)
+                        connect.assert_not_called()
+                        store.begin.assert_not_called()
+                        store.finish.assert_not_called()
+                        self.assertTrue(upstream.connections.empty())
                         self.assertTrue(upstream.receipts.empty())
 
 
