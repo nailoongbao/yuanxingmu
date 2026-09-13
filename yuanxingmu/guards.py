@@ -864,6 +864,37 @@ def _executable(part: list[str]) -> tuple[str, list[str]]:
     return tokens[0].replace("\\", "/").rsplit("/", 1)[-1].casefold(), tokens[1:]
 
 
+def _package_source_override(program: str, args: list[str]) -> bool:
+    """Recognize explicit source options, not resolve a package manager's policy.
+
+    Environment/config files, omitted defaults and arbitrary scripts need a
+    separate trusted-host installation policy. An unmatched command is not
+    evidence that its packages, source or install-time behavior are safe.
+    """
+    pip = re.fullmatch(r"pip(?:\d+(?:\.\d+)?)?(?:\.exe)?", program) is not None
+    npm = program in {"npm", "npm.cmd", "npm.exe"}
+    if not pip and not npm:
+        return False
+    for index, arg in enumerate(args):
+        if arg == "--":
+            break  # Later tokens are positional data, not options.
+        name, equal, value = arg.partition("=")
+        if npm and name == "--registry":
+            return True
+        if pip:
+            if name in {"--index-url", "--extra-index-url", "--trusted-host"} or arg.startswith("-i"):
+                return True
+            if name == "--find-links":
+                value = value if equal else (args[index + 1] if index + 1 < len(args) else "")
+            elif arg.startswith("-f") and not arg.startswith("--"):
+                value = arg[2:] or (args[index + 1] if index + 1 < len(args) else "")
+            else:
+                continue
+            if value.casefold().startswith(("http://", "https://")):
+                return True
+    return False
+
+
 def _memory_output_target(command: str) -> bool:
     """Recognize explicit output paths, without treating a fetched URL as a write."""
     try:
@@ -1133,6 +1164,9 @@ class Guards:
         pending: tuple[Verdict, str, str] | None = (
             ("review", "indirect_execution", "命令的批量输入、包装选项或实际执行内容尚未确定，需要您先核对。")
             if unresolved else None)
+        if pending is None and any(_package_source_override(program, args) for program, args in programs):
+            pending = ("review", "package_source_override",
+                       "命令显式指定了依赖来源或放宽了源的验证，需要您先核对来源与制品。")
         for mode, path in effects:
             if mode == "environment":
                 if _SENSITIVE_VARIABLE.search(path):
