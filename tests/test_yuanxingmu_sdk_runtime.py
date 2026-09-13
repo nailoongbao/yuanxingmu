@@ -112,6 +112,29 @@ class SdkConfigurationTests(unittest.TestCase):
                             with self.assertRaisesRegex(ValueError, "sdk_remote_tools_not_allowed"):
                                 guard.preflight(value)
 
+    def test_google_adk_transfer_does_not_grant_automatic_or_host_tools(self):
+        class Guard:
+            def preflight(self, raw):
+                return None
+        base = {"model": "model", "messages": [{"role": "user", "content": "normal"}], "max_tokens": 512}
+        with patch.object(runtime, "ModelOutputGuard", return_value=Guard()):
+            for automatic in (False, True):
+                guard = runtime._SdkOutputGuard(object(), "task", "model", 2048,
+                                               framework="google_adk", automatic_actions=automatic)
+                for name in (*runtime.SDK_TOOLS, "transfer_to_agent", "yuanxingmu_request_action",
+                             "yuanxingmu_send", "execute_code", "yuanxingmu_handoff_to_executor", "final_answer"):
+                    raw = json.dumps({**base, "tools": [{"type": "function", "function": {"name": name}}]}).encode()
+                    with self.subTest(automatic=automatic, tool=name):
+                        if name in {*runtime.SDK_TOOLS, "transfer_to_agent"} or name == "yuanxingmu_request_action" and automatic:
+                            self.assertIsNone(guard.preflight(raw))
+                        else:
+                            with self.assertRaisesRegex(ValueError, "sdk_remote_tools_not_allowed"):
+                                guard.preflight(raw)
+            for framework in ("smolagents", "langgraph", "openai_agents", "pydantic_ai"):
+                guard = runtime._SdkOutputGuard(object(), "task", "model", 2048, framework=framework)
+                with self.subTest(framework=framework), self.assertRaisesRegex(ValueError, "sdk_remote_tools_not_allowed"):
+                    guard.preflight(json.dumps({**base, "tools": [{"type": "function", "function": {"name": "transfer_to_agent"}}]}).encode())
+
 
 @unittest.skipUnless(sys.platform.startswith("linux"), "Linux SDK process boundary")
 class SdkHostTests(unittest.TestCase):
@@ -265,6 +288,41 @@ class SdkHostTests(unittest.TestCase):
                 runtime._session(profile, manifest, "pydantic", python, resume=True, framework=changed)
             self.assertEqual((folder / "session.json").read_bytes(), original)
         self.assertEqual(runtime._session(profile, manifest, "pydantic", python, resume=True, framework="pydantic_ai")[1], first)
+
+    def test_google_adk_packages_and_native_session_cannot_replace_original_authority(self):
+        profile = self.root / "profile"
+        profile.mkdir(mode=0o700)
+        manifest = {"task_id": "original-task", "family_id": "original-family"}
+        venv = self.root / "google-adk-runtime"
+        (venv / "bin").mkdir(parents=True)
+        python = venv / "bin/python"
+        python.symlink_to("/usr/bin/python3")
+        (venv / "pyvenv.cfg").write_text("home = /usr/bin\n", encoding="utf-8")
+        metadata = []
+        for name, version in runtime._sdk("google_adk")["packages"]:
+            path = venv / "lib/python3.12/site-packages" / (name + "-" + version + ".dist-info/METADATA")
+            path.parent.mkdir(parents=True)
+            path.write_text("Name: " + name + "\nVersion: " + version + "\n\n", encoding="utf-8")
+            metadata.append(path)
+        with patch.object(runtime.subprocess, "run", side_effect=AssertionError("SDK executed on host")):
+            self.assertEqual(runtime._python_runtime(python, profile, framework="google_adk"), (python, venv))
+            for path in metadata:
+                original = path.read_bytes()
+                path.write_text("Version: 0.0.0\n", encoding="utf-8")
+                with self.assertRaisesRegex(ValueError, "sdk_requires_pinned_google_adk_packages"):
+                    runtime._python_runtime(python, profile, framework="google_adk")
+                path.unlink()
+                with self.assertRaisesRegex(ValueError, "sdk_google_adk_version_not_verified"):
+                    runtime._python_runtime(python, profile, framework="google_adk")
+                path.write_bytes(original)
+        folder, first = runtime._session(profile, manifest, "google-adk", python, resume=False, framework="google_adk")
+        original = (folder / "session.json").read_bytes()
+        self.assertEqual((first["task_id"], first["family_id"]), (manifest["task_id"], manifest["family_id"]))
+        for changed in ("smolagents", "langgraph", "openai_agents", "pydantic_ai"):
+            with self.assertRaisesRegex(ValueError, "sdk_session_binding_changed"):
+                runtime._session(profile, manifest, "google-adk", python, resume=True, framework=changed)
+            self.assertEqual((folder / "session.json").read_bytes(), original)
+        self.assertEqual(runtime._session(profile, manifest, "google-adk", python, resume=True, framework="google_adk")[1], first)
 
     def test_bounded_pipe_collection_stops_noisy_worker_and_timeout(self):
         for code, limit, expected in (("import os; os.write(1,b'x'*100000)", 1024, "output_limit"),
@@ -650,6 +708,50 @@ class PydanticAiFullLoopTests(LangGraphFullLoopTests):
         self.assertNotEqual(result["session_id"], original["session_id"])
         self.assertEqual(len(self.automatic_receipts), 3)
         self.assertEqual(len(self.model_requests), 3)
+        observed = json.dumps(self.model_requests[-1]["messages"])
+        self.assertEqual(observed.count("automatic_attempt_budget_exhausted"), 3)
+        self.assertNotIn("162000", observed)
+
+
+class GoogleAdkFullLoopTests(LangGraphFullLoopTests):
+    __unittest_skip__ = not (sys.platform.startswith("linux") and os.environ.get("YUANXINGMU_GOOGLE_ADK_PYTHON"))
+    __unittest_skip_why__ = "Set YUANXINGMU_GOOGLE_ADK_PYTHON to the pinned Google ADK Linux venv"
+    framework = "google_adk"
+    sdk_python_environment = "YUANXINGMU_GOOGLE_ADK_PYTHON"
+    automatic_model_requests = 4
+
+    def model_message(self, value):
+        if self.framework != "google_adk" or not self.automatic_calls:
+            return super().model_message(value)
+        number = len(self.model_requests)
+        if number == 1:
+            return super().model_message(value)
+        if number == 2:
+            return {"role": "assistant", "content": None, "tool_calls": [{"id": "provider-transfer",
+                "type": "function", "function": {"name": "transfer_to_agent", "arguments": '{"agent_name":"yuanxingmu_executor"}'}}]}
+        if number == 3:
+            return {"role": "assistant", "content": None, "tool_calls": self.automatic_calls}
+        return {"role": "assistant", "content": "PUBLIC SDK DONE"}
+
+    def test_automatic_message_upload_and_form_once_then_resume_without_duplicates(self):
+        super().test_automatic_message_upload_and_form_once_then_resume_without_duplicates()
+        before = {row["function"]["name"] for row in self.model_requests[0]["tools"]}
+        after = {row["function"]["name"] for row in self.model_requests[2]["tools"]}
+        self.assertEqual(before, {"yuanxingmu_read", "yuanxingmu_describe", "yuanxingmu_action_targets", "transfer_to_agent"})
+        self.assertEqual(after, {"yuanxingmu_describe", "yuanxingmu_action_targets", "yuanxingmu_propose_action",
+                                 "yuanxingmu_draft_email", "yuanxingmu_request_action"})
+        self.assertEqual(self.automatic_result["task_id"], runtime.host.validate_profile(self.fixture.profile)["task_id"])
+
+    def test_new_google_adk_session_after_transfer_does_not_reset_the_automatic_budget(self):
+        self.test_automatic_message_upload_and_form_once_then_resume_without_duplicates()
+        original = self.automatic_result
+        self.model_requests.clear()
+        result = self.run_sdk(session="same-framework-after-budget")
+        self.assertEqual(result["status"], "completed")
+        self.assertEqual(result["task_id"], original["task_id"])
+        self.assertNotEqual(result["session_id"], original["session_id"])
+        self.assertEqual(len(self.automatic_receipts), 3)
+        self.assertEqual(len(self.model_requests), 4)
         observed = json.dumps(self.model_requests[-1]["messages"])
         self.assertEqual(observed.count("automatic_attempt_budget_exhausted"), 3)
         self.assertNotIn("162000", observed)

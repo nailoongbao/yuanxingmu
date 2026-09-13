@@ -70,6 +70,15 @@ _SDK_RUNTIMES = {
                       "from yuanxingmu.adapters.pydantic_ai_runtime import main; raise SystemExit(main())"),
         "answer_tools": (),
     },
+    "google_adk": {
+        "version": "2.9.0",
+        "packages": (("google_adk", "2.9.0"), ("google_genai", "2.23.0"),
+                     ("pydantic", "2.13.5")),
+        "bootstrap": ("import sys; sys.path.insert(0, sys.argv.pop(1)); "
+                      "from yuanxingmu.adapters.google_adk_runtime import main; raise SystemExit(main())"),
+        "answer_tools": (),
+        "handoff_tools": ("transfer_to_agent",),
+    },
 }
 
 
