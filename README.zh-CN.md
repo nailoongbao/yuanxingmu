@@ -4,7 +4,7 @@
 
 **[0.7.0a2 预览运行包](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.7.0a2)与[配套 0.4.0a2 安装器](https://github.com/yh-l20/yuanxingmu/releases/tag/installer-0.4.0a2)已发布。** 安装器同时准备 Hermes 和 OpenClaw。按[安装步骤](https://yh-l20.github.io/yuanxingmu/start.html)使用新的 `~/yuanxingmu-v07a2` 目录；旧安装和旧工作不会自动升级。
 
-**main 新增：** [smolagents](docs/sdk-runtime.zh-CN.md)、[LangGraph](docs/langgraph-runtime.zh-CN.md)、[OpenAI Agents](docs/openai-agents-runtime.zh-CN.md) 和 [PydanticAI](docs/pydantic-ai-runtime.zh-CN.md) 的完整会话入口，复用已有工作的隔离、防护和恢复记录；有既定自动范围时，可自动发送消息、上传文本和提交表单。OpenAI Agents 支持固定助手交接，报告保留失败尝试与声明兼容调整后的复测；[PydanticAI 两轮记录](docs/evidence/pydantic-ai-runtime-2026-09-13/REPORT.zh-CN.md)也保留第一次工具名错误和第二次运行结果。这四条开发入口尚未进入上面的 a2 下载包，仅覆盖各自固定流程。
+**main 新增：** [smolagents](docs/sdk-runtime.zh-CN.md)、[LangGraph](docs/langgraph-runtime.zh-CN.md)、[OpenAI Agents](docs/openai-agents-runtime.zh-CN.md)、[PydanticAI](docs/pydantic-ai-runtime.zh-CN.md) 和 [Google ADK](docs/google-adk-runtime.zh-CN.md) 的完整会话入口，复用已有工作的隔离、防护和恢复记录；有既定自动范围时，可自动发送消息、上传文本和提交表单。OpenAI Agents 与 Google ADK 支持固定助手交接，共用原权限和额度；[Google ADK 实测](docs/evidence/google-adk-runtime-2026-09-13/REPORT.zh-CN.md)记录了三项操作完成、宿主原件核验和重开无重复提交。这五条开发入口尚未进入上面的 a2 下载包，仅覆盖各自固定流程。
 
 先选好资料和可接收的固定对象，再让 AI 读报价、发消息、上传文本或填表。范围内且通过检查的操作可自动执行；你可以随时关闭工作或收回资料权限。你选用的模型服务仍会收到聊天和使用的资料。
 

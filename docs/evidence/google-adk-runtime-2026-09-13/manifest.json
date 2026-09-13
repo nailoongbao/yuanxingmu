@@ -1,0 +1,32 @@
+{
+  "source_commit": "6543f54213eb6a2792c3f349426c1a083f2bc8c8",
+  "exported_at": "2026-09-13T02:08:46.846263+00:00",
+  "exporter_sha256": "06467972fcc4fefab67c140e9ea76e631ba4858ddd7602b8877fa147da516625",
+  "files": {
+    "protocol.json": {
+      "sha256": "92a5e050edfba56b02f013618b96de6672c77c2d2ca224d0565f80c6a7086279",
+      "bytes": 13430
+    },
+    "receipts.json": {
+      "sha256": "a3aef2f0f063f58a855d07c4338d2daac6bd35643cc67e3bb8b83b6ff340554a",
+      "bytes": 2133
+    },
+    "result.json": {
+      "sha256": "fbf20555f083e2490013055bf0de6b1979acfdc47c421326c09fa71269a27219",
+      "bytes": 12093
+    },
+    "native-history.json": {
+      "sha256": "35a28381ab9dc6b27c09ec50548c9a172a7c9d457fb76c5a53a4d8f150129f53",
+      "bytes": 7319
+    },
+    "regressions.json": {
+      "sha256": "86997a4e69c8d3ef1bcacc1fbc0fcea4d38682f15d9bc4d60a7f77835b69588e",
+      "bytes": 41680
+    },
+    "independent-checks.json": {
+      "sha256": "2b4e0ff787f79e797144b4830136c0d4011eae90bffa9078ec6b19d74abad5d7",
+      "bytes": 51053
+    }
+  },
+  "scope": "First fresh-profile normal-task trial on the frozen source, not a success-rate or full attack-defense evaluation. No native WebUI or video in this SDK test. Released a2 downloads unchanged."
+}

@@ -1,0 +1,1953 @@
+{
+  "source_commit": "6543f54213eb6a2792c3f349426c1a083f2bc8c8",
+  "checks": [
+    {
+      "name": "receipt_file_is_list",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "single_native_checkpoint",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "protocol_source_commit",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "summary_source_commit",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "protocol_source_directory_is_frozen_checkout",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "frozen_checkout_head_matches_source",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "protocol_model_and_completed_reopen_scope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "source_hash_list_exact_tracked_package",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "source_raw_git_blobs_match_protocol",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "frozen_source_files_match_git_blobs",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "frozen_source_contains_host_tool_original_store",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "original_driver_bytes_available",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "protocol_prompt_objective_quote_match_bound_driver",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "bound_driver_imports_recorded_frozen_checkout",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "quote_copies_match_protocol",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_sequences_continuous",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_no_header_or_credential_capture",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_model_and_forced_thinking",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_upstream_request_byte_hashes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_recorded_response_byte_hashes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_all_successful_responses_preserved",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_durations_finite_nonnegative",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "task_including_profile_creation_quiescent_boundaries",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "task_including_profile_creation_relay_count_correspondence",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "completed_reopen_quiescent_boundaries",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "completed_reopen_relay_count_correspondence",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "revoked_reopen_quiescent_boundaries",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "revoked_reopen_relay_count_correspondence",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "after_last_recorded_phase_quiescent_boundaries",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "after_last_recorded_phase_relay_count_correspondence",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "final_recorded_relay_is_quiescent",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "final_relay_counters_cover_all_preserved_exchanges",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_store_session_binding",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_store_unique_request_hashes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_one_main_exchange",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_one_checkpoint_request",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_successful_upstream_response_preserved",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_host_nonce_shape",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_relay_request_exact_except_forced_option",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_accepted_response_equals_host",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_0_provider_response_except_checked_ids_indexes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_one_main_exchange",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_one_checkpoint_request",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_successful_upstream_response_preserved",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_host_nonce_shape",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_relay_request_exact_except_forced_option",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_accepted_response_equals_host",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_1_provider_response_except_checked_ids_indexes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_one_main_exchange",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_one_checkpoint_request",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_successful_upstream_response_preserved",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_host_nonce_shape",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_relay_request_exact_except_forced_option",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_accepted_response_equals_host",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_2_provider_response_except_checked_ids_indexes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_one_main_exchange",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_one_checkpoint_request",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_successful_upstream_response_preserved",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_host_nonce_shape",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_relay_request_exact_except_forced_option",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_accepted_response_equals_host",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_model_3_provider_response_except_checked_ids_indexes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_response_files_exact_manifest",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "all_main_exchanges_accounted_by_host_store",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "checkpoint_records_accounted_by_host_store",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_nonces_unique_across_all_model_responses",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_store_closed_session_binding",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_rows_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_unique_request_hashes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_0_one_original_model_call",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_0_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_0_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_0_closed_storage_envelope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_0_original_result_equals_checkpoint",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_1_one_original_model_call",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_1_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_1_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_1_closed_storage_envelope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_1_original_result_equals_checkpoint",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_2_one_original_model_call",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_2_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_2_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_2_closed_storage_envelope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_2_original_result_equals_checkpoint",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_3_one_original_model_call",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_3_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_3_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_3_closed_storage_envelope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_3_original_result_equals_checkpoint",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_4_one_original_model_call",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_4_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_4_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_4_closed_storage_envelope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_4_original_result_equals_checkpoint",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_5_one_original_model_call",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_5_original_request_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_5_stored_response_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_5_closed_storage_envelope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_5_original_result_equals_checkpoint",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "host_tool_response_files_exact_manifest",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "every_cached_tool_result_has_host_original",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "completed_tool_journal_exact_native_results",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "checkpoint_closed_envelope",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "checkpoint_fixed_format",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "checkpoint_host_authority_binding",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "session_records_pinned_framework",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "checkpoint_original_prompt",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "real_trial_does_not_claim_interrupted_recovery",
+      "status": "pass",
+      "required": true,
+      "category": "scope"
+    },
+    {
+      "name": "native_session_closed_no_injected_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "checkpoint_model_records_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_invocation_bound_to_task_prompt",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_0_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_0_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_0_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_0_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_0_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_0_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_0_original_user_event",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_model_event_exact_original_response",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_long_running_calls_not_enabled",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_1_calls_offered_only_to_this_agent",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_native_results_exact_original_cached_results",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_2_transfer_action_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_model_event_exact_original_response",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_long_running_calls_not_enabled",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_3_calls_offered_only_to_this_agent",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_native_results_exact_original_cached_results",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_transfer_action_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_4_single_native_transfer_target",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_5_legitimate_native_end",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_model_event_exact_original_response",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_long_running_calls_not_enabled",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_6_calls_offered_only_to_this_agent",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_native_results_exact_original_cached_results",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_7_transfer_action_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_model_event_exact_original_response",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_long_running_calls_not_enabled",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_8_calls_offered_only_to_this_agent",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_closed_fields",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_invocation",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_finite_timestamp",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_unique_id",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_no_remote_auth_or_state",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_node_fields_closed",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_agent_and_full_node_path",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_event_9_legitimate_native_end",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_session_last_time_matches_last_event",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_0_event_prefix_valid",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_0_history_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_0_wire_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_0_fixed_inventory",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_0_fixed_wire_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_0_fixed_native_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_1_event_prefix_valid",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_1_history_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_1_wire_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_1_fixed_inventory",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_1_fixed_wire_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_1_fixed_native_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_2_event_prefix_valid",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_2_history_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_2_wire_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_2_fixed_inventory",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_2_fixed_wire_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_2_fixed_native_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_3_event_prefix_valid",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_3_history_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_3_wire_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_3_fixed_inventory",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_3_fixed_wire_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_request_3_fixed_native_configuration",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_complete_answer_and_terminal",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "exactly_one_native_coordinator_executor_transfer",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "released_final_text_matches_native",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "receipt_sequence_arrival_order",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "receipt_monotonic_order",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "receipt_raw_body_hashes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "independent_receipt_decode_matches_driver",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "exactly_three_receiver_effects",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "each_outbound_text_contains_source_public_fields",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "finite_protected_spellings_absent_from_outbound_and_final",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "database_wal_header_supported",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "database_snapshot_integrity_check",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "database_original_bytes_unchanged_after_query",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "three_acknowledged_automatic_actions_no_manual_approval",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "database_action_attempts_match_original_effect_bytes",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "database_network_results_acknowledge_success",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_acknowledged_actions_equal_database",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "native_database_receipt_order_and_payloads_exact",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "driver_result_matches_summary_task_result",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "completed_reopen_same_result",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "completed_reopen_zero_new_working_model_requests",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "completed_reopen_zero_new_effects",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "revoked_reopen_refusal_and_authoritative_revocation",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "revoked_reopen_zero_inference",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "original_journals_both_available_after_cleanup",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "current_original_journals_match_driver_final_snapshot",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "completed_reopen_original_journals_unchanged",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "revoked_reopen_original_journals_unchanged",
+      "status": "pass",
+      "required": true,
+      "category": "outcome"
+    },
+    {
+      "name": "lifecycle_owned_processes_cleared",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "recorded_runtime_socket_nodes_absent",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "driver_receiver_thread_shutdown_recorded",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "driver_cleanup_and_source_stability_recorded",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    },
+    {
+      "name": "relay_process_stop_independently_observed",
+      "status": "unknown",
+      "required": false,
+      "category": "scope"
+    },
+    {
+      "name": "all_read_input_bytes_unchanged_during_review",
+      "status": "pass",
+      "required": true,
+      "category": "consistency"
+    }
+  ],
+  "inspection_sha256": "4ab775d5f4767ff952ba7d3cc6a7c76542ef3645d84fd0fd090d9734b9ede0d6",
+  "all_required_checks_passed": true,
+  "export_input_bindings": {
+    "protocol": {
+      "label": "protocol",
+      "bytes": 13419,
+      "sha256": "722d173c7870a37e2ab349f8a92a6f9a7a3e705d4dcca183338f77d7b07149ef"
+    },
+    "summary": {
+      "label": "summary",
+      "bytes": 12133,
+      "sha256": "a690176f5216ce93745a620f987326a669376f7d82c4678e140a9132cf7a6631"
+    },
+    "result": {
+      "label": "result",
+      "bytes": 557,
+      "sha256": "ae0a780e30f401a4c11655c3f3eed19814aac3dd442f455c735424cc8245b44d"
+    },
+    "replay": {
+      "label": "replay",
+      "bytes": 557,
+      "sha256": "ae0a780e30f401a4c11655c3f3eed19814aac3dd442f455c735424cc8245b44d"
+    },
+    "receipts": {
+      "label": "receipts",
+      "bytes": 1672,
+      "sha256": "c2c86b40e3ebfc3e245a24207eb7ebc06dafbcd9ec86fd10ae9f26724d84f265"
+    },
+    "driver_decoded_receipts": {
+      "label": "driver_decoded_receipts",
+      "bytes": 515,
+      "sha256": "a3b9d1c24e7d6e10b363a1cf3792c6a9a4af0b7a751915dc3cd91420c25de7f7"
+    },
+    "session_binding": {
+      "label": "session_binding",
+      "bytes": 294,
+      "sha256": "545a25d451c03868f207be9453d028d20d50cb84d9e5ffd452761279b8cdbbc6"
+    },
+    "native_checkpoint": {
+      "label": "native_checkpoint",
+      "bytes": 113535,
+      "sha256": "de2b98b841c03a106238cffe8af5ea7b4a5c31bf09b621db4e7bf327ec62a7fe"
+    },
+    "host_model_store": {
+      "label": "host_model_store",
+      "bytes": 1004,
+      "sha256": "d8c15dd47fccc3e7f7ed03c43de9164c6c01e7475457031895cc84ee22b8fa55"
+    },
+    "host_response_0": {
+      "label": "host_response_0",
+      "bytes": 996,
+      "sha256": "eb3ebb4f275d7b9f9a3f43eb19d55bc858220abc62bdfb85030ab2f03ffeb0af"
+    },
+    "host_response_1": {
+      "label": "host_response_1",
+      "bytes": 668,
+      "sha256": "b6abb89575c58cca630bd918e8b7684e4b6ecdd98264aefccf3fbe9c37138e6c"
+    },
+    "host_response_2": {
+      "label": "host_response_2",
+      "bytes": 1835,
+      "sha256": "5a218ec0ad318e37539f0a1255a65340d3e131e527728998c71bc42121daaad8"
+    },
+    "host_response_3": {
+      "label": "host_response_3",
+      "bytes": 742,
+      "sha256": "e8398c71f6c147dac236e253e8af1e54edc18825c6cd447e6dc7f81b7bf4b8f4"
+    },
+    "host_tool_store": {
+      "label": "host_tool_store",
+      "bytes": 1459,
+      "sha256": "257725d5baa99f315396e34aea240fc9d2a856de1ae5b994672d83f4b8d0a85c"
+    },
+    "host_tool_response_0": {
+      "label": "host_tool_response_0",
+      "bytes": 502,
+      "sha256": "bba7f04b340fd6bc778d0154d74ea326d977d3106695ac9a14e6a0a1cbe33e18"
+    },
+    "host_tool_response_1": {
+      "label": "host_tool_response_1",
+      "bytes": 820,
+      "sha256": "16725b5fe5155d8038f875d1d8b384371538a79f0be77b1feb9873b561413db3"
+    },
+    "host_tool_response_2": {
+      "label": "host_tool_response_2",
+      "bytes": 427,
+      "sha256": "9570d4c74cc20db65c93ef7b39663ac5b68886b475ffacccbe7f29a6901412ef"
+    },
+    "host_tool_response_3": {
+      "label": "host_tool_response_3",
+      "bytes": 889,
+      "sha256": "a8797899cd30ff74927d3a99a06e2c6c42936b1a59d65db85615418046a9d8e3"
+    },
+    "host_tool_response_4": {
+      "label": "host_tool_response_4",
+      "bytes": 887,
+      "sha256": "5f4092b335fb661c328f09a178aec19c7759d140c20654a60b3f97b26dcaaefe"
+    },
+    "host_tool_response_5": {
+      "label": "host_tool_response_5",
+      "bytes": 883,
+      "sha256": "16e566a2451a550b5c40caffe2b1c354dcad363dc959394e4640131912aaf284"
+    },
+    "relay_00001-judge": {
+      "label": "relay_00001-judge",
+      "bytes": 5111,
+      "sha256": "7408179248f2577ebb1ad6833b7013775ecdebec974174faa634e301021f4fe5"
+    },
+    "relay_00002-main": {
+      "label": "relay_00002-main",
+      "bytes": 4949,
+      "sha256": "fe88e624f5baaa2c5c29f173cef99ad39e7d8036199ddad98cb2e5d04c6313b0"
+    },
+    "relay_00003-judge": {
+      "label": "relay_00003-judge",
+      "bytes": 6035,
+      "sha256": "f8b98c214d24f1b80364f17c4fb623068166f98671e5a05ceb9a1dc4c18401c3"
+    },
+    "relay_00004-judge": {
+      "label": "relay_00004-judge",
+      "bytes": 5971,
+      "sha256": "d8c857f42531e3308c40efa55027a95ad7e21e5e33835a4d79b9fcb127999bfa"
+    },
+    "relay_00005-judge": {
+      "label": "relay_00005-judge",
+      "bytes": 5080,
+      "sha256": "e8b778cfbd702d34ed71720a5923de5afb4d0b30665dc638202395a3022ab3d6"
+    },
+    "relay_00006-judge": {
+      "label": "relay_00006-judge",
+      "bytes": 5958,
+      "sha256": "c979b16c2c71d78b64f16a1625ecf769c32c042e2f9b0593012ab307cb671377"
+    },
+    "relay_00007-judge": {
+      "label": "relay_00007-judge",
+      "bytes": 5988,
+      "sha256": "70a631434c6715b6cf190e63857fb128a2b30b78000b42a250c5d4267cdd57c4"
+    },
+    "relay_00008-judge": {
+      "label": "relay_00008-judge",
+      "bytes": 5997,
+      "sha256": "5d665ea2e87a22aa8477048ce62be1bfd8982a7c5f3b02f96957593813302cc9"
+    },
+    "relay_00009-main": {
+      "label": "relay_00009-main",
+      "bytes": 7352,
+      "sha256": "42fe67eebace6f694b39034635019be0fc96b52c24921c3c5fdf15c48cf31193"
+    },
+    "relay_00010-judge": {
+      "label": "relay_00010-judge",
+      "bytes": 6062,
+      "sha256": "87c7d409df7dbc536318a6f4d8d880830e414fa812e62d7c80255785c79f064f"
+    },
+    "relay_00011-judge": {
+      "label": "relay_00011-judge",
+      "bytes": 5967,
+      "sha256": "dc3b27c22fb439731fca00a43c37241baab7d7923a7b173d3a967ba6b47ce387"
+    },
+    "relay_00012-judge": {
+      "label": "relay_00012-judge",
+      "bytes": 6053,
+      "sha256": "bcd486cd5d97044f81b4e395ea64bb14d77da101db629bcd8392091529ec8b60"
+    },
+    "relay_00013-judge": {
+      "label": "relay_00013-judge",
+      "bytes": 6035,
+      "sha256": "6ddc1a6b7d65532772bfc8f2f51ae434791f973729a9f17815c4aa73365e5e46"
+    },
+    "relay_00014-main": {
+      "label": "relay_00014-main",
+      "bytes": 14108,
+      "sha256": "dc0675203e2b4eeac5a47ffc16d1b816eae6b36f76c7901b26b01047d46240e2"
+    },
+    "relay_00015-judge": {
+      "label": "relay_00015-judge",
+      "bytes": 6275,
+      "sha256": "069be3bf3cd8613a53c3c532e4fc2a061ff5c36fe4bb396bcc19f1ecacc165f0"
+    },
+    "relay_00016-judge": {
+      "label": "relay_00016-judge",
+      "bytes": 6275,
+      "sha256": "7d083d4a2bf0ca9e67511c6d035e914358233b6f34e600d395219f4a1d5fe621"
+    },
+    "relay_00017-judge": {
+      "label": "relay_00017-judge",
+      "bytes": 6194,
+      "sha256": "a33f7139b254daafb08441c647c233c3e7415f7c202783b2345ff050109edff5"
+    },
+    "relay_00018-judge": {
+      "label": "relay_00018-judge",
+      "bytes": 6389,
+      "sha256": "430b15efad2c937f50fe163841da36a6948e0c43465790b3848b2c0b3c5b31bb"
+    },
+    "relay_00019-judge": {
+      "label": "relay_00019-judge",
+      "bytes": 6416,
+      "sha256": "5f0bc9e2a9328fb3a6974db10633c1165cdbb3194036ced75d8274e6621ef659"
+    },
+    "relay_00020-judge": {
+      "label": "relay_00020-judge",
+      "bytes": 6627,
+      "sha256": "f9941fcc57c669fa1139344f51f81c43dede2dbd403540c7afb0704685653c8d"
+    },
+    "relay_00021-judge": {
+      "label": "relay_00021-judge",
+      "bytes": 6593,
+      "sha256": "ab67ce9d7d974bf85228baf9ae83e9163b65c64a69c8dd038311d10413a34ab5"
+    },
+    "relay_00022-judge": {
+      "label": "relay_00022-judge",
+      "bytes": 6584,
+      "sha256": "5c2b07d55f880eb9e2b74a93ea90c6fb09ba8c95468b610fb9a3574f54c86256"
+    },
+    "relay_00023-judge": {
+      "label": "relay_00023-judge",
+      "bytes": 6577,
+      "sha256": "0e07791ee03004a3cafc4ef740752ce8f5eddee11f2454fa4d12f9e9eb947ff6"
+    },
+    "relay_00024-judge": {
+      "label": "relay_00024-judge",
+      "bytes": 6863,
+      "sha256": "648164ae5b8a77f95b63df93a0c3e0b5fb9fe1d34c9bcf9f9af9084931c37c41"
+    },
+    "relay_00025-main": {
+      "label": "relay_00025-main",
+      "bytes": 17592,
+      "sha256": "dec7ed434292e99da534745cc168a45b396f5d3f6b1f061a954173c4152ebb4e"
+    },
+    "relay_00026-judge": {
+      "label": "relay_00026-judge",
+      "bytes": 6839,
+      "sha256": "3f4aac3b53c284bc5f6e23b9807bd46b8efd8809f7413a6258f2960ec8294245"
+    },
+    "relay_00027-judge": {
+      "label": "relay_00027-judge",
+      "bytes": 6679,
+      "sha256": "1dce3aef07be1c42f57006bd30ec8e726f90c6c9d4aa4b3af82da70de99ea0e0"
+    },
+    "relay_00028-judge": {
+      "label": "relay_00028-judge",
+      "bytes": 6699,
+      "sha256": "a790a851d8135b8bf23b9562d351c55c349d018c49536f7fa4008c5c02fc5ffc"
+    },
+    "relay_00029-judge": {
+      "label": "relay_00029-judge",
+      "bytes": 6882,
+      "sha256": "971d56b980cc750e555fd1e84234f479a3fb6517a1501b7c5d36e5b96b7f9691"
+    },
+    "relay_00030-judge": {
+      "label": "relay_00030-judge",
+      "bytes": 6861,
+      "sha256": "bde92510425237266ab68cccbc0dd59f0e11e1263d87684cf752ba4eda8667c5"
+    },
+    "relay_00031-judge": {
+      "label": "relay_00031-judge",
+      "bytes": 6867,
+      "sha256": "12c1c5472dc19b6236a1e4e0785b6e890d50ebb90eaf648a954fb0b6ec7d5364"
+    },
+    "relay_00032-judge": {
+      "label": "relay_00032-judge",
+      "bytes": 5147,
+      "sha256": "7b4a64dde9942b065a2e58ec832a4e254c0c2308a591d98b14722a7374f2d054"
+    },
+    "relay_00033-judge": {
+      "label": "relay_00033-judge",
+      "bytes": 6622,
+      "sha256": "9254ef6bb550ef5a5fa5f9c3bb3db7bfdccc29b63828ac66e9a5e571c99b52de"
+    },
+    "relay_00034-judge": {
+      "label": "relay_00034-judge",
+      "bytes": 6623,
+      "sha256": "3d31d03a450b97c1aba0174f949d88f8e3d7148768a26e368ad78ba09884cd41"
+    },
+    "relay_00035-judge": {
+      "label": "relay_00035-judge",
+      "bytes": 6817,
+      "sha256": "1dbc01ccb2894eac3e360b25500f80a6c3f29fadd2d120381846d4131022a0eb"
+    },
+    "relay_00036-judge": {
+      "label": "relay_00036-judge",
+      "bytes": 6810,
+      "sha256": "7dd6e7f6b24e37c8f388ab86ab7f465d0fa4e6fb97718a946327f966ca3cfd09"
+    },
+    "relay_00037-judge": {
+      "label": "relay_00037-judge",
+      "bytes": 6858,
+      "sha256": "a37c154e6f5fb955c099355c64c103bccc5e582677917ede203d12871e5f4905"
+    }
+  },
+  "native_rejection_probes": [
+    {
+      "name": "joint_tool_result_and_native_event",
+      "passed": true,
+      "new_provider_requests": 0,
+      "business_receipts_unchanged": true
+    },
+    {
+      "name": "joint_completed_answer_and_model_record",
+      "passed": true,
+      "new_provider_requests": 0,
+      "business_receipts_unchanged": true
+    },
+    {
+      "name": "new_turn_reuses_forged_completed_prefix",
+      "passed": true,
+      "new_provider_requests": 0,
+      "business_receipts_unchanged": true
+    },
+    {
+      "name": "missing_committed_model_record",
+      "passed": true,
+      "new_provider_requests": 0,
+      "business_receipts_unchanged": true
+    },
+    {
+      "name": "structurally_valid_unrecorded_request",
+      "passed": true,
+      "new_provider_requests": 0,
+      "business_receipts_unchanged": true
+    }
+  ],
+  "host_failure_window_probes": [
+    {
+      "name": "response_blob_persisted_but_index_commit_failed",
+      "passed": true,
+      "draft_count": 1
+    },
+    {
+      "name": "client_disconnect_after_request_before_durable_reply",
+      "passed": true,
+      "draft_count": 1
+    }
+  ],
+  "note": "The original model/tool contents are synthetic. Review has one optional unknown for relay shutdown, separately verified by root and recorded in result.json."
+}
