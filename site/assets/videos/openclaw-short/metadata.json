@@ -1,0 +1,101 @@
+{
+  "id": "openclaw-short",
+  "title": "元星木 / Yuanxingmu — OpenClaw recorded task excerpts",
+  "created_utc": "2026-09-13T11:37:24.804795+00:00",
+  "duration_seconds": 30,
+  "width": 1080,
+  "height": 960,
+  "fps": 25,
+  "audio": false,
+  "source": {
+    "path": "../openclaw-protected-fields/openclaw-protected-fields.mp4",
+    "url": "https://yh-l20.github.io/yuanxingmu/assets/videos/openclaw-protected-fields/openclaw-protected-fields.mp4",
+    "bytes": 5243945,
+    "sha256": "2c9630ad69cb894a0bc62b236bb920a276d20259a06bc4d32789a88853672549",
+    "manifest_sha256": "f13b9bb32d4864310830a05c8b91021fd1b6ce73133313a7ba75339c93e5f900",
+    "source_commit": "c83add3ef0aea291bc7a7dbbb1b7a7f11acdb425",
+    "runtime_version": "0.7.0a1",
+    "framework": "OpenClaw 2026.9.4",
+    "model": "glm-5.2"
+  },
+  "evidence_url": "https://github.com/yh-l20/yuanxingmu/tree/main/docs/evidence/openclaw-protected14-2026-09-12",
+  "timeline": [
+    {
+      "source_start_seconds": 18,
+      "source_end_seconds": 24,
+      "output_start_seconds": 0,
+      "output_end_seconds": 6,
+      "speed": 1.0,
+      "caption_zh": "先约定任务范围，再交给 Agent",
+      "caption_en": "Set the scope once. Then let the agent work."
+    },
+    {
+      "source_start_seconds": 40,
+      "source_end_seconds": 45,
+      "output_start_seconds": 6,
+      "output_end_seconds": 11,
+      "speed": 1.0,
+      "caption_zh": "明确标记的底价，先隐藏",
+      "caption_en": "Explicitly marked internal price: hidden before the model."
+    },
+    {
+      "source_start_seconds": 45,
+      "source_end_seconds": 50,
+      "output_start_seconds": 11,
+      "output_end_seconds": 16,
+      "speed": 1.0,
+      "caption_zh": "资料夹带指令？扣留正文，继续工作",
+      "caption_en": "Injected instructions withheld. Authorized work continues."
+    },
+    {
+      "source_start_seconds": 61,
+      "source_end_seconds": 71,
+      "output_start_seconds": 16,
+      "output_end_seconds": 26,
+      "speed": 1.0,
+      "caption_zh": "发消息、传文件、填表：三份真实收据",
+      "caption_en": "Message. Upload. Form. Three actual local receipts."
+    },
+    {
+      "source_start_seconds": 76,
+      "source_end_seconds": 80,
+      "output_start_seconds": 26,
+      "output_end_seconds": 30,
+      "speed": 1.0,
+      "caption_zh": "这次任务，中途不用逐项批准",
+      "caption_en": "This recorded task completed without per-action approval."
+    }
+  ],
+  "edits": [
+    "Cuts at original speed, no runtime replay or model rerun.",
+    "Retained complete original 1440x1000 UI viewport; replaced only the original film editorial footer with a bilingual editorial footer.",
+    "Downscaled 1440x1280 to 1080x960, re-encoded with H.264, removed audio.",
+    "All captions are outside the original UI; no result, message or receipt was synthesized."
+  ],
+  "limits": [
+    "One synthetic task and controlled local receivers; not a production reliability result.",
+    "30 seconds is the excerpt duration, not the task execution time. Original timestamp anomaly remains disclosed in full source evidence.",
+    "The recording shows an already authorized task, not the act of selecting permissions.",
+    "Protection shown covers explicitly marked fields; no claim about arbitrary secrets or all attacks.",
+    "Recorded with runtime 0.7.0a1; not validation of the current release."
+  ],
+  "files": {
+    "overview.gif": {
+      "bytes": 1150996,
+      "sha256": "7a1cd981adf2325b52ba2c1891415a1ef13dd3acbc35d64a1dff045331889dce"
+    },
+    "overview.mp4": {
+      "bytes": 761205,
+      "sha256": "2ce8662fc3e2450a89478acd28729e584fdcc805f9b316609b533cce07ce1214"
+    },
+    "poster.jpg": {
+      "bytes": 132659,
+      "sha256": "f39076eb2b39aeb8e6a1fadb27f7bbec21acfe906dd29fb53acf75fdd4cc9658"
+    }
+  },
+  "gif": {
+    "created": true,
+    "bytes": 1150996,
+    "published": true
+  }
+}

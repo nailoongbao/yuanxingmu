@@ -270,3 +270,26 @@
 .start-v06-guide .start-latest-result p{margin:10px 0}
 @media(max-width:899px){.home-v06 .home-latest-layout{gap:30px}.home-v06 .home-latest-copy h2{font-size:34px}.home-v06 .home-latest-copy>p:not(.eyebrow){font-size:14px}}
 @media(max-width:639px){.home-v06 .home-latest-film{padding:40px 0 20px}.home-v06 .home-latest-layout{grid-template-columns:1fr;gap:26px}.home-v06 .home-latest-copy h2{font-size:33px}.home-v06 .home-latest-copy h2 br{display:initial}.home-v06 .home-latest-copy>.button{width:100%;justify-content:space-between}.home-v06 .home-latest-copy>p:not(.eyebrow){font-size:15px}.home-v06 .home-latest-details{font-size:13px}.layers-page .layers-latest-demo{padding-bottom:20px}}
+
+/* First-visit path: identify the supported agents, show the native UI, install. */
+.first-visit .main-nav{gap:24px}
+.first-visit .hero{grid-template-columns:1fr 1fr;gap:44px;min-height:690px;padding-block:40px}
+.first-visit .hero-copy{padding:20px 0 28px;min-width:0}
+.first-visit h1{font-size:clamp(40px,4.1vw,59px);letter-spacing:-1.8px}
+.first-visit .hero-eyebrow{font-size:12px;letter-spacing:1px;line-height:1.8;margin-top:26px}
+.first-visit .hero-description{max-width:530px;font-size:17px;line-height:1.95;margin-top:22px}
+.first-visit .hero-actions{gap:23px;margin-top:28px;flex-wrap:wrap}
+.first-visit .hero-footnote{font-size:12px;line-height:1.8}
+.first-visit .validation-note{max-width:490px;font-size:12px;line-height:1.9}
+.first-visit .home-evidence-note a{color:#c7f8b6;text-decoration:underline;text-underline-offset:4px}
+.first-look{margin:0;min-width:0;overflow:hidden;border:1px solid #758d8566;border-radius:12px;background:#0d202b;box-shadow:0 22px 65px #0003;scroll-margin-top:30px}
+.first-look-bar{display:flex;align-items:center;gap:10px;padding:15px 18px;font-size:12px;color:#cbdad4;border-bottom:1px solid #647e7c55}
+.first-look-bar>span:last-child{margin-left:auto;font-family:var(--mono);font-size:11px;color:#8fa9ad}
+.first-look video{display:block;width:100%;height:auto;background:#0a1520;aspect-ratio:1080/960}
+.first-look figcaption{padding:17px 19px 10px;font-size:15px;line-height:1.85;color:#e5efea}
+.first-look figcaption span{font-size:11px;color:#a2b8be}
+.first-look-links{display:flex;flex-wrap:wrap;gap:9px 19px;padding:0 19px 18px;font-size:11px;line-height:1.8;color:#c7f8b6}
+.first-look-links a{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:1199px){.first-visit .main-nav{gap:17px;font-size:12px}.first-visit .hero{gap:28px}.first-visit h1{font-size:46px}}
+@media(max-width:899px){.first-visit .hero{grid-template-columns:1fr;gap:28px;padding-block:35px 42px;min-height:0}.first-visit .hero-copy{padding:0}.first-visit .hero-description{max-width:650px}.first-look{max-width:620px;width:100%;margin:auto}.first-visit h1{font-size:52px}.first-visit .main-nav{gap:15px}.first-visit .hero-footnote{margin-top:18px}}
+@media(max-width:639px){.first-visit h1{font-size:clamp(32px,8.8vw,44px);white-space:normal;letter-spacing:-1px}.first-visit .hero-eyebrow{font-size:11px;margin-top:22px}.first-visit .hero-description{font-size:16px;margin-top:18px}.first-visit .hero-actions{gap:16px;margin-top:23px}.first-visit .hero-footnote{font-size:11px}.first-visit .validation-note{font-size:11px}.first-look-bar{padding:12px;font-size:11px}.first-look figcaption{padding:14px 13px 8px;font-size:13px}.first-look figcaption span{font-size:10px}.first-look-links{padding:0 13px 15px;font-size:11px}.first-visit .hero-principles p{font-size:11px;line-height:1.8}.first-visit .hero-principles small{font-size:6px}}
