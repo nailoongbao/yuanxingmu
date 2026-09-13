@@ -298,7 +298,7 @@ def _response(raw: bytes, content_type: str, *, host_ids=False):
 
 
 class ModelStore:
-    def __init__(self, private_directory, session_id):
+    def __init__(self, private_directory, session_id, *, create=True):
         if (fcntl is None or os.name != "posix" or not hasattr(os, "O_NOFOLLOW")
                 or not hasattr(os, "O_DIRECTORY")):
             _fail("sdk_model_secure_storage_unavailable")
@@ -320,7 +320,7 @@ class ModelStore:
         self._directory_identity = None
         self._lock_identity = None
         try:
-            with self._directory(create=True) as (directory, created):
+            with self._directory(create=create) as (directory, created):
                 if created:
                     lock = os.open(_LOCK, self._flags(os.O_WRONLY | os.O_CREAT | os.O_EXCL), 0o600, dir_fd=directory)
                     try:
@@ -540,24 +540,67 @@ class ModelStore:
         if type(ticket) is not ModelTicket or ticket._owner is not self._owner:
             _fail("sdk_model_invalid_ticket")
 
-    def begin(self, raw_request: bytes) -> ModelTicket:
+    def _committed_response(self, directory, record):
+        if record["state"] != "complete":
+            _fail("sdk_model_outcome_unknown")
+        replay = self._read_file(directory, self._response_name(record["request_sha256"]), limit=MAX_BODY_BYTES)
+        if hashlib.sha256(replay).hexdigest() != record["response_sha256"]:
+            _fail("sdk_model_response_changed")
+        _response(replay, "application/json", host_ids=True)
+        return replay
+
+    def lookup(self, raw_request: bytes) -> bytes:
+        """Read a committed reply without reserving a flight or making inference.
+
+        Missing, pending and unknown requests are refusals, never cache misses.
+        This cannot release or replace any existing in-flight ticket.
+        """
+        _request(raw_request)
+        key = hashlib.sha256(raw_request).hexdigest()
+        with self._locked() as directory:
+            state, _ = self._load_state(directory)
+            record = next((r for r in state["records"] if r["request_sha256"] == key), None)
+            if record is None:
+                _fail("sdk_model_record_missing")
+            if record["request_bytes"] != len(raw_request):
+                _fail("sdk_model_invalid_state")
+            return self._committed_response(directory, record)
+
+    def lookup_tool_call(self, nonce: str) -> dict:
+        """Resolve one unique host-issued call, only from committed responses."""
+        if type(nonce) is not str or _HOST_ID.fullmatch(nonce) is None:
+            _fail("sdk_model_tool_call_missing")
+        with self._locked() as directory:
+            state, _ = self._load_state(directory)
+            found = None
+            for record in state["records"]:
+                if record["state"] != "complete":
+                    continue
+                value = _json(self._committed_response(directory, record))
+                for call in value["choices"][0]["message"].get("tool_calls") or []:
+                    if call["id"] == nonce:
+                        if found is not None:
+                            _fail("sdk_model_duplicate_tool_id")
+                        found = call
+            if found is None:
+                _fail("sdk_model_tool_call_missing")
+            return found
+
+    def begin(self, raw_request: bytes, *, stop_on_unknown=False) -> ModelTicket:
         _request(raw_request)
         key = hashlib.sha256(raw_request).hexdigest()
         with self._locked() as directory:
             if self._inflight is not None:
                 _fail("sdk_model_busy")
             state, total = self._load_state(directory)
+            if stop_on_unknown and any(r["state"] != "complete" for r in state["records"]):
+                _fail("sdk_model_outcome_unknown")
             record = next((r for r in state["records"] if r["request_sha256"] == key), None)
             replay = None
             if record is not None:
                 if record["request_bytes"] != len(raw_request):
                     _fail("sdk_model_invalid_state")
-                if record["state"] != "complete":
-                    _fail("sdk_model_outcome_unknown")
-                replay = self._read_file(directory, self._response_name(key), limit=MAX_BODY_BYTES)
-                if hashlib.sha256(replay).hexdigest() != record["response_sha256"]:
-                    _fail("sdk_model_response_changed")
-                _response(replay, "application/json", host_ids=True)
+                replay = self._committed_response(directory, record)
             else:
                 if any(r["state"] == "pending" for r in state["records"]):
                     _fail("sdk_model_busy")

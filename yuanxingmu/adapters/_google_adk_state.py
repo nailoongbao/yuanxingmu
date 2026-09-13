@@ -142,6 +142,8 @@ def _session(loop, native):
 
 
 def _records(loop):
+    # This establishes local consistency only. verify_host_history separately
+    # binds these untrusted copies to host-owned model and tool originals.
     from .google_adk_runtime import TRANSFER_TOOL, _check_action_outcome
     all_ids = set()
     for row in loop.checkpoint.value["records"]:

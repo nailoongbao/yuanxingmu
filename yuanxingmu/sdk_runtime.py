@@ -387,12 +387,18 @@ def run_session(*, profile: Path, sdk_python: Path, session: str, prompt: str,
                 operations = {"read", "describe", "action_targets", "propose_action", "draft_email"}
                 if automatic_actions:
                     operations.add("request_action")
-                broker.serve(manifest["task_id"], runtime / "broker.sock", allowed_operations=operations)
+                from .sdk_model_store import ModelStore
+                store = ModelStore(folder / "model-responses", binding["session_id"], create=not resume)
+                if framework == "google_adk":
+                    from .sdk_tool_store import SdkToolServer
+                    stack.enter_context(SdkToolServer(broker, manifest["task_id"], runtime / "broker.sock",
+                        folder / "tool-results", binding["session_id"], store,
+                        automatic_actions=automatic_actions, resume=resume))
+                else:
+                    broker.serve(manifest["task_id"], runtime / "broker.sock", allowed_operations=operations)
                 broker.serve_reviews(manifest["task_id"], runtime / "review.sock")
                 operator = _Operator(profile, manifest, broker, lifecycle, cancelled, framework=framework)
                 stack.callback(operator.close)
-                from .sdk_model_store import ModelStore
-                store = ModelStore(folder / "model-responses", binding["session_id"])
                 guard = _SdkOutputGuard(broker, manifest["task_id"], manifest["model"]["id"], max_tokens,
                                         automatic_actions=automatic_actions, framework=framework)
                 stack.enter_context(HostModel(runtime, model_url=manifest["model"]["url"],

@@ -1,8 +1,10 @@
-"""Atomic, bounded native ADK sessions and original host-response journals.
+"""Atomic, bounded native ADK snapshots with untrusted response copies.
 
 An interrupted invocation is replayed by the real Runner from its saved
 session prefix. Earlier native events, including failure events, are retained
 as attempts; replay changes neither the host task nor its action budget.
+Structural consistency is not authenticity: the worker verifies every saved
+response and result against the host's read-only original records before use.
 """
 from copy import deepcopy
 import hashlib

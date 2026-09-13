@@ -116,13 +116,14 @@ class _UnixHTTP(http.client.HTTPConnection):
         self.sock.connect(self.path)
 
 
-def model_request(config, payload):
+def model_request(config, payload, *, replay_only=False):
     body = json_bytes(payload)
     if len(body) > MAX_JSON:
         raise ValueError("sdk_model_request_too_large")
     connection = _UnixHTTP(config["model_socket"])
     try:
-        connection.request("POST", "/v1/chat/completions", body=body, headers={"Content-Type": "application/json"})
+        path = "/v1/chat/completions/replay" if replay_only else "/v1/chat/completions"
+        connection.request("POST", path, body=body, headers={"Content-Type": "application/json"})
         response = connection.getresponse()
         raw = response.read(MAX_JSON + 1)
         if response.status != 200 or len(raw) > MAX_JSON:

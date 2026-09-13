@@ -420,11 +420,12 @@ class SdkModelBridgeTests(unittest.TestCase):
         self.body = json.dumps({"model": "chosen-model", "max_tokens": 512,
             "messages": [{"role": "user", "content": "synthetic request"}]}).encode()
 
-    def request(self):
+    def request(self, *, replay_only=False):
         from tests.test_yuanxingmu_gateway_network import _UnixHTTP
         connection = _UnixHTTP(self.folder / "model.sock")
         try:
-            connection.request("POST", "/v1/chat/completions", body=self.body)
+            path = "/v1/chat/completions/replay" if replay_only else "/v1/chat/completions"
+            connection.request("POST", path, body=self.body)
             response = connection.getresponse()
             return response.status, response.read()
         finally:
@@ -448,6 +449,42 @@ class SdkModelBridgeTests(unittest.TestCase):
         self.assertEqual(self.request()[0], 502)
         self.provider.receipts.get(timeout=1)
         self.assertEqual(self.request()[0], 409)
+        self.assertTrue(self.provider.receipts.empty())
+
+    def test_lookup_route_missing_and_unknown_never_infers_or_registers_requests(self):
+        self.assertEqual(self.request(replay_only=True)[0], 409)
+        self.assertTrue(self.provider.receipts.empty())
+        state = self.store.directory / "state.json"
+        self.assertEqual(json.loads(state.read_bytes())["records"], [])
+        self.fail_provider = True
+        self.assertEqual(self.request()[0], 502)
+        self.provider.receipts.get(timeout=1)
+        before = state.read_bytes()
+        self.assertEqual(self.request(replay_only=True)[0], 409)
+        self.assertEqual(state.read_bytes(), before)
+        self.assertTrue(self.provider.receipts.empty())
+
+    def test_lookup_route_replays_exact_reply_and_enforces_current_revocation(self):
+        status, first = self.request()
+        self.assertEqual(status, 200)
+        self.provider.receipts.get(timeout=1)
+        with patch.object(self.store, "begin", side_effect=AssertionError("lookup reserved a model call")), \
+                patch.object(self.store, "finish", side_effect=AssertionError("lookup released a model call")):
+            self.assertEqual(self.request(replay_only=True), (200, first))
+            self.broker.revoke("one-task")
+            status, denied = self.request(replay_only=True)
+            self.assertEqual(status, 403)
+            self.assertEqual(json.loads(denied)["error"], "model_replay_currently_denied")
+        self.assertTrue(self.provider.receipts.empty())
+
+    def test_lookup_route_current_guard_rewrite_never_claims_to_be_original(self):
+        self.assertEqual(self.request()[0], 200)
+        self.provider.receipts.get(timeout=1)
+        with patch.object(self.guard, "preflight", return_value=None), \
+                patch.object(self.guard, "guard", return_value=b'{"synthetic":"withheld"}'):
+            status, body = self.request(replay_only=True)
+        self.assertEqual(status, 403)
+        self.assertNotIn(b"withheld", body)
         self.assertTrue(self.provider.receipts.empty())
 
     def test_journal_finish_fault_does_not_skip_connection_cleanup(self):

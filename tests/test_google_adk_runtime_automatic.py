@@ -69,7 +69,7 @@ class GoogleAdkAutomaticTests(GoogleAdkFixture, unittest.TestCase):
         def request(operation, *args, **kwargs):
             nonlocal dropped
             result = original(operation, *args, **kwargs)
-            if operation == "request_action" and not dropped:
+            if operation == "sdk_tool" and kwargs["call"]["op"] == "request_action" and not dropped:
                 dropped = True
                 raise OSError("fixture_lost_host_reply")
             return result
@@ -94,7 +94,7 @@ class GoogleAdkAutomaticTests(GoogleAdkFixture, unittest.TestCase):
 
         def request(operation, *args, **kwargs):
             nonlocal failed
-            if operation == "request_action" and kwargs["proposal"]["payload"]["body"] == "second" and not failed:
+            if operation == "sdk_tool" and kwargs["call"]["op"] == "request_action" and kwargs["call"]["proposal"]["payload"]["body"] == "second" and not failed:
                 failed = True
                 raise OSError("fixture_interrupted_second_call")
             return original(operation, *args, **kwargs)
@@ -121,11 +121,11 @@ class GoogleAdkAutomaticTests(GoogleAdkFixture, unittest.TestCase):
 
         def request(operation, *args, **kwargs):
             nonlocal running
-            if operation != "request_action":
+            if operation != "sdk_tool" or kwargs["call"]["op"] != "request_action":
                 return original_request(operation, *args, **kwargs)
             running += 1
             self.assertEqual(running, 1)
-            entered.append(kwargs["proposal"]["payload"]["body"])
+            entered.append(kwargs["call"]["proposal"]["payload"]["body"])
             try:
                 return original_request(operation, *args, **kwargs)
             finally:
@@ -151,7 +151,7 @@ class GoogleAdkAutomaticTests(GoogleAdkFixture, unittest.TestCase):
         def request(operation, *args, **kwargs):
             nonlocal revoked
             result = original(operation, *args, **kwargs)
-            if operation == "request_action" and not revoked:
+            if operation == "sdk_tool" and kwargs["call"]["op"] == "request_action" and not revoked:
                 revoked = True
                 self.broker.authority.revoke(self.task)
             return result
@@ -218,7 +218,7 @@ class GoogleAdkAutomaticTests(GoogleAdkFixture, unittest.TestCase):
         original, calls = self.runtime.request, []
 
         def request(operation, *args, **kwargs):
-            calls.append((operation, kwargs["timeout_seconds"]))
+            calls.append((operation, kwargs["call"]["op"], kwargs["timeout_seconds"]))
             return original(operation, *args, **kwargs)
 
         self.responses.extend([completion(tool_call("read", "yuanxingmu_read", {"resource": "note"})),
@@ -227,4 +227,7 @@ class GoogleAdkAutomaticTests(GoogleAdkFixture, unittest.TestCase):
                                    tool_call("automatic", "yuanxingmu_request_action", self.proposal("automatic"))), final_response()])
         with patch.object(self.runtime, "request", request):
             self.runtime.run_session(self.config)
-        self.assertEqual(calls, [("read", 120), ("propose_action", 120), ("request_action", 120)])
+        self.assertTrue(all(timeout == 120 for _, _, timeout in calls))
+        self.assertEqual([name for operation, name, _ in calls if operation == "sdk_tool"],
+                         ["read", "propose_action", "request_action"])
+        self.assertTrue(any(operation == "sdk_tool_result" for operation, _, _ in calls))

@@ -12,7 +12,6 @@ import argparse
 import asyncio
 from contextlib import aclosing, redirect_stderr, redirect_stdout
 from copy import deepcopy
-import hashlib
 from importlib.metadata import version
 import json
 import os
@@ -39,7 +38,7 @@ from ._google_adk_checkpoint import Checkpoint
 from ._openai_agents_schema import inline_model_schema
 from ._runtime_support import checked_config, checked_text, json_bytes, load_json, model_request, read_json
 from ._schemas import ClosedModel, FormProposal, MessageProposal, SCHEMAS, UploadProposal
-from .client import DESCRIPTIONS, NativeTools, PROPOSALS, TOOL_NAMES, _arguments, decode_arguments, encode_result
+from .client import DESCRIPTIONS, NativeTools, TOOL_NAMES, _arguments, decode_arguments, encode_result
 
 
 SDK_VERSION = "2.9.0"
@@ -61,6 +60,7 @@ INSTRUCTIONS = {
               "within the host's existing scope. Report returned outcomes accurately."}
 EXECUTOR_DESCRIPTION = "Prepare reviewed actions or perform actions within the existing host scope; retain the same authority and budget."
 STOP_REASONS = {"sdk_action_unconfirmed", "sdk_host_stopped", "sdk_checkpoint_response_changed",
+                "sdk_checkpoint_tool_result_changed", "sdk_host_tool_result_unavailable",
                 "sdk_replayed_tool_no_longer_allowed", "sdk_tool_dispatch_failed", "sdk_model_dispatch_failed",
                 "sdk_native_event_changed", "sdk_checkpoint_write_failed", "sdk_max_steps_reached"}
 
@@ -85,23 +85,32 @@ def _check_action_outcome(result):
         raise RuntimeError("sdk_host_stopped")
 
 
-class _RuntimeTools(NativeTools):
-    def request_key(self, operation, framework, tool_call_id):
-        if operation not in {*PROPOSALS, "request_action"} or framework != "google_adk":
-            raise ValueError("sdk_invalid_request_context")
-        if not checked_text(tool_call_id, 512):
-            raise ValueError("sdk_host_nonce_required")
-        namespace = "automatic" if operation == "request_action" else "reviewed"
-        binding = ["yuanxingmu-google-adk-" + namespace + "-v1", self.session_id, operation, tool_call_id]
-        return "adk_" + namespace + "_v1_" + hashlib.sha256(json_bytes(binding)).hexdigest()
+def _host_call(name, arguments):
+    operation = "request_action" if name == AUTOMATIC_TOOL else BY_NAME[name]
+    fields = _arguments("propose_action" if operation == "request_action" else operation, arguments)
+    return {"op": operation, **fields}
 
-    def invoke(self, operation, arguments, *, framework, tool_call_id=None):
-        if operation not in OPERATIONS or framework != "google_adk":
-            raise ValueError("sdk_invalid_native_operation")
-        fields = _arguments(operation, arguments)
-        if operation in PROPOSALS:
-            fields["request_key"] = self.request_key(operation, framework, tool_call_id)
-        return request(operation, socket_path=self.socket_path, timeout_seconds=SDK_RPC_TIMEOUT_SECONDS, **fields)
+
+def _original_host_result(envelope, *, replay_only=False):
+    """Accept only the host's original result, with current refusal enforced."""
+    if type(envelope) is not dict:
+        raise RuntimeError("sdk_host_tool_result_unavailable")
+    _check_action_outcome(encode_result(envelope))
+    expected = {"allowed", "result"} | (set() if replay_only else {"current"})
+    if (set(envelope) != expected or envelope["allowed"] is not True
+            or type(envelope["result"]) is not dict or type(envelope["result"].get("allowed")) is not bool):
+        raise RuntimeError("sdk_host_tool_result_unavailable")
+    original = envelope["result"]
+    encoded = encode_result(original)
+    _check_action_outcome(encoded)
+    if not replay_only:
+        current = envelope["current"]
+        if type(current) is not dict or type(current.get("allowed")) is not bool:
+            raise RuntimeError("sdk_host_tool_result_unavailable")
+        _check_action_outcome(encode_result(current))
+        if current.get("allowed") is False and original.get("allowed") is not False:
+            raise RuntimeError("sdk_replayed_tool_no_longer_allowed")
+    return encoded
 
 
 class _BrokerTool(BaseTool):
@@ -190,7 +199,7 @@ class _SessionService(InMemorySessionService):
 class _Loop:
     def __init__(self, config, checkpoint):
         self.config, self.checkpoint = config, checkpoint
-        self.client = _RuntimeTools(config["broker_socket"], config["session_id"])
+        self.client = NativeTools(config["broker_socket"], config["session_id"])
         self.failed, self.failure_reason = False, None
         self.condition = asyncio.Condition()
         self.dispatch_index = 0
@@ -265,7 +274,7 @@ class _Loop:
             if name != TRANSFER_TOOL:
                 _arguments("propose_action" if name == AUTOMATIC_TOOL else BY_NAME[name], payload)
             result.append({"id": nonce, "name": name, "arguments": payload})
-        if any(call["name"] == TRANSFER_TOOL for call in result) and (len(result) != 1 or content):
+        if any(call["name"] == TRANSFER_TOOL for call in result) and len(result) != 1:
             raise ValueError("sdk_transfer_mixed_batch")
         if not result and not content:
             raise ValueError("sdk_empty_model_response")
@@ -316,10 +325,33 @@ class _Loop:
                 "tools": deepcopy(self.schemas[agent]), "stream": False, "max_tokens": self.config["max_tokens"],
                 "parallel_tool_calls": False}
 
+    async def verify_host_history(self):
+        """Local checkpoints are untrusted; lookup never creates missing data."""
+        records = self.checkpoint.value["records"]
+        for row in records:
+            if row["response"] is None:
+                continue
+            response = await asyncio.to_thread(model_request, self.config, row["request"], replay_only=True)
+            if json_bytes(response) != json_bytes(row["response"]):
+                raise RuntimeError("sdk_checkpoint_response_changed")
+        for row in records:
+            if row["response"] is None:
+                continue
+            for call in self.response(row["response"], row["agent"])[1]:
+                if call["id"] not in row["results"] or call["name"] == TRANSFER_TOOL:
+                    continue
+                envelope = await asyncio.to_thread(request, "sdk_tool_result", socket_path=self.client.socket_path,
+                    timeout_seconds=SDK_RPC_TIMEOUT_SECONDS, nonce=call["id"],
+                    call=_host_call(call["name"], call["arguments"]))
+                original = _original_host_result(envelope, replay_only=True)
+                if original != row["results"][call["id"]]:
+                    raise RuntimeError("sdk_checkpoint_tool_result_changed")
+
     async def model(self, agent, native):
         from ._google_adk_state import validate_saved
         if self.failed:
             raise RuntimeError(self.failure_reason)
+        await self.verify_host_history()
         records = self.checkpoint.value["records"]
         if self.cursor - self.checkpoint.value["round_start"] >= self.config["max_steps"]:
             raise RuntimeError("sdk_max_steps_reached")
@@ -336,7 +368,7 @@ class _Loop:
             records.append(row)
             validate_saved(self)
             self.checkpoint.save()
-        response = await asyncio.to_thread(model_request, self.config, row["request"])
+        response = await asyncio.to_thread(model_request, self.config, row["request"], replay_only=row["response"] is not None)
         _, calls = self.response(response, agent)  # Validate the complete batch before native dispatch.
         previous = {call["id"] for old in records[:self.cursor] if old["response"] is not None
                     for call in self.response(old["response"], old["agent"])[1]}
@@ -354,7 +386,7 @@ class _Loop:
         if self.failed or self.active_row < 0:
             raise RuntimeError(self.failure_reason or "sdk_tool_dispatch_failed")
         row = self.checkpoint.value["records"][self.active_row]
-        response = await asyncio.to_thread(model_request, self.config, row["request"])
+        response = await asyncio.to_thread(model_request, self.config, row["request"], replay_only=True)
         if row["response"] is None or json_bytes(response) != json_bytes(row["response"]):
             raise RuntimeError("sdk_checkpoint_response_changed")
         _, calls = self.response(response, row["agent"])
@@ -376,21 +408,13 @@ class _Loop:
                 if self.failed:
                     raise RuntimeError(self.failure_reason)
                 await self.checked_call(nonce, name, payload)
-                if name == AUTOMATIC_TOOL:
-                    result = await asyncio.to_thread(request, "request_action", socket_path=self.client.socket_path,
-                        timeout_seconds=SDK_RPC_TIMEOUT_SECONDS,
-                        request_key=self.client.request_key("request_action", "google_adk", nonce),
-                        proposal=_arguments("propose_action", payload)["proposal"])
-                else:
-                    result = await self.client.ainvoke(BY_NAME[name], payload, framework="google_adk", tool_call_id=nonce)
-                encoded = encode_result(result)
-                _check_action_outcome(encoded)
+                envelope = await asyncio.to_thread(request, "sdk_tool", socket_path=self.client.socket_path,
+                    timeout_seconds=SDK_RPC_TIMEOUT_SECONDS, nonce=nonce, call=_host_call(name, payload))
+                encoded = _original_host_result(envelope)
                 cached = row["results"].get(nonce)
                 if cached is not None:
-                    _check_action_outcome(cached)
-                    if result.get("allowed") is False and load_json(cached).get("allowed") is not False:
-                        raise RuntimeError("sdk_replayed_tool_no_longer_allowed")
-                    encoded = cached
+                    if encoded != cached:
+                        raise RuntimeError("sdk_checkpoint_tool_result_changed")
                 else:
                     row["results"][nonce] = encoded
                     self.checkpoint.save()
@@ -443,6 +467,7 @@ async def _run(config):
     value = checkpoint.value
     if config["resume"] and value["status"] == "running" and value["prompt"] != config["prompt"]:
         raise ValueError("sdk_unfinished_prompt_changed")
+    await loop.verify_host_history()
     if value["status"] == "completed" and value["prompt"] == config["prompt"]:
         return {"status": "completed", "answer": value["answer"], "framework": "google_adk",
                 "session_id": config["session_id"], "steps": len(value["records"]) - value["round_start"]}
@@ -479,6 +504,7 @@ async def _run(config):
     message, calls = loop.response(last["response"], last["agent"])
     if calls:
         raise RuntimeError("sdk_native_completion_missing")
+    await loop.verify_host_history()
     value.update(status="completed", answer=checked_text(message["content"]))
     validate_saved(loop)
     checkpoint.save()

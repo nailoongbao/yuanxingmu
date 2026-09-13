@@ -188,6 +188,53 @@ class ModelStoreTests(unittest.TestCase):
             self.assertNotIn(marker.encode(), path.read_bytes())
         self.store.finish(ticket)
 
+    def test_lookup_is_read_only_for_complete_missing_pending_and_unknown(self):
+        raw = request("original")
+        result = self.committed(raw)
+        before = {p.name: p.read_bytes() for p in self.path.iterdir()}
+        self.assertEqual(self.store.lookup(raw), result)
+        self.assert_blocked(self.store.lookup, request("missing"), reason="sdk_model_record_missing")
+        self.assertEqual(before, {p.name: p.read_bytes() for p in self.path.iterdir()})
+        ticket = self.store.begin(request("pending"))
+        self.assert_blocked(self.store.lookup, request("pending"), reason="sdk_model_outcome_unknown")
+        self.assertEqual(self.store.lookup(raw), result)
+        self.assertIs(self.store._inflight, ticket)
+        self.store.finish(ticket)
+        self.assert_blocked(self.store.lookup, request("pending"), reason="sdk_model_outcome_unknown")
+        self.assertEqual(len(self.state()["records"]), 2)
+
+    def test_tool_lookup_requires_committed_unique_host_nonce_and_verified_bytes(self):
+        first = self.committed(request("first"))
+        call = json.loads(first)["choices"][0]["message"]["tool_calls"][0]
+        self.assertEqual(self.store.lookup_tool_call(call["id"]), call)
+        for nonce in ("provider-id", "yxm_" + "0" * 48, None, []):
+            self.assert_blocked(self.store.lookup_tool_call, nonce, reason="sdk_model_tool_call_missing")
+        # Force a nonce collision across different committed responses.
+        with mock.patch.object(storage.secrets, "token_hex", return_value=call["id"][4:]):
+            self.committed(request("second"))
+        self.assert_blocked(self.store.lookup_tool_call, call["id"], reason="sdk_model_duplicate_tool_id")
+        path = next(self.path.glob("response-*.json"))
+        raw = path.read_bytes()
+        path.write_bytes(raw.replace(b"synthetic", b"tamperedx"))
+        self.assert_blocked(self.store.lookup_tool_call, call["id"], reason="sdk_model_response_changed")
+
+    def test_lookup_hash_checks_and_reopen_cannot_create_lost_store(self):
+        result = self.committed(tools=0)
+        path = next(self.path.glob("response-*.json"))
+        path.write_bytes(result.replace(b"synthetic answer", b"changedxx answer"))
+        self.assert_blocked(self.store.lookup, request(), reason="sdk_model_response_changed")
+        absent = self.parent / "absent"
+        self.assert_blocked(storage.ModelStore, absent, "same", create=False,
+                            reason="sdk_model_storage_unavailable")
+        self.assertFalse(absent.exists())
+
+    def test_strict_outcome_mode_blocks_new_effect_after_any_unknown(self):
+        ticket = self.store.begin(request("lost effect"), stop_on_unknown=True)
+        self.store.finish(ticket)
+        self.assert_blocked(self.store.begin, request("another effect"), stop_on_unknown=True,
+                            reason="sdk_model_outcome_unknown")
+        self.assertEqual(len(self.state()["records"]), 1)
+
     def test_complete_rewrites_every_tool_id_and_restart_replays_exact_bytes(self):
         result = self.committed(tools=2)
         parsed = json.loads(result)

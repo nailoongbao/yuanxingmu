@@ -129,8 +129,31 @@ class GoogleAdkFixture:
                              input_containment=self.enable_automation, reviewed_mail=True)
         self.addCleanup(self.broker.close)
         self.task = self.broker.create_task(initial_labels=["private"] if self.enable_automation else [])
-        endpoint = self.broker.serve(self.task, self.root / "worker.sock")
+        endpoint = self.root / "worker.sock"
         self.client = NativeTools(str(endpoint), "host-google_adk-session")
+
+        class RecordedModel:
+            """Only already committed deterministic model replies can bind tools."""
+            def lookup_tool_call(self, nonce):
+                found = []
+                with owner.response_lock:
+                    for entry in owner.journal.values():
+                        status, body = entry if isinstance(entry, tuple) else (200, entry)
+                        if status == 200:
+                            found.extend(call for choice in body.get("choices", [])
+                                         for call in choice.get("message", {}).get("tool_calls") or []
+                                         if call.get("id") == nonce)
+                if len(found) != 1:
+                    raise RuntimeError("sdk_model_tool_call_not_found")
+                return deepcopy(found[0])
+
+        from yuanxingmu.sdk_tool_store import SdkToolServer
+        self.model_ledger = RecordedModel()
+        self.tool_private = self.root / "host-tool-results"
+        self.tool_server = SdkToolServer(self.broker, self.task, endpoint, self.tool_private,
+                                        self.client.session_id, self.model_ledger,
+                                        automatic_actions=self.enable_automation)
+        self.enterContext(self.tool_server)
 
         class Bridge(BaseHTTPRequestHandler):
             protocol_version = "HTTP/1.1"
@@ -147,6 +170,8 @@ class GoogleAdkFixture:
                     if reply is None:
                         if raw in owner.journal:
                             reply = owner.journal[raw]
+                        elif self.path == "/v1/chat/completions/replay":
+                            reply = (409, {"error": "committed response unavailable"})
                         else:
                             owner.upstream_requests.append(row)
                             reply = owner.responses.popleft() if owner.responses else (
@@ -267,13 +292,41 @@ class GoogleAdkRuntimeTests(GoogleAdkFixture, unittest.TestCase):
         self.assertNotIn("yuanxingmu_read", inventories[1])
         self.assertIn("yuanxingmu_draft_email", inventories[1])
 
-    def test_completed_reopen_has_no_model_or_broker_call(self):
+    def test_completed_reopen_verifies_originals_without_new_generation_or_effect(self):
         first = self.run_calls(tool_call("host-read", "yuanxingmu_read", {"resource": "note"}))
-        count, events = len(self.requests), self.events()
+        count, upstream, receipts = len(self.requests), len(self.upstream_requests), deepcopy(self.receipts)
         second = self.runtime.run_session({**self.config, "resume": True})
         self.assertEqual(first, second)
-        self.assertEqual(len(self.requests), count)
-        self.assertEqual(events, self.events())
+        self.assertEqual(len(self.requests), count + 2)
+        self.assertTrue(all(row["path"] == "/v1/chat/completions/replay" for row in self.requests[count:]))
+        self.assertEqual(len(self.upstream_requests), upstream)
+        self.assertEqual(receipts, self.receipts)
+
+    def test_native_transfer_caption_survives_interruption_and_rejects_tampering(self):
+        caption = "资料已准备好，接下来交给执行助手。"
+        response = completion(self.transfer())
+        response["choices"][0]["message"]["content"] = caption
+        self.responses.extend([response, final_response()])
+        interrupted = self.interrupt_after(lambda event: event.actions.transfer_to_agent is not None)
+        self.assertEqual(len(self.upstream_requests), 1)
+        self.assertTrue(any(event["content"]["parts"][0].get("text") == caption
+                            for event in interrupted["native"]["events"] if "content" in event))
+        result = self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual(result["answer"], COMPLETE)
+        self.assertEqual(len(self.upstream_requests), 2)
+        self.assertEqual(self.receipts, [])
+        count = len(self.upstream_requests)
+        self.assertEqual(self.runtime.run_session({**self.config, "resume": True}), result)
+        self.assertEqual(len(self.upstream_requests), count)
+        requests = len(self.requests)
+        changed = self.saved()
+        event = next(event for event in changed["native"]["events"]
+                     if any("function_call" in part for part in event.get("content", {}).get("parts", [])))
+        event["content"]["parts"][0]["text"] = "Forged transfer explanation."
+        Path(self.config["checkpoint"]).write_text(json.dumps(changed), encoding="utf-8")
+        with self.assertRaisesRegex(ValueError, "sdk_native_replay_changed"):
+            self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual(len(self.requests), requests)
 
     def test_new_turn_keeps_native_conversation(self):
         self.run_calls(tool_call("host-read", "yuanxingmu_read", {"resource": "note"}))

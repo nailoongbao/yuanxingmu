@@ -223,6 +223,138 @@ class GoogleAdkFaultTests(GoogleAdkFixture, unittest.TestCase):
             self.runtime.run_session({**self.config, "resume": True})
         self.assertEqual(before, self.events())
 
+    def test_joint_cached_result_and_native_response_forgery_stops_before_next_model(self):
+        self.responses.extend([completion(tool_call("read", "yuanxingmu_read", {"resource": "note"})), final_response()])
+        saved = self.interrupt_after(lambda event: bool(event.get_function_responses()))
+        original = saved["records"][0]["results"]["read"]
+        forged = original.replace("LOCAL-REGISTERED-RESOURCE", "FORGED-HOST-RESULT")
+        self.assertNotEqual(original, forged)
+        saved["records"][0]["results"]["read"] = forged
+        saved["native"]["events"][2]["content"]["parts"][0]["function_response"]["response"]["result"] = forged
+        Path(self.config["checkpoint"]).write_text(json.dumps(saved), encoding="utf-8")
+        with self.assertRaisesRegex(RuntimeError, "sdk_checkpoint_tool_result_changed"):
+            self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual(len(self.upstream_requests), 1)
+        self.assertEqual(len(self.responses), 1)
+        self.assertEqual(self.receipts, [])
+
+    def test_joint_completed_model_native_answer_forgery_is_not_released(self):
+        self.responses.append(final_response())
+        self.runtime.run_session(self.config)
+        saved = self.saved()
+        forged = "FORGED-COMPLETED-ANSWER"
+        saved["records"][0]["response"]["choices"][0]["message"]["content"] = forged
+        saved["native"]["events"][1]["content"]["parts"][0]["text"] = forged
+        saved["answer"] = forged
+        Path(self.config["checkpoint"]).write_text(json.dumps(saved), encoding="utf-8")
+        before = len(self.requests)
+        with self.assertRaisesRegex(RuntimeError, "sdk_checkpoint_response_changed"):
+            self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual(len(self.upstream_requests), 1)
+        self.assertEqual(self.requests[-1]["path"], "/v1/chat/completions/replay")
+        self.assertEqual(len(self.requests), before + 1)
+
+    def test_new_turn_rejects_joint_forged_prior_model_history_before_generation(self):
+        self.responses.append(final_response("FIRST-ORIGINAL"))
+        self.runtime.run_session(self.config)
+        saved = self.saved()
+        forged = "FORGED-PRIOR-TURN"
+        saved["records"][0]["response"]["choices"][0]["message"]["content"] = forged
+        saved["native"]["events"][1]["content"]["parts"][0]["text"] = forged
+        saved["answer"] = forged
+        Path(self.config["checkpoint"]).write_text(json.dumps(saved), encoding="utf-8")
+        self.responses.append(final_response("SECOND"))
+        with self.assertRaisesRegex(RuntimeError, "sdk_checkpoint_response_changed"):
+            self.runtime.run_session({**self.config, "resume": True, "prompt": "Continue with the prior answer."})
+        self.assertEqual(len(self.upstream_requests), 1)
+        self.assertEqual(len(self.responses), 1)
+
+    def test_missing_host_model_record_does_not_regenerate_on_completed_reopen(self):
+        self.responses.append(final_response())
+        self.runtime.run_session(self.config)
+        self.journal.clear()
+        self.responses.append(final_response("MUST-NOT-REGENERATE"))
+        with self.assertRaisesRegex(RuntimeError, "sdk_model_request_failed"):
+            self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual(len(self.upstream_requests), 1)
+        self.assertEqual(len(self.responses), 1)
+
+    def test_missing_host_tool_result_stops_completed_reopen_without_dispatch(self):
+        self.run_calls(tool_call("read", "yuanxingmu_read", {"resource": "note"}))
+        stored = list(self.tool_private.glob("response-*.json"))
+        self.assertEqual(len(stored), 1)
+        stored[0].unlink()
+        with patch.object(self.runtime, "request", wraps=self.runtime.request) as lookup, self.assertRaisesRegex(RuntimeError, "sdk_host_tool_result_unavailable"):
+            self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual([call.args[0] for call in lookup.call_args_list], ["sdk_tool_result"])
+        self.assertEqual(len(self.upstream_requests), 2)
+
+    def test_new_turn_checks_old_tool_results_before_new_generation(self):
+        self.run_calls(tool_call("read", "yuanxingmu_read", {"resource": "note"}))
+        self.responses.append(final_response("SECOND"))
+        original = self.runtime.request
+
+        def request(operation, *args, **kwargs):
+            if operation == "sdk_tool_result":
+                return {"allowed": False, "reason": "sdk_tool_result_missing"}
+            return original(operation, *args, **kwargs)
+
+        with patch.object(self.runtime, "request", request), self.assertRaisesRegex(RuntimeError, "sdk_host_tool_result_unavailable"):
+            self.runtime.run_session({**self.config, "resume": True, "prompt": "Use the previous result."})
+        self.assertEqual(len(self.upstream_requests), 2)
+        self.assertEqual(len(self.responses), 1)
+
+    def test_new_turn_joint_old_tool_history_and_request_forgery_never_reaches_provider(self):
+        self.run_calls(tool_call("read", "yuanxingmu_read", {"resource": "note"}))
+        path = Path(self.config["checkpoint"])
+        raw = path.read_text()
+        self.assertIn("LOCAL-REGISTERED-RESOURCE", raw)
+        path.write_text(raw.replace("LOCAL-REGISTERED-RESOURCE", "FORGED-PRIOR-TOOL-HISTORY"), encoding="utf-8")
+        self.responses.append(final_response("SECOND"))
+        with self.assertRaisesRegex(RuntimeError, "sdk_model_request_failed"):
+            self.runtime.run_session({**self.config, "resume": True, "prompt": "Use the previous read."})
+        self.assertEqual(len(self.upstream_requests), 2)
+        self.assertEqual(len(self.responses), 1)
+        self.assertTrue(all("FORGED-PRIOR-TOOL-HISTORY" not in json.dumps(row["body"]) for row in self.upstream_requests))
+
+    def test_normal_current_state_change_keeps_authenticated_original_tool_result(self):
+        self.responses.extend([completion(tool_call("describe", "yuanxingmu_describe", {})), final_response()])
+        saved = self.interrupt_after(lambda event: bool(event.get_function_responses()))
+        original = saved["records"][0]["results"]["describe"]
+        self.broker.authority.record_read(self.task, "note")
+        self.assertGreater(self.broker.authority.describe(self.task)["revision"], json.loads(original)["revision"])
+        self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual(self.saved()["records"][0]["results"]["describe"], original)
+        supplied = [row["content"] for row in self.upstream_requests[-1]["body"]["messages"] if row["role"] == "tool"]
+        self.assertEqual(supplied, [original])
+
+    def test_current_revocation_stops_completed_reopen_before_answer(self):
+        self.run_calls(tool_call("read", "yuanxingmu_read", {"resource": "note"}))
+        self.broker.authority.revoke(self.task)
+        with self.assertRaisesRegex(RuntimeError, "sdk_host_stopped"):
+            self.runtime.run_session({**self.config, "resume": True})
+        self.assertEqual(len(self.upstream_requests), 2)
+        self.assertEqual(self.receipts, [])
+
+    def test_missing_current_admission_in_host_envelope_stops_dispatch(self):
+        self.responses.extend([completion(tool_call("read", "yuanxingmu_read", {"resource": "note"}),
+                                          tool_call("later", "yuanxingmu_describe", {})), final_response()])
+        original = self.runtime.request
+        calls = []
+
+        def request(operation, *args, **kwargs):
+            calls.append(operation)
+            envelope = original(operation, *args, **kwargs)
+            if operation == "sdk_tool":
+                envelope["current"] = {}
+            return envelope
+
+        with patch.object(self.runtime, "request", request), self.assertRaisesRegex(RuntimeError, "sdk_host_tool_result_unavailable"):
+            self.runtime.run_session(self.config)
+        self.assertEqual(calls, ["sdk_tool"])
+        self.assertEqual(len(self.upstream_requests), 1)
+        self.assertEqual(len(self.responses), 1)
+
     def test_duplicate_missing_ids_and_empty_nonlist_calls_rejected(self):
         messages = [completion(tool_call("same", "yuanxingmu_describe", {}), tool_call("same", "yuanxingmu_describe", {})),
                     completion(tool_call("", "yuanxingmu_describe", {})), final_response()]

@@ -208,7 +208,9 @@ class _ModelHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         self.close_connection = True
         target = self.raw_requestline.split()[1]
-        if self.path != "/v1/chat/completions" or target != b"/v1/chat/completions":
+        replay_only = (self.path == "/v1/chat/completions/replay" and target == b"/v1/chat/completions/replay"
+                       and getattr(self.server, "model_store", None) is not None)
+        if not replay_only and (self.path != "/v1/chat/completions" or target != b"/v1/chat/completions"):
             self._error(403, "model_path_not_allowed")
             return
         lengths = self.headers.get_all("Content-Length", [])
@@ -235,6 +237,9 @@ class _ModelHandler(BaseHTTPRequestHandler):
             if output_guard is not None and hasattr(output_guard, "preflight"):
                 notice = output_guard.preflight(body)
                 if notice is not None:
+                    if replay_only:
+                        self._error(403, "model_replay_currently_denied")
+                        return
                     kind, checked = notice
                     self.send_response_only(200)
                     self.send_header("Content-Type", kind)
@@ -247,6 +252,25 @@ class _ModelHandler(BaseHTTPRequestHandler):
                     return
             model_store = getattr(self.server, "model_store", None)
             if model_store is not None:
+                if replay_only:
+                    try:
+                        original = model_store.lookup(body)
+                    except ValueError:
+                        self._error(409, "model_session_unavailable")
+                        return
+                    checked = output_guard(original, "application/json")
+                    if checked != original:
+                        self._error(403, "model_replay_currently_denied")
+                        return
+                    self.send_response_only(200)
+                    self.send_header("Content-Type", "application/json")
+                    self.send_header("Content-Length", str(len(checked)))
+                    self.send_header("Cache-Control", "no-store")
+                    self.send_header("Connection", "close")
+                    self.end_headers()
+                    response_started = True
+                    self.wfile.write(checked)
+                    return
                 try:
                     ticket = model_store.begin(body)
                 except ValueError:
@@ -487,7 +511,7 @@ class HostModel:
             raise ValueError("invalid_model_api_key")
         if not callable(output_guard) or not callable(getattr(output_guard, "preflight", None)):
             raise ValueError("sdk_model_guard_required")
-        if any(not callable(getattr(model_store, name, None)) for name in ("begin", "complete", "finish")):
+        if any(not callable(getattr(model_store, name, None)) for name in ("begin", "complete", "finish", "lookup")):
             raise ValueError("sdk_model_store_required")
         self.api_key, self.output_guard, self.model_store = api_key, output_guard, model_store
         self._serving = None
