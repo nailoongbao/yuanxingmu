@@ -436,15 +436,69 @@ os._exit(0)
         self.assertEqual(len(self.receipts),4)
 
     def test_late_success_after_timeout_does_not_mark_delivered(self):
-        self.http_status,self.delay=200,.2
         queue=self.queue(timeout_seconds=.05)
         queue.enqueue("slow-event","paused")
-        started=time.monotonic()
-        self.assertTrue(queue.dispatch_once())
-        self.assertLess(time.monotonic()-started,.5)
-        time.sleep(.25)
-        self.assertEqual(queue.status()["counts"]["delivered"],0)
-        self.assertEqual(queue.status()["counts"]["pending"],1)
+        release,send_started,send_returned,dispatch_returned = (
+            threading.Event() for _ in range(4))
+        transport_threads,transport_cancel,results,errors = [],[],[],[]
+
+        def late_success(claim,cancelled,holder):
+            transport_threads.append(threading.current_thread())
+            transport_cancel.append(cancelled)
+            send_started.set()
+            release.wait()  # Deliberately ignore cancellation and succeed late.
+            send_returned.set()
+            return True,False,None
+
+        def dispatch():
+            try:
+                results.append(queue.dispatch_once())
+            except BaseException as exc:
+                errors.append(exc)
+            finally:
+                dispatch_returned.set()
+
+        dispatcher = threading.Thread(target=dispatch,daemon=True)
+
+        def cleanup():
+            release.set()
+            if dispatcher.ident is not None:
+                dispatcher.join(timeout=5)
+            for worker in transport_threads:
+                worker.join(timeout=5)
+            self.assertFalse(dispatcher.is_alive(),"Dispatch thread did not stop")
+            self.assertFalse(any(worker.is_alive() for worker in transport_threads),
+                             "Late transport thread did not stop")
+
+        patcher = mock.patch.object(queue,"_send",side_effect=late_success)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.addCleanup(cleanup)
+        dispatcher.start()
+        # Five seconds only bounds a hung fixture; event order is the assertion.
+        self.assertTrue(send_started.wait(5),"Transport did not reach its gate")
+        self.assertTrue(dispatch_returned.wait(5),"Dispatch waited for late transport instead of timing out")
+        dispatcher.join(timeout=5)
+        if errors:
+            raise errors[0]
+        self.assertEqual(results,[True])
+        self.assertFalse(release.is_set())
+        self.assertFalse(send_returned.is_set())
+        self.assertTrue(transport_cancel[0].is_set())
+        timed_out = queue.status()
+        self.assertEqual(timed_out["counts"]["delivered"],0)
+        self.assertEqual(timed_out["counts"]["pending"],1)
+        self.assertEqual(timed_out["events"][0]["last_error"],"delivery_timeout")
+        self.assertTrue(timed_out["transport_busy"])
+
+        release.set()
+        transport_threads[0].join(timeout=5)
+        self.assertFalse(transport_threads[0].is_alive(),"Late success did not finish")
+        self.assertTrue(send_returned.is_set())
+        after_late_success = queue.status()
+        self.assertFalse(after_late_success["transport_busy"])
+        self.assertEqual(after_late_success["counts"],timed_out["counts"])
+        self.assertEqual(after_late_success["events"],timed_out["events"])
 
     def test_capacity_counts_durable_deduplication_records_and_never_drops_alerts(self):
         queue=self.queue(queue_capacity=2)
