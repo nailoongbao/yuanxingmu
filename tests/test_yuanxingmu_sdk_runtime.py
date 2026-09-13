@@ -489,7 +489,7 @@ class SdkModelBridgeTests(unittest.TestCase):
 
     def test_journal_finish_fault_does_not_skip_connection_cleanup(self):
         with patch.object(self.store, "finish", side_effect=ValueError("synthetic-storage-fault")):
-            self.assertEqual(self.request()[0], 200)
+            self.assertEqual(self.request()[0], 409)
             deadline = time.monotonic() + 2
             server = self.bridge._serving.server
             while time.monotonic() < deadline:
@@ -499,6 +499,76 @@ class SdkModelBridgeTests(unittest.TestCase):
                 time.sleep(.01)
             with server.connections_lock:
                 self.assertFalse(server.connections)
+
+    def check_reply_waits_for_finish(self, *, fail_provider=False, replay=False):
+        if replay:
+            self.assertEqual(self.request()[0], 200)
+            self.provider.receipts.get(timeout=1)
+        self.fail_provider = fail_provider
+        entered, release, received = threading.Event(), threading.Event(), threading.Event()
+        result = []
+        original = self.store.finish
+
+        def delayed(ticket):
+            entered.set()
+            if not release.wait(5):
+                raise ValueError("test_finish_not_released")
+            return original(ticket)
+
+        def client():
+            try:
+                result.append(self.request())
+            finally:
+                received.set()
+
+        with patch.object(self.store, "finish", side_effect=delayed):
+            thread = threading.Thread(target=client)
+            thread.start()
+            try:
+                self.assertTrue(entered.wait(3), "handler did not reach finish")
+                self.assertFalse(received.wait(.15), "HTTP reply escaped before the journal flight finished")
+            finally:
+                release.set()
+                thread.join(timeout=5)
+        self.assertFalse(thread.is_alive())
+        self.assertEqual(result[0][0], 502 if fail_provider else 200)
+        self.assertIsNone(self.store._inflight)
+        if fail_provider:
+            self.assertEqual(json.loads((self.store.directory / "state.json").read_bytes())["records"][0]["state"], "unknown")
+            self.assertEqual(self.request(replay_only=True)[0], 409)
+        else:
+            self.assertEqual(self.request(replay_only=True), result[0])
+
+    def test_successful_model_reply_waits_for_finish_before_immediate_lookup(self):
+        self.check_reply_waits_for_finish()
+
+    def test_failed_model_reply_waits_for_unknown_state_before_immediate_lookup(self):
+        self.check_reply_waits_for_finish(fail_provider=True)
+
+    def test_cached_model_reply_waits_for_finish_before_immediate_lookup(self):
+        self.check_reply_waits_for_finish(replay=True)
+
+    def test_cached_finish_single_failure_is_session_error_without_new_inference(self):
+        first = self.request()
+        self.assertEqual(first[0], 200)
+        self.provider.receipts.get(timeout=1)
+        calls = []
+        original = self.store.finish
+
+        def fail_once(ticket):
+            calls.append(ticket)
+            if len(calls) == 1:
+                raise ValueError("synthetic_finish_fault")
+            return original(ticket)
+
+        with patch.object(self.store, "finish", side_effect=fail_once):
+            status, body = self.request()
+        self.assertEqual(status, 409)
+        self.assertEqual(json.loads(body)["error"], "model_session_unavailable")
+        self.assertEqual(len(calls), 2)
+        self.assertIsNone(self.store._inflight)
+        self.assertEqual(self.request(replay_only=True), first)
+        self.assertTrue(self.provider.receipts.empty())
 
 
 @unittest.skipUnless(sys.platform.startswith("linux") and os.environ.get("YUANXINGMU_SMOLAGENTS_PYTHON"),

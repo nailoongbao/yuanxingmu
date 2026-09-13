@@ -187,6 +187,12 @@ class _ModelHandler(BaseHTTPRequestHandler):
         pass
 
     def _error(self, status: int, reason: str) -> None:
+        finish = getattr(self, "_finish_model", None)
+        if finish is not None:
+            try:
+                finish()
+            except ValueError:
+                status, reason = 409, "model_session_unavailable"
         body = ('{"error":"' + reason + '"}\n').encode("ascii")
         self.close_connection = True
         self.send_response_only(status)
@@ -228,6 +234,14 @@ class _ModelHandler(BaseHTTPRequestHandler):
         response_started = False
         model_store = None
         ticket = None
+
+        def finish_model():
+            nonlocal ticket
+            if model_store is not None and ticket is not None:
+                model_store.finish(ticket)
+                ticket = None
+
+        self._finish_model = finish_model
         try:
             body = self.rfile.read(length)
             if len(body) != length:
@@ -280,8 +294,14 @@ class _ModelHandler(BaseHTTPRequestHandler):
                     # Stored responses remain subject to CURRENT host checks.
                     # A cache hit must not bypass a pause, revocation or policy.
                     checked = output_guard(ticket.replay, ticket.content_type)
+                    content_type = ticket.content_type
+                    try:
+                        finish_model()
+                    except ValueError:
+                        self._error(409, "model_session_unavailable")
+                        return
                     self.send_response_only(200)
-                    self.send_header("Content-Type", ticket.content_type)
+                    self.send_header("Content-Type", content_type)
                     self.send_header("Content-Length", str(len(checked)))
                     self.send_header("Cache-Control", "no-store")
                     self.send_header("Connection", "close")
@@ -341,6 +361,10 @@ class _ModelHandler(BaseHTTPRequestHandler):
                 if model_store is not None:
                     try:
                         checked = model_store.complete(ticket, checked, content_type)
+                        # Clients may immediately verify/reuse this response.
+                        # Release its flight lock before publishing any bytes,
+                        # including errors whose unknown state must be durable.
+                        finish_model()
                     except ValueError:
                         self._error(409, "model_session_unavailable")
                         return
