@@ -4,11 +4,13 @@ on:
   push:
     paths:
       - 'install/**'
+      - '!install/windows/**'
       - 'tests/test_yuanxingmu_installer.py'
       - '.github/workflows/installer.yml'
   pull_request:
     paths:
       - 'install/**'
+      - '!install/windows/**'
       - 'tests/test_yuanxingmu_installer.py'
       - '.github/workflows/installer.yml'
   workflow_dispatch:

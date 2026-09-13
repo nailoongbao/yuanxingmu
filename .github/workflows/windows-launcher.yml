@@ -1,0 +1,47 @@
+name: Windows launcher
+
+on:
+  push:
+    paths:
+      - 'install/windows/**'
+      - '.github/workflows/windows-launcher.yml'
+  pull_request:
+    paths:
+      - 'install/windows/**'
+      - '.github/workflows/windows-launcher.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  windows-build:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check Windows argument handling and bridge protocol
+        shell: pwsh
+        run: ./install/windows/test.ps1 -Python python -OutputDirectory "$env:RUNNER_TEMP/launcher-tests"
+      - name: Build from the checked-out commit
+        shell: pwsh
+        run: ./install/windows/build.ps1 -Release -SourceCommit "${{ github.sha }}" -OutputDirectory "$env:RUNNER_TEMP/windows-launcher"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yuanxingmu-windows-launcher
+          path: ${{ runner.temp }}/windows-launcher/
+          if-no-files-found: error
+
+  linux-bridge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check owned child process cleanup with synthetic local processes
+        run: python -I -B install/windows/tests/test_bridge.py

@@ -28,6 +28,8 @@ Ubuntu 24.04 或 WSL Ubuntu 24.04，x86_64，系统 `/usr/bin/python3` 3.12+，�
 
 ## 日常打开
 
+Windows 用户可使用独立的 [Windows 启动器预览版](https://github.com/yh-l20/yuanxingmu/releases/tag/windows-launcher-0.1.0a1)：双击 `.exe`，选择已准备好的 WSL 发行版和元星木安装目录，即可打开原有工作台。它适用于上述 `0.4.0a2 / 0.7.0a2` 安装，不负责首次安装或启用 WSL。[使用范围与构建说明](windows/README.md)。
+
 ```bash
 "$HOME/yuanxingmu-v07a2/open-yuanxingmu"
 ```
