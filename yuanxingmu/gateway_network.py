@@ -16,6 +16,8 @@ from http.server import BaseHTTPRequestHandler
 import ipaddress
 import os
 from pathlib import Path
+import re
+import secrets
 import select
 import signal
 import socket
@@ -31,6 +33,12 @@ from urllib.parse import urlsplit
 MODEL_PORT = 18701
 MODEL_RESPONSE_TIMEOUT = 180
 MAX_MODEL_REQUEST = 16 * 1024 * 1024
+
+_ALLOWED_AUDIT_HEADERS = frozenset({
+    "X-YXM-Audit-Correlation-ID",
+    "X-YXM-Audit-Protocol-Version",
+})
+_AUDIT_VALUE_PATTERN = re.compile(r"^[A-Za-z0-9._~-]{1,64}$")
 INNER_BOOTSTRAP = (
     "import sys; sys.path.insert(0, sys.argv.pop(1)); "
     "from yuanxingmu.gateway_network import inner; raise SystemExit(inner())"
@@ -318,12 +326,34 @@ class _ModelHandler(BaseHTTPRequestHandler):
             tracked.settimeout(180)
             # No inbound headers, caller-supplied destination, redirects, proxy
             # environment, or inbound Authorization participate in this request.
-            connection.request("POST", path, body=body, headers={
+            outbound_headers = {
                 "Authorization": "Bearer " + self.server.api_key,
                 "Content-Type": "application/json",
                 "Accept": "application/json, text/event-stream",
                 "Connection": "close",
-            })
+            }
+            audit_provider = getattr(self.server, "audit_metadata_provider", None)
+            if audit_provider is not None:
+                if not callable(audit_provider):
+                    self._error(500, "audit_metadata_provider_invalid")
+                    return
+                try:
+                    meta = audit_provider()
+                except Exception:
+                    self._error(500, "audit_metadata_generation_failed")
+                    return
+                if not isinstance(meta, dict):
+                    self._error(500, "audit_metadata_must_be_dict")
+                    return
+                for k, v in meta.items():
+                    if k not in _ALLOWED_AUDIT_HEADERS:
+                        self._error(500, "audit_metadata_key_not_permitted")
+                        return
+                    if not isinstance(v, str) or len(v) > 64 or not _AUDIT_VALUE_PATTERN.fullmatch(v):
+                        self._error(500, "audit_metadata_value_invalid")
+                        return
+                    outbound_headers[k] = v
+            connection.request("POST", path, body=body, headers=outbound_headers)
             response = connection.getresponse()
             if response.status < 200 or 300 <= response.status < 400:
                 self._error(502, "model_upstream_redirect_or_upgrade_refused")
@@ -527,7 +557,8 @@ class HostModel:
     socket's inode is granted to the worker; the private store stays outside.
     """
 
-    def __init__(self, runtime: Path, *, model_url: str, api_key: str, output_guard, model_store):
+    def __init__(self, runtime: Path, *, model_url: str, api_key: str, output_guard, model_store,
+                 audit_metadata_provider=None):
         self.runtime = Path(runtime).absolute()
         self.upstream = _upstream(model_url)
         if (type(api_key) is not str or not api_key
@@ -537,7 +568,10 @@ class HostModel:
             raise ValueError("sdk_model_guard_required")
         if any(not callable(getattr(model_store, name, None)) for name in ("begin", "complete", "finish", "lookup")):
             raise ValueError("sdk_model_store_required")
+        if audit_metadata_provider is not None and not callable(audit_metadata_provider):
+            raise ValueError("invalid_audit_metadata_provider")
         self.api_key, self.output_guard, self.model_store = api_key, output_guard, model_store
+        self.audit_metadata_provider = audit_metadata_provider
         self._serving = None
 
     def __enter__(self):
@@ -549,6 +583,7 @@ class HostModel:
         server, path = _listen(socket.AF_UNIX, str(self.runtime / "model.sock"), _ModelHandler)
         server.upstream, server.api_key = self.upstream, self.api_key
         server.output_guard, server.model_store = self.output_guard, self.model_store
+        server.audit_metadata_provider = self.audit_metadata_provider
         self._serving = _Serving(server, path)
         return self
 

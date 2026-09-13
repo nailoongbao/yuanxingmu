@@ -10,6 +10,8 @@ import json
 import os
 from pathlib import Path
 import queue
+import re
+import secrets
 import signal
 import socket
 import subprocess
@@ -18,6 +20,7 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest import mock
 from unittest.mock import patch
 
 from yuanxingmu import gateway_network as network
@@ -484,6 +487,110 @@ finally:
         with socket.socket() as listener:
             listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             listener.bind(("127.0.0.1", network.MODEL_PORT))
+
+
+class _AuditMetadataTests(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.runtime = Path(self.tmp.name)
+
+    def tearDown(self):
+        self.tmp.cleanup()
+
+    def _guard(self):
+        guard = unittest.mock.Mock(side_effect=lambda data, ct: data)
+        guard.preflight = unittest.mock.Mock(return_value=None)
+        return guard
+
+    def _store(self):
+        store = unittest.mock.Mock()
+        ticket = unittest.mock.Mock()
+        ticket.replay = None
+        store.begin = unittest.mock.Mock(return_value=ticket)
+        store.complete = unittest.mock.Mock(side_effect=lambda t, data, ct: data)
+        store.finish = unittest.mock.Mock()
+        store.lookup = unittest.mock.Mock(return_value=None)
+        return store
+
+    def test_worker_inbound_headers_are_stripped_and_default_has_no_audit_headers(self):
+        with _provider() as upstream:
+            port = upstream.server_address[1]
+            host_model = network.HostModel(
+                self.runtime,
+                model_url=f"http://127.0.0.1:{port}/v1/chat/completions",
+                api_key="sk-test-secret-key",
+                output_guard=self._guard(),
+                model_store=self._store(),
+            )
+            with host_model:
+                conn = _UnixHTTP(self.runtime / "model.sock")
+                conn.connect()
+                # Worker attempts to inject spoofed headers and custom audit headers
+                conn.request("POST", "/v1/chat/completions", body=b'{"model":"test"}', headers={
+                    "X-YXM-Audit-Correlation-ID": "spoofed-by-worker",
+                    "X-Custom-Injected-Header": "malicious",
+                    "Authorization": "Bearer worker-fake-token",
+                })
+                resp = conn.getresponse()
+                self.assertEqual(resp.status, 200)
+                cmd, path, headers, body = upstream.receipts.get(timeout=2)
+                # Verify worker headers did not enter upstream
+                self.assertNotIn("x-custom-injected-header", {k.lower() for k in headers})
+                self.assertNotIn("x-yxm-audit-correlation-id", {k.lower() for k in headers})
+                self.assertEqual(headers["Authorization"], "Bearer sk-test-secret-key")
+
+    def test_host_audit_metadata_provider_injects_permitted_headers(self):
+        with _provider() as upstream:
+            port = upstream.server_address[1]
+            correlation_id = "corr-" + secrets.token_hex(8)
+            host_model = network.HostModel(
+                self.runtime,
+                model_url=f"http://127.0.0.1:{port}/v1/chat/completions",
+                api_key="sk-test-secret-key",
+                output_guard=self._guard(),
+                model_store=self._store(),
+                audit_metadata_provider=lambda: {
+                    "X-YXM-Audit-Correlation-ID": correlation_id,
+                    "X-YXM-Audit-Protocol-Version": "1.0",
+                }
+            )
+            with host_model:
+                conn = _UnixHTTP(self.runtime / "model.sock")
+                conn.connect()
+                conn.request("POST", "/v1/chat/completions", body=b'{"model":"test"}')
+                resp = conn.getresponse()
+                self.assertEqual(resp.status, 200)
+                cmd, path, headers, body = upstream.receipts.get(timeout=2)
+                self.assertEqual(headers.get("X-YXM-Audit-Correlation-ID"), correlation_id)
+                self.assertEqual(headers.get("X-YXM-Audit-Protocol-Version"), "1.0")
+                self.assertEqual(headers.get("Authorization"), "Bearer sk-test-secret-key")
+
+    def test_disallowed_or_invalid_audit_metadata_aborts_before_upstream(self):
+        cases = [
+            ("disallowed_key", {"X-YXM-Audit-Task-ID": "task-123"}),
+            ("invalid_chars", {"X-YXM-Audit-Correlation-ID": "bad value with spaces!"}),
+            ("too_long", {"X-YXM-Audit-Correlation-ID": "a" * 65}),
+        ]
+        for name, bad_meta in cases:
+            with self.subTest(case=name):
+                with _provider() as upstream:
+                    port = upstream.server_address[1]
+                    host_model = network.HostModel(
+                        self.runtime,
+                        model_url=f"http://127.0.0.1:{port}/v1/chat/completions",
+                        api_key="sk-test-secret-key",
+                        output_guard=self._guard(),
+                        model_store=self._store(),
+                        audit_metadata_provider=lambda: bad_meta
+                    )
+                    with host_model:
+                        conn = _UnixHTTP(self.runtime / "model.sock")
+                        conn.connect()
+                        conn.request("POST", "/v1/chat/completions", body=b'{"model":"test"}')
+                        resp = conn.getresponse()
+                        self.assertEqual(resp.status, 500)
+                        # Zero requests reached upstream
+                        self.assertTrue(upstream.receipts.empty())
 
 
 if __name__ == "__main__":
