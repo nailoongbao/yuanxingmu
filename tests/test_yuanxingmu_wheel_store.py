@@ -20,7 +20,7 @@ class WheelStoreTests(unittest.TestCase):
         self.source_dir = self.root / "source"
         self.store_root = self.root / "store"
         self.source_dir.mkdir()
-        self.store_root.mkdir()
+        self.store_root.mkdir(mode=0o700)
 
     def tearDown(self):
         # Restore write permissions before cleanup
