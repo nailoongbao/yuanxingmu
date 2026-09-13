@@ -678,9 +678,9 @@ def install(root: Path, *, system_deps=False, cache=None, shortcut=True, dev_whe
 
 
 def main(argv=None):
-    parser = argparse.ArgumentParser(description="元星木安装器：Ubuntu / WSL Ubuntu 24.04 x86_64 预览版")
+    parser = argparse.ArgumentParser(description="元星木安装器：Ubuntu 24.04 / Debian 12 (x86_64) 预览版")
     parser.add_argument("--install-root", type=Path, default=Path.home() / "yuanxingmu", help="Linux 家目录下的新子目录")
-    parser.add_argument("--system-deps", action="store_true", help="允许通过 sudo 安装隔离组件、配置指定组件的 Ubuntu 权限")
+    parser.add_argument("--system-deps", action="store_true", help="允许通过 sudo 安装隔离组件与配置系统权限")
     parser.add_argument("--download-cache", type=Path, help="可复用下载目录；所有文件仍需核对固定 SHA256")
     parser.add_argument("--no-shortcut", action="store_true", help="不创建 Linux 应用入口")
     parser.add_argument("--development-wheel", type=Path, help="仅本机开发验收：使用当前版本的本地 wheel，并安装 Hermes")
