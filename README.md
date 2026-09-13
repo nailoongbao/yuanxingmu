@@ -137,8 +137,6 @@ The [independent Linux CI report](examples/yuanxingmu/verified-hosted-report.jso
 
 ## Positioning
 
-Increasingly capable agents can combine legitimate actions and search for omitted checks. Yuanxingmu builds an execution boundary whose decisions remain outside the agent. Sandboxing, credential brokers and information-flow control are established ideas; this project combines them with durable task identity and reproducible outcome evidence.
-
-We have **not established overall superiority over [AgentWard / 玄甲](https://github.com/FIND-Lab/AgentWard)**, which already provides OpenClaw detection, approvals and conversation intervention. See [the comparison and product direction](docs/positioning.md).
+Increasingly capable agents can combine legitimate actions and search for omitted checks. Yuanxingmu builds an execution boundary whose decisions remain outside the agent. Sandboxing, credential brokers and information-flow control are established ideas; this project combines them with durable task identity, host-level isolation, and reproducible outcome evidence. See [the architectural positioning and product direction](docs/positioning.md).
 
 The earlier MCP integration verifier remains available: [legacy documentation](LEGACY-MCP.md), [v0.1.0a1](https://github.com/yh-l20/yuanxingmu/releases/tag/v0.1.0a1). Existing releases are unchanged; their results are not attributed to the new runtime.
