@@ -115,18 +115,21 @@ def save(root: Path, state: dict):
 
 def check_environment(root: Path):
     if not sys.platform.startswith("linux") or platform.machine() != "x86_64":
-        raise InstallError("这版安装器适用于 Ubuntu 24.04 / WSL Ubuntu 24.04 的 x86_64 电脑。")
+        raise InstallError("这版安装器适用于 Ubuntu 24.04 / Debian 12 (WSL 或原生 Linux) 的 x86_64 电脑。")
     if sys.version_info < (3, 12) or not Path(sys.executable).resolve().is_relative_to("/usr"):
-        raise InstallError("请用 Ubuntu 自带的 /usr/bin/python3（3.12 或更新版本）运行安装器。")
+        raise InstallError("请用系统自带的 /usr/bin/python3（3.12 或更新版本）运行安装器。")
     if os.geteuid() == 0:
-        raise InstallError("请以自己的 Ubuntu 用户运行安装器，不要在整条命令前加 sudo。")
+        raise InstallError("请以自己的普通用户运行安装器，不要在整条命令前加 sudo。")
     release = {}
     for line in Path("/etc/os-release").read_text().splitlines():
         key, separator, value = line.partition("=")
         if separator:
             release[key] = value.strip('"')
-    if release.get("ID") != "ubuntu" or release.get("VERSION_ID") != "24.04":
-        raise InstallError("当前只验证了 Ubuntu 24.04；其他发行版请使用手工安装指南。")
+    distro = release.get("ID", "")
+    version = release.get("VERSION_ID", "")
+    supported = (distro == "ubuntu" and version == "24.04") or (distro == "debian" and version == "12")
+    if not supported:
+        raise InstallError("当前只验证了 Ubuntu 24.04 与 Debian 12；其他发行版请使用手工安装指南。")
     home = Path.home().absolute()
     if (".." in root.parts or root.resolve() != root or root == home
             or not root.is_relative_to(home) or root.is_relative_to("/mnt")):

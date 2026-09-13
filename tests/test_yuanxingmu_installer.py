@@ -841,6 +841,37 @@ class InstallerTests(unittest.TestCase):
         else:
             self.assertEqual(script.read_bytes(), b"replaced npm script; must never execute")
 
+    def test_check_environment_accepts_ubuntu_24_04_and_debian_12(self):
+        root = self.directory("check-env-ok")
+        for distro, version in (("ubuntu", "24.04"), ("debian", "12")):
+            with self.subTest(distro=distro, version=version):
+                os_release_content = f'ID="{distro}"\nVERSION_ID="{version}"\n'
+                with mock.patch("pathlib.Path.read_text", return_value=os_release_content), \
+                     mock.patch("sys.platform", "linux"), \
+                     mock.patch("platform.machine", return_value="x86_64"), \
+                     mock.patch("sys.version_info", (3, 12, 0)), \
+                     mock.patch("os.geteuid", return_value=1000), \
+                     mock.patch("pathlib.Path.resolve", return_value=root), \
+                     mock.patch("pathlib.Path.is_relative_to", side_effect=lambda other: str(other) != "/mnt"), \
+                     mock.patch("pathlib.Path.home", return_value=root.parent), \
+                     mock.patch("shutil.disk_usage", return_value=mock.Mock(free=10 * 1024 ** 3)):
+                    installer.check_environment(root)
+
+    def test_check_environment_rejects_unsupported_distro(self):
+        root = self.directory("check-env-fail")
+        os_release_content = 'ID="fedora"\nVERSION_ID="40"\n'
+        with mock.patch("pathlib.Path.read_text", return_value=os_release_content), \
+             mock.patch("sys.platform", "linux"), \
+             mock.patch("platform.machine", return_value="x86_64"), \
+             mock.patch("sys.version_info", (3, 12, 0)), \
+             mock.patch("os.geteuid", return_value=1000), \
+             mock.patch("pathlib.Path.resolve", return_value=root), \
+             mock.patch("pathlib.Path.is_relative_to", side_effect=lambda other: str(other) != "/mnt"), \
+             mock.patch("pathlib.Path.home", return_value=root.parent), \
+             mock.patch("shutil.disk_usage", return_value=mock.Mock(free=10 * 1024 ** 3)):
+            with self.assertRaisesRegex(installer.InstallError, "当前只验证了 Ubuntu 24.04 与 Debian 12"):
+                installer.check_environment(root)
+
     def test_resumed_install_rejects_changed_npm_symlink_before_execution(self):
         self.check_resumed_node_tampering(change="link")
 
