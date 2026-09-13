@@ -1,0 +1,211 @@
+{
+  "source_commit": "82c02f4fc69ea6d053b4a24f085d4738e3d99904",
+  "recorded_at": "2026-09-13T02:31:34.189177+00:00",
+  "scope": "Deterministic shared-host HTTP journal timing repair; no new GLM trial.",
+  "previous_public_head": "01a712500672e489779712189359914596fa0760",
+  "observed_failing_public_runs": [
+    34732548636,
+    34732548634
+  ],
+  "cause": "HTTP reply was delivered before the request journal flight was finished; immediate lookup could race.",
+  "repair": "Finish successful/cached requests and durable unknown state before replying; finish failure returns 409 and keeps transport cleanup.",
+  "regressions": {
+    "windows": {
+      "tests_run": 1293,
+      "passed": 378,
+      "skipped": 915,
+      "failures": 0,
+      "errors": 0,
+      "duration_seconds": 18.688,
+      "functional_files": 486,
+      "source_bytes_match_git_before_and_after": true
+    },
+    "linux": {
+      "tests_run": 1293,
+      "passed": 1150,
+      "skipped": 143,
+      "failures": 0,
+      "errors": 0,
+      "duration_seconds": 226.68,
+      "functional_files": 486,
+      "source_bytes_match_git_before_and_after": true
+    }
+  },
+  "linux_sdk": {
+    "modules": 19,
+    "passed": 281,
+    "skipped": 0,
+    "counts_by_module": {
+      "test_google_adk_runtime": 11,
+      "test_google_adk_runtime_automatic": 13,
+      "test_google_adk_runtime_faults": 29,
+      "test_langgraph_automatic_runtime": 8,
+      "test_langgraph_runtime": 10,
+      "test_langgraph_runtime_faults": 9,
+      "test_openai_agents_runtime": 14,
+      "test_openai_agents_runtime_automatic": 8,
+      "test_openai_agents_runtime_faults": 14,
+      "test_pydantic_ai_runtime": 14,
+      "test_pydantic_ai_runtime_automatic": 8,
+      "test_pydantic_ai_runtime_faults": 16,
+      "test_smolagents_automatic_runtime": 12,
+      "test_smolagents_runtime": 15,
+      "test_smolagents_runtime_timeouts": 4,
+      "test_yuanxingmu_sdk_boundary_failures": 7,
+      "test_yuanxingmu_sdk_model_store": 35,
+      "test_yuanxingmu_sdk_runtime": 44,
+      "test_yuanxingmu_sdk_tool_store": 10
+    }
+  },
+  "consistency_audit": {
+    "checks_passed": 207,
+    "checks_failed": 0
+  },
+  "independent_probes": [
+    {
+      "variant": "old",
+      "source_commit": "6543f54213eb6a2792c3f349426c1a083f2bc8c8",
+      "test_source_commit": "82c02f4fc69ea6d053b4a24f085d4738e3d99904",
+      "tests_run": 3,
+      "failures": 3,
+      "errors": 0,
+      "skips": 0,
+      "expected_outcome_observed": true,
+      "source_bytes_unchanged": true,
+      "test_ids": [
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_successful_model_reply_waits_for_finish_before_immediate_lookup",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_failed_model_reply_waits_for_unknown_state_before_immediate_lookup",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_cached_model_reply_waits_for_finish_before_immediate_lookup"
+      ],
+      "stdout": {
+        "bytes": 4578,
+        "sha256": "c6c4ab4bf109007f9f9423842f4e596d90a41de65320cd585d1255c44833b698"
+      },
+      "stderr": {
+        "bytes": 3694,
+        "sha256": "214f47f882c109960e5f86ce6eb7b68a678762b76c71c6ed1497ad956ff7c3f2"
+      }
+    },
+    {
+      "variant": "current",
+      "source_commit": "82c02f4fc69ea6d053b4a24f085d4738e3d99904",
+      "test_source_commit": "82c02f4fc69ea6d053b4a24f085d4738e3d99904",
+      "tests_run": 10,
+      "failures": 0,
+      "errors": 0,
+      "skips": 0,
+      "expected_outcome_observed": true,
+      "source_bytes_unchanged": true,
+      "test_ids": [
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_cached_finish_single_failure_is_session_error_without_new_inference",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_cached_model_reply_waits_for_finish_before_immediate_lookup",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_failed_model_reply_waits_for_unknown_state_before_immediate_lookup",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_journal_finish_fault_does_not_skip_connection_cleanup",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_lookup_route_current_guard_rewrite_never_claims_to_be_original",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_lookup_route_missing_and_unknown_never_infers_or_registers_requests",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_lookup_route_replays_exact_reply_and_enforces_current_revocation",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_replay_keeps_host_nonce_and_current_revocation_is_checked",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_successful_model_reply_waits_for_finish_before_immediate_lookup",
+        "independent_finish_order_current_tests.SdkModelBridgeTests.test_unknown_upstream_outcome_cannot_be_retried"
+      ],
+      "stdout": {
+        "bytes": 2864,
+        "sha256": "635424d03a90dcd41fc4ce1b06b7f0215413fbcff8b020f4339669dd3a2e7fc9"
+      },
+      "stderr": {
+        "bytes": 2099,
+        "sha256": "68ae29b5a7a791eb51698f3b51f83547abaa2870c53a2f052b2b02a0fe6bcae8"
+      }
+    }
+  ],
+  "environment": {
+    "reused_from_previous_attempt": true,
+    "pins_rechecked": true,
+    "packages_changed": false
+  },
+  "historical_glm_trial": {
+    "source_commit": "6543f54213eb6a2792c3f349426c1a083f2bc8c8",
+    "rerun": false,
+    "data_files_unchanged": {
+      "independent-checks.json": {
+        "bytes": 51053,
+        "sha256": "2b4e0ff787f79e797144b4830136c0d4011eae90bffa9078ec6b19d74abad5d7"
+      },
+      "manifest.json": {
+        "bytes": 1254,
+        "sha256": "6f8d97bc32287d6e75ba184e8fd766db3fc7d40a884ef48ccf96fda8111451e8"
+      },
+      "native-history.json": {
+        "bytes": 7319,
+        "sha256": "35a28381ab9dc6b27c09ec50548c9a172a7c9d457fb76c5a53a4d8f150129f53"
+      },
+      "protocol.json": {
+        "bytes": 13430,
+        "sha256": "92a5e050edfba56b02f013618b96de6672c77c2d2ca224d0565f80c6a7086279"
+      },
+      "receipts.json": {
+        "bytes": 2133,
+        "sha256": "a3aef2f0f063f58a855d07c4338d2daac6bd35643cc67e3bb8b83b6ff340554a"
+      },
+      "regressions.json": {
+        "bytes": 41680,
+        "sha256": "86997a4e69c8d3ef1bcacc1fbc0fcea4d38682f15d9bc4d60a7f77835b69588e"
+      },
+      "result.json": {
+        "bytes": 12093,
+        "sha256": "fbf20555f083e2490013055bf0de6b1979acfdc47c421326c09fa71269a27219"
+      }
+    }
+  },
+  "inputs": {
+    "frozen_regression_audit": {
+      "bytes": 27381,
+      "sha256": "b072010836c1ecf492241306c7ce26d2256b3ecc69e09c46301fe399d1d9eb08"
+    },
+    "source_freeze": {
+      "bytes": 59860,
+      "sha256": "9b7bcfef5ca5f300e55dc03d92afa383a56366b1500ee80d031e22f976da55b6"
+    },
+    "independent_review": {
+      "bytes": 11031,
+      "sha256": "6c5cca30d54688290a864c3bc9a36a7ef1ec38b1520fc1b7192f1e673631e945"
+    },
+    "environment_recheck": {
+      "bytes": 7806,
+      "sha256": "c213508fc7eb32481ddeb561a5e87ff405625ceeb6050fec181c54585965bd7a"
+    },
+    "environment_reuse_record": {
+      "bytes": 408,
+      "sha256": "84c99b24b70c2f4b97cfd1099d71f46513a13302e3b0044e7a8856e22e9d230c"
+    },
+    "independent_old_stdout": {
+      "bytes": 4578,
+      "sha256": "c6c4ab4bf109007f9f9423842f4e596d90a41de65320cd585d1255c44833b698"
+    },
+    "independent_old_stderr": {
+      "bytes": 3694,
+      "sha256": "214f47f882c109960e5f86ce6eb7b68a678762b76c71c6ed1497ad956ff7c3f2"
+    },
+    "independent_current_stdout": {
+      "bytes": 2864,
+      "sha256": "635424d03a90dcd41fc4ce1b06b7f0215413fbcff8b020f4339669dd3a2e7fc9"
+    },
+    "independent_current_stderr": {
+      "bytes": 2099,
+      "sha256": "68ae29b5a7a791eb51698f3b51f83547abaa2870c53a2f052b2b02a0fe6bcae8"
+    },
+    "windows_full_result": {
+      "bytes": 509845,
+      "sha256": "5e728d04e144b4e22526aa202c2137caced190661cc48e65742a4bc89d3b14fc"
+    },
+    "linux_full_result": {
+      "bytes": 407076,
+      "sha256": "c2d2a56c077d2d130792f1cb798374d1d450e8365a71204027f47db7f76d0918"
+    }
+  },
+  "limits": [
+    "Local frozen regressions do not assert a GitHub CI result.",
+    "Existing runtime 0.7.0a2 and installer 0.4.0a2 downloads are unchanged.",
+    "The original failed CI and development attempts are retained."
+  ]
+}

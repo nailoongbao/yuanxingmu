@@ -6,6 +6,8 @@
 
 **2026-09-13 新增：** `sdk-run` 提供 [smolagents 1.26.0 `ToolCallingAgent`](sdk-runtime.zh-CN.md)、[LangGraph 1.2.11 固定 `StateGraph`](langgraph-runtime.zh-CN.md)、[OpenAI Agents 0.22.2 固定双助手流程](openai-agents-runtime.zh-CN.md)、[PydanticAI 2.43.0 固定 `Agent`](pydantic-ai-runtime.zh-CN.md) 和 [Google ADK 2.9.0 固定双助手流程](google-adk-runtime.zh-CN.md) 五条完整运行入口，接到已有且已停止的受保护工作实例，运行模型循环、受限 Broker 工具及会话恢复。原实例有既定自动范围时，可额外启用消息、上传、表单的 `request_action`，由宿主复核和去重。OpenAI Agents 与 Google ADK 的固定交接共用原权限和额度；即时 `send`、`CodeAgent`、自定义工具、任意已有图、动态或并行多 Agent 不在范围内。新增验证与下列历史工具记录分开列示；其他框架仍保持原来的工具适配状态。
 
+这些 SDK 入口属于 main 开发源码，未进入当前 a2 下载包。smolagents、LangGraph、OpenAI Agents 和 PydanticAI 的完成答案及全部旧轮历史尚未逐项与宿主原件核验；请仅恢复自己生成、未被其他程序改写的检查点。当前权限检查和操作去重不等于历史内容可信；不能把 Google ADK 的原件核验结论套用到另外四个入口。
+
 smolagents 源码入口的 [GLM‑5.2 实测](evidence/smolagents-runtime-2026-09-13/REPORT.zh-CN.md)已完成三种自动操作、已完成会话重开和撤销检查；当时六个相关模块在 Linux 上 80/80 通过。它仍未包含在已发布的 a2 下载包中，也未做 SDK WebUI 视频或攻击阻断率评估。
 
 LangGraph 的独立 [GLM‑5.2 实测](evidence/langgraph-runtime-2026-09-13/REPORT.zh-CN.md)同样完成三种自动操作、已完成会话重开和撤销检查。原生图通过同步 JSON 检查点恢复，每次只派发一个 `ToolNode` 调用；另开 smolagents 会话不能重置原任务的自动额度。它也属于 main 源码入口，未进入 a2 下载包，尚未做任意图应用或五层攻击整体验收。
