@@ -31,12 +31,6 @@ class _MockGatewayHandler(BaseHTTPRequestHandler):
     def do_POST(self):
         length = int(self.headers.get("Content-Length", "0"))
         body = self.rfile.read(length)
-        audit_headers = {
-            "X-YXM-Audit-Correlation-ID": self.headers.get("X-YXM-Audit-Correlation-ID"),
-            "X-YXM-Audit-Protocol-Version": self.headers.get("X-YXM-Audit-Protocol-Version"),
-            "Authorization": self.headers.get("Authorization"),
-            "X-Worker-Spoofed": self.headers.get("X-Worker-Spoofed"),
-        }
         self.server.request_count += 1
         self.server.receipts.put((self.command, self.path, dict(self.headers), body))
 
@@ -53,6 +47,13 @@ class _MockGatewayHandler(BaseHTTPRequestHandler):
             self.send_header("X-YXM-Audit-Correlation-ID", corr)
         self.end_headers()
         self.wfile.write(resp_body)
+
+
+class _CountingGateway(ThreadingHTTPServer):
+    def get_request(self):
+        accepted = super().get_request()
+        self.tcp_accepts += 1
+        return accepted
 
 
 class _UnixHTTP(http.client.HTTPConnection):
@@ -87,8 +88,9 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         self.runtime.mkdir(mode=0o700)
 
         # Mock Upstream Gateway
-        self.gateway = ThreadingHTTPServer(("127.0.0.1", 0), _MockGatewayHandler)
+        self.gateway = _CountingGateway(("127.0.0.1", 0), _MockGatewayHandler)
         self.gateway.receipts = queue.Queue()
+        self.gateway.tcp_accepts = 0
         self.gateway.request_count = 0
         self.gateway_thread = threading.Thread(target=self.gateway.serve_forever, kwargs={"poll_interval": 0.05}, daemon=True)
         self.gateway_thread.start()
@@ -96,11 +98,21 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         self.stack.callback(self.gateway.server_close)
         self.stack.callback(self.gateway.shutdown)
 
-        # Track actual TCP connects
-        self.tcp_connections = 0
+        # Separate connect attempts, server-side accepts, and HTTP requests.
+        # Only this fixture's Unix sockets and loopback gateway may be reached.
+        original_socket_connect = socket.socket.connect
+        def fixture_only(connection, address):
+            if connection.family == socket.AF_UNIX:
+                if not str(address).startswith(str(self.root) + "/"):
+                    raise AssertionError("unexpected Unix socket")
+            elif connection.family != socket.AF_INET or tuple(address[:2]) != ("127.0.0.1", self.gateway.server_port):
+                raise AssertionError("pilot tests forbid non-fixture network connections")
+            return original_socket_connect(connection, address)
+        self.stack.enter_context(patch.object(socket.socket, "connect", fixture_only))
+        self.tcp_connect_attempts = 0
         original_connect = http.client.HTTPConnection.connect
         def tracked_connect(connection):
-            self.tcp_connections += 1
+            self.tcp_connect_attempts += 1
             return original_connect(connection)
         self.stack.enter_context(patch.object(http.client.HTTPConnection, "connect", tracked_connect))
 
@@ -135,6 +147,14 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         finally:
             conn.close()
 
+    def _assert_no_upstream_or_journal_change(self, journal_before):
+        self.assertEqual(self.tcp_connect_attempts, 0)
+        self.assertEqual(self.gateway.tcp_accepts, 0)
+        self.assertEqual(self.gateway.request_count, 0)
+        self.assertTrue(self.gateway.receipts.empty())
+        self.begin.assert_not_called()
+        self.assertEqual(self.journal_path.read_bytes(), journal_before)
+
     def test_criterion1_and_2_correlation_penetration_and_unidirectional_isolation(self):
         status, worker_resp_headers, data = self._request(
             headers={
@@ -148,12 +168,14 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         cmd, path, gateway_headers, body = self.gateway.receipts.get(timeout=2)
         # 1. Gateway preserved valid correlation and protocol version
         self.assertEqual(gateway_headers["X-YXM-Audit-Correlation-ID"], self.valid_corr)
+        self.assertRegex(gateway_headers["X-YXM-Audit-Correlation-ID"], r"^corr-[0-9a-f]{32}$")
         self.assertEqual(gateway_headers["X-YXM-Audit-Protocol-Version"], "1.0")
         self.assertEqual(gateway_headers["Authorization"], "Bearer sk-pilot-test-key")
 
         # 2. Worker spoofed header was stripped before reaching gateway
         self.assertNotIn("x-worker-spoofed", {k.lower() for k in gateway_headers})
-        self.assertEqual(self.tcp_connections, 1)
+        self.assertEqual(self.tcp_connect_attempts, 1)
+        self.assertEqual(self.gateway.tcp_accepts, 1)
         self.assertEqual(self.gateway.request_count, 1)
 
         # 3. HostModel stripped gateway's echoed correlation ID, preventing echo to worker
@@ -164,20 +186,27 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         self.assertEqual(len(records), 1)
         self.assertEqual(records[0]["state"], "complete")
 
-    def test_criterion3_revocation_before_and_during_provider_zero_upstream(self):
+    def test_criterion3_invalid_metadata_zero_upstream_and_no_ticket(self):
         journal_before = self.journal_path.read_bytes()
+        self.metadata = lambda: {"X-YXM-Audit-Correlation-ID": "corr-bad!format",
+                                 "X-YXM-Audit-Protocol-Version": "1.0"}
+        status, _, _ = self._request()
+        self.assertEqual(status, 500)
+        self.provider.assert_called_once()
+        self._assert_no_upstream_or_journal_change(journal_before)
 
-        # Case 3a: Prior revocation
+    def test_criterion3_revocation_before_provider_zero_upstream(self):
+        journal_before = self.journal_path.read_bytes()
         self.broker.revoke("pilot-task")
         status, _, data = self._request()
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(data)["model"], "yuanxingmu-host")
         self.provider.assert_not_called()
-        self.assertEqual(self.tcp_connections, 0)
-        self.assertEqual(self.gateway.request_count, 0)
-        self.assertEqual(self.journal_path.read_bytes(), journal_before)
+        self._assert_no_upstream_or_journal_change(journal_before)
 
-        # Case 3b: Revocation during provider execution
+    def test_criterion3_revocation_during_provider_zero_upstream(self):
+        # Independent setUp leaves this task live until the callback runs.
+        journal_before = self.journal_path.read_bytes()
         valid = self.metadata
         def revoke_then_return():
             self.broker.revoke("pilot-task")
@@ -187,16 +216,16 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         status, _, data = self._request()
         self.assertEqual(status, 200)
         self.assertEqual(json.loads(data)["model"], "yuanxingmu-host")
-        self.assertEqual(self.tcp_connections, 0)
-        self.assertEqual(self.gateway.request_count, 0)
-        self.assertEqual(self.journal_path.read_bytes(), journal_before)
+        self.provider.assert_called_once()
+        self._assert_no_upstream_or_journal_change(journal_before)
 
     def test_criterion4_explicit_replay_exact_bytes_zero_upstream_and_no_new_ticket(self):
         # 1. First initial request
         first_status, first_headers, first_body = self._request()
         self.assertEqual(first_status, 200)
         self.gateway.receipts.get(timeout=2)
-        self.assertEqual(self.tcp_connections, 1)
+        self.assertEqual(self.tcp_connect_attempts, 1)
+        self.assertEqual(self.gateway.tcp_accepts, 1)
         self.assertEqual(self.gateway.request_count, 1)
         self.provider.assert_called_once()
         self.begin.assert_called_once_with(self.body)
@@ -204,7 +233,8 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         journal_after_first = self.journal_path.read_bytes()
 
         # Reset counters & mocks
-        self.tcp_connections = 0
+        self.tcp_connect_attempts = 0
+        self.gateway.tcp_accepts = 0
         self.gateway.request_count = 0
         self.provider.reset_mock()
         self.begin.reset_mock()
@@ -218,13 +248,13 @@ class MetaordoPilotIntegrationTests(unittest.TestCase):
         self.assertEqual(replay_body, first_body)
 
         # 4. Assert zero upstream TCP connections & zero HTTP requests
-        self.assertEqual(self.tcp_connections, 0)
+        self.assertEqual(self.tcp_connect_attempts, 0)
+        self.assertEqual(self.gateway.tcp_accepts, 0)
         self.assertEqual(self.gateway.request_count, 0)
 
         # 5. Assert provider not called, no new ticket created, and journal untouched
         self.provider.assert_not_called()
-        self.begin.assert_not_called()
-        self.assertEqual(self.journal_path.read_bytes(), journal_after_first)
+        self._assert_no_upstream_or_journal_change(journal_after_first)
 
 
 if __name__ == "__main__":
